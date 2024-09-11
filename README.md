@@ -7,12 +7,17 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+# Developers
 
-## Learn more
+Please use the Pull Request workflow to submit your changes. For a guide on how to create Pull Requests, check out [GitHub's tutorial on creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+If that seems to be too complicated: 
+Use https://gitbutler.com to create a pull request.
+
+## One PR per change
+
+Please create one PR per change. If you have multiple changes, please create multiple PRs. This allows for early feedback and reduces the risk of having to rework large parts of a PR.
+
+## Commit messages
+
+Please use clear and descriptive commit messages.
