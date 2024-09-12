@@ -21,3 +21,7 @@ Please create one PR per change. If you have multiple changes, please create mul
 ## Commit messages
 
 Please use clear and descriptive commit messages.
+
+## Ash Framework
+
+We are using the [Ash Framework](https://ash-hq.org).
