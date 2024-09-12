@@ -17,7 +17,7 @@ defmodule OmedisWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import OmedisWeb.Gettext
+  use Gettext, backend: OmedisWeb.Gettext
 
   @doc """
   Renders a modal.
