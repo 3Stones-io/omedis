@@ -10,8 +10,21 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
   </head>
-  <body class="bg-white">
-    <%= @inner_content %>
+  <body class="antialiased bg-white dark:bg-gray-900">
+    <div>
+      <.top_navigation />
+      <div class="w-[100%] text-base flex justify-between">
+        <.desktop_sidebar_navigation />
+        <div class="w-[100%] md:ml-[20%] pt-[70px]  px-[8px] md:px-[20px] ">
+          <.flash_group flash={@flash} />
+          <%= @inner_content %>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
