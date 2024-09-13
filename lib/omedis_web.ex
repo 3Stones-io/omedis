@@ -43,7 +43,7 @@ defmodule OmedisWeb do
         layouts: [html: OmedisWeb.Layouts]
 
       import Plug.Conn
-      import OmedisWeb.Gettext
+      use Gettext, backend: OmedisWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -86,6 +86,7 @@ defmodule OmedisWeb do
       # Core UI components and translation
       import OmedisWeb.CoreComponents
       use Gettext, backend: OmedisWeb.Gettext
+
 
       import OmedisWeb.GeneralComponents
 
