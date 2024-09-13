@@ -100,4 +100,6 @@ jobs:
           CI: true # Set a CI environment variable
           DISABLE_ML_FEATURES: true # Disable ML features
         run: mix test
-      # Removed Credo As We Are Yet To Install It
+
+      - name: Run Credo
+        run: mix credo --strict
