@@ -16,17 +16,11 @@
     />
   </head>
   <body class="antialiased bg-white">
-    <div>
-      <.top_navigation />
-      <div class="w-[100%] text-base flex justify-between">
-        <.desktop_sidebar_navigation />
-        <div class="w-[100%] md:ml-[20%] pt-[70px]  px-[8px] md:px-[20px] ">
-          <.flash_group flash={@flash} />
-          <div class="w-[95%] mt-8 mx-auto">
-            <%= @inner_content %>
-          </div>
-        </div>
+    <.side_and_topbar />
+    <main class="py-10 pl-72">
+      <div class="px-4 sm:px-6 lg:px-8">
+        <%= @inner_content %>
       </div>
-    </div>
+    </main>
   </body>
 </html>
