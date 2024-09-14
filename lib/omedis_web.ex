@@ -87,6 +87,8 @@ defmodule OmedisWeb do
       import OmedisWeb.CoreComponents
       use Gettext, backend: OmedisWeb.Gettext
 
+      import OmedisWeb.GeneralComponents
+
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 

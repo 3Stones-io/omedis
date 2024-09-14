@@ -10,8 +10,17 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
   </head>
-  <body class="bg-white">
-    <%= @inner_content %>
+  <body class="antialiased bg-white">
+    <.side_and_topbar />
+    <main class="py-10 pl-72">
+      <div class="px-4 sm:px-6 lg:px-8">
+        <%= @inner_content %>
+      </div>
+    </main>
   </body>
 </html>
