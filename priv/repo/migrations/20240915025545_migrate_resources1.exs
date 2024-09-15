@@ -17,6 +17,14 @@ defmodule Omedis.Repo.Migrations.MigrateResources1 do
       add :gender, :text
       add :birthdate, :date, null: false
       add :current_tenant_id, :uuid, null: false
+
+      add :created_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :updated_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
     end
 
     create unique_index(:users, [:email], name: "users_unique_email_index")

@@ -1,20 +1,20 @@
 {
   "attributes": [
     {
-      "default": "fragment(\"gen_random_uuid()\")",
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "size": null,
-      "type": "uuid",
-      "source": "id",
+      "type": "utc_datetime_usec",
+      "source": "updated_at",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
-      "primary_key?": true
+      "primary_key?": false
     },
     {
-      "default": "nil",
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "size": null,
-      "type": "citext",
-      "source": "email",
+      "type": "utc_datetime_usec",
+      "source": "created_at",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
@@ -23,38 +23,8 @@
     {
       "default": "nil",
       "size": null,
-      "type": "text",
-      "source": "hashed_password",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "first_name",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "last_name",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "gender",
+      "type": "map",
+      "source": "extra_data",
       "references": null,
       "allow_nil?": true,
       "generated?": false,
@@ -63,8 +33,8 @@
     {
       "default": "nil",
       "size": null,
-      "type": "date",
-      "source": "birthdate",
+      "type": "text",
+      "source": "purpose",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
@@ -73,42 +43,47 @@
     {
       "default": "nil",
       "size": null,
-      "type": "uuid",
-      "source": "current_tenant_id",
+      "type": "utc_datetime",
+      "source": "expires_at",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
-    }
-  ],
-  "table": "users",
-  "hash": "2E5106F70B2C6A0677AF3AF62BC3600778B40DFC05C58A074DB52B31C39CA7F6",
-  "repo": "Elixir.Omedis.Repo",
-  "schema": null,
-  "identities": [
+    },
     {
-      "name": "unique_email",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "email"
-        }
-      ],
-      "where": null,
-      "nils_distinct?": true,
-      "base_filter": null,
-      "all_tenants?": false,
-      "index_name": "users_unique_email_index"
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "subject",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "jti",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": true
     }
   ],
+  "table": "tokens",
+  "hash": "50C046757ED1ED1910B888F27F78D2B7285AEF5488366BC6ECE0EF921A863889",
+  "repo": "Elixir.Omedis.Repo",
+  "identities": [],
+  "schema": null,
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
   "base_filter": null,
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "multitenancy": {
-    "global": null,
-    "strategy": null,
-    "attribute": null
-  },
   "has_create_action": true
 }

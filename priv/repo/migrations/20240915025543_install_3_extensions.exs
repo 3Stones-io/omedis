@@ -1,4 +1,4 @@
-defmodule Omedis.Repo.Migrations.Install3Extensions20240915023446 do
+defmodule Omedis.Repo.Migrations.Install3Extensions20240915025542 do
   @moduledoc """
   Installs any extensions that are mentioned in the repo's `installed_extensions/0` callback
 
