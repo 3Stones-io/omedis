@@ -22,6 +22,9 @@ config :omedis, OmedisWeb.Endpoint,
   pubsub_server: Omedis.PubSub,
   live_view: [signing_salt: "Lu8xpRC9"]
 
+config :omedis, ash_domains: [Omedis.Accounts]
+
+config :omedis, :token_signing_secret, "Lu8xpRC9"
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

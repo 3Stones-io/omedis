@@ -1,5 +1,7 @@
 defmodule Omedis.Repo do
-  use Ecto.Repo,
-    otp_app: :omedis,
-    adapter: Ecto.Adapters.Postgres
+  use AshPostgres.Repo, otp_app: :omedis
+
+  def installed_extensions do
+    ["ash-functions", "uuid-ossp", "citext"]
+  end
 end
