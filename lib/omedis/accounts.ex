@@ -7,5 +7,6 @@ defmodule Omedis.Accounts do
   resources do
     resource Omedis.Accounts.User
     resource Omedis.Accounts.Token
+    resource Omedis.Accounts.Tenant
   end
 end
