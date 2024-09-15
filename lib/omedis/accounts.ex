@@ -1,4 +1,7 @@
 defmodule Omedis.Accounts do
+  @moduledoc """
+  Represents the accounts domain.
+  """
   use Ash.Domain
 
   resources do

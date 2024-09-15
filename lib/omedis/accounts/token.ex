@@ -1,4 +1,7 @@
 defmodule Omedis.Accounts.Token do
+  @moduledoc """
+  Represents tokens used for authentication in the system.
+  """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication.TokenResource],

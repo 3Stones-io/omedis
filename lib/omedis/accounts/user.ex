@@ -1,4 +1,7 @@
 defmodule Omedis.Accounts.User do
+  @moduledoc """
+  Represents a user in the system.
+  """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication],
