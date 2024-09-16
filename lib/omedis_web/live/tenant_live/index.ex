@@ -18,9 +18,8 @@ defmodule OmedisWeb.TenantLive.Index do
         id="tenants"
         rows={@streams.tenants}
         row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant}") end}
-        class="min-w-full table-auto"
       >
-        <:col :let={{_id, tenant}} label="Id"><%= tenant.id %></:col>
+        <:col :let={{_id, tenant}} label="Id "><%= tenant.id %></:col>
         <:col :let={{_id, tenant}} label="Name"><%= tenant.name %></:col>
         <:col :let={{_id, tenant}} label="Additional info"><%= tenant.additional_info %></:col>
         <:col :let={{_id, tenant}} label="Street"><%= tenant.street %></:col>
