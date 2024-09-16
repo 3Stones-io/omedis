@@ -6,87 +6,86 @@ defmodule OmedisWeb.TenantLive.Show do
     ~H"""
     <.header>
       Tenant <%= @tenant.id %>
-        <:subtitle>This is a tenant record from your database.</:subtitle>
-      
-        <:actions>
-          <.link patch={~p"/tenants/#{@tenant}/show/edit"} phx-click={JS.push_focus()}>
-            <.button>Edit tenant</.button>
-          </.link>
-        </:actions>
-      
+      <:subtitle>This is a tenant record from your database.</:subtitle>
+
+      <:actions>
+        <.link patch={~p"/tenants/#{@tenant}/show/edit"} phx-click={JS.push_focus()}>
+          <.button>Edit tenant</.button>
+        </.link>
+      </:actions>
     </.header>
 
     <.list>
-      
-        <:item title="Id"><%= @tenant.id %></:item>
-      
-        <:item title="Name"><%= @tenant.name %></:item>
-      
-        <:item title="Additional info"><%= @tenant.additional_info %></:item>
-      
-        <:item title="Street"><%= @tenant.street %></:item>
-      
-        <:item title="Street2"><%= @tenant.street2 %></:item>
-      
-        <:item title="Po box"><%= @tenant.po_box %></:item>
-      
-        <:item title="Zip code"><%= @tenant.zip_code %></:item>
-      
-        <:item title="City"><%= @tenant.city %></:item>
-      
-        <:item title="Canton"><%= @tenant.canton %></:item>
-      
-        <:item title="Country"><%= @tenant.country %></:item>
-      
-        <:item title="Description"><%= @tenant.description %></:item>
-      
-        <:item title="Owner"><%= @tenant.owner_id %></:item>
-      
-        <:item title="Phone"><%= @tenant.phone %></:item>
-      
-        <:item title="Fax"><%= @tenant.fax %></:item>
-      
-        <:item title="Email"><%= @tenant.email %></:item>
-      
-        <:item title="Website"><%= @tenant.website %></:item>
-      
-        <:item title="Zsr number"><%= @tenant.zsr_number %></:item>
-      
-        <:item title="Ean gln"><%= @tenant.ean_gln %></:item>
-      
-        <:item title="Uid bfs number"><%= @tenant.uid_bfs_number %></:item>
-      
-        <:item title="Trade register no"><%= @tenant.trade_register_no %></:item>
-      
-        <:item title="Bur number"><%= @tenant.bur_number %></:item>
-      
-        <:item title="Account number"><%= @tenant.account_number %></:item>
-      
-        <:item title="Iban"><%= @tenant.iban %></:item>
-      
-        <:item title="Bic"><%= @tenant.bic %></:item>
-      
-        <:item title="Bank"><%= @tenant.bank %></:item>
-      
-        <:item title="Account holder"><%= @tenant.account_holder %></:item>
-      
+      <:item title="Id"><%= @tenant.id %></:item>
+
+      <:item title="Name"><%= @tenant.name %></:item>
+
+      <:item title="Additional info"><%= @tenant.additional_info %></:item>
+
+      <:item title="Street"><%= @tenant.street %></:item>
+
+      <:item title="Street2"><%= @tenant.street2 %></:item>
+
+      <:item title="Po box"><%= @tenant.po_box %></:item>
+
+      <:item title="Zip code"><%= @tenant.zip_code %></:item>
+
+      <:item title="City"><%= @tenant.city %></:item>
+
+      <:item title="Canton"><%= @tenant.canton %></:item>
+
+      <:item title="Country"><%= @tenant.country %></:item>
+
+      <:item title="Description"><%= @tenant.description %></:item>
+
+      <:item title="Owner"><%= @tenant.owner_id %></:item>
+
+      <:item title="Phone"><%= @tenant.phone %></:item>
+
+      <:item title="Fax"><%= @tenant.fax %></:item>
+
+      <:item title="Email"><%= @tenant.email %></:item>
+
+      <:item title="Website"><%= @tenant.website %></:item>
+
+      <:item title="Zsr number"><%= @tenant.zsr_number %></:item>
+
+      <:item title="Ean gln"><%= @tenant.ean_gln %></:item>
+
+      <:item title="Uid bfs number"><%= @tenant.uid_bfs_number %></:item>
+
+      <:item title="Trade register no"><%= @tenant.trade_register_no %></:item>
+
+      <:item title="Bur number"><%= @tenant.bur_number %></:item>
+
+      <:item title="Account number"><%= @tenant.account_number %></:item>
+
+      <:item title="Iban"><%= @tenant.iban %></:item>
+
+      <:item title="Bic"><%= @tenant.bic %></:item>
+
+      <:item title="Bank"><%= @tenant.bank %></:item>
+
+      <:item title="Account holder"><%= @tenant.account_holder %></:item>
     </.list>
 
     <.back navigate={~p"/tenants"}>Back to tenants</.back>
 
-
-      <.modal :if={@live_action == :edit} id="tenant-modal" show on_cancel={JS.patch(~p"/tenants/#{@tenant}")}>
-        <.live_component
-          module={OmedisWeb.TenantLive.FormComponent}
-          id={@tenant.id}
-          title={@page_title}
-          action={@live_action}
-          
-          tenant={@tenant}
-          patch={~p"/tenants/#{@tenant}"}
-        />
-      </.modal>
-
+    <.modal
+      :if={@live_action == :edit}
+      id="tenant-modal"
+      show
+      on_cancel={JS.patch(~p"/tenants/#{@tenant}")}
+    >
+      <.live_component
+        module={OmedisWeb.TenantLive.FormComponent}
+        id={@tenant.id}
+        title={@page_title}
+        action={@live_action}
+        tenant={@tenant}
+        patch={~p"/tenants/#{@tenant}"}
+      />
+    </.modal>
     """
   end
 
