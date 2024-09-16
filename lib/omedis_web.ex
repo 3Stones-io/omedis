@@ -83,6 +83,8 @@ defmodule OmedisWeb do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
+      import Phoenix.HTML.Form
+      use PhoenixHTMLHelpers
       # Core UI components and translation
       import OmedisWeb.CoreComponents
       use Gettext, backend: OmedisWeb.Gettext
