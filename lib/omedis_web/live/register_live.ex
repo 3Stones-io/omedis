@@ -1,8 +1,9 @@
 defmodule OmedisWeb.RegisterLive do
-  use OmedisWeb, :live_view
+  alias AshPhoenix.Form
   alias Omedis.Accounts
   alias Omedis.Accounts.User
-  alias AshPhoenix.Form
+
+  use OmedisWeb, :live_view
 
   @impl true
   def mount(_params, _session, socket) do
