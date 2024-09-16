@@ -15,16 +15,52 @@ defmodule Omedis.Accounts.User do
     attribute :last_name, :string, allow_nil?: false, public?: true
     attribute :gender, :string, allow_nil?: true, public?: true
     attribute :birthdate, :date, allow_nil?: false, public?: true
-    attribute :current_tenant_id, :uuid, allow_nil?: false, public?: false
+    attribute :current_tenant_id, :uuid, allow_nil?: true, public?: false
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  code_interface do
+    domain Accounts
+    define :read
+    define :create
+    define :by_id, get_by: [:id], action: :read
+    define :by_email, get_by: [:email], action: :read
+  end
+
+  actions do
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [
+        :email,
+        :hashed_password,
+        :first_name,
+        :last_name,
+        :gender,
+        :birthdate
+      ]
+
+      primary? true
+    end
   end
 
   authentication do
     strategies do
       password :password do
         identity_field :email
+
+        sign_in_tokens_enabled? true
+        confirmation_required?(false)
+
+        register_action_accept([
+          :email,
+          :first_name,
+          :last_name,
+          :gender,
+          :birthdate
+        ])
       end
     end
 

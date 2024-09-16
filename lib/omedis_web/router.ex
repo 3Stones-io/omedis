@@ -1,5 +1,6 @@
 defmodule OmedisWeb.Router do
   use OmedisWeb, :router
+  use AshAuthentication.Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -8,16 +9,25 @@ defmodule OmedisWeb.Router do
     plug :put_root_layout, html: {OmedisWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :load_from_session
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :load_from_bearer
   end
 
   scope "/", OmedisWeb do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/login", LoginLive, :index
+    live "/register", RegisterLive, :index
+
+    sign_out_route(AuthController, "/auth/user/sign-out")
+    auth_routes_for(Omedis.Accounts.User, to: AuthController)
+
+    reset_route([])
   end
 
   # Other scopes may use custom stacks.

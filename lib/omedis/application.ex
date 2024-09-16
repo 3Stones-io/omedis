@@ -12,6 +12,7 @@ defmodule Omedis.Application do
       Omedis.Repo,
       {DNSCluster, query: Application.get_env(:omedis, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Omedis.PubSub},
+      {AshAuthentication.Supervisor, otp_app: :omedis},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Omedis.Finch},
       # Start a worker by calling: Omedis.Worker.start_link(arg)
