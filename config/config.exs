@@ -24,7 +24,9 @@ config :omedis, OmedisWeb.Endpoint,
 
 config :omedis, ash_domains: [Omedis.Accounts]
 
-config :omedis, :token_signing_secret, "Lu8xpRC9"
+# Configures the signing secret for the token
+
+config :omedis, :token_signing_secret, System.get_env("TOKEN_SIGNING_SECRET") || "Lu8xpRC9"
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
