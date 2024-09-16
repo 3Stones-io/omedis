@@ -18,6 +18,13 @@ defmodule OmedisWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/tenants", TenantLive.Index, :index
+    live "/tenants/new", TenantLive.Index, :new
+    live "/tenants/:id/edit", TenantLive.Index, :edit
+
+    live "/tenants/:id", TenantLive.Show, :show
+    live "/tenants/:id/show/edit", TenantLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
