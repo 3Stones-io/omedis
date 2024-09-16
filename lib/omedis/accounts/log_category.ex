@@ -29,11 +29,18 @@ defmodule Omedis.Accounts.LogCategory do
     define :destroy
   end
 
+  identities do
+    identity :unique_color_code_position, [:color_code, :tenant_id]
+    identity :unique_position, [:position, :tenant_id]
+  end
+
   actions do
     create :create do
       accept [
         :name,
-        :tenant_id
+        :tenant_id,
+        :color_code,
+        :position
       ]
 
       primary? true
@@ -42,7 +49,9 @@ defmodule Omedis.Accounts.LogCategory do
     update :update do
       accept [
         :name,
-        :tenant_id
+        :tenant_id,
+        :color_code,
+        :position
       ]
 
       primary? true
@@ -57,11 +66,20 @@ defmodule Omedis.Accounts.LogCategory do
     end
   end
 
+  validations do
+    validate present(:name)
+    validate present(:tenant_id)
+  end
+
   attributes do
     uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :tenant_id, :uuid, allow_nil?: false, public?: true
+
+    attribute :color_code, :string, allow_nil?: true, public?: true
+
+    attribute :position, :string, allow_nil?: true, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at

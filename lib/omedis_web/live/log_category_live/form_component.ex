@@ -23,6 +23,9 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           label="Tenant"
           options={Enum.map(@tenants, &{&1.name, &1.id})}
         />
+        <.input field={@form[:color_code]} type="text" label="Color code" />
+
+        <.input field={@form[:position]} type="number" label="Position" />
 
         <:actions>
           <.button phx-disable-with="Saving...">Save Log category</.button>
