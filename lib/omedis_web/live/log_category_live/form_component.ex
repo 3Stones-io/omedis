@@ -7,7 +7,6 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage log_category records in your database.</:subtitle>
       </.header>
 
       <.simple_form
@@ -17,11 +16,14 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        
-            
-              <.input field={@form[:name]} type="text" label="Name" /><.input field={@form[:tenant_id]} type="text" label="Tenant" />
-            
-          
+        <.input field={@form[:name]} type="text" label="Name" />
+        <.input
+          field={@form[:tenant_id]}
+          type="select"
+          label="Tenant"
+          options={Enum.map(@tenants, &{&1.name, &1.id})}
+        />
+
         <:actions>
           <.button phx-disable-with="Saving...">Save Log category</.button>
         </:actions>
