@@ -66,7 +66,8 @@ defmodule Omedis.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:ash_phoenix, "~> 2.1.2"}
     ]
   end
 
