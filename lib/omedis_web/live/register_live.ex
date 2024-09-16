@@ -5,7 +5,7 @@ defmodule OmedisWeb.RegisterLive do
   alias AshPhoenix.Form
 
   @impl true
-  def mount(_params, session, socket) do
+  def mount(_params, _session, socket) do
     socket =
       socket
       |> assign(current_user: nil)
