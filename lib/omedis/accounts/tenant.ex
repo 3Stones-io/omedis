@@ -5,7 +5,6 @@ defmodule Omedis.Accounts.Tenant do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    authorizers: Ash.Policy.Authorizer,
     domain: Omedis.Accounts
 
   postgres do
@@ -15,6 +14,10 @@ defmodule Omedis.Accounts.Tenant do
     references do
       reference :owner, on_delete: :delete
     end
+  end
+
+  resource do
+    plural_name :tenants
   end
 
   code_interface do
@@ -79,12 +82,12 @@ defmodule Omedis.Accounts.Tenant do
         :account_number
       ]
 
+      primary? true
       require_atomic? false
     end
 
     read :read do
       primary? true
-      pagination offset?: true, keyset?: true, required?: false
     end
 
     destroy :destroy do
@@ -98,6 +101,8 @@ defmodule Omedis.Accounts.Tenant do
       end
 
       filter expr(user_id == ^arg(:user_id))
+
+      primary? false
     end
   end
 
@@ -121,7 +126,7 @@ defmodule Omedis.Accounts.Tenant do
     attribute :country, :string, allow_nil?: false, public?: true
     attribute :description, :string, allow_nil?: true, public?: true
 
-    attribute :owner_id, :uuid, allow_nil?: false, public?: true
+    attribute :owner_id, :uuid, allow_nil?: true, public?: true
 
     attribute :phone, :string, allow_nil?: true, public?: true
 
@@ -157,7 +162,7 @@ defmodule Omedis.Accounts.Tenant do
 
   relationships do
     belongs_to :owner, Omedis.Accounts.User do
-      allow_nil? false
+      allow_nil? true
       attribute_writable? true
     end
   end
