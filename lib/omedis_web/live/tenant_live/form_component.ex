@@ -81,7 +81,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
   end
 
   def handle_event("save", %{"tenant" => tenant_params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: tenant_params) |> IO.inspect() do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: tenant_params) do
       {:ok, tenant} ->
         notify_parent({:saved, tenant})
 
