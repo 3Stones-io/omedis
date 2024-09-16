@@ -24,7 +24,15 @@ Please use clear and descriptive commit messages.
 
 ## Secrets
 
-- Our secret for tokens is stored in the `config/config.exs` file and is `Lu8xpRC9`
+The secret for tokens need to be changed for the `production` environment and can be found in `config/config.exs`
+
+```
+config :omedis, :token_signing_secret, "Lu8xpRC9"
+```
+
+This can also be set as an environment variable `TOKEN_SIGNING_SECRET` and override the value in the `config.exs` file.
+
+
 
 ## Ash Framework
 
