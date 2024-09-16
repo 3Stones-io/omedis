@@ -8,93 +8,68 @@ defmodule OmedisWeb.TenantLive.Index do
       Listing Tenants
       <:actions>
         <.link patch={~p"/tenants/new"}>
-        <.button>New Tenant</.button>
+          <.button>New Tenant</.button>
         </.link>
       </:actions>
     </.header>
 
-    <.table
-      id="tenants"
-      rows={@streams.tenants}
-      row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant}") end}
-    >
-      
+    <div class="overflow-x-auto">
+      <.table
+        id="tenants"
+        rows={@streams.tenants}
+        row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant}") end}
+        class="min-w-full table-auto"
+      >
         <:col :let={{_id, tenant}} label="Id"><%= tenant.id %></:col>
-      
         <:col :let={{_id, tenant}} label="Name"><%= tenant.name %></:col>
-      
         <:col :let={{_id, tenant}} label="Additional info"><%= tenant.additional_info %></:col>
-      
         <:col :let={{_id, tenant}} label="Street"><%= tenant.street %></:col>
-      
         <:col :let={{_id, tenant}} label="Street2"><%= tenant.street2 %></:col>
-      
         <:col :let={{_id, tenant}} label="Po box"><%= tenant.po_box %></:col>
-      
         <:col :let={{_id, tenant}} label="Zip code"><%= tenant.zip_code %></:col>
-      
         <:col :let={{_id, tenant}} label="City"><%= tenant.city %></:col>
-      
         <:col :let={{_id, tenant}} label="Canton"><%= tenant.canton %></:col>
-      
         <:col :let={{_id, tenant}} label="Country"><%= tenant.country %></:col>
-      
         <:col :let={{_id, tenant}} label="Description"><%= tenant.description %></:col>
-      
         <:col :let={{_id, tenant}} label="Owner"><%= tenant.owner_id %></:col>
-      
         <:col :let={{_id, tenant}} label="Phone"><%= tenant.phone %></:col>
-      
         <:col :let={{_id, tenant}} label="Fax"><%= tenant.fax %></:col>
-      
         <:col :let={{_id, tenant}} label="Email"><%= tenant.email %></:col>
-      
         <:col :let={{_id, tenant}} label="Website"><%= tenant.website %></:col>
-      
         <:col :let={{_id, tenant}} label="Zsr number"><%= tenant.zsr_number %></:col>
-      
         <:col :let={{_id, tenant}} label="Ean gln"><%= tenant.ean_gln %></:col>
-      
         <:col :let={{_id, tenant}} label="Uid bfs number"><%= tenant.uid_bfs_number %></:col>
-      
         <:col :let={{_id, tenant}} label="Trade register no"><%= tenant.trade_register_no %></:col>
-      
         <:col :let={{_id, tenant}} label="Bur number"><%= tenant.bur_number %></:col>
-      
         <:col :let={{_id, tenant}} label="Account number"><%= tenant.account_number %></:col>
-      
         <:col :let={{_id, tenant}} label="Iban"><%= tenant.iban %></:col>
-      
         <:col :let={{_id, tenant}} label="Bic"><%= tenant.bic %></:col>
-      
         <:col :let={{_id, tenant}} label="Bank"><%= tenant.bank %></:col>
-      
         <:col :let={{_id, tenant}} label="Account holder"><%= tenant.account_holder %></:col>
-      
-      <:action :let={{_id, tenant}}>
-        <div class="sr-only">
-          <.link navigate={~p"/tenants/#{tenant}"}>Show</.link>
-        </div>
-        
+        <:action :let={{_id, tenant}}>
+          <div class="sr-only">
+            <.link navigate={~p"/tenants/#{tenant}"}>Show</.link>
+          </div>
           <.link patch={~p"/tenants/#{tenant}/edit"}>Edit</.link>
-        
-      </:action>
-      
-    </.table>
+        </:action>
+      </.table>
+    </div>
 
-
-        <.modal :if={@live_action in [:new, :edit]} id="tenant-modal" show on_cancel={JS.patch(~p"/tenants")}>
-          <.live_component
-            module={OmedisWeb.TenantLive.FormComponent}
-            id={(@tenant && @tenant.id) || :new}
-            title={@page_title}
-            
-            action={@live_action}
-            tenant={@tenant}
-            patch={~p"/tenants"}
-          />
-        </.modal>
-      
+    <.modal
+      :if={@live_action in [:new, :edit]}
+      id="tenant-modal"
+      show
+      on_cancel={JS.patch(~p"/tenants")}
+    >
+      <.live_component
+        module={OmedisWeb.TenantLive.FormComponent}
+        id={(@tenant && @tenant.id) || :new}
+        title={@page_title}
+        action={@live_action}
+        tenant={@tenant}
+        patch={~p"/tenants"}
+      />
+    </.modal>
     """
   end
 
