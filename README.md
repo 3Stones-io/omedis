@@ -27,12 +27,10 @@ Please use clear and descriptive commit messages.
 The secret for tokens need to be changed for the `production` environment and can be found in `config/config.exs`
 
 ```
-config :omedis, :token_signing_secret, "Lu8xpRC9"
+config :omedis, :token_signing_secret, System.get_env("TOKEN_SIGNING_SECRET") || "Lu8xpRC9"
 ```
 
 This can also be set as an environment variable `TOKEN_SIGNING_SECRET` and override the value in the `config.exs` file.
-
-
 
 ## Ash Framework
 
