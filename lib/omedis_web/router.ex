@@ -30,12 +30,15 @@ defmodule OmedisWeb.Router do
 
     reset_route([])
 
-    live "/tenants", TenantLive.Index, :index
-    live "/tenants/new", TenantLive.Index, :new
-    live "/tenants/:id/edit", TenantLive.Index, :edit
+    ash_authentication_live_session :authentication_required,
+      on_mount: {OmedisWeb.LiveUserAuth, :live_user_required} do
+      live "/tenants", TenantLive.Index, :index
+      live "/tenants/new", TenantLive.Index, :new
+      live "/tenants/:id/edit", TenantLive.Index, :edit
 
-    live "/tenants/:id", TenantLive.Show, :show
-    live "/tenants/:id/show/edit", TenantLive.Show, :edit
+      live "/tenants/:id", TenantLive.Show, :show
+      live "/tenants/:id/show/edit", TenantLive.Show, :edit
+    end
   end
 
   # Other scopes may use custom stacks.
