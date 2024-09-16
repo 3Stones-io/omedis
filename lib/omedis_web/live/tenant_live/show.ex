@@ -1,5 +1,6 @@
 defmodule OmedisWeb.TenantLive.Show do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Tenant
 
   @impl true
   def render(assigns) do
@@ -99,7 +100,7 @@ defmodule OmedisWeb.TenantLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:tenant, Omedis.Accounts.Tenant.by_id!(id))}
+     |> assign(:tenant, Tenant.by_id!(id))}
   end
 
   defp page_title(:show), do: "Show Tenant"

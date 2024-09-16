@@ -1,5 +1,6 @@
 defmodule OmedisWeb.TenantLive.Index do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Tenant
 
   @impl true
   def render(assigns) do
@@ -74,7 +75,7 @@ defmodule OmedisWeb.TenantLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :tenants, Ash.read!(Omedis.Accounts.Tenant))}
+    {:ok, stream(socket, :tenants, Ash.read!(Tenant))}
   end
 
   @impl true
@@ -85,7 +86,7 @@ defmodule OmedisWeb.TenantLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Tenant")
-    |> assign(:tenant, Omedis.Accounts.Tenant.by_id!(id))
+    |> assign(:tenant, Tenant.by_id!(id))
   end
 
   defp apply_action(socket, :new, _params) do
