@@ -8,5 +8,6 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.User
     resource Omedis.Accounts.Token
     resource Omedis.Accounts.Tenant
+    resource Omedis.Accounts.LogCategory
   end
 end
