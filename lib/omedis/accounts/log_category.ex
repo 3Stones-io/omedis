@@ -27,6 +27,7 @@ defmodule Omedis.Accounts.LogCategory do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
+    define :by_tenant_id
   end
 
   identities do
@@ -60,6 +61,14 @@ defmodule Omedis.Accounts.LogCategory do
 
     read :read do
       primary? true
+    end
+
+    read :by_tenant_id do
+      argument :tenant_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(tenant_id == ^arg(:tenant_id))
     end
 
     destroy :destroy do

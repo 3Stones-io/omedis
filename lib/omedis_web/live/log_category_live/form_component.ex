@@ -17,12 +17,24 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:name]} type="text" label="Name" />
-        <.input
-          field={@form[:tenant_id]}
-          type="select"
-          label="Tenant"
-          options={Enum.map(@tenants, &{&1.name, &1.id})}
-        />
+        <%= if @tenant.id do %>
+          <.input
+            field={@form[:tenant_id]}
+            type="select"
+            label="Tenant"
+            options={Enum.map(@tenants, &{&1.name, &1.id})}
+            disabled={true}
+            value={@tenant.id}
+          />
+          <input type="hidden" name="log_category[tenant_id]" value={@tenant.id} />
+        <% else %>
+          <.input
+            field={@form[:tenant_id]}
+            type="select"
+            label="Tenant"
+            options={Enum.map(@tenants, &{&1.name, &1.id})}
+          />
+        <% end %>
         <.input field={@form[:color_code]} type="text" label="Color code" />
 
         <.input field={@form[:position]} type="number" label="Position" />
@@ -50,7 +62,8 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
   end
 
   def handle_event("save", %{"log_category" => log_category_params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: log_category_params) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: log_category_params)
+         |> IO.inspect() do
       {:ok, log_category} ->
         notify_parent({:saved, log_category})
 
