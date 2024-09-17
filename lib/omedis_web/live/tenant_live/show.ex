@@ -13,6 +13,9 @@ defmodule OmedisWeb.TenantLive.Show do
         <.link patch={~p"/tenants/#{@tenant}/show/edit"} phx-click={JS.push_focus()}>
           <.button>Edit tenant</.button>
         </.link>
+        <.link patch={~p"/tenants/#{@tenant.id}/log_categories"} phx-click={JS.push_focus()}>
+          <.button>Log categories</.button>
+        </.link>
       </:actions>
     </.header>
 
@@ -85,6 +88,22 @@ defmodule OmedisWeb.TenantLive.Show do
         action={@live_action}
         tenant={@tenant}
         patch={~p"/tenants/#{@tenant}"}
+      />
+    </.modal>
+    <.modal
+      :if={@live_action in [:new, :edit]}
+      id="log_category-modal"
+      show
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.id}/log_categories")}
+    >
+      <.live_component
+        module={OmedisWeb.LogCategoryLive.FormComponent}
+        id={(@log_category && @log_category.id) || :new}
+        title={@page_title}
+        tenants={@tenants}
+        action={@live_action}
+        log_category={@log_category}
+        patch={~p"/tenants/#{@tenant.id}/log_categories"}
       />
     </.modal>
     """

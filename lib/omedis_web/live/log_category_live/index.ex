@@ -6,10 +6,11 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <.link navigate={~p"/tenants/#{@tenant.id}"} class="button ">Back</.link>
     <.header>
       Listing Log categories
       <:actions>
-        <.link patch={~p"/log_categories/new"}>
+        <.link patch={~p"/tenants/#{@tenant.id}/log_categories/new"}>
           <.button>New Log category</.button>
         </.link>
       </:actions>
@@ -18,20 +19,26 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     <.table
       id="log_categories"
       rows={@streams.log_categories}
-      row_click={fn {_id, log_category} -> JS.navigate(~p"/log_categories/#{log_category}") end}
+      row_click={
+        fn {_id, log_category} ->
+          JS.navigate(~p"/tenants/#{@tenant.id}/log_categories/#{log_category}")
+        end
+      }
     >
       <:col :let={{_id, log_category}} label="Id"><%= log_category.id %></:col>
 
       <:col :let={{_id, log_category}} label="Name"><%= log_category.name %></:col>
 
       <:col :let={{_id, log_category}} label="Tenant"><%= log_category.tenant_id %></:col>
+      <:col :let={{_id, log_category}} label="Color code"><%= log_category.color_code %></:col>
+      <:col :let={{_id, log_category}} label="position"><%= log_category.position %></:col>
 
       <:action :let={{_id, log_category}}>
         <div class="sr-only">
-          <.link navigate={~p"/log_categories/#{log_category}"}>Show</.link>
+          <.link navigate={~p"/tenants/#{@tenant.id}/log_categories/#{log_category}"}>Show</.link>
         </div>
 
-        <.link patch={~p"/log_categories/#{log_category}/edit"}>Edit</.link>
+        <.link patch={~p"/tenants/#{@tenant.id}/log_categories/#{log_category}/edit"}>Edit</.link>
       </:action>
     </.table>
 
@@ -39,19 +46,28 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       :if={@live_action in [:new, :edit]}
       id="log_category-modal"
       show
-      on_cancel={JS.patch(~p"/log_categories")}
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.id}/log_categories")}
     >
       <.live_component
         module={OmedisWeb.LogCategoryLive.FormComponent}
         id={(@log_category && @log_category.id) || :new}
         title={@page_title}
         tenants={@tenants}
+        tenant={@tenant}
         action={@live_action}
         log_category={@log_category}
-        patch={~p"/log_categories"}
+        patch={~p"/tenants/#{@tenant.id}/log_categories"}
       />
     </.modal>
     """
+  end
+
+  def mount(%{"tenant_id" => tenant_id}, _session, socket) do
+    {:ok,
+     socket
+     |> stream(:log_categories, LogCategory.by_tenant_id!(%{tenant_id: tenant_id}))
+     |> assign(:tenants, Ash.read!(Tenant))
+     |> assign(:tenant, Tenant.by_id!(tenant_id))}
   end
 
   @impl true
@@ -59,7 +75,8 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     {:ok,
      socket
      |> stream(:log_categories, Ash.read!(LogCategory))
-     |> assign(:tenants, Ash.read!(Tenant))}
+     |> assign(:tenants, Ash.read!(Tenant))
+     |> assign(:tenant, nil)}
   end
 
   @impl true

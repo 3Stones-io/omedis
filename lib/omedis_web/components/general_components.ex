@@ -74,7 +74,7 @@ defmodule OmedisWeb.GeneralComponents do
                     Tenants
                   </a>
                 </li>
-                <li>
+                <%!-- <li>
                   <a
                     href="/log_categories"
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
@@ -95,7 +95,7 @@ defmodule OmedisWeb.GeneralComponents do
                     </svg>
                     Log categories
                   </a>
-                </li>
+                </li> --%>
                 <li>
                   <a
                     href="#"
@@ -471,7 +471,7 @@ defmodule OmedisWeb.GeneralComponents do
                     Tenants
                   </.link>
                 </li>
-                <li>
+                <%!-- <li>
                   <a
                     href="/log_categories"
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
@@ -492,7 +492,7 @@ defmodule OmedisWeb.GeneralComponents do
                     </svg>
                     Log categories
                   </a>
-                </li>
+                </li> --%>
                 <li>
                   <a
                     href="#"
