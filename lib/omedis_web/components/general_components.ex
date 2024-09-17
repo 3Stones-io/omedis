@@ -707,7 +707,7 @@ defmodule OmedisWeb.GeneralComponents do
         <.link navigate="/login">
           Login
         </.link>
-        <.link navigate="/login">
+        <.link navigate="/register">
           Register
         </.link>
       </div>
