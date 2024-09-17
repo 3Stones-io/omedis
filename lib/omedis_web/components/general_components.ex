@@ -9,7 +9,7 @@ defmodule OmedisWeb.GeneralComponents do
   def side_and_topbar(assigns) do
     ~H"""
     <div>
-      <.topbar />
+      <.topbar current_user={@current_user} />
       <.desktop_sidebar />
     </div>
     """
@@ -379,7 +379,7 @@ defmodule OmedisWeb.GeneralComponents do
                   </span>
                 </button>
 
-                <.dropdown_items />
+                <.dropdown_items current_user={@current_user} />
               </div>
             </div>
           </div>
@@ -427,8 +427,8 @@ defmodule OmedisWeb.GeneralComponents do
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/tenants"
+                  <.link
+                    navigate="/tenants"
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -446,7 +446,7 @@ defmodule OmedisWeb.GeneralComponents do
                       />
                     </svg>
                     Tenants
-                  </a>
+                  </.link>
                 </li>
                 <li>
                   <a
@@ -653,24 +653,20 @@ defmodule OmedisWeb.GeneralComponents do
       aria-labelledby="user-menu-button"
       tabindex="-1"
     >
-      <a
-        href="#"
-        class="block px-3 py-1 text-sm leading-6 text-gray-900"
-        role="menuitem"
-        tabindex="-1"
-        id="user-menu-item-0"
-      >
-        Your profile
-      </a>
-      <a
-        href="#"
-        class="block px-3 py-1 text-sm leading-6 text-gray-900"
-        role="menuitem"
-        tabindex="-1"
-        id="user-menu-item-1"
-      >
-        Sign out
-      </a>
+      <div :if={@current_user} class="flex  p-2 flex-col gap-2">
+        <.link navigate="/auth/user/sign-out">
+          Sign out
+        </.link>
+      </div>
+
+      <div :if={@current_user == nil} class="flex p-2 flex-col gap-2">
+        <.link navigate="/login">
+          Login
+        </.link>
+        <.link navigate="/login">
+          Register
+        </.link>
+      </div>
     </div>
     """
   end
