@@ -62,8 +62,7 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
   end
 
   def handle_event("save", %{"log_category" => log_category_params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: log_category_params)
-         |> IO.inspect() do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: log_category_params) do
       {:ok, log_category} ->
         notify_parent({:saved, log_category})
 
