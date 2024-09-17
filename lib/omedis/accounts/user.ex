@@ -25,6 +25,8 @@ defmodule Omedis.Accounts.User do
     domain Accounts
     define :read
     define :create
+    define :update
+    define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_email, get_by: [:email], action: :read
   end
@@ -43,6 +45,20 @@ defmodule Omedis.Accounts.User do
       ]
 
       primary? true
+    end
+
+    update :update do
+      accept [
+        :email,
+        :hashed_password,
+        :first_name,
+        :last_name,
+        :gender,
+        :birthdate
+      ]
+
+      primary? true
+      require_atomic? false
     end
   end
 
