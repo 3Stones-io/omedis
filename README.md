@@ -35,3 +35,41 @@ This can also be set as an environment variable `TOKEN_SIGNING_SECRET` and overr
 ## Ash Framework
 
 We are using the [Ash Framework](https://ash-hq.org).
+
+## System Admins
+
+Most times system admin work is done with the web GUI. But sometimes it is handy to do this work in the CLI. Here are some examples.
+
+### Add a User
+
+To add a user , you can use the following code in the IEx console.
+To create a user you need to provide the following information:
+email, hashed_password, first_name, last_name , gender and birthdate.
+
+```
+alias Omedis.Accounts.User
+
+User.create(%{email: "wintermeyer@gmail.com" , hashed_password: Bcrypt.hash_pwd_salt("password"),first_name: "Stefan", last_name: "Wintermeyer", gender: "Male", birthdate: "1980-01-01"})
+```
+
+### Update a User
+
+To update the user with the email address `example@example.com` you
+
+```
+alias Omedis.Accounts.User
+
+{:ok , user} = User.by_email("example@example.com")
+User.update(user, %{first_name: "Stefan" })
+```
+
+### Delete a User
+
+To delete the user with the email address `example@example.com` you ...
+
+```
+alias Omedis.Accounts.User
+
+{:ok , user} = User.by_email("example@example.com")
+User.destroy(user)
+```
