@@ -374,17 +374,18 @@ defmodule OmedisWeb.GeneralComponents do
                   aria-haspopup="true"
                 >
                   <span class="sr-only">Open user menu</span>
-                  <img
-                    class="h-8 w-8 rounded-full bg-gray-50"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
+
                   <span class="hidden lg:flex lg:items-center">
-                    <span
-                      class="ml-4 text-sm font-semibold leading-6 text-gray-900"
-                      aria-hidden="true"
-                    >
-                      Tom Cook
+                    <span class="ml-4 text-sm font-medium leading-6 text-gray-900" aria-hidden="true">
+                      <%= if @current_user do %>
+                        <%= @current_user.first_name %> <%= @current_user.last_name %>
+                      <% else %>
+                        <.link navigate="/login" class="text-blue-500">Login</.link>
+                        <span>
+                          Or
+                        </span>
+                        <.link navigate="/register" class="text-blue-500">Register</.link>
+                      <% end %>
                     </span>
                     <svg
                       class="ml-2 h-5 w-5 text-gray-400"
