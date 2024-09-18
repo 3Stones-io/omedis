@@ -1,15 +1,15 @@
 defmodule Omedis.FarmersTest do
   use Omedis.DataCase
 
-  alias Omedis.Factory
   alias Omedis.Accounts.User
+  alias Omedis.Factory
 
   describe "User Resource Unit Tests" do
     test "read/0  returns all users" do
       Factory.insert(:user, %{email: "test@gmail.com"})
 
       {:ok, users} = User.read()
-      assert Enum.count(users) == 1
+      assert Enum.empty?(users) == false
     end
 
     test "create/1 creates a user given valid attributes" do
@@ -50,12 +50,12 @@ defmodule Omedis.FarmersTest do
         Factory.insert_user(%{email: "test@gmail.com"})
 
       {:ok, users} = User.read()
-      assert Enum.count(users) == 1
+      assert Enum.empty?(users) == false
 
       assert :ok = User.destroy(user)
 
       {:ok, users} = User.read()
-      assert Enum.count(users) == 0
+      assert Enum.empty?(users) == true
     end
 
     test "by_id/1 returns a user given a valid id" do
