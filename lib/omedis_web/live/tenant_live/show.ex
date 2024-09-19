@@ -6,21 +6,20 @@ defmodule OmedisWeb.TenantLive.Show do
   def render(assigns) do
     ~H"""
     <.header>
-      Tenant <%= @tenant.id %>
-      <:subtitle>This is a tenant record from your database.</:subtitle>
+      <%= @tenant.slug %>
 
       <:actions>
-        <.link patch={~p"/tenants/#{@tenant}/show/edit"} phx-click={JS.push_focus()}>
+        <.link patch={~p"/tenants/#{@tenant.slug}/show/edit"} phx-click={JS.push_focus()}>
           <.button>Edit tenant</.button>
         </.link>
-        <.link patch={~p"/tenants/#{@tenant.id}/log_categories"} phx-click={JS.push_focus()}>
+        <.link patch={~p"/tenants/#{@tenant.slug}/log_categories"} phx-click={JS.push_focus()}>
           <.button>Log categories</.button>
         </.link>
       </:actions>
     </.header>
 
     <.list>
-      <:item title="Id"><%= @tenant.id %></:item>
+      <:item title="slug"><%= @tenant.slug %></:item>
 
       <:item title="Name"><%= @tenant.name %></:item>
 
@@ -79,7 +78,7 @@ defmodule OmedisWeb.TenantLive.Show do
       :if={@live_action == :edit}
       id="tenant-modal"
       show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant}")}
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}")}
     >
       <.live_component
         module={OmedisWeb.TenantLive.FormComponent}
@@ -87,14 +86,14 @@ defmodule OmedisWeb.TenantLive.Show do
         title={@page_title}
         action={@live_action}
         tenant={@tenant}
-        patch={~p"/tenants/#{@tenant}"}
+        patch={~p"/tenants/#{@tenant.slug}"}
       />
     </.modal>
     <.modal
-      :if={@live_action in [:new, :edit]}
+      :if={@live_action in [:new]}
       id="log_category-modal"
       show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.id}/log_categories")}
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/log_categories")}
     >
       <.live_component
         module={OmedisWeb.LogCategoryLive.FormComponent}
@@ -103,7 +102,7 @@ defmodule OmedisWeb.TenantLive.Show do
         tenants={@tenants}
         action={@live_action}
         log_category={@log_category}
-        patch={~p"/tenants/#{@tenant.id}/log_categories"}
+        patch={~p"/tenants/#{@tenant.slug}/log_categories"}
       />
     </.modal>
     """
@@ -115,11 +114,14 @@ defmodule OmedisWeb.TenantLive.Show do
   end
 
   @impl true
-  def handle_params(%{"id" => id}, _, socket) do
+  def handle_params(%{"slug" => slug}, _, socket) do
+    IO.inspect("handle_params")
+    IO.inspect(slug)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:tenant, Tenant.by_id!(id))}
+     |> assign(:tenant, Tenant.by_slug!(slug))}
   end
 
   defp page_title(:show), do: "Show Tenant"

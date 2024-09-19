@@ -18,9 +18,9 @@ defmodule OmedisWeb.TenantLive.Index do
       <.table
         id="tenants"
         rows={@streams.tenants}
-        row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant}") end}
+        row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant.slug}") end}
       >
-        <:col :let={{_id, tenant}} label="Id"><%= tenant.id %></:col>
+        <:col :let={{_id, tenant}} label="slug"><%= tenant.slug %></:col>
         <:col :let={{_id, tenant}} label="Name"><%= tenant.name %></:col>
         <:col :let={{_id, tenant}} label="Additional info"><%= tenant.additional_info %></:col>
         <:col :let={{_id, tenant}} label="Street"><%= tenant.street %></:col>
@@ -48,9 +48,9 @@ defmodule OmedisWeb.TenantLive.Index do
         <:col :let={{_id, tenant}} label="Account holder"><%= tenant.account_holder %></:col>
         <:action :let={{_id, tenant}}>
           <div class="sr-only">
-            <.link navigate={~p"/tenants/#{tenant}"}>Show</.link>
+            <.link navigate={~p"/tenants/#{tenant.slug}"}>Show</.link>
           </div>
-          <.link patch={~p"/tenants/#{tenant}/edit"}>Edit</.link>
+          <.link patch={~p"/tenants/#{tenant.slug}/edit"}>Edit</.link>
         </:action>
       </.table>
     </div>
@@ -63,7 +63,7 @@ defmodule OmedisWeb.TenantLive.Index do
     >
       <.live_component
         module={OmedisWeb.TenantLive.FormComponent}
-        id={(@tenant && @tenant.id) || :new}
+        id={(@tenant && @tenant.slug) || :new}
         title={@page_title}
         action={@live_action}
         tenant={@tenant}
@@ -83,10 +83,13 @@ defmodule OmedisWeb.TenantLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :edit, %{"slug" => slug}) do
+    IO.inspect("apply_action")
+    IO.inspect(slug)
+
     socket
     |> assign(:page_title, "Edit Tenant")
-    |> assign(:tenant, Tenant.by_id!(id))
+    |> assign(:tenant, Tenant.by_slug!(slug))
   end
 
   defp apply_action(socket, :new, _params) do

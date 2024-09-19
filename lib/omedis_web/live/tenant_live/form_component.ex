@@ -58,7 +58,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           type="text"
           label="Account number"
         />
-
+        <.input field={@form[:slug]} type="text" label="Slug" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Tenant</.button>
         </:actions>
@@ -81,6 +81,13 @@ defmodule OmedisWeb.TenantLive.FormComponent do
   end
 
   def handle_event("save", %{"tenant" => tenant_params}, socket) do
+    tenant_params =
+      if Map.has_key?(tenant_params, "slug") do
+        Map.update!(tenant_params, "slug", &Slug.slugify/1)
+      else
+        tenant_params
+      end
+
     case AshPhoenix.Form.submit(socket.assigns.form, params: tenant_params) do
       {:ok, tenant} ->
         notify_parent({:saved, tenant})

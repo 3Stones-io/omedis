@@ -6,11 +6,11 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.link navigate={~p"/tenants/#{@tenant.id}"} class="button ">Back</.link>
+    <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button ">Back</.link>
     <.header>
       Listing Log categories
       <:actions>
-        <.link patch={~p"/tenants/#{@tenant.id}/log_categories/new"}>
+        <.link patch={~p"/tenants/#{@tenant.slug}/log_categories/new"}>
           <.button>New Log category</.button>
         </.link>
       </:actions>
@@ -21,7 +21,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       rows={@streams.log_categories}
       row_click={
         fn {_id, log_category} ->
-          JS.navigate(~p"/tenants/#{@tenant.id}/log_categories/#{log_category}")
+          JS.navigate(~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}")
         end
       }
     >
@@ -35,10 +35,10 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
       <:action :let={{_id, log_category}}>
         <div class="sr-only">
-          <.link navigate={~p"/tenants/#{@tenant.id}/log_categories/#{log_category}"}>Show</.link>
+          <.link navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}"}>Show</.link>
         </div>
 
-        <.link patch={~p"/tenants/#{@tenant.id}/log_categories/#{log_category}/edit"}>Edit</.link>
+        <.link patch={~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}/edit"}>Edit</.link>
       </:action>
     </.table>
 
@@ -46,7 +46,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       :if={@live_action in [:new, :edit]}
       id="log_category-modal"
       show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.id}/log_categories")}
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/log_categories")}
     >
       <.live_component
         module={OmedisWeb.LogCategoryLive.FormComponent}
@@ -56,18 +56,20 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         tenant={@tenant}
         action={@live_action}
         log_category={@log_category}
-        patch={~p"/tenants/#{@tenant.id}/log_categories"}
+        patch={~p"/tenants/#{@tenant.slug}/log_categories"}
       />
     </.modal>
     """
   end
 
-  def mount(%{"tenant_id" => tenant_id}, _session, socket) do
+  def mount(%{"slug" => slug}, _session, socket) do
+    tenant = Tenant.by_slug!(slug)
+
     {:ok,
      socket
-     |> stream(:log_categories, LogCategory.by_tenant_id!(%{tenant_id: tenant_id}))
+     |> stream(:log_categories, LogCategory.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:tenants, Ash.read!(Tenant))
-     |> assign(:tenant, Tenant.by_id!(tenant_id))}
+     |> assign(:tenant, Tenant.by_id!(tenant.id))}
   end
 
   @impl true

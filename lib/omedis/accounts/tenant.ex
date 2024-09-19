@@ -20,6 +20,10 @@ defmodule Omedis.Accounts.Tenant do
     plural_name :tenants
   end
 
+  identities do
+    identity :unique_slug, [:slug]
+  end
+
   code_interface do
     domain Omedis.Accounts
     define :read
@@ -28,6 +32,7 @@ defmodule Omedis.Accounts.Tenant do
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_user_id, args: [:user_id]
+    define :by_slug, get_by: [:slug], action: :read
   end
 
   actions do
@@ -52,7 +57,8 @@ defmodule Omedis.Accounts.Tenant do
         :uid_bfs_number,
         :trade_register_no,
         :bur_number,
-        :account_number
+        :account_number,
+        :slug
       ]
 
       primary? true
@@ -79,7 +85,8 @@ defmodule Omedis.Accounts.Tenant do
         :uid_bfs_number,
         :trade_register_no,
         :bur_number,
-        :account_number
+        :account_number,
+        :slug
       ]
 
       primary? true
@@ -88,6 +95,14 @@ defmodule Omedis.Accounts.Tenant do
 
     read :read do
       primary? true
+    end
+
+    read :by_slug do
+      argument :slug, :string do
+        allow_nil? false
+      end
+
+      filter expr(slug == ^arg(:slug))
     end
 
     destroy :destroy do
@@ -155,6 +170,10 @@ defmodule Omedis.Accounts.Tenant do
     attribute :bank, :string, allow_nil?: true, public?: true
 
     attribute :account_holder, :string, allow_nil?: true, public?: true
+
+    attribute :slug, :string do
+      constraints max_length: 80
+    end
 
     create_timestamp :created_at
     update_timestamp :updated_at
