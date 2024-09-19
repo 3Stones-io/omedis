@@ -35,15 +35,15 @@ defmodule OmedisWeb.Router do
       on_mount: {OmedisWeb.LiveUserAuth, :live_user_required} do
       live "/tenants", TenantLive.Index, :index
       live "/tenants/new", TenantLive.Index, :new
-      live "/tenants/:id/edit", TenantLive.Index, :edit
+      live "/tenants/:slug/edit", TenantLive.Index, :edit
 
-      live "/tenants/:tenant_id/log_categories", LogCategoryLive.Index, :index
-      live "/tenants/:tenant_id/log_categories/new", LogCategoryLive.Index, :new
-      live "/tenants/:tenant_id/log_categories/:id", LogCategoryLive.Show, :show
-      live "/tenants/:tenant_id/log_categories/:id/edit", LogCategoryLive.Index, :edit
-      live "/tenants/:tenant_id/log_categories/:id/show/edit", LogCategoryLive.Show, :edit
-      live "/tenants/:id", TenantLive.Show, :show
-      live "/tenants/:id/show/edit", TenantLive.Show, :edit
+      live "/tenants/:slug/log_categories", LogCategoryLive.Index, :index
+      live "/tenants/:slug/log_categories/new", LogCategoryLive.Index, :new
+      live "/tenants/:slug/log_categories/:id", LogCategoryLive.Show, :show
+      live "/tenants/:slug/log_categories/:id/edit", LogCategoryLive.Index, :edit
+      live "/tenants/:slug/log_categories/:id/show/edit", LogCategoryLive.Show, :edit
+      live "/tenants/:slug", TenantLive.Show, :show
+      live "/tenants/:slug/show/edit", TenantLive.Show, :edit
 
       # live "/log_categories", LogCategoryLive.Index, :index
       # live "/log_categories/new", LogCategoryLive.Index, :new

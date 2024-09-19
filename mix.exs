@@ -68,7 +68,8 @@ defmodule Omedis.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:bandit, "~> 1.5"},
       {:ex_machina, "~> 2.8.0", only: :test},
-      {:ash_phoenix, "~> 2.1.2"}
+      {:ash_phoenix, "~> 2.1.2"},
+      {:slugify, "~> 1.3"}
     ]
   end
 

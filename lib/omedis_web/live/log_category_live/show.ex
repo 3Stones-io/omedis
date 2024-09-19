@@ -12,7 +12,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
 
       <:actions>
         <.link
-          patch={~p"/tenants/#{@tenant.id}/log_categories/#{@log_category}/show/edit"}
+          patch={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/show/edit"}
           phx-click={JS.push_focus()}
         >
           <.button>Edit log_category</.button>
@@ -30,13 +30,13 @@ defmodule OmedisWeb.LogCategoryLive.Show do
       <:item title="position"><%= @log_category.position %></:item>
     </.list>
 
-    <.back navigate={~p"/tenants/#{@tenant.id}/log_categories"}>Back to log_categories</.back>
+    <.back navigate={~p"/tenants/#{@tenant.slug}/log_categories"}>Back to log categories</.back>
 
     <.modal
       :if={@live_action == :edit}
       id="log_category-modal"
       show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.id}/log_categories/#{@log_category}")}
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}")}
     >
       <.live_component
         module={OmedisWeb.LogCategoryLive.FormComponent}
@@ -46,7 +46,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
         tenant={@tenant}
         tenants={@tenants}
         log_category={@log_category}
-        patch={~p"/tenants/#{@tenant.id}/log_categories/#{@log_category}"}
+        patch={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}"}
       />
     </.modal>
     """
@@ -58,13 +58,15 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   end
 
   @impl true
-  def handle_params(%{"tenant_id" => tenant_id, "id" => id}, _, socket) do
+  def handle_params(%{"slug" => slug, "id" => id}, _, socket) do
+    tenant = Tenant.by_slug!(slug)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:log_category, LogCategory.by_id!(id))
      |> assign(:tenants, Ash.read!(Tenant))
-     |> assign(:tenant, Tenant.by_id!(tenant_id))}
+     |> assign(:tenant, tenant)}
   end
 
   defp page_title(:show), do: "Show Log category"
