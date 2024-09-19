@@ -115,9 +115,6 @@ defmodule OmedisWeb.TenantLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
-    IO.inspect("handle_params")
-    IO.inspect(slug)
-
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))

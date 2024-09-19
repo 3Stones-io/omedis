@@ -84,9 +84,6 @@ defmodule OmedisWeb.TenantLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"slug" => slug}) do
-    IO.inspect("apply_action")
-    IO.inspect(slug)
-
     socket
     |> assign(:page_title, "Edit Tenant")
     |> assign(:tenant, Tenant.by_slug!(slug))
