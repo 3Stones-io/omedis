@@ -5,8 +5,6 @@ defmodule OmedisWeb.AuthController do
   def success(conn, _activity, user, _token) do
     return_to = get_session(conn, :return_to) || ~p"/"
 
-    IO.inspect(user)
-
     conn
     |> delete_session(:return_to)
     |> store_in_session(user)
@@ -33,8 +31,6 @@ defmodule OmedisWeb.AuthController do
         {:password, :register},
         reason
       ) do
-    IO.inspect(reason)
-
     conn
     |> assign(:errors, reason)
     |> put_flash(
