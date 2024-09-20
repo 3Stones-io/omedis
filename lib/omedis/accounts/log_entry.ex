@@ -63,6 +63,7 @@ defmodule Omedis.Accounts.LogEntry do
     end
 
     destroy :destroy do
+      p
     end
   end
 
