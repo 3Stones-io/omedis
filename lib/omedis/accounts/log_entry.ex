@@ -28,9 +28,18 @@ defmodule Omedis.Accounts.LogEntry do
     define :create
     define :update
     define :destroy
+    define :by_log_category
   end
 
   actions do
+    read :by_log_category do
+      argument :log_category_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(log_category_id == ^arg(:log_category_id))
+    end
+
     create :create do
       accept [
         :comment,
