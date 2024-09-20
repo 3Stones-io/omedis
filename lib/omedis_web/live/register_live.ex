@@ -44,6 +44,7 @@ defmodule OmedisWeb.RegisterLive do
   @impl true
   def handle_event("submit", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user)
+    IO.inspect(form, label: "Form")
 
     {:noreply,
      socket
