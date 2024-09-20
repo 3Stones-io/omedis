@@ -1,8 +1,8 @@
 defmodule OmedisWeb.LogEntryLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.LogCategory
-  alias Omedis.Accounts.Tenant
   alias Omedis.Accounts.LogEntry
+  alias Omedis.Accounts.Tenant
 
   @impl true
   def render(assigns) do
