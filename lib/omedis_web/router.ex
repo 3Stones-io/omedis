@@ -45,12 +45,7 @@ defmodule OmedisWeb.Router do
       live "/tenants/:slug", TenantLive.Show, :show
       live "/tenants/:slug/show/edit", TenantLive.Show, :edit
 
-      # live "/log_categories", LogCategoryLive.Index, :index
-      # live "/log_categories/new", LogCategoryLive.Index, :new
-      # live "/log_categories/:id/edit", LogCategoryLive.Index, :edit
-
-      # live "/log_categories/:id", LogCategoryLive.Show, :show
-      # live "/log_categories/:id/show/edit", LogCategoryLive.Show, :edit
+      live "/tenants/:slug/log_categories/:id/log_entries", LogEntryLive.Index, :index
     end
   end
 

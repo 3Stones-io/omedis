@@ -9,5 +9,6 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.Token
     resource Omedis.Accounts.Tenant
     resource Omedis.Accounts.LogCategory
+    resource Omedis.Accounts.LogEntry
   end
 end

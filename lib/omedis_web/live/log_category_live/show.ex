@@ -17,6 +17,13 @@ defmodule OmedisWeb.LogCategoryLive.Show do
         >
           <.button>Edit log_category</.button>
         </.link>
+
+        <.link
+          navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/log_entries"}
+          phx-click={JS.push_focus()}
+        >
+          <.button>View Log entries</.button>
+        </.link>
       </:actions>
     </.header>
 
