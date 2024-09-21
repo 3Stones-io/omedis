@@ -18,7 +18,7 @@ defmodule OmedisWeb.TimeTracking do
   ## Example
 
       <.dashboard_component
-        categories={[%{name: "Work", color_code: "#FF0000", entries: [...]}, ...]}
+        categories={[%{name: "Work", color_code: "#FF0000", log_entries: [...]}, ...]}
         starts_at={~T[08:00:00]}
         ends_at={~T[18:00:00]}
         current_time={~T[13:30:00]}
@@ -221,8 +221,8 @@ defmodule OmedisWeb.TimeTracking do
   ## Example
 
       iex> categories = [
-      ...>   %{name: "Work", color_code: "#FF0000", entries: [%{starts_at: ~T[09:00:00], ends_at: ~T[12:00:00]}]},
-      ...>   %{name: "Break", color_code: "#00FF00", entries: [%{starts_at: ~T[12:00:00], ends_at: ~T[13:00:00]}]}
+      ...>   %{name: "Work", color_code: "#FF0000", log_entries: [%{starts_at: ~T[09:00:00], ends_at: ~T[12:00:00]}]},
+      ...>   %{name: "Break", color_code: "#00FF00", log_entries: [%{starts_at: ~T[12:00:00], ends_at: ~T[13:00:00]}]}
       ...> ]
       iex> format_entries(categories)
       [
@@ -233,7 +233,7 @@ defmodule OmedisWeb.TimeTracking do
   def format_entries(categories) do
     categories
     |> Enum.map(fn category ->
-      category.entries
+      category.log_entries
     end)
     |> List.flatten()
     |> Enum.sort_by(fn %{starts_at: starts_at, ends_at: ends_at} -> {starts_at, ends_at} end)
@@ -243,7 +243,7 @@ defmodule OmedisWeb.TimeTracking do
         ends_at: x.ends_at,
         color_code:
           Enum.find(categories, fn category ->
-            category.entries |> Enum.find(fn entry -> entry.starts_at == x.starts_at end)
+            category.log_entries |> Enum.find(fn entry -> entry.starts_at == x.starts_at end)
           end).color_code
       }
     end)
