@@ -17,6 +17,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
+        <.input field={@form[:slug]} type="text" label="Slug" />
         <.input field={@form[:name]} type="text" label="Name" /><.input
           field={@form[:street]}
           type="text"
@@ -25,11 +26,13 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           field={@form[:city]}
           type="text"
           label="City"
-        /><.input field={@form[:country]} type="text" label="Country" /><.input
-          field={@form[:owner_id]}
-          type="text"
-          label="Owner"
-        /><.input field={@form[:additional_info]} type="text" label="Additional info" /><.input
+        /><.input field={@form[:country]} type="text" label="Country" />
+
+        <input type="hidden" value={@current_user.id} name="tenant[owner_id]" />
+        <.input field={@form[:daily_start_at]} type="time" label="Daily Start At" />
+        <.input field={@form[:daily_end_at]} type="time" label="Daily End At" />
+
+        <.input field={@form[:additional_info]} type="text" label="Additional info" /><.input
           field={@form[:street2]}
           type="text"
           label="Street2"
@@ -58,7 +61,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           type="text"
           label="Account number"
         />
-        <.input field={@form[:slug]} type="text" label="Slug" />
+
         <:actions>
           <.button phx-disable-with="Saving...">Save Tenant</.button>
         </:actions>

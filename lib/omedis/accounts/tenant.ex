@@ -58,7 +58,9 @@ defmodule Omedis.Accounts.Tenant do
         :trade_register_no,
         :bur_number,
         :account_number,
-        :slug
+        :slug,
+        :daily_start_at,
+        :daily_end_at
       ]
 
       primary? true
@@ -86,7 +88,9 @@ defmodule Omedis.Accounts.Tenant do
         :trade_register_no,
         :bur_number,
         :account_number,
-        :slug
+        :slug,
+        :daily_start_at,
+        :daily_end_at
       ]
 
       primary? true
@@ -173,7 +177,11 @@ defmodule Omedis.Accounts.Tenant do
 
     attribute :slug, :string do
       constraints max_length: 80
+      allow_nil? false
     end
+
+    attribute :daily_start_at, :time, allow_nil?: true, public?: true, default: ~T[08:00:00]
+    attribute :daily_end_at, :time, allow_nil?: true, public?: true, default: ~T[17:00:00]
 
     create_timestamp :created_at
     update_timestamp :updated_at

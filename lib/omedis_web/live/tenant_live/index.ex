@@ -67,6 +67,7 @@ defmodule OmedisWeb.TenantLive.Index do
         title={@page_title}
         action={@live_action}
         tenant={@tenant}
+        current_user={@current_user}
         patch={~p"/tenants"}
       />
     </.modal>

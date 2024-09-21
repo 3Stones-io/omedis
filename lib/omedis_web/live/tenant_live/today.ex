@@ -9,8 +9,8 @@ defmodule OmedisWeb.TenantLive.Today do
     <div>
       <.dashboard_component
         categories={@categories}
-        starts_at={~T[08:00:00]}
-        ends_at={~T[17:00:00]}
+        starts_at={@tenant.daily_start_at}
+        ends_at={@tenant.daily_end_at}
         current_time={@current_time}
       />
     </div>
