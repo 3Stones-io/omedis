@@ -87,6 +87,7 @@ defmodule OmedisWeb.TenantLive.Show do
         module={OmedisWeb.TenantLive.FormComponent}
         id={@tenant.id}
         title={@page_title}
+        current_user={@current_user}
         action={@live_action}
         tenant={@tenant}
         patch={~p"/tenants/#{@tenant.slug}"}
