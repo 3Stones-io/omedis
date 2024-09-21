@@ -25,7 +25,6 @@ defmodule OmedisWeb.TenantLive.Today do
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
-    IO.inspect(tenant)
 
     {:noreply,
      socket
