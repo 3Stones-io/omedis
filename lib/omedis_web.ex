@@ -90,6 +90,7 @@ defmodule OmedisWeb do
       use Gettext, backend: OmedisWeb.Gettext
 
       import OmedisWeb.GeneralComponents
+      import OmedisWeb.TimeTracking
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
