@@ -68,6 +68,8 @@ defmodule Omedis.Accounts.LogCategory do
         allow_nil? false
       end
 
+      prepare build(load: [:log_entries])
+
       filter expr(tenant_id == ^arg(:tenant_id))
     end
 
@@ -98,6 +100,10 @@ defmodule Omedis.Accounts.LogCategory do
     belongs_to :tenant, Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true
+    end
+
+    has_many :log_entries, Omedis.Accounts.LogEntry do
+      domain Omedis.Accounts
     end
   end
 end
