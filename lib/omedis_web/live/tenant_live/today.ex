@@ -12,6 +12,7 @@ defmodule OmedisWeb.TenantLive.Today do
         categories={@categories}
         start_at={@start_at}
         end_at={@end_at}
+        log_entries={@log_entries}
         current_time={@current_time}
       />
     </div>
@@ -34,14 +35,43 @@ defmodule OmedisWeb.TenantLive.Today do
 
     end_at = get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
 
+    update_categories_and_current_time_every_minute()
+
+    categories = categories(tenant.id)
+
+    log_entries = format_entries(categories)
+
     {:noreply,
      socket
      |> assign(:page_title, "Today")
      |> assign(:tenant, tenant)
+     |> assign(:value, 0)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
+     |> assign(:log_entries, log_entries)
      |> assign(:current_time, Time.utc_now())
-     |> assign(:categories, categories(tenant.id))}
+     |> assign(:categories, categories)}
+  end
+
+  @impl true
+  def handle_info(:update_categories_and_current_time, socket) do
+    tenant = socket.assigns.tenant
+
+    categories = categories(tenant.id)
+
+    log_entries =
+      format_entries(categories)
+
+    {:noreply,
+     socket
+     |> assign(:categories, categories)
+     |> assign(:log_entries, log_entries)
+     |> assign(:value, socket.assigns.value + 1)
+     |> assign(:current_time, Time.utc_now())}
+  end
+
+  defp update_categories_and_current_time_every_minute do
+    :timer.send_interval(60_000, self(), :update_categories_and_current_time)
   end
 
   defp get_start_time_to_use(nil, tenant_daily_start_at) do
@@ -68,6 +98,38 @@ defmodule OmedisWeb.TenantLive.Today do
     end
   end
 
+  defp format_entries(categories) do
+    categories
+    |> Enum.map(fn category ->
+      category.log_entries
+    end)
+    |> List.flatten()
+    |> Enum.filter(fn entry ->
+      entry.created_at |> DateTime.to_date() == Date.utc_today()
+    end)
+    |> Enum.sort_by(fn %{start_at: start_at, end_at: end_at} -> {start_at, end_at} end)
+    |> Enum.map(fn x ->
+      %{
+        id: x.id,
+        start_at: x.start_at,
+        end_at: get_end_time_in_entry(x.end_at),
+        category_id: x.log_category_id,
+        color_code:
+          Enum.find(categories, fn category ->
+            category.log_entries |> Enum.find(fn entry -> entry.start_at == x.start_at end)
+          end).color_code
+      }
+    end)
+  end
+
+  defp get_end_time_in_entry(nil) do
+    Time.utc_now()
+  end
+
+  defp get_end_time_in_entry(end_time) do
+    end_time
+  end
+
   defp categories(tenant_id) do
     case LogCategory.by_tenant_id(%{tenant_id: tenant_id}) do
       {:ok, categories} ->
@@ -79,6 +141,15 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp get_time_range(log_entries) do
+    log_entries =
+      log_entries
+      |> Enum.map(fn x ->
+        %{
+          start_at: x.start_at,
+          end_at: get_end_time_in_entry(x.end_at)
+        }
+      end)
+
     Enum.reduce(log_entries, {nil, nil}, fn entry, {min_start, max_end} ->
       start_at = entry.start_at
       end_at = entry.end_at

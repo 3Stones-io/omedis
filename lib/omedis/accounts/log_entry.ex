@@ -32,6 +32,7 @@ defmodule Omedis.Accounts.LogEntry do
     define :by_log_category_today
     define :by_tenant
     define :by_tenant_today
+    define :by_id, get_by: [:id], action: :read
   end
 
   actions do
