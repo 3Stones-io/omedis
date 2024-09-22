@@ -31,7 +31,7 @@ defmodule Omedis.Accounts.Tenant do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
-    define :by_user_id, args: [:user_id]
+    define :by_owner_id, get_by: [:owner_id], action: :read
     define :by_slug, get_by: [:slug], action: :read
   end
 
@@ -112,16 +112,12 @@ defmodule Omedis.Accounts.Tenant do
     destroy :destroy do
     end
 
-    read :by_user_id do
-      pagination offset?: true, keyset?: true, required?: false
-
-      argument :user_id, :uuid do
+    read :by_owner_id do
+      argument :owner_id, :uuid do
         allow_nil? false
       end
 
-      filter expr(user_id == ^arg(:user_id))
-
-      primary? false
+      filter expr(owner_id == ^arg(:owner_id))
     end
   end
 
