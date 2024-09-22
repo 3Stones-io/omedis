@@ -29,6 +29,10 @@ defmodule Omedis.Accounts.LogEntry do
     define :update
     define :destroy
     define :by_log_category
+    define :by_log_category_today
+    define :by_tenant
+    define :by_tenant_today
+    define :by_id, get_by: [:id], action: :read
   end
 
   actions do
@@ -38,6 +42,36 @@ defmodule Omedis.Accounts.LogEntry do
       end
 
       filter expr(log_category_id == ^arg(:log_category_id))
+    end
+
+    read :by_tenant do
+      argument :tenant_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(tenant_id == ^arg(:tenant_id))
+    end
+
+    read :by_tenant_today do
+      argument :tenant_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(
+               tenant_id == ^arg(:tenant_id) and
+                 created_at >= ^Date.utc_today() and created_at < ^Date.add(Date.utc_today(), 1)
+             )
+    end
+
+    read :by_log_category_today do
+      argument :log_category_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(
+               log_category_id == ^arg(:log_category_id) and
+                 created_at >= ^Date.utc_today() and created_at < ^Date.add(Date.utc_today(), 1)
+             )
     end
 
     create :create do

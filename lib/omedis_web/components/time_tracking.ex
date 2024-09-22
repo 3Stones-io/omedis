@@ -6,11 +6,13 @@ defmodule OmedisWeb.TimeTracking do
   individual time entries, and utility functions for time calculations.
   """
   use Phoenix.Component
+  alias Omedis.Accounts.LogEntry
 
   attr :categories, :list, required: true
-  attr :starts_at, :any, required: true
-  attr :ends_at, :any, required: true
+  attr :start_at, :any, required: true
+  attr :end_at, :any, required: true
   attr :current_time, :any, required: true
+  attr :log_entries, :list, required: true
 
   @doc """
   Renders the main dashboard component.
@@ -19,18 +21,23 @@ defmodule OmedisWeb.TimeTracking do
 
       <.dashboard_component
         categories={[%{name: "Work", color_code: "#FF0000", log_entries: [...]}, ...]}
-        starts_at={~T[08:00:00]}
-        ends_at={~T[18:00:00]}
+        starts_a={~T[08:00:00]}
+        ends_a={~T[18:00:00]}
         current_time={~T[13:30:00]}
+        log_entries={[%{start_at: ~T[09:00:00], end_at: ~T[12:00:00], color_code: "#FF0000"}, ...]}
       />
   """
   def dashboard_component(assigns) do
     ~H"""
-    <div class="w-[100%]">
+    <div class="w-[100%] flex flex-col gap-1 ">
+      <div class="w-[100%] flex justify-end items-center gap-1">
+        <%= format_time(@current_time) %>
+      </div>
       <.dashboard_card
         categories={@categories}
-        starts_at={@starts_at}
-        ends_at={@ends_at}
+        start_at={@start_at}
+        end_at={@end_at}
+        log_entries={@log_entries}
         current_time={@current_time}
       />
     </div>
@@ -42,28 +49,29 @@ defmodule OmedisWeb.TimeTracking do
   """
 
   attr :categories, :list, required: true
-  attr :starts_at, :any, required: true
-  attr :ends_at, :any, required: true
+  attr :start_at, :any, required: true
+  attr :end_at, :any, required: true
   attr :current_time, :any, required: true
+  attr :log_entries, :list, required: true
 
   def dashboard_card(assigns) do
     ~H"""
     <div class="md:w-[50%] w-[90%] h-[70vh]  m-auto flex justify-start gap-1 items-end">
       <div class="md:w-[40%]  flex justify-start flex-col gap-5 h-[100%]">
         <%= for category <- @categories do %>
-          <.category_button category={category} />
+          <.category_button category={category} current_time={@current_time} />
         <% end %>
       </div>
 
       <div class="w-[30%] flex items-end justify-end gap-4 h-[100%] ">
         <div class="w-[40%] relative h-[100%]">
-          <%= for entry <- format_entries(@categories) do %>
+          <%= for entry <- @log_entries do %>
             <div
               class="absolute w-[100%]"
               style={
-                "top: #{get_top_to_use_for_entry(entry, @starts_at, @ends_at)}%;
+                "top: #{get_top_to_use_for_entry(entry, @start_at, @end_at)}%;
                 background-color: #{entry.color_code};
-                height: #{get_height_to_use_for_entry(entry, @starts_at, @ends_at)}%;
+                height: #{get_height_to_use_for_entry(entry, @start_at, @end_at)}%;
                 "
               }
             />
@@ -78,13 +86,13 @@ defmodule OmedisWeb.TimeTracking do
           </div>
 
           <div class="w-[100%] h-[100%] flex flex-row gap-1">
-            <.time_intervals starts_at={@starts_at} ends_at={@ends_at} />
+            <.time_intervals start_at={@start_at} end_at={@end_at} />
           </div>
         </div>
 
         <div
           class="md:w-[50px] w-[40px] h-[3px] bg-red-500 absolute "
-          style={"top: #{get_top_to_use_for_current_time(@starts_at, @ends_at, @current_time)}%; position: absolute "}
+          style={"top: #{get_top_to_use_for_current_time(@start_at, @end_at, @current_time)}%; position: absolute "}
         />
       </div>
     </div>
@@ -97,13 +105,13 @@ defmodule OmedisWeb.TimeTracking do
   We have a total of maximum 12 intervals.
   """
 
-  attr :starts_at, :any, required: true
-  attr :ends_at, :any, required: true
+  attr :start_at, :any, required: true
+  attr :end_at, :any, required: true
 
   def time_intervals(assigns) do
     ~H"""
     <div class="w-[100%] h-[100%] flex flex-col justify-between  gap-1">
-      <%= for time_interval <- get_time_intervals_array(@starts_at, @ends_at) do %>
+      <%= for time_interval <- get_time_intervals_array(@start_at, @end_at) do %>
         <p>
           <%= format_time(time_interval) %>
         </p>
@@ -122,8 +130,8 @@ defmodule OmedisWeb.TimeTracking do
        ~T[13:00:00], ~T[14:00:00], ~T[15:00:00], ~T[16:00:00], ~T[17:00:00],
        ~T[18:00:00]]
   """
-  def get_time_intervals_array(starts_at, ends_at) do
-    total_hours = Time.diff(ends_at, starts_at, :hour)
+  def get_time_intervals_array(start_at, end_at) do
+    total_hours = Time.diff(end_at, start_at, :hour)
     max_intervals = 12
 
     interval_step =
@@ -135,7 +143,7 @@ defmodule OmedisWeb.TimeTracking do
 
     Enum.to_list(0..total_hours)
     |> Enum.filter(fn hour -> rem(hour, interval_step) == 0 end)
-    |> Enum.map(fn hour -> Time.add(starts_at, hour * 3600, :second) end)
+    |> Enum.map(fn hour -> Time.add(start_at, hour * 3600, :second) end)
   end
 
   @doc """
@@ -143,13 +151,20 @@ defmodule OmedisWeb.TimeTracking do
 
   ## Example
 
-      iex> entry = %{starts_at: ~T[09:00:00], ends_at: ~T[11:00:00]}
+      iex> entry = %{start_at: ~T[09:00:00], end_at: ~T[11:00:00]}
       iex> get_height_to_use_for_entry(entry, ~T[08:00:00], ~T[18:00:00])
       16.666666666666668 # Represents 16.67% of the total height
   """
-  def get_height_to_use_for_entry(entry, starts_at, ends_at) do
-    time_spent = Time.diff(entry.ends_at, entry.starts_at, :minute)
-    maximum_time_in_minutes = Time.diff(ends_at, starts_at, :minute)
+
+  def get_height_to_use_for_entry(entry, start_at, end_at) do
+    time_spent =
+      if entry.end_at == nil do
+        Time.diff(Time.utc_now(), entry.start_at, :minute)
+      else
+        Time.diff(entry.end_at, entry.start_at, :minute)
+      end
+
+    maximum_time_in_minutes = Time.diff(end_at, start_at, :minute)
     time_spent / maximum_time_in_minutes * 100
   end
 
@@ -158,14 +173,14 @@ defmodule OmedisWeb.TimeTracking do
 
   ## Example
 
-      iex> entry = %{starts_at: ~T[10:00:00], ends_at: ~T[12:00:00]}
+      iex> entry = %{start_at: ~T[10:00:00], end_at: ~T[12:00:00]}
       iex> get_top_to_use_for_entry(entry, ~T[08:00:00], ~T[18:00:00])
       20.0 # Represents 20% from the top
   """
-  def get_top_to_use_for_entry(entry, starts_at, ends_at) do
-    time_difference_between_starts_at_and_entry = Time.diff(entry.starts_at, starts_at, :minute)
+  def get_top_to_use_for_entry(entry, start_at, end_at) do
+    time_difference_between_start_at_and_entry = Time.diff(entry.start_at, start_at, :minute)
 
-    time_difference_between_starts_at_and_entry / Time.diff(ends_at, starts_at, :minute) * 100
+    time_difference_between_start_at_and_entry / Time.diff(end_at, start_at, :minute) * 100
   end
 
   @doc """
@@ -176,9 +191,9 @@ defmodule OmedisWeb.TimeTracking do
       iex> get_top_to_use_for_current_time(~T[08:00:00], ~T[18:00:00], ~T[13:00:00])
       50.0 # Represents 50% from the top
   """
-  def get_top_to_use_for_current_time(starts_at, ends_at, current_time) do
-    time_spent = Time.diff(current_time, starts_at, :minute)
-    maximum_time_in_minutes = Time.diff(ends_at, starts_at, :minute)
+  def get_top_to_use_for_current_time(start_at, end_at, current_time) do
+    time_spent = Time.diff(current_time, start_at, :minute)
+    maximum_time_in_minutes = Time.diff(end_at, start_at, :minute)
     time_spent / maximum_time_in_minutes * 100
   end
 
@@ -187,17 +202,30 @@ defmodule OmedisWeb.TimeTracking do
   """
 
   attr :category, :any, required: true
+  attr :current_time, :any, required: true
 
   def category_button(assigns) do
     ~H"""
-    <button
-      class="w-[100%] h-[100%] h-[40px] rounded-md"
-      style={"background-color: #{@category.color_code};"}
-    >
-      <span class="text-white text-sm p-2  md:text-base">
-        <%= @category.name %>
-      </span>
-    </button>
+    <div class="flex flex-col gap-0">
+      <.counter_for_time_taken_by_current_task category={@category} current_time={@current_time} />
+      <div class="flex flex-row gap-2 items-center">
+        <p
+          :if={active_log_category?(@category.id)}
+          class="h-[10px] w-[10px] bg-green-500 rounded-full"
+        />
+
+        <button
+          class="w-[100%] h-[100%] h-[40px] rounded-md"
+          phx-click="select_log_category"
+          phx-value-log_category_id={@category.id}
+          style={"background-color: #{@category.color_code};"}
+        >
+          <span class="text-white text-sm p-2  md:text-base">
+            <%= @category.name %>
+          </span>
+        </button>
+      </div>
+    </div>
     """
   end
 
@@ -213,57 +241,21 @@ defmodule OmedisWeb.TimeTracking do
     "#{String.pad_leading(Integer.to_string(hour), 2, "0")}:#{String.pad_leading(Integer.to_string(minute), 2, "0")}"
   end
 
-  @doc """
-  This formats the entries to be used in the dashboard card.
-  The entries are listed in order of their start time.
-  They are also assigned a color code based on their category.
-
-  ## Example
-
-      iex> categories = [
-      ...>   %{name: "Work", color_code: "#FF0000", log_entries: [%{starts_at: ~T[09:00:00], ends_at: ~T[12:00:00]}]},
-      ...>   %{name: "Break", color_code: "#00FF00", log_entries: [%{starts_at: ~T[12:00:00], ends_at: ~T[13:00:00]}]}
-      ...> ]
-      iex> format_entries(categories)
-      [
-        %{starts_at: ~T[09:00:00], ends_at: ~T[12:00:00], color_code: "#FF0000"},
-        %{starts_at: ~T[12:00:00], ends_at: ~T[13:00:00], color_code: "#00FF00"}
-      ]
-  """
-  def format_entries(categories) do
-    categories
-    |> Enum.map(fn category ->
-      category.log_entries
-    end)
-    |> List.flatten()
-    |> Enum.sort_by(fn %{starts_at: starts_at, ends_at: ends_at} -> {starts_at, ends_at} end)
-    |> Enum.map(fn x ->
-      %{
-        starts_at: x.starts_at,
-        ends_at: x.ends_at,
-        color_code:
-          Enum.find(categories, fn category ->
-            category.log_entries |> Enum.find(fn entry -> entry.starts_at == x.starts_at end)
-          end).color_code
-      }
-    end)
-  end
-
-  attr :starts_at, :any, required: true
-  attr :ends_at, :any, required: true
+  attr :start_at, :any, required: true
+  attr :end_at, :any, required: true
   attr :events, :list, required: true
 
   def time_tracking(assigns) do
     ~H"""
     <div class="w-[100%] h-[100%] flex flex-row">
       <div class="w-[10%] h-[100%]">
-        <.time_intervals starts_at={@starts_at} ends_at={@ends_at} />
+        <.time_intervals start_at={@start_at} end_at={@end_at} />
       </div>
       <div class="w-[90%] h-[100%] relative">
         <%= for event <- @events do %>
           <div
             class="absolute w-[100%] bg-gray-200 rounded-md p-2"
-            style={"top: #{calculate_top_position(event.starts_at, @starts_at, @ends_at)}%; height: #{calculate_height(event.starts_at, event.ends_at, @starts_at, @ends_at)}%;"}
+            style={"top: #{calculate_top_position(event.start_at, @start_at, @end_at)}%; height: #{calculate_height(event.start_at, event.end_at, @start_at, @end_at)}%;"}
           >
             <%= event.title %>
           </div>
@@ -299,5 +291,27 @@ defmodule OmedisWeb.TimeTracking do
     total_minutes = Time.diff(timeline_end, timeline_start, :minute)
     event_duration = Time.diff(event_end, event_start, :minute)
     event_duration / total_minutes * 100
+  end
+
+  def counter_for_time_taken_by_current_task(assigns) do
+    ~H"""
+    <%= for log_entry <- @category.log_entries |> Enum.map(fn x -> %{start: x.start_at , end: x.end_at} end) do %>
+      <p :if={log_entry.end == nil} class="text-xs">
+        Active for <%= Time.diff(Time.utc_now(), log_entry.start, :minute) %> minutes
+      </p>
+    <% end %>
+    """
+  end
+
+  defp active_log_category?(log_category_id) do
+    {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category_id})
+
+    case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
+      nil ->
+        false
+
+      _log_entry ->
+        true
+    end
   end
 end
