@@ -295,9 +295,9 @@ defmodule OmedisWeb.TimeTracking do
 
   def counter_for_time_taken_by_current_task(assigns) do
     ~H"""
-    <%= for log_entry <- @category.log_entries |> Enum.map(fn x -> %{start: x.start_at , end: x.end_at} end) do %>
-      <p :if={log_entry.end == nil} class="text-xs">
-        Active for <%= Time.diff(Time.utc_now(), log_entry.start, :minute) %> minutes
+    <%= for log_entry <- @category.log_entries |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
+      <p :if={log_entry.end_at == nil} class="text-xs">
+        Active for <%= Time.diff(Time.utc_now(), log_entry.start_at, :minute) %> minutes
       </p>
     <% end %>
     """
