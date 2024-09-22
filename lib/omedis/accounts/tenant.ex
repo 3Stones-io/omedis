@@ -181,7 +181,7 @@ defmodule Omedis.Accounts.Tenant do
     end
 
     attribute :daily_start_at, :time, allow_nil?: true, public?: true, default: ~T[08:00:00]
-    attribute :daily_end_at, :time, allow_nil?: true, public?: true, default: ~T[17:00:00]
+    attribute :daily_end_at, :time, allow_nil?: true, public?: true, default: ~T[18:00:00]
 
     create_timestamp :created_at
     update_timestamp :updated_at
