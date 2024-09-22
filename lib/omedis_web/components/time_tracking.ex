@@ -29,7 +29,10 @@ defmodule OmedisWeb.TimeTracking do
   """
   def dashboard_component(assigns) do
     ~H"""
-    <div class="w-[100%]">
+    <div class="w-[100%] flex flex-col gap-1 ">
+      <div class="w-[100%] flex justify-end items-center gap-1">
+        <%= format_time(@current_time) %>
+      </div>
       <.dashboard_card
         categories={@categories}
         start_at={@start_at}
