@@ -311,12 +311,4 @@ defmodule OmedisWeb.TimeTracking do
         true
     end
   end
-
-  defp active_log_entry(log_entry) do
-    if log_entry.end_at == nil do
-      log_entry
-    else
-      nil
-    end
-  end
 end
