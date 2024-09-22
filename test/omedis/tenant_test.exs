@@ -1,7 +1,6 @@
 defmodule Omedis.TenantTest do
   use Omedis.DataCase
 
-
   alias Omedis.Accounts.Tenant
   alias Omedis.Accounts.User
   alias Omedis.Factory
@@ -84,7 +83,6 @@ defmodule Omedis.TenantTest do
         Factory.insert_user(%{email: "test@gmail.com"})
       {:ok, tenant} =
         Factory.insert_tenant(%{slug: "tenant-one", owner_id: user.id})
-
 
       {:ok, fetched_tenant} = Tenant.by_owner_id(user.id)
 
