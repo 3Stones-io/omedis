@@ -69,6 +69,7 @@ defmodule Omedis.TenantTest do
 
       assert tenant.id == fetched_tenant.id
     end
+
      test "by_slug/1 returns a tenant given a slug" do
       {:ok, tenant} =
         Factory.insert_tenant(%{slug: "tenant-one"})
@@ -76,6 +77,18 @@ defmodule Omedis.TenantTest do
       {:ok, fetched_tenant} = Tenant.by_slug(tenant.slug)
 
       assert tenant.slug == fetched_tenant.slug
+    end
+
+     test "by_owner_id/1 returns a tenant for a specific user" do
+       {:ok, user} =
+        Factory.insert_user(%{email: "test@gmail.com"})
+      {:ok, tenant} =
+        Factory.insert_tenant(%{slug: "tenant-one", owner_id: user.id})
+
+
+      {:ok, fetched_tenant} = Tenant.by_owner_id(user.id)
+
+      assert tenant.owner_id == fetched_tenant.owner_id
     end
   end
 end
