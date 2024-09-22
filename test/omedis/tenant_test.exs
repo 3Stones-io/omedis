@@ -7,7 +7,6 @@ defmodule Omedis.TenantTest do
 
   describe "Tenant Resource Unit Tests" do
     test "read/0  returns all tenants" do
-
       Factory.insert_tenant(%{slug: "tenant-one"})
 
       {:ok, tenants} = Tenant.read()
@@ -31,7 +30,7 @@ defmodule Omedis.TenantTest do
 
       assert {:error, _} =
                User.create(%{
-                 name: "Test",
+                 name: "Test"
                })
     end
 
@@ -69,7 +68,7 @@ defmodule Omedis.TenantTest do
       assert tenant.id == fetched_tenant.id
     end
 
-     test "by_slug/1 returns a tenant given a slug" do
+    test "by_slug/1 returns a tenant given a slug" do
       {:ok, tenant} =
         Factory.insert_tenant(%{slug: "tenant-one"})
 
@@ -78,9 +77,10 @@ defmodule Omedis.TenantTest do
       assert tenant.slug == fetched_tenant.slug
     end
 
-     test "by_owner_id/1 returns a tenant for a specific user" do
-       {:ok, user} =
+    test "by_owner_id/1 returns a tenant for a specific user" do
+      {:ok, user} =
         Factory.insert_user(%{email: "test@gmail.com"})
+
       {:ok, tenant} =
         Factory.insert_tenant(%{slug: "tenant-one", owner_id: user.id})
 
