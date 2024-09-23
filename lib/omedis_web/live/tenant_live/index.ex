@@ -20,11 +20,22 @@ defmodule OmedisWeb.TenantLive.Index do
         rows={@streams.tenants}
         row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant.slug}") end}
       >
-        <:col :let={{_id, tenant}} label="slug"><%= tenant.slug %></:col>
-        <:col :let={{_id, tenant}} label="Name"><%= tenant.name %></:col>
-        <:col :let={{_id, tenant}} label="Additional info"><%= tenant.additional_info %></:col>
-        <:col :let={{_id, tenant}} label="Street"><%= tenant.street %></:col>
-        <:col :let={{_id, tenant}} label="Street2"><%= tenant.street2 %></:col>
+        <:col :let={{_id, tenant}} label="Name">
+          <%= tenant.name %>
+          <%= if tenant.additional_info do %>
+            <br /><span class="text-gray-500">(<%= tenant.additional_info %>)</span>
+          <% end %>
+        </:col>
+        <:col :let={{_id, tenant}} label="Street and Po Box">
+          <%= tenant.street %>
+          <%= if tenant.street2 do %>
+            <br /><span class="text-gray-500"><%= tenant.street2 %></span>
+          <% end %>
+          <%= if tenant.po_box do %>
+            <br /><span class="text-gray-500"><%= tenant.po_box %></span>
+          <% end %>
+        </:col>
+
         <:col :let={{_id, tenant}} label="Po box"><%= tenant.po_box %></:col>
         <:col :let={{_id, tenant}} label="Zip code"><%= tenant.zip_code %></:col>
         <:col :let={{_id, tenant}} label="City"><%= tenant.city %></:col>
