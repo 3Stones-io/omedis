@@ -183,6 +183,12 @@ defmodule Omedis.Accounts.Tenant do
     update_timestamp :updated_at
   end
 
+  def tenant_with_owner() do
+    __MODULE__
+    |> Ash.Query.load(:owner)
+    |> Ash.read!()
+  end
+
   relationships do
     belongs_to :owner, Omedis.Accounts.User do
       allow_nil? true

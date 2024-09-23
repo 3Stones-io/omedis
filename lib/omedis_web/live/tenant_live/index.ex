@@ -42,7 +42,11 @@ defmodule OmedisWeb.TenantLive.Index do
         <:col :let={{_id, tenant}} label="Canton"><%= tenant.canton %></:col>
         <:col :let={{_id, tenant}} label="Country"><%= tenant.country %></:col>
         <:col :let={{_id, tenant}} label="Description"><%= tenant.description %></:col>
-        <:col :let={{_id, tenant}} label="Owner"><%= tenant.owner_id %></:col>
+        <:col :let={{_id, tenant}} label="Owner">
+          <%= if tenant.owner do %>
+            <%= tenant.owner.first_name %> <%= tenant.owner.last_name %>
+          <% end %>
+        </:col>
         <:col :let={{_id, tenant}} label="Phone"><%= tenant.phone %></:col>
         <:col :let={{_id, tenant}} label="Fax"><%= tenant.fax %></:col>
         <:col :let={{_id, tenant}} label="Email"><%= tenant.email %></:col>
@@ -87,7 +91,7 @@ defmodule OmedisWeb.TenantLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :tenants, Ash.read!(Tenant))}
+    {:ok, stream(socket, :tenants, Tenant.tenant_with_owner())}
   end
 
   @impl true
