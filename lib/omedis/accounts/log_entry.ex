@@ -59,7 +59,7 @@ defmodule Omedis.Accounts.LogEntry do
 
       filter expr(
                tenant_id == ^arg(:tenant_id) and
-                 created_at >= ^Date.utc_today() and created_at < ^Date.add(Date.utc_today(), 1)
+                 fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
              )
     end
 
@@ -70,7 +70,7 @@ defmodule Omedis.Accounts.LogEntry do
 
       filter expr(
                log_category_id == ^arg(:log_category_id) and
-                 created_at >= ^Date.utc_today() and created_at < ^Date.add(Date.utc_today(), 1)
+                 fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
              )
     end
 

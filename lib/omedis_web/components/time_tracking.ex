@@ -7,12 +7,15 @@ defmodule OmedisWeb.TimeTracking do
   """
   use Phoenix.Component
   alias Omedis.Accounts.LogEntry
+  import Gettext, only: [with_locale: 2]
+  use Gettext, backend: OmedisWeb.Gettext
 
   attr :categories, :list, required: true
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
   attr :current_time, :any, required: true
   attr :log_entries, :list, required: true
+  attr :language, :any, required: true
 
   @doc """
   Renders the main dashboard component.
@@ -24,6 +27,7 @@ defmodule OmedisWeb.TimeTracking do
         starts_a={~T[08:00:00]}
         ends_a={~T[18:00:00]}
         current_time={~T[13:30:00]}
+        language="en"
         log_entries={[%{start_at: ~T[09:00:00], end_at: ~T[12:00:00], color_code: "#FF0000"}, ...]}
       />
   """
@@ -38,6 +42,7 @@ defmodule OmedisWeb.TimeTracking do
         start_at={@start_at}
         end_at={@end_at}
         log_entries={@log_entries}
+        language={@language}
         current_time={@current_time}
       />
     </div>
@@ -53,13 +58,14 @@ defmodule OmedisWeb.TimeTracking do
   attr :end_at, :any, required: true
   attr :current_time, :any, required: true
   attr :log_entries, :list, required: true
+  attr :language, :any, required: true
 
   def dashboard_card(assigns) do
     ~H"""
     <div class="md:w-[50%] w-[90%] h-[70vh]  m-auto flex justify-start gap-1 items-end">
       <div class="md:w-[40%]  flex justify-start flex-col gap-5 h-[100%]">
         <%= for category <- @categories do %>
-          <.category_button category={category} current_time={@current_time} />
+          <.category_button category={category} language={@language} current_time={@current_time} />
         <% end %>
       </div>
 
@@ -203,11 +209,16 @@ defmodule OmedisWeb.TimeTracking do
 
   attr :category, :any, required: true
   attr :current_time, :any, required: true
+  attr :language, :any, required: true
 
   def category_button(assigns) do
     ~H"""
     <div class="flex flex-col gap-0">
-      <.counter_for_time_taken_by_current_task category={@category} current_time={@current_time} />
+      <.counter_for_time_taken_by_current_task
+        language={@language}
+        category={@category}
+        current_time={@current_time}
+      />
       <div class="flex flex-row gap-2 items-center">
         <p
           :if={active_log_category?(@category.id)}
@@ -297,7 +308,13 @@ defmodule OmedisWeb.TimeTracking do
     ~H"""
     <%= for log_entry <- @category.log_entries |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
       <p :if={log_entry.end_at == nil} class="text-xs">
-        Active for <%= Time.diff(Time.utc_now(), log_entry.start_at, :minute) %> minutes
+        <%= with_locale(@language, fn -> %>
+          <%= gettext(" Active for") %>
+        <% end) %>
+        <%= Time.diff(Time.utc_now(), log_entry.start_at, :minute) %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("minutes") %>
+        <% end) %>
       </p>
     <% end %>
     """
