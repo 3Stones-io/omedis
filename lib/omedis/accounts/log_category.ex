@@ -3,6 +3,8 @@ defmodule Omedis.Accounts.LogCategory do
   This is the log category module
   """
 
+  require Ash.Query
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
@@ -28,6 +30,7 @@ defmodule Omedis.Accounts.LogCategory do
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_tenant_id
+    define :max_position_by_tenant_id
   end
 
   identities do
@@ -73,6 +76,18 @@ defmodule Omedis.Accounts.LogCategory do
       filter expr(tenant_id == ^arg(:tenant_id))
     end
 
+    read :max_position_by_tenant_id do
+      argument :tenant_id, :uuid do
+        allow_nil? false
+      end
+
+      aggregates do
+        max(:max_position, :position)
+      end
+
+      filter expr(tenant_id == ^arg(:tenant_id))
+    end
+
     destroy :destroy do
     end
   end
@@ -101,6 +116,20 @@ defmodule Omedis.Accounts.LogCategory do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  def get_max_position_by_tenant_id(tenant_id) do
+    __MODULE__
+    |> Ash.Query.filter(tenant_id: tenant_id)
+    |> Ash.Query.sort(position: :desc)
+    |> Ash.Query.limit(1)
+    |> Ash.Query.select([:position])
+    |> Ash.read!()
+    |> Enum.at(0)
+    |> case do
+      nil -> 0
+      record -> record.position |> String.to_integer()
+    end
   end
 
   relationships do
