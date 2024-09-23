@@ -13,6 +13,7 @@ defmodule OmedisWeb.TenantLive.Today do
         start_at={@start_at}
         end_at={@end_at}
         log_entries={@log_entries}
+        language={@language}
         current_time={@current_time}
       />
     </div>
@@ -20,8 +21,10 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket}
+  def mount(_params, %{"language" => language} = _session, socket) do
+    {:ok,
+     socket
+     |> assign(:language, language)}
   end
 
   @impl true
@@ -62,16 +65,25 @@ defmodule OmedisWeb.TenantLive.Today do
     log_entries =
       format_entries(categories)
 
+    {min_start_in_entries, max_end_in_entries} =
+      get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
+
+    start_at = get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+
+    end_at = get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+
     {:noreply,
      socket
      |> assign(:categories, categories)
      |> assign(:log_entries, log_entries)
+     |> assign(:start_at, start_at)
+     |> assign(:end_at, end_at)
      |> assign(:value, socket.assigns.value + 1)
      |> assign(:current_time, Time.utc_now())}
   end
 
   defp update_categories_and_current_time_every_minute do
-    :timer.send_interval(60_000, self(), :update_categories_and_current_time)
+    :timer.send_interval(1000, self(), :update_categories_and_current_time)
   end
 
   defp get_start_time_to_use(nil, tenant_daily_start_at) do
