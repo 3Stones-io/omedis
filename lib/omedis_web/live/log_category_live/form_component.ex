@@ -16,12 +16,17 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:name]} type="text" label="Name" />
+        <.input
+          field={@form[:name]}
+          type="text"
+          label={Phoenix.HTML.raw("Name  <span class='text-red-600'>*</span>")}
+        />
+
         <%= if @tenant.id do %>
           <.input
             field={@form[:tenant_id]}
             type="select"
-            label="Tenant"
+            label={Phoenix.HTML.raw("Tenant  <span class='text-red-600'>*</span>")}
             options={Enum.map(@tenants, &{&1.name, &1.id})}
             disabled={true}
             value={@tenant.id}
@@ -31,16 +36,36 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           <.input
             field={@form[:tenant_id]}
             type="select"
-            label="Tenant"
+            label={Phoenix.HTML.raw("Tenant  <span class='text-red-600'>*</span>")}
             options={Enum.map(@tenants, &{&1.name, &1.id})}
           />
         <% end %>
-        <.input field={@form[:color_code]} type="text" label="Color code" />
+        <.input
+          field={@form[:color_code]}
+          type="text"
+          label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
+        />
 
-        <.input field={@form[:position]} type="number" label="Position" />
+        <.input
+          field={@form[:position]}
+          type="number"
+          label={Phoenix.HTML.raw("Position  <span class='text-red-600'>*</span>")}
+        />
 
         <:actions>
-          <.button phx-disable-with="Saving...">Save Log category</.button>
+          <.button
+            class={
+              if @form.source.source.valid? == false do
+                "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
+              else
+                ""
+              end
+            }
+            disabled={@form.source.source.valid? == false}
+            phx-disable-with="Saving..."
+          >
+            Save Log category
+          </.button>
         </:actions>
       </.simple_form>
     </div>

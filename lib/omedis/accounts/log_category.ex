@@ -80,6 +80,11 @@ defmodule Omedis.Accounts.LogCategory do
   validations do
     validate present(:name)
     validate present(:tenant_id)
+
+    validate match(:color_code, ~r/^#[0-9A-Fa-f]{6}$/),
+      message: "Color code must be a valid hex color code eg. #FF0000"
+
+    validate present(:position)
   end
 
   attributes do
