@@ -1,6 +1,7 @@
 defmodule OmedisWeb.TenantLive.FormComponent do
   use OmedisWeb, :live_component
   alias AshPhoenix.Form
+  alias Omedis.Accounts.Tenant
 
   @impl true
   def render(assigns) do
@@ -8,7 +9,6 @@ defmodule OmedisWeb.TenantLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage tenant records in your database.</:subtitle>
       </.header>
 
       <.simple_form
@@ -20,13 +20,14 @@ defmodule OmedisWeb.TenantLive.FormComponent do
         phx-submit="save"
       >
         <div class="space-y-3">
-          <.input field={@form[:slug]} type="text" label="Slug" />
-        </div>
-        <div class="space-y-3">
-          <.input field={@form[:name]} type="text" label="Name" /><.input
+          <.input
+            field={@form[:name]}
+            type="text"
+            label={Phoenix.HTML.raw("Name <span class='text-red-600'>*</span>")}
+          /><.input
             field={@form[:street]}
             type="text"
-            label="Street"
+            label={Phoenix.HTML.raw("Street <span class='text-red-600'>*</span>")}
           />
         </div>
 
@@ -34,14 +35,22 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           <.input field={@form[:street2]} type="text" label="Street2" />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:zip_code]} type="text" label="Zip code" /><.input
+          <.input
+            field={@form[:zip_code]}
+            type="text"
+            label={Phoenix.HTML.raw("Zip Code <span class='text-red-600'>*</span>")}
+          /><.input
             field={@form[:city]}
             type="text"
-            label="City"
+            label={Phoenix.HTML.raw("City <span class='text-red-600'>*</span>")}
           />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:country]} type="text" label="Country" />
+          <.input
+            field={@form[:country]}
+            type="text"
+            label={Phoenix.HTML.raw("Country <span class='text-red-600'>*</span>")}
+          />
         </div>
 
         <input type="hidden" value={@current_user.id} name="tenant[owner_id]" />
@@ -96,14 +105,23 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           <.input field={@form[:trade_register_no]} type="text" label="Trade register no" />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:bur_number]} type="text" label="Bur number" />
+          <.input field={@form[:bank]} type="text" label="Bank" />
         </div>
+        <div class="space-y-3">
+          <.input field={@form[:iban]} type="text" label="Iban" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:bic]} type="text" label="Bic" />
+        </div>
+
         <div class="space-y-3">
           <.input field={@form[:account_number]} type="text" label="Account number" />
         </div>
 
         <:actions>
-          <.button phx-disable-with="Saving...">Save Tenant</.button>
+          <.button phx-disable-with="Saving...">
+            Save Tenant
+          </.button>
         </:actions>
       </.simple_form>
     </div>
@@ -126,14 +144,11 @@ defmodule OmedisWeb.TenantLive.FormComponent do
   end
 
   def handle_event("save", %{"tenant" => tenant_params}, socket) do
-    tenant_params =
-      if Map.has_key?(tenant_params, "slug") do
-        Map.update!(tenant_params, "slug", &Slug.slugify/1)
-      else
-        tenant_params
-      end
+    new_tenant_params =
+      tenant_params
+      |> Map.put("slug", Slug.slugify(update_slug(tenant_params["name"])))
 
-    case AshPhoenix.Form.submit(socket.assigns.form, params: tenant_params) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: new_tenant_params) |> IO.inspect() do
       {:ok, tenant} ->
         notify_parent({:saved, tenant})
 
@@ -149,6 +164,22 @@ defmodule OmedisWeb.TenantLive.FormComponent do
          socket
          |> assign(errors: Form.errors(form))
          |> assign(form: form)}
+    end
+  end
+
+  defp generate_unique_slug(base_slug) do
+    new_slug = "#{base_slug}#{:rand.uniform(99)}"
+
+    case Tenant.check_if_slug_exists(new_slug) do
+      true -> generate_unique_slug(base_slug)
+      false -> new_slug
+    end
+  end
+
+  defp update_slug(slug) do
+    case Tenant.check_if_slug_exists(slug) do
+      true -> generate_unique_slug(slug)
+      false -> slug
     end
   end
 
