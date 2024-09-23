@@ -106,6 +106,8 @@ defmodule Omedis.Accounts.Tenant do
         allow_nil? false
       end
 
+      prepare build(load: [:owner])
+
       filter expr(slug == ^arg(:slug))
     end
 

@@ -36,7 +36,6 @@ defmodule OmedisWeb.TenantLive.Index do
           <% end %>
         </:col>
 
-        <:col :let={{_id, tenant}} label="Po box"><%= tenant.po_box %></:col>
         <:col :let={{_id, tenant}} label="Zip code"><%= tenant.zip_code %></:col>
         <:col :let={{_id, tenant}} label="City"><%= tenant.city %></:col>
         <:col :let={{_id, tenant}} label="Canton"><%= tenant.canton %></:col>

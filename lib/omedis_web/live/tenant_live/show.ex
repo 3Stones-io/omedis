@@ -44,7 +44,11 @@ defmodule OmedisWeb.TenantLive.Show do
 
       <:item title="Description"><%= @tenant.description %></:item>
 
-      <:item title="Owner"><%= @tenant.owner_id %></:item>
+      <:item title="Owner">
+        <%= if @tenant.owner do %>
+          <%= @tenant.owner.first_name %> <%= @tenant.owner.last_name %>
+        <% end %>
+      </:item>
 
       <:item title="Phone"><%= @tenant.phone %></:item>
 
