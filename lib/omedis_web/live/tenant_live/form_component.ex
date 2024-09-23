@@ -148,7 +148,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
       tenant_params
       |> Map.put("slug", Slug.slugify(update_slug(tenant_params["name"])))
 
-    case AshPhoenix.Form.submit(socket.assigns.form, params: new_tenant_params) |> IO.inspect() do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: new_tenant_params) do
       {:ok, tenant} ->
         notify_parent({:saved, tenant})
 

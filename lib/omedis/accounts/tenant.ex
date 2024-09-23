@@ -195,11 +195,6 @@ defmodule Omedis.Accounts.Tenant do
     end
   end
 
-  def test() do
-    IO.inspect("test")
-    check_if_slug_exists("kerry-clements")
-  end
-
   relationships do
     belongs_to :owner, Omedis.Accounts.User do
       allow_nil? true
