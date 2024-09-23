@@ -1,5 +1,6 @@
 defmodule OmedisWeb.TenantLive.FormComponent do
   use OmedisWeb, :live_component
+  alias AshPhoenix.Form
 
   @impl true
   def render(assigns) do
@@ -11,56 +12,95 @@ defmodule OmedisWeb.TenantLive.FormComponent do
       </.header>
 
       <.simple_form
+        :let={f}
         for={@form}
         id="tenant-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:slug]} type="text" label="Slug" />
-        <.input field={@form[:name]} type="text" label="Name" /><.input
-          field={@form[:street]}
-          type="text"
-          label="Street"
-        />
-        <.input field={@form[:street2]} type="text" label="Street2" />
-        <.input field={@form[:additional_info]} type="text" label="Additional info" />
-        <.input field={@form[:zip_code]} type="text" label="Zip code" /><.input
-          field={@form[:city]}
-          type="text"
-          label="City"
-        />
-        <.input field={@form[:country]} type="text" label="Country" />
+        <div class="space-y-3">
+          <.input field={@form[:slug]} type="text" label="Slug" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:name]} type="text" label="Name" /><.input
+            field={@form[:street]}
+            type="text"
+            label="Street"
+          />
+        </div>
+
+        <div class="space-y-3">
+          <.input field={@form[:street2]} type="text" label="Street2" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:zip_code]} type="text" label="Zip code" /><.input
+            field={@form[:city]}
+            type="text"
+            label="City"
+          />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:country]} type="text" label="Country" />
+        </div>
 
         <input type="hidden" value={@current_user.id} name="tenant[owner_id]" />
-        <.input field={@form[:daily_start_at]} type="time" label="Daily Start At" />
-        <.input field={@form[:daily_end_at]} type="time" label="Daily End At" />
+        <div class="space-y-3">
+          <.input field={@form[:daily_start_at]} type="time" label="Daily Start At" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:daily_end_at]} type="time" label="Daily End At" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:additional_info]} type="text" label="Additional info" />
+        </div>
 
-        <.input field={@form[:po_box]} type="text" label="Po box" /><.input
-          field={@form[:canton]}
-          type="text"
-          label="Canton"
-        /><.input field={@form[:phone]} type="text" label="Phone" /><.input
-          field={@form[:fax]}
-          type="text"
-          label="Fax"
-        /><.input field={@form[:email]} type="text" label="Email" /><.input
-          field={@form[:website]}
-          type="text"
-          label="Website"
-        /><.input field={@form[:zsr_number]} type="text" label="Zsr number" /><.input
-          field={@form[:ean_gln]}
-          type="text"
-          label="Ean gln"
-        /><.input field={@form[:uid_bfs_number]} type="text" label="Uid bfs number" /><.input
-          field={@form[:trade_register_no]}
-          type="text"
-          label="Trade register no"
-        /><.input field={@form[:bur_number]} type="text" label="Bur number" /><.input
-          field={@form[:account_number]}
-          type="text"
-          label="Account number"
-        />
+        <div class="space-y-3">
+          <.input field={@form[:po_box]} type="text" label="Po box" />
+        </div>
+
+        <div class="space-y-3">
+          <.input field={@form[:canton]} type="text" label="Canton" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:phone]} type="text" label="Phone" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:fax]} type="text" label="Fax" />
+        </div>
+
+        <div class="space-y-3">
+          <.input field={@form[:email]} type="text" label="Email" />
+          <.error :for={msg <- get_field_errors(f[:email], :email)}>
+            <%= "Email" <> " " <> msg %>
+          </.error>
+        </div>
+
+        <div class="space-y-3">
+          <.input field={@form[:website]} type="text" label="Website" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:zsr_number]} type="text" label="Zsr number" />
+          <.error :for={msg <- get_field_errors(f[:zsr_number], :zsr_number)}>
+            <%= "Zsr_number" <> " " <> msg %>
+          </.error>
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:ean_gln]} type="text" label="Ean gln" />
+        </div>
+
+        <div class="space-y-3">
+          <.input field={@form[:uid_bfs_number]} type="text" label="Uid bfs number" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:trade_register_no]} type="text" label="Trade register no" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:bur_number]} type="text" label="Bur number" />
+        </div>
+        <div class="space-y-3">
+          <.input field={@form[:account_number]} type="text" label="Account number" />
+        </div>
 
         <:actions>
           <.button phx-disable-with="Saving...">Save Tenant</.button>
@@ -75,12 +115,14 @@ defmodule OmedisWeb.TenantLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:errors, [])
      |> assign_form()}
   end
 
   @impl true
   def handle_event("validate", %{"tenant" => tenant_params}, socket) do
-    {:noreply, assign(socket, form: AshPhoenix.Form.validate(socket.assigns.form, tenant_params))}
+    form = Form.validate(socket.assigns.form, tenant_params, errors: true)
+    {:noreply, socket |> assign(form: form)}
   end
 
   def handle_event("save", %{"tenant" => tenant_params}, socket) do
@@ -103,7 +145,10 @@ defmodule OmedisWeb.TenantLive.FormComponent do
         {:noreply, socket}
 
       {:error, form} ->
-        {:noreply, assign(socket, form: form)}
+        {:noreply,
+         socket
+         |> assign(errors: Form.errors(form))
+         |> assign(form: form)}
     end
   end
 
@@ -118,5 +163,9 @@ defmodule OmedisWeb.TenantLive.FormComponent do
       end
 
     assign(socket, form: to_form(form))
+  end
+
+  defp get_field_errors(field, _name) do
+    Enum.map(field.errors, &translate_error(&1))
   end
 end
