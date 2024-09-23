@@ -22,21 +22,21 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           field={@form[:street]}
           type="text"
           label="Street"
-        /><.input field={@form[:zip_code]} type="text" label="Zip code" /><.input
+        />
+        <.input field={@form[:street2]} type="text" label="Street2" />
+        <.input field={@form[:additional_info]} type="text" label="Additional info" />
+        <.input field={@form[:zip_code]} type="text" label="Zip code" /><.input
           field={@form[:city]}
           type="text"
           label="City"
-        /><.input field={@form[:country]} type="text" label="Country" />
+        />
+        <.input field={@form[:country]} type="text" label="Country" />
 
         <input type="hidden" value={@current_user.id} name="tenant[owner_id]" />
         <.input field={@form[:daily_start_at]} type="time" label="Daily Start At" />
         <.input field={@form[:daily_end_at]} type="time" label="Daily End At" />
 
-        <.input field={@form[:additional_info]} type="text" label="Additional info" /><.input
-          field={@form[:street2]}
-          type="text"
-          label="Street2"
-        /><.input field={@form[:po_box]} type="text" label="Po box" /><.input
+        <.input field={@form[:po_box]} type="text" label="Po box" /><.input
           field={@form[:canton]}
           type="text"
           label="Canton"
