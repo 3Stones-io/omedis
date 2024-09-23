@@ -33,6 +33,7 @@ defmodule OmedisWeb.Router do
 
     ash_authentication_live_session :authentication_required,
       on_mount: {OmedisWeb.LiveUserAuth, :live_user_required} do
+      live "/edit_profile", EditProfileLive, :index
       live "/tenants", TenantLive.Index, :index
       live "/tenants/new", TenantLive.Index, :new
       live "/tenants/:slug/edit", TenantLive.Index, :edit

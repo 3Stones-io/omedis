@@ -700,6 +700,9 @@ defmodule OmedisWeb.GeneralComponents do
       tabindex="-1"
     >
       <div :if={@current_user} class="flex  p-2 flex-col gap-2">
+        <.link navigate="/edit_profile">
+          Edit Profile
+        </.link>
         <.link navigate="/auth/user/sign-out">
           Sign out
         </.link>
