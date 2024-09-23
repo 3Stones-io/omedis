@@ -3,7 +3,6 @@ defmodule Omedis.Accounts.Tenant do
   This is the Tenant module
   """
   require Ash.Query
-  alias Omedis.Repo
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
