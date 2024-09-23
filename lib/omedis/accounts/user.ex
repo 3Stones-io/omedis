@@ -54,7 +54,8 @@ defmodule Omedis.Accounts.User do
         :first_name,
         :last_name,
         :gender,
-        :birthdate
+        :birthdate,
+        :current_tenant_id
       ]
 
       primary? true
