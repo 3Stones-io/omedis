@@ -31,7 +31,7 @@ defmodule Omedis.Accounts.Tenant do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
-    define :by_owner_id, get_by: [:owner_id], action: :read
+    define :by_owner_id
     define :by_slug, get_by: [:slug], action: :read
   end
 
