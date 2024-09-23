@@ -45,12 +45,13 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           type="text"
           label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
         />
-
-        <.input
-          field={@form[:position]}
-          type="number"
-          label={Phoenix.HTML.raw("Position  <span class='text-red-600'>*</span>")}
-        />
+        <div class="hidden">
+          <.input
+            field={@form[:position]}
+            value={@next_position}
+            label={Phoenix.HTML.raw("Position  <span class='text-red-600'>*</span>")}
+          />
+        </div>
 
         <:actions>
           <.button
@@ -99,7 +100,10 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
         {:noreply, socket}
 
       {:error, form} ->
-        {:noreply, assign(socket, form: form)}
+        {:noreply,
+         socket
+         |> assign(form: form)
+         |> put_flash(:error, "Log category could not be saved")}
     end
   end
 

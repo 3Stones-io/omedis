@@ -54,6 +54,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         title={@page_title}
         tenants={@tenants}
         tenant={@tenant}
+        next_position={@next_position}
         action={@live_action}
         log_category={@log_category}
         patch={~p"/tenants/#{@tenant.slug}/log_categories"}
@@ -64,12 +65,14 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   def mount(%{"slug" => slug}, _session, socket) do
     tenant = Tenant.by_slug!(slug)
+    next_position = LogCategory.get_max_position_by_tenant_id(tenant.id) + 1
 
     {:ok,
      socket
      |> stream(:log_categories, LogCategory.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:tenants, Ash.read!(Tenant))
-     |> assign(:tenant, Tenant.by_id!(tenant.id))}
+     |> assign(:tenant, Tenant.by_id!(tenant.id))
+     |> assign(:next_position, next_position)}
   end
 
   @impl true
@@ -83,7 +86,13 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    tenant = Tenant.by_slug!(params["slug"])
+    next_position = LogCategory.get_max_position_by_tenant_id(tenant.id) + 1
+
+    {:noreply,
+     socket
+     |> apply_action(socket.assigns.live_action, params)
+     |> assign(:next_position, next_position)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
