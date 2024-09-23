@@ -1,4 +1,4 @@
-defmodule OmedisWeb.LoginTest do
+defmodule OmedisWeb.EditProfileTest do
   use OmedisWeb.ConnCase
   alias Omedis.Accounts.User
 
