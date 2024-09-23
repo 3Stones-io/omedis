@@ -32,7 +32,7 @@ defmodule Omedis.Accounts.User do
   end
 
   calculations do
-    calculate :name, :string, expr(first_name <> " " <> last_name)
+    calculate :as_string, :string, expr(first_name <> " " <> last_name)
   end
 
   actions do
@@ -98,7 +98,7 @@ defmodule Omedis.Accounts.User do
   preparations do
     prepare build(
               load: [
-                :name
+                :as_string
               ]
             )
   end
