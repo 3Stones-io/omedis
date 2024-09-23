@@ -31,6 +31,10 @@ defmodule Omedis.Accounts.User do
     define :by_email, get_by: [:email], action: :read
   end
 
+  calculations do
+    calculate :as_string, :string, expr(first_name <> " " <> last_name)
+  end
+
   actions do
     defaults [:read, :destroy]
 
@@ -89,6 +93,14 @@ defmodule Omedis.Accounts.User do
         Application.fetch_env(:omedis, :token_signing_secret)
       end
     end
+  end
+
+  preparations do
+    prepare build(
+              load: [
+                :as_string
+              ]
+            )
   end
 
   postgres do
