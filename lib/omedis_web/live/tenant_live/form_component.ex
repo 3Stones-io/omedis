@@ -170,14 +170,14 @@ defmodule OmedisWeb.TenantLive.FormComponent do
   defp generate_unique_slug(base_slug) do
     new_slug = "#{base_slug}#{:rand.uniform(99)}"
 
-    case Tenant.check_if_slug_exists(new_slug) do
+    case Tenant.slug_exists?(new_slug) do
       true -> generate_unique_slug(base_slug)
       false -> new_slug
     end
   end
 
   defp update_slug(slug) do
-    case Tenant.check_if_slug_exists(slug) do
+    case Tenant.slug_exists?(slug) do
       true -> generate_unique_slug(slug)
       false -> slug
     end

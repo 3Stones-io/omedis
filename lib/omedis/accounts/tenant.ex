@@ -184,7 +184,7 @@ defmodule Omedis.Accounts.Tenant do
     update_timestamp :updated_at
   end
 
-  def check_if_slug_exists(slug) do
+  def slug_exists?(slug) do
     __MODULE__
     |> Ash.Query.filter(slug: slug)
     |> Ash.read_one!()
