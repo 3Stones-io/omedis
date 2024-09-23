@@ -84,9 +84,9 @@ defmodule Omedis.TenantTest do
       {:ok, tenant} =
         Factory.insert_tenant(%{slug: "tenant-one", owner_id: user.id})
 
-      {:ok, fetched_tenant} = Tenant.by_owner_id(user.id)
+      {:ok, fetched_tenants} = Tenant.by_owner_id(%{owner_id: user.id})
 
-      assert tenant.owner_id == fetched_tenant.owner_id
+      assert tenant.owner_id == fetched_tenants |> hd |> Map.get(:owner_id)
     end
   end
 end
