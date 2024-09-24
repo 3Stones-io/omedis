@@ -24,7 +24,18 @@ defmodule OmedisWeb.TenantLive.FormComponent do
             field={@form[:name]}
             type="text"
             label={Phoenix.HTML.raw("Name <span class='text-red-600'>*</span>")}
-          /><.input
+          />
+        </div>
+
+        <div class="space-y-3">
+          <.input
+            field={@form[:slug]}
+            type="text"
+            label={Phoenix.HTML.raw("Slug <span class='text-red-600'>*</span>")}
+          />
+        </div>
+        <div class="space-y-3">
+          <.input
             field={@form[:street]}
             type="text"
             label={Phoenix.HTML.raw("Street <span class='text-red-600'>*</span>")}
@@ -138,17 +149,24 @@ defmodule OmedisWeb.TenantLive.FormComponent do
   end
 
   @impl true
+
   def handle_event("validate", %{"tenant" => tenant_params}, socket) do
-    form = Form.validate(socket.assigns.form, tenant_params, errors: true)
+    current_name = socket.assigns.form.source.params["name"]
+    new_name = tenant_params["name"]
+
+    new_tenant_params =
+      if current_name != new_name do
+        Map.put(tenant_params, "slug", update_slug(Slug.slugify(new_name)))
+      else
+        tenant_params
+      end
+
+    form = Form.validate(socket.assigns.form, new_tenant_params, errors: true)
     {:noreply, socket |> assign(form: form)}
   end
 
   def handle_event("save", %{"tenant" => tenant_params}, socket) do
-    new_tenant_params =
-      tenant_params
-      |> Map.put("slug", Slug.slugify(update_slug(tenant_params["name"])))
-
-    case AshPhoenix.Form.submit(socket.assigns.form, params: new_tenant_params) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: tenant_params) do
       {:ok, tenant} ->
         notify_parent({:saved, tenant})
 
@@ -172,14 +190,14 @@ defmodule OmedisWeb.TenantLive.FormComponent do
 
     case Tenant.slug_exists?(new_slug) do
       true -> generate_unique_slug(base_slug)
-      false -> new_slug
+      false -> Slug.slugify(new_slug)
     end
   end
 
   defp update_slug(slug) do
     case Tenant.slug_exists?(slug) do
       true -> generate_unique_slug(slug)
-      false -> slug
+      false -> Slug.slugify(slug)
     end
   end
 
