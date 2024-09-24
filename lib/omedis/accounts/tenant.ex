@@ -2,6 +2,7 @@ defmodule Omedis.Accounts.Tenant do
   @moduledoc """
   This is the Tenant module
   """
+  require Ash.Query
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -181,6 +182,16 @@ defmodule Omedis.Accounts.Tenant do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  def slug_exists?(slug) do
+    __MODULE__
+    |> Ash.Query.filter(slug: slug)
+    |> Ash.read_one!()
+    |> case do
+      nil -> false
+      _ -> true
+    end
   end
 
   preparations do
