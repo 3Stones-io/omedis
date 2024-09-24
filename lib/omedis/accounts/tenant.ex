@@ -183,6 +183,14 @@ defmodule Omedis.Accounts.Tenant do
     update_timestamp :updated_at
   end
 
+  preparations do
+    prepare build(
+              load: [
+                :owner
+              ]
+            )
+  end
+
   relationships do
     belongs_to :owner, Omedis.Accounts.User do
       allow_nil? true
