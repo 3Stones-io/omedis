@@ -26,6 +26,8 @@ defmodule OmedisWeb.TenantLive.Show do
 
       <:item title="Name"><%= @tenant.name %></:item>
 
+      <:item title="Owner"><%= @tenant.owner.as_string %></:item>
+
       <:item title="Additional info"><%= @tenant.additional_info %></:item>
 
       <:item title="Street"><%= @tenant.street %></:item>

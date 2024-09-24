@@ -20,32 +20,29 @@ defmodule OmedisWeb.TenantLive.Index do
         rows={@streams.tenants}
         row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant.slug}") end}
       >
-        <:col :let={{_id, tenant}} label="slug"><%= tenant.slug %></:col>
-        <:col :let={{_id, tenant}} label="Name"><%= tenant.name %></:col>
-        <:col :let={{_id, tenant}} label="Additional info"><%= tenant.additional_info %></:col>
-        <:col :let={{_id, tenant}} label="Street"><%= tenant.street %></:col>
-        <:col :let={{_id, tenant}} label="Street2"><%= tenant.street2 %></:col>
-        <:col :let={{_id, tenant}} label="Po box"><%= tenant.po_box %></:col>
+        <:col :let={{_id, tenant}} label="Name">
+          <%= tenant.name %>
+          <%= if not is_nil(tenant.additional_info) and tenant.additional_info != "" do %>
+            <br />
+            <%= tenant.additional_info %>
+          <% end %>
+        </:col>
+        <:col :let={{_id, tenant}} label="Street">
+          <%= tenant.street %>
+          <%= if not is_nil(tenant.street2) do %>
+            <br />
+            <%= tenant.street2 %>
+          <% end %>
+
+          <%= if not is_nil(tenant.po_box) do %>
+            <br />
+            <%= tenant.po_box %>
+          <% end %>
+        </:col>
         <:col :let={{_id, tenant}} label="Zip code"><%= tenant.zip_code %></:col>
         <:col :let={{_id, tenant}} label="City"><%= tenant.city %></:col>
         <:col :let={{_id, tenant}} label="Canton"><%= tenant.canton %></:col>
-        <:col :let={{_id, tenant}} label="Country"><%= tenant.country %></:col>
-        <:col :let={{_id, tenant}} label="Description"><%= tenant.description %></:col>
-        <:col :let={{_id, tenant}} label="Owner"><%= tenant.owner_id %></:col>
-        <:col :let={{_id, tenant}} label="Phone"><%= tenant.phone %></:col>
-        <:col :let={{_id, tenant}} label="Fax"><%= tenant.fax %></:col>
-        <:col :let={{_id, tenant}} label="Email"><%= tenant.email %></:col>
         <:col :let={{_id, tenant}} label="Website"><%= tenant.website %></:col>
-        <:col :let={{_id, tenant}} label="Zsr number"><%= tenant.zsr_number %></:col>
-        <:col :let={{_id, tenant}} label="Ean gln"><%= tenant.ean_gln %></:col>
-        <:col :let={{_id, tenant}} label="Uid bfs number"><%= tenant.uid_bfs_number %></:col>
-        <:col :let={{_id, tenant}} label="Trade register no"><%= tenant.trade_register_no %></:col>
-        <:col :let={{_id, tenant}} label="Bur number"><%= tenant.bur_number %></:col>
-        <:col :let={{_id, tenant}} label="Account number"><%= tenant.account_number %></:col>
-        <:col :let={{_id, tenant}} label="Iban"><%= tenant.iban %></:col>
-        <:col :let={{_id, tenant}} label="Bic"><%= tenant.bic %></:col>
-        <:col :let={{_id, tenant}} label="Bank"><%= tenant.bank %></:col>
-        <:col :let={{_id, tenant}} label="Account holder"><%= tenant.account_holder %></:col>
         <:action :let={{_id, tenant}}>
           <div class="sr-only">
             <.link navigate={~p"/tenants/#{tenant.slug}"}>Show</.link>

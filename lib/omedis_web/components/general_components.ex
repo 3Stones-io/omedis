@@ -379,7 +379,7 @@ defmodule OmedisWeb.GeneralComponents do
                   <span class="hidden lg:flex lg:items-center">
                     <span class="ml-4 text-sm font-medium leading-6 text-gray-900" aria-hidden="true">
                       <%= if @current_user do %>
-                        <%= @current_user.first_name %> <%= @current_user.last_name %>
+                        <%= @current_user.as_string %>
                       <% else %>
                         <.link navigate="/login" class="text-blue-500">Login</.link>
                         <span>
@@ -700,6 +700,9 @@ defmodule OmedisWeb.GeneralComponents do
       tabindex="-1"
     >
       <div :if={@current_user} class="flex  p-2 flex-col gap-2">
+        <.link navigate="/edit_profile">
+          Edit Profile
+        </.link>
         <.link navigate="/auth/user/sign-out">
           Sign out
         </.link>
