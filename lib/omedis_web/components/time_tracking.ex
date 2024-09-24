@@ -7,7 +7,6 @@ defmodule OmedisWeb.TimeTracking do
   """
   use Phoenix.Component
   alias Omedis.Accounts.LogEntry
-  import Gettext, only: [with_locale: 2]
   use Gettext, backend: OmedisWeb.Gettext
 
   attr :categories, :list, required: true
@@ -214,11 +213,6 @@ defmodule OmedisWeb.TimeTracking do
   def category_button(assigns) do
     ~H"""
     <div class="flex flex-col gap-0">
-      <.counter_for_time_taken_by_current_task
-        language={@language}
-        category={@category}
-        current_time={@current_time}
-      />
       <div class="flex flex-row gap-2 items-center">
         <p
           :if={active_log_category?(@category.id)}
@@ -231,9 +225,18 @@ defmodule OmedisWeb.TimeTracking do
           phx-value-log_category_id={@category.id}
           style={"background-color: #{@category.color_code};"}
         >
-          <span class="text-white text-sm p-2  md:text-base">
-            <%= @category.name %>
-          </span>
+          <div class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
+            <span>
+              <%= @category.name %>
+            </span>
+            <span>
+              <.counter_for_time_taken_by_current_task
+                language={@language}
+                category={@category}
+                current_time={@current_time}
+              />
+            </span>
+          </div>
         </button>
       </div>
     </div>
@@ -307,14 +310,8 @@ defmodule OmedisWeb.TimeTracking do
   def counter_for_time_taken_by_current_task(assigns) do
     ~H"""
     <%= for log_entry <- @category.log_entries |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
-      <p :if={log_entry.end_at == nil} class="text-xs">
-        <%= with_locale(@language, fn -> %>
-          <%= gettext(" Active for") %>
-        <% end) %>
-        <%= Time.diff(Time.utc_now(), log_entry.start_at, :minute) %>
-        <%= with_locale(@language, fn -> %>
-          <%= gettext("minutes") %>
-        <% end) %>
+      <p :if={log_entry.end_at == nil}>
+        <%= Time.diff(Time.utc_now(), log_entry.start_at, :minute) |> minutes_to_hhmm() %>
       </p>
     <% end %>
     """
@@ -330,5 +327,17 @@ defmodule OmedisWeb.TimeTracking do
       _log_entry ->
         true
     end
+  end
+
+  def minutes_to_hhmm(minutes) do
+    hours = div(minutes, 60)
+    remaining_minutes = rem(minutes, 60)
+
+    # Format to ensure two digits for both hours and minutes
+    formatted_time =
+      :io_lib.format("~2..0B:~2..0B", [hours, remaining_minutes])
+      |> IO.iodata_to_binary()
+
+    "(#{formatted_time})"
   end
 end
