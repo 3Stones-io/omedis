@@ -5,12 +5,13 @@ defmodule OmedisWeb.GeneralComponents do
   use Phoenix.Component
 
   use Gettext, backend: OmedisWeb.Gettext
+  alias Omedis.Accounts.Tenant
 
   def side_and_topbar(assigns) do
     ~H"""
     <div>
       <.topbar current_user={@current_user} />
-      <.desktop_sidebar />
+      <.desktop_sidebar current_user={@current_user} />
     </div>
     """
   end
@@ -75,9 +76,11 @@ defmodule OmedisWeb.GeneralComponents do
                     Tenants
                   </a>
                 </li>
-                <%!-- <li>
-                  <a
-                    href="/log_categories"
+
+                <li>
+                  <.link
+                    :if={@current_user && @current_user.current_tenant_id}
+                    navigate={get_current_tenant_path(@current_user)}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -94,9 +97,10 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
                       />
                     </svg>
-                    Log categories
-                  </a>
-                </li> --%>
+                    Today's Time Tracker
+                  </.link>
+                </li>
+
                 <li>
                   <a
                     href="#"
@@ -324,7 +328,7 @@ defmodule OmedisWeb.GeneralComponents do
               x-cloak
               class="w-[75%]   h-[100vh] "
             >
-              <.mobile_sidebar />
+              <.mobile_sidebar current_user={@current_user} />
             </div>
 
             <div class="p-4 text-black" @click="open = false" x-show="open" x-transition x-cloak>
@@ -472,9 +476,11 @@ defmodule OmedisWeb.GeneralComponents do
                     Tenants
                   </.link>
                 </li>
-                <%!-- <li>
-                  <a
-                    href="/log_categories"
+
+                <li>
+                  <.link
+                    :if={@current_user && @current_user.current_tenant_id}
+                    navigate={get_current_tenant_path(@current_user)}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -491,9 +497,10 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
                       />
                     </svg>
-                    Log categories
-                  </a>
-                </li> --%>
+                    Today's Time Tracker
+                  </.link>
+                </li>
+
                 <li>
                   <a
                     href="#"
@@ -733,5 +740,12 @@ defmodule OmedisWeb.GeneralComponents do
       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
     </svg>
     """
+  end
+
+  defp get_current_tenant_path(current_user) do
+    case Tenant.by_id(current_user.current_tenant_id) do
+      {:ok, tenant} -> "/tenants/#{tenant.slug}/today"
+      _ -> "/tenants"
+    end
   end
 end
