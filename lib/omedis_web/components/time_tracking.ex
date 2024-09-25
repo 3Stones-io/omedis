@@ -76,7 +76,7 @@ defmodule OmedisWeb.TimeTracking do
               style={
                 "top: #{get_top_to_use_for_entry(entry, @start_at, @end_at)}%;
                 background-color: #{entry.color_code};
-                height: #{get_height_to_use_for_entry(entry, @start_at, @end_at)}%;
+                height: #{get_height_to_use_for_entry(entry, @current_time , @start_at, @end_at)}%;
                 "
               }
             />
@@ -157,14 +157,14 @@ defmodule OmedisWeb.TimeTracking do
   ## Example
 
       iex> entry = %{start_at: ~T[09:00:00], end_at: ~T[11:00:00]}
-      iex> get_height_to_use_for_entry(entry, ~T[08:00:00], ~T[18:00:00])
+      iex> get_height_to_use_for_entry(entry, ~T[10:00:00],  ~T[08:00:00], ~T[18:00:00])
       16.666666666666668 # Represents 16.67% of the total height
   """
 
-  def get_height_to_use_for_entry(entry, start_at, end_at) do
+  def get_height_to_use_for_entry(entry, current_time, start_at, end_at) do
     time_spent =
       if entry.end_at == nil do
-        Time.diff(Time.utc_now(), entry.start_at, :minute)
+        Time.diff(current_time, entry.start_at, :minute)
       else
         Time.diff(entry.end_at, entry.start_at, :minute)
       end

@@ -2,6 +2,7 @@ defmodule Omedis.Accounts.Tenant do
   @moduledoc """
   This is the Tenant module
   """
+  alias Omedis.Validations
   require Ash.Query
 
   use Ash.Resource,
@@ -174,7 +175,10 @@ defmodule Omedis.Accounts.Tenant do
 
     attribute :account_holder, :string, allow_nil?: true, public?: true
 
-    attribute :timezone, :string, allow_nil?: true, public?: true
+    attribute :timezone, :string,
+      allow_nil?: false,
+      public?: true,
+      default: "GMT+0200 (Europe/Berlin)"
 
     attribute :slug, :string do
       constraints max_length: 80
@@ -186,6 +190,10 @@ defmodule Omedis.Accounts.Tenant do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  validations do
+    validate {Validations.Timezone, attribute: :timezone}
   end
 
   def slug_exists?(slug) do
