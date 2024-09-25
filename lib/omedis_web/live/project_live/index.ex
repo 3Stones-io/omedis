@@ -1,7 +1,8 @@
 defmodule OmedisWeb.ProjectLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Tenant
+
   alias Omedis.Accounts.Project
+  alias Omedis.Accounts.Tenant
 
   @impl true
   def render(assigns) do
@@ -85,7 +86,7 @@ defmodule OmedisWeb.ProjectLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Project")
-    |> assign(:project, Omedis.Accounts.Project.by_id!(id))
+    |> assign(:project, Project.by_id!(id))
   end
 
   defp apply_action(socket, :new, _params) do
