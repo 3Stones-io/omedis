@@ -15,6 +15,9 @@ defmodule OmedisWeb.TenantLive.Show do
         <.link patch={~p"/tenants/#{@tenant.slug}/log_categories"} phx-click={JS.push_focus()}>
           <.button>Log categories</.button>
         </.link>
+        <.link patch={~p"/tenants/#{@tenant.slug}/projects"} phx-click={JS.push_focus()}>
+          <.button>Projects</.button>
+        </.link>
         <.link navigate={~p"/tenants/#{@tenant.slug}/today"} phx-click={JS.push_focus()}>
           <.button>Today</.button>
         </.link>
