@@ -54,6 +54,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         title={@page_title}
         tenants={@tenants}
         tenant={@tenant}
+        is_custom_color={@is_custom_color}
         next_position={@next_position}
         action={@live_action}
         log_category={@log_category}
@@ -72,6 +73,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> stream(:log_categories, LogCategory.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:tenant, Tenant.by_id!(tenant.id))
+     |> assign(:is_custom_color, false)
      |> assign(:next_position, next_position)}
   end
 
@@ -94,6 +96,8 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> apply_action(socket.assigns.live_action, params)
      |> assign(:next_position, next_position)}
   end
+
+  @impl true
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket

@@ -42,24 +42,56 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           />
         <% end %>
 
-        <.input
-          field={@form[:color_code]}
-          type="select"
-          options={[
-            "#1f77b4",
-            "#ff7f0e",
-            "#2ca02c",
-            "#d62728",
-            "#9467bd",
-            "#8c564b",
-            "#e377c2",
-            "#7f7f7f",
-            "#bcbd22",
-            "#17becf"
-          ]}
-          value={@color_code}
-          label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
-        />
+        <div class="flex gap-5">
+          <p>Enter custom color</p>
+          <div
+            role="switch"
+            phx-click="toggle_color_mode"
+            phx-target={@myself}
+            class={
+    "relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out " <>
+    if @is_custom_color, do: "bg-green-500", else: "bg-gray-200"
+    }
+            aria-checked={@is_custom_color}
+          >
+            <span class="sr-only">Enable or disable custom color input</span>
+
+            <span class={
+      "block w-5 h-5 transform bg-white rounded-full transition duration-200 ease-in-out " <>
+      if @is_custom_color, do: "translate-x-5", else: "translate-x-0"
+    }>
+            </span>
+          </div>
+        </div>
+        <div :if={!@is_custom_color}>
+          <.input
+            field={@form[:color_code]}
+            type="select"
+            options={[
+              "#1f77b4",
+              "#ff7f0e",
+              "#2ca02c",
+              "#d62728",
+              "#9467bd",
+              "#8c564b",
+              "#e377c2",
+              "#7f7f7f",
+              "#bcbd22",
+              "#17becf"
+            ]}
+            value={@color_code}
+            label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
+          />
+        </div>
+
+        <div :if={@is_custom_color}>
+          <.input
+            field={@form[:color_code]}
+            type="text"
+            value={@form[:color_code].value || @color_code}
+            label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
+          />
+        </div>
 
         <div
           :if={@form[:name].value}
@@ -116,6 +148,12 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
     {:noreply,
      socket
      |> assign(form: form)}
+  end
+
+  def handle_event("toggle_color_mode", _params, socket) do
+    {:noreply,
+     socket
+     |> update(:is_custom_color, fn is_custom_color -> not is_custom_color end)}
   end
 
   def handle_event("save", %{"log_category" => log_category_params}, socket) do
