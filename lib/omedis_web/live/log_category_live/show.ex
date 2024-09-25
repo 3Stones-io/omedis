@@ -68,6 +68,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   def handle_params(%{"slug" => slug, "id" => id}, _, socket) do
     tenant = Tenant.by_slug!(slug)
 
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))

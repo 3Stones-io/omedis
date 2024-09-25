@@ -44,10 +44,35 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
 
         <.input
           field={@form[:color_code]}
-          type="color"
+          type="select"
+          options={[
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#d62728",
+            "#9467bd",
+            "#8c564b",
+            "#e377c2",
+            "#7f7f7f",
+            "#bcbd22",
+            "#17becf"
+          ]}
           value={@color_code}
           label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
         />
+
+        <div
+          :if={@form[:name].value}
+          class="w-[25%] h-[100%] h-[40px] rounded-md"
+          style={"background-color: #{@form[:color_code].value || @color_code};"}
+        >
+          <div class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
+            <span>
+              <%= @form[:name].value || "Name" %>
+            </span>
+          </div>
+        </div>
+
         <div class="hidden">
           <.input
             field={@form[:position]}
