@@ -27,10 +27,20 @@ import Alpine from "alpinejs";
 window.Alpine = Alpine;
 Alpine.start();
 
+let Hooks = {};
+
+Hooks.Timezone = {
+  mounted() {
+    timezone = new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1];
+    document.getElementById("tenant_timezone").value = timezone;
+  },
+};
+
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
+  hooks: Hooks,
   longPollFallbackMs: 2500,
   dom: {
     onBeforeElUpdated(from, to) {
