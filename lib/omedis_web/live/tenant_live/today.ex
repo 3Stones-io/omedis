@@ -34,26 +34,47 @@ defmodule OmedisWeb.TenantLive.Today do
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
 
-    start_at = get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+    start_at =
+      get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+      |> format_timezone(tenant.timezone)
 
-    end_at = get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+    end_at =
+      get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+      |> format_timezone(tenant.timezone)
 
     update_categories_and_current_time_every_minute()
 
     categories = categories(tenant.id)
 
-    log_entries = format_entries(categories)
+    log_entries = format_entries(categories, tenant)
+
+    current_time = Time.utc_now() |> format_timezone(tenant.timezone)
 
     {:noreply,
      socket
      |> assign(:page_title, "Today")
      |> assign(:tenant, tenant)
-     |> assign(:value, 0)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
      |> assign(:log_entries, log_entries)
-     |> assign(:current_time, Time.utc_now())
+     |> assign(:current_time, current_time)
      |> assign(:categories, categories)}
+  end
+
+  # Defaults to German Timezone
+  defp format_timezone(time, nil), do: Time.add(time, 2, :hour)
+
+  defp format_timezone(time, timezone) do
+    regex = ~r/GMT([+-]\d{2})/
+
+    offset =
+      case Regex.run(regex, timezone) do
+        # Convert the extracted "+03" into an integer (+3)
+        [_, offset] -> String.to_integer(offset)
+        _ -> "No match"
+      end
+
+    Time.add(time, offset, :hour)
   end
 
   @impl true
@@ -63,14 +84,20 @@ defmodule OmedisWeb.TenantLive.Today do
     categories = categories(tenant.id)
 
     log_entries =
-      format_entries(categories)
+      format_entries(categories, tenant)
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
 
-    start_at = get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+    start_at =
+      get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+      |> format_timezone(tenant.timezone)
 
-    end_at = get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+    end_at =
+      get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+      |> format_timezone(tenant.timezone)
+
+    current_time = Time.utc_now() |> format_timezone(tenant.timezone)
 
     {:noreply,
      socket
@@ -78,8 +105,7 @@ defmodule OmedisWeb.TenantLive.Today do
      |> assign(:log_entries, log_entries)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
-     |> assign(:value, socket.assigns.value + 1)
-     |> assign(:current_time, Time.utc_now())}
+     |> assign(:current_time, current_time)}
   end
 
   defp update_categories_and_current_time_every_minute do
@@ -110,7 +136,7 @@ defmodule OmedisWeb.TenantLive.Today do
     end
   end
 
-  defp format_entries(categories) do
+  defp format_entries(categories, tenant) do
     categories
     |> Enum.map(fn category ->
       category.log_entries
@@ -123,8 +149,8 @@ defmodule OmedisWeb.TenantLive.Today do
     |> Enum.map(fn x ->
       %{
         id: x.id,
-        start_at: x.start_at,
-        end_at: get_end_time_in_entry(x.end_at),
+        start_at: x.start_at |> format_timezone(tenant.timezone),
+        end_at: get_end_time_in_entry(x.end_at) |> format_timezone(tenant.timezone),
         category_id: x.log_category_id,
         color_code:
           Enum.find(categories, fn category ->
