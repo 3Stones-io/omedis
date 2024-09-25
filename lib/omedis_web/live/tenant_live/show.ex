@@ -27,6 +27,7 @@ defmodule OmedisWeb.TenantLive.Show do
       <:item title="Name"><%= @tenant.name %></:item>
 
       <:item title="Owner"><%= @tenant.owner.as_string %></:item>
+      <:item title="Timezone"><%= @tenant.timezone %></:item>
 
       <:item title="Additional info"><%= @tenant.additional_info %></:item>
 

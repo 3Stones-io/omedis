@@ -61,7 +61,8 @@ defmodule Omedis.Accounts.Tenant do
         :account_number,
         :slug,
         :daily_start_at,
-        :daily_end_at
+        :daily_end_at,
+        :timezone
       ]
 
       primary? true
@@ -91,7 +92,8 @@ defmodule Omedis.Accounts.Tenant do
         :account_number,
         :slug,
         :daily_start_at,
-        :daily_end_at
+        :daily_end_at,
+        :timezone
       ]
 
       primary? true
@@ -171,6 +173,8 @@ defmodule Omedis.Accounts.Tenant do
     attribute :bank, :string, allow_nil?: true, public?: true
 
     attribute :account_holder, :string, allow_nil?: true, public?: true
+
+    attribute :timezone, :string, allow_nil?: true, public?: true
 
     attribute :slug, :string do
       constraints max_length: 80
