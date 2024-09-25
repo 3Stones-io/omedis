@@ -1,4 +1,4 @@
-defmodule Omedis.Repo.Migrations.MigrateResources15 do
+defmodule Omedis.Repo.Migrations.MigrateResources16 do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
