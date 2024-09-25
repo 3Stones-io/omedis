@@ -7,7 +7,7 @@ defmodule OmedisWeb.ProjectLive.Show do
   def render(assigns) do
     ~H"""
     <.header>
-      Project <%= @project.id %>
+      Project
       <:subtitle>This is a project record from your database.</:subtitle>
 
       <:actions>
@@ -21,8 +21,6 @@ defmodule OmedisWeb.ProjectLive.Show do
     </.header>
 
     <.list>
-      <:item title="Id"><%= @project.id %></:item>
-
       <:item title="Name"><%= @project.name %></:item>
 
       <:item title="Tenant"><%= @project.tenant_id %></:item>

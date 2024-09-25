@@ -22,8 +22,6 @@ defmodule OmedisWeb.ProjectLive.Index do
         fn {_id, project} -> JS.navigate(~p"/tenants/#{@tenant.slug}/projects/#{project}") end
       }
     >
-      <:col :let={{_id, project}} label="Id"><%= project.id %></:col>
-
       <:col :let={{_id, project}} label="Name"><%= project.name %></:col>
 
       <:col :let={{_id, project}} label="Tenant"><%= project.tenant_id %></:col>
