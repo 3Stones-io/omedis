@@ -97,8 +97,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> assign(:next_position, next_position)}
   end
 
-  @impl true
-
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Log category")
