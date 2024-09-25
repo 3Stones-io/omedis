@@ -51,7 +51,10 @@ defmodule OmedisWeb.LogCategoryLive.Show do
         title={@page_title}
         action={@live_action}
         tenant={@tenant}
+        color_code={@color_code}
+        is_custom_color={@is_custom_color}
         tenants={@tenants}
+        next_position={@next_position}
         log_category={@log_category}
         patch={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}"}
       />
@@ -67,13 +70,18 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   @impl true
   def handle_params(%{"slug" => slug, "id" => id}, _, socket) do
     tenant = Tenant.by_slug!(slug)
+    log_category = LogCategory.by_id!(id)
+    next_position = log_category.position
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:log_category, LogCategory.by_id!(id))
+     |> assign(:log_category, log_category)
      |> assign(:tenants, Ash.read!(Tenant))
-     |> assign(:tenant, tenant)}
+     |> assign(:tenant, tenant)
+     |> assign(:is_custom_color, true)
+     |> assign(:color_code, log_category.color_code)
+     |> assign(:next_position, next_position)}
   end
 
   defp page_title(:show), do: "Show Log category"
