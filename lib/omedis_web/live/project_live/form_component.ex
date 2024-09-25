@@ -57,7 +57,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
   end
 
   def handle_event("save", %{"project" => project_params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: project_params) |> IO.inspect() do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: project_params) do
       {:ok, project} ->
         notify_parent({:saved, project})
 
@@ -69,7 +69,10 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
         {:noreply, socket}
 
       {:error, form} ->
-        {:noreply, assign(socket, form: form)}
+        {:noreply,
+         socket
+         |> assign(form: form)
+         |> put_flash(:error, "Please correct the errors below")}
     end
   end
 
