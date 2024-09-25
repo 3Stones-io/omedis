@@ -174,7 +174,10 @@ defmodule Omedis.Accounts.Tenant do
 
     attribute :account_holder, :string, allow_nil?: true, public?: true
 
-    attribute :timezone, :string, allow_nil?: true, public?: true
+    attribute :timezone, :string,
+      allow_nil?: false,
+      public?: true,
+      default: "GMT+0200 (Europe/Berlin)"
 
     attribute :slug, :string do
       constraints max_length: 80
