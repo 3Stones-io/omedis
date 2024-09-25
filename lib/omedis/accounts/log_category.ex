@@ -9,6 +9,18 @@ defmodule Omedis.Accounts.LogCategory do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  @github_issue_color_codes [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf"
+  ]
   postgres do
     table "log_categories"
     repo Omedis.Repo
@@ -129,6 +141,28 @@ defmodule Omedis.Accounts.LogCategory do
     |> case do
       nil -> 0
       record -> record.position |> String.to_integer()
+    end
+  end
+
+  def get_color_code_for_a_tenant(tenant_id) do
+    __MODULE__
+    |> Ash.Query.filter(tenant_id: tenant_id)
+    |> Ash.Query.select([:color_code])
+    |> Ash.read!()
+    |> Enum.map(& &1.color_code)
+  end
+
+  def select_unused_color_code(tenant_id) do
+    existing_color_codes = get_color_code_for_a_tenant(tenant_id)
+
+    unused_color_code =
+      @github_issue_color_codes
+      |> Enum.filter(fn color_code -> color_code not in existing_color_codes end)
+      |> Enum.random()
+
+    case unused_color_code do
+      nil -> Enum.random(@github_issue_color_codes)
+      color_code -> color_code
     end
   end
 
