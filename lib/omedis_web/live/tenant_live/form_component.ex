@@ -129,8 +129,6 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           <.input field={@form[:account_number]} type="text" label="Account number" />
         </div>
 
-        <input phx-hook="Timezone" phx-update="ignore" id="tenant_timezone" name="tenant[timezone]" />
-
         <:actions>
           <.button phx-disable-with="Saving...">
             Save Tenant

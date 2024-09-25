@@ -32,6 +32,18 @@ defmodule Omedis.TenantTest do
                User.create(%{
                  name: "Test"
                })
+
+      # an error is returned when a tenant is created with a timezone that is not in the list of supported timezones
+      assert {:error, _tenant} =
+               Tenant.create(%{
+                 name: "Test",
+                 street: "Wall Street",
+                 zip_code: "12345",
+                 city: "New York",
+                 country: "USA",
+                 slug: "tenant-one",
+                 timezone: "GMT+0300 Kenya"
+               })
     end
 
     test "update/2 updates a tenant given valid attributes" do
