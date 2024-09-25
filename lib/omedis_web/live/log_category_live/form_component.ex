@@ -1,5 +1,6 @@
 defmodule OmedisWeb.LogCategoryLive.FormComponent do
   use OmedisWeb, :live_component
+  alias Omedis.Accounts.LogCategory
 
   @impl true
   def render(assigns) do
@@ -40,9 +41,11 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
             options={Enum.map(@tenants, &{&1.name, &1.id})}
           />
         <% end %>
+
         <.input
           field={@form[:color_code]}
-          type="text"
+          type="color"
+          value={@color_code}
           label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
         />
         <div class="hidden">
@@ -83,8 +86,11 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"log_category" => log_category_params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.form, log_category_params)
+
     {:noreply,
-     assign(socket, form: AshPhoenix.Form.validate(socket.assigns.form, log_category_params))}
+     socket
+     |> assign(form: form)}
   end
 
   def handle_event("save", %{"log_category" => log_category_params}, socket) do
@@ -114,9 +120,12 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
       if log_category do
         AshPhoenix.Form.for_update(log_category, :update, as: "log_category")
       else
-        AshPhoenix.Form.for_create(Omedis.Accounts.LogCategory, :create, as: "log_category")
+        AshPhoenix.Form.for_create(LogCategory, :create, as: "log_category")
       end
 
-    assign(socket, form: to_form(form))
+    color_code =
+      LogCategory.select_unused_color_code(socket.assigns.tenant.id)
+
+    assign(socket, form: to_form(form), color_code: color_code)
   end
 end
