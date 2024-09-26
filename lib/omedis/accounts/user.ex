@@ -83,7 +83,8 @@ defmodule Omedis.Accounts.User do
           :first_name,
           :last_name,
           :gender,
-          :birthdate
+          :birthdate,
+          :lang
         ])
       end
     end
