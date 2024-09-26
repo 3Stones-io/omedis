@@ -3,13 +3,18 @@ defmodule OmedisWeb.RegisterLive do
   alias Omedis.Accounts
   alias Omedis.Accounts.User
 
+  @supported_languages [{"English", "en"}, {"Deutsch", "de"}]
+
   use OmedisWeb, :live_view
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"language" => language} = _session, socket) do
     socket =
       socket
       |> assign(current_user: nil)
+      |> assign(:languaged, language)
+      |> assign(:default_language, language)
+      |> assign(:supported_languages, @supported_languages)
       |> assign(trigger_action: false)
       |> assign(:errors, [])
 
@@ -38,7 +43,12 @@ defmodule OmedisWeb.RegisterLive do
   def handle_event("validate", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user, errors: true)
 
-    {:noreply, socket |> assign(form: form)}
+    default_language = user["lang"] || socket.assigns.default_language
+
+    {:noreply,
+     socket
+     |> assign(default_language: default_language)
+     |> assign(form: form)}
   end
 
   @impl true
@@ -191,6 +201,25 @@ defmodule OmedisWeb.RegisterLive do
                 ) %>
                 <.error :for={msg <- get_field_errors(f[:birthdate], :birthdate)}>
                   <%= "Birthdate" <> " " <> msg %>
+                </.error>
+              </div>
+            </div>
+
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">
+                Language
+              </label>
+
+              <div phx-feedback-for={f[:lang].name} class="mt-2">
+                <%= select(f, :lang, @supported_languages,
+                  prompt: "Select Language",
+                  value: @default_language,
+                  class:
+                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                  "phx-debounce": "blur"
+                ) %>
+                <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
+                  <%= "Language" <> " " <> msg %>
                 </.error>
               </div>
             </div>
