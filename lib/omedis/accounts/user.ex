@@ -16,7 +16,7 @@ defmodule Omedis.Accounts.User do
     attribute :gender, :string, allow_nil?: true, public?: true
     attribute :birthdate, :date, allow_nil?: false, public?: true
     attribute :current_tenant_id, :uuid, allow_nil?: true, public?: false
-    attribute :lang, :string, allow_nil?: false, public?: true , default: "en"
+    attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
 
     create_timestamp :created_at
     update_timestamp :updated_at
