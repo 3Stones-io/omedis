@@ -2,6 +2,9 @@ defmodule Omedis.Accounts.User do
   @moduledoc """
   Represents a user in the system.
   """
+
+  alias Omedis.Validations
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication],
@@ -20,6 +23,10 @@ defmodule Omedis.Accounts.User do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  validations do
+    validate {Validations.Language, attribute: :lang}
   end
 
   code_interface do

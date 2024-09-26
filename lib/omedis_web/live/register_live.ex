@@ -3,7 +3,12 @@ defmodule OmedisWeb.RegisterLive do
   alias Omedis.Accounts
   alias Omedis.Accounts.User
 
-  @supported_languages [{"English", "en"}, {"Deutsch", "de"}]
+  @supported_languages [
+    {"English", "en"},
+    {"Deutsch", "de"},
+    {"Français", "fr"},
+    {"Italiano", "it"}
+  ]
 
   use OmedisWeb, :live_view
 
