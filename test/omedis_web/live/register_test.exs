@@ -10,7 +10,8 @@ defmodule OmedisWeb.RegisterTest do
     "email" => "test@gmail.com",
     "password" => "12345678",
     "gender" => "Male",
-    "birthdate" => ~D[1990-01-01]
+    "birthdate" => ~D[1990-01-01],
+    "lang" => "en"
   }
 
   describe "Tests the Registration flow" do

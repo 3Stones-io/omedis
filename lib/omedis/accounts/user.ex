@@ -2,6 +2,9 @@ defmodule Omedis.Accounts.User do
   @moduledoc """
   Represents a user in the system.
   """
+
+  alias Omedis.Validations
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication],
@@ -16,9 +19,14 @@ defmodule Omedis.Accounts.User do
     attribute :gender, :string, allow_nil?: true, public?: true
     attribute :birthdate, :date, allow_nil?: false, public?: true
     attribute :current_tenant_id, :uuid, allow_nil?: true, public?: false
+    attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  validations do
+    validate {Validations.Language, attribute: :lang}
   end
 
   code_interface do
@@ -45,7 +53,8 @@ defmodule Omedis.Accounts.User do
         :first_name,
         :last_name,
         :gender,
-        :birthdate
+        :birthdate,
+        :lang
       ]
 
       primary? true
@@ -59,6 +68,7 @@ defmodule Omedis.Accounts.User do
         :last_name,
         :gender,
         :birthdate,
+        :lang,
         :current_tenant_id
       ]
 
@@ -80,7 +90,8 @@ defmodule Omedis.Accounts.User do
           :first_name,
           :last_name,
           :gender,
-          :birthdate
+          :birthdate,
+          :lang
         ])
       end
     end
