@@ -24,6 +24,8 @@ config :omedis, OmedisWeb.Endpoint,
 
 config :omedis, ash_domains: [Omedis.Accounts]
 
+# I18n
+config :omedis, OmedisWeb.Gettext, default_locale: "en", locales: ~w(en de fr it)
 # Configures the signing secret for the token
 
 config :omedis, :token_signing_secret, System.get_env("TOKEN_SIGNING_SECRET") || "Lu8xpRC9"
