@@ -10,78 +10,140 @@ defmodule OmedisWeb.TenantLive.Show do
 
       <:actions>
         <.link patch={~p"/tenants/#{@tenant.slug}/show/edit"} phx-click={JS.push_focus()}>
-          <.button>Edit tenant</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Edit tenant") %>
+            <% end) %>
+          </.button>
         </.link>
         <.link patch={~p"/tenants/#{@tenant.slug}/log_categories"} phx-click={JS.push_focus()}>
-          <.button>Log categories</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Log categories") %>
+            <% end) %>
+          </.button>
         </.link>
         <.link patch={~p"/tenants/#{@tenant.slug}/projects"} phx-click={JS.push_focus()}>
-          <.button>Projects</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Projects") %>
+            <% end) %>
+          </.button>
         </.link>
         <.link navigate={~p"/tenants/#{@tenant.slug}/today"} phx-click={JS.push_focus()}>
-          <.button>Today</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Today") %>
+            <% end) %>
+          </.button>
         </.link>
       </:actions>
     </.header>
 
     <.list>
-      <:item title="slug"><%= @tenant.slug %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @tenant.slug %></:item>
 
-      <:item title="Name"><%= @tenant.name %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Name") end)}><%= @tenant.name %></:item>
 
-      <:item title="Owner"><%= @tenant.owner.as_string %></:item>
-      <:item title="Timezone"><%= @tenant.timezone %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Owner") end)}>
+        <%= @tenant.owner.as_string %>
+      </:item>
+      <:item title={with_locale(@language, fn -> gettext("Timezone") end)}>
+        <%= @tenant.timezone %>
+      </:item>
 
-      <:item title="Additional info"><%= @tenant.additional_info %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Additional info") end)}>
+        <%= @tenant.additional_info %>
+      </:item>
 
-      <:item title="Street"><%= @tenant.street %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Street") end)}><%= @tenant.street %></:item>
 
-      <:item title="Street2"><%= @tenant.street2 %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Street2") end)}>
+        <%= @tenant.street2 %>
+      </:item>
 
-      <:item title="Po box"><%= @tenant.po_box %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Po box") end)}><%= @tenant.po_box %></:item>
 
-      <:item title="Zip code"><%= @tenant.zip_code %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Zip code") end)}>
+        <%= @tenant.zip_code %>
+      </:item>
 
-      <:item title="City"><%= @tenant.city %></:item>
+      <:item title={with_locale(@language, fn -> gettext("City") end)}><%= @tenant.city %></:item>
 
-      <:item title="Canton"><%= @tenant.canton %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Canton") end)}><%= @tenant.canton %></:item>
 
-      <:item title="Country"><%= @tenant.country %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Country") end)}>
+        <%= @tenant.country %>
+      </:item>
 
-      <:item title="Description"><%= @tenant.description %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Description") end)}>
+        <%= @tenant.description %>
+      </:item>
 
-      <:item title="Owner"><%= @tenant.owner_id %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Owner") end)}>
+        <%= @tenant.owner_id %>
+      </:item>
 
-      <:item title="Phone"><%= @tenant.phone %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Phone") end)}>
+        <%= @tenant.phone %>
+      </:item>
 
-      <:item title="Fax"><%= @tenant.fax %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Fax") end)}>
+        <%= @tenant.fax %>
+      </:item>
 
-      <:item title="Email"><%= @tenant.email %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Email") end)}>
+        <%= @tenant.email %>
+      </:item>
 
-      <:item title="Website"><%= @tenant.website %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Website") end)}>
+        <%= @tenant.website %>
+      </:item>
 
-      <:item title="Zsr number"><%= @tenant.zsr_number %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Zsr Number") end)}>
+        <%= @tenant.zsr_number %>
+      </:item>
 
-      <:item title="Ean gln"><%= @tenant.ean_gln %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Ean gln") end)}>
+        <%= @tenant.ean_gln %>
+      </:item>
 
-      <:item title="Uid bfs number"><%= @tenant.uid_bfs_number %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Uid Bfs Number") end)}>
+        <%= @tenant.uid_bfs_number %>
+      </:item>
 
-      <:item title="Trade register no"><%= @tenant.trade_register_no %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Trade register no") end)}>
+        <%= @tenant.trade_register_no %>
+      </:item>
 
-      <:item title="Bur number"><%= @tenant.bur_number %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Bur number") end)}>
+        <%= @tenant.bur_number %>
+      </:item>
 
-      <:item title="Account number"><%= @tenant.account_number %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Account number") end)}>
+        <%= @tenant.account_number %>
+      </:item>
 
-      <:item title="Iban"><%= @tenant.iban %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Iban") end)}>
+        <%= @tenant.iban %>
+      </:item>
 
-      <:item title="Bic"><%= @tenant.bic %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Bic") end)}>
+        <%= @tenant.bic %>
+      </:item>
 
-      <:item title="Bank"><%= @tenant.bank %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Bank") end)}><%= @tenant.bank %></:item>
 
-      <:item title="Account holder"><%= @tenant.account_holder %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Account holder") end)}>
+        <%= @tenant.account_holder %>
+      </:item>
     </.list>
 
-    <.back navigate={~p"/tenants"}>Back to tenants</.back>
+    <.back navigate={~p"/tenants"}>
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Back to tenants") %>
+      <% end) %>
+    </.back>
 
     <.modal
       :if={@live_action == :edit}
@@ -95,6 +157,7 @@ defmodule OmedisWeb.TenantLive.Show do
         title={@page_title}
         current_user={@current_user}
         action={@live_action}
+        language={@language}
         tenant={@tenant}
         patch={~p"/tenants/#{@tenant.slug}"}
       />
@@ -111,6 +174,7 @@ defmodule OmedisWeb.TenantLive.Show do
         title={@page_title}
         tenants={@tenants}
         action={@live_action}
+        language={@language}
         log_category={@log_category}
         patch={~p"/tenants/#{@tenant.slug}/log_categories"}
       />
@@ -119,18 +183,20 @@ defmodule OmedisWeb.TenantLive.Show do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket}
+  def mount(_params, %{"language" => language} = _session, socket) do
+    {:ok,
+     socket
+     |> assign(:language, language)}
   end
 
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
+     |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:tenant, Tenant.by_slug!(slug))}
   end
 
-  defp page_title(:show), do: "Show Tenant"
-  defp page_title(:edit), do: "Edit Tenant"
+  defp page_title(:show, language), do: with_locale(language, fn -> gettext("Show Tenant") end)
+  defp page_title(:edit, language), do: with_locale(language, fn -> gettext("Edit Tenant") end)
 end

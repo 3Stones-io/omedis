@@ -8,10 +8,17 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     ~H"""
     <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button ">Back</.link>
     <.header>
-      Listing Log categories
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Listing Log categories") %>
+      <% end) %>
+
       <:actions>
         <.link patch={~p"/tenants/#{@tenant.slug}/log_categories/new"}>
-          <.button>New Log category</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("New Log category") %>
+            <% end) %>
+          </.button>
         </.link>
       </:actions>
     </.header>
@@ -25,20 +32,38 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         end
       }
     >
-      <:col :let={{_id, log_category}} label="Id"><%= log_category.id %></:col>
+      <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("ID") end)}>
+        <%= log_category.id %>
+      </:col>
 
-      <:col :let={{_id, log_category}} label="Name"><%= log_category.name %></:col>
+      <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Name") end)}>
+        <%= log_category.name %> ><%= log_category.name %>
+      </:col>
 
-      <:col :let={{_id, log_category}} label="Tenant"><%= log_category.tenant_id %></:col>
-      <:col :let={{_id, log_category}} label="Color code"><%= log_category.color_code %></:col>
-      <:col :let={{_id, log_category}} label="position"><%= log_category.position %></:col>
+      <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Tenant") end)}>
+        <%= log_category.tenant_id %>
+      </:col>
+      <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Color code") end)}>
+        <%= log_category.color_code %>
+      </:col>
+      <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Position") end)}>
+        <%= log_category.position %>
+      </:col>
 
       <:action :let={{_id, log_category}}>
         <div class="sr-only">
-          <.link navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}"}>Show</.link>
+          <.link navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}"}>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Show") %>
+            <% end) %>
+          </.link>
         </div>
 
-        <.link patch={~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}/edit"}>Edit</.link>
+        <.link patch={~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}/edit"}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Edit") %>
+          <% end) %>
+        </.link>
       </:action>
     </.table>
 
@@ -56,6 +81,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         tenant={@tenant}
         is_custom_color={@is_custom_color}
         next_position={@next_position}
+        language={@language}
         action={@live_action}
         log_category={@log_category}
         patch={~p"/tenants/#{@tenant.slug}/log_categories"}
@@ -64,7 +90,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     """
   end
 
-  def mount(%{"slug" => slug}, _session, socket) do
+  def mount(%{"slug" => slug}, %{"language" => language} = _session, socket) do
     tenant = Tenant.by_slug!(slug)
     next_position = LogCategory.get_max_position_by_tenant_id(tenant.id) + 1
 
@@ -73,15 +99,17 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> stream(:log_categories, LogCategory.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:tenant, Tenant.by_id!(tenant.id))
+     |> assign(:language, language)
      |> assign(:is_custom_color, false)
      |> assign(:next_position, next_position)}
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"language" => language} = _session, socket) do
     {:ok,
      socket
      |> stream(:log_categories, Ash.read!(LogCategory))
+     |> assign(:language, language)
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:tenant, nil)}
   end
@@ -99,19 +127,28 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "Edit Log category")
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn -> gettext("Edit Log category") end)
+    )
     |> assign(:log_category, LogCategory.by_id!(id))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "New Log category")
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn -> gettext("New Log category") end)
+    )
     |> assign(:log_category, nil)
   end
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Log categories")
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn -> gettext("Listing Log categories") end)
+    )
     |> assign(:log_category, nil)
   end
 

@@ -6,10 +6,16 @@ defmodule OmedisWeb.TenantLive.Index do
   def render(assigns) do
     ~H"""
     <.header>
-      Listing Tenants
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Listing Tenants") %>
+      <% end) %>
       <:actions>
         <.link patch={~p"/tenants/new"}>
-          <.button>New Tenant</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("New Tenant") %>
+            <% end) %>
+          </.button>
         </.link>
       </:actions>
     </.header>
@@ -20,14 +26,14 @@ defmodule OmedisWeb.TenantLive.Index do
         rows={@streams.tenants}
         row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant.slug}") end}
       >
-        <:col :let={{_id, tenant}} label="Name">
+        <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Name") end)}>
           <%= tenant.name %>
           <%= if not is_nil(tenant.additional_info) and tenant.additional_info != "" do %>
             <br />
             <%= tenant.additional_info %>
           <% end %>
         </:col>
-        <:col :let={{_id, tenant}} label="Street">
+        <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Street") end)}>
           <%= tenant.street %>
           <%= if not is_nil(tenant.street2) do %>
             <br />
@@ -39,15 +45,31 @@ defmodule OmedisWeb.TenantLive.Index do
             <%= tenant.po_box %>
           <% end %>
         </:col>
-        <:col :let={{_id, tenant}} label="Zip code"><%= tenant.zip_code %></:col>
-        <:col :let={{_id, tenant}} label="City"><%= tenant.city %></:col>
-        <:col :let={{_id, tenant}} label="Canton"><%= tenant.canton %></:col>
-        <:col :let={{_id, tenant}} label="Website"><%= tenant.website %></:col>
+        <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Zip code") end)}>
+          <%= tenant.zip_code %>
+        </:col>
+        <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("City") end)}>
+          <%= tenant.city %>
+        </:col>
+        <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Canton") end)}>
+          <%= tenant.canton %>
+        </:col>
+        <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Country") end)}>
+          <%= tenant.website %>
+        </:col>
         <:action :let={{_id, tenant}}>
           <div class="sr-only">
-            <.link navigate={~p"/tenants/#{tenant.slug}"}>Show</.link>
+            <.link navigate={~p"/tenants/#{tenant.slug}"}>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Show") %>
+              <% end) %>
+            </.link>
           </div>
-          <.link patch={~p"/tenants/#{tenant.slug}/edit"}>Edit</.link>
+          <.link patch={~p"/tenants/#{tenant.slug}/edit"}>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Edit") %>
+            <% end) %>
+          </.link>
         </:action>
       </.table>
     </div>
@@ -65,6 +87,7 @@ defmodule OmedisWeb.TenantLive.Index do
         action={@live_action}
         tenant={@tenant}
         current_user={@current_user}
+        language={@language}
         patch={~p"/tenants"}
       />
     </.modal>
@@ -72,7 +95,11 @@ defmodule OmedisWeb.TenantLive.Index do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"language" => language} = _session, socket) do
+    socket =
+      socket
+      |> assign(:language, language)
+
     {:ok, stream(socket, :tenants, Ash.read!(Tenant))}
   end
 
@@ -83,19 +110,22 @@ defmodule OmedisWeb.TenantLive.Index do
 
   defp apply_action(socket, :edit, %{"slug" => slug}) do
     socket
-    |> assign(:page_title, "Edit Tenant")
+    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Edit Tenant") end))
     |> assign(:tenant, Tenant.by_slug!(slug))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "New Tenant")
+    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("New Tenant") end))
     |> assign(:tenant, nil)
   end
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Tenants")
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn -> gettext("Listing Tenants") end)
+    )
     |> assign(:tenant, nil)
   end
 
