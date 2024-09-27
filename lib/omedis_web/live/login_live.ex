@@ -102,8 +102,8 @@ defmodule OmedisWeb.LoginLive do
               ) %>
               <.error :for={msg <- get_field_errors(f[:email], :email)}>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Email") %>
-                <% end) <> " " <> msg %>
+                  <%= gettext("Email") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -126,8 +126,8 @@ defmodule OmedisWeb.LoginLive do
               ) %>
               <.error :for={msg <- get_field_errors(f[:password], :password)}>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Password") %>
-                <% end) <> " " <> msg %>
+                  <%= gettext("Password") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>

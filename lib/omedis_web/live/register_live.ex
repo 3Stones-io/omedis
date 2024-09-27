@@ -117,8 +117,8 @@ defmodule OmedisWeb.RegisterLive do
                 ) %>
                 <.error :for={msg <- get_field_errors(f[:email], :email)}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("Email") %>
-                  <% end) <> " " <> msg %>
+                    <%= gettext("Email") <> " " <> msg %>
+                  <% end) %>
                 </.error>
               </div>
             </div>
@@ -141,8 +141,8 @@ defmodule OmedisWeb.RegisterLive do
                 ) %>
                 <.error :for={msg <- get_field_errors(f[:password], :password)}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("Password") %>
-                  <% end) <> " " <> msg %>
+                    <%= gettext("Password") <> " " <> msg %>
+                  <% end) %>
                 </.error>
               </div>
             </div>
@@ -164,8 +164,8 @@ defmodule OmedisWeb.RegisterLive do
                 ) %>
                 <.error :for={msg <- get_field_errors(f[:first_name], :first_name)}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("First Name") %>
-                  <% end) <> " " <> msg %>
+                    <%= gettext("First Name") <> " " <> msg %>
+                  <% end) %>
                 </.error>
               </div>
             </div>
@@ -186,8 +186,8 @@ defmodule OmedisWeb.RegisterLive do
                 ) %>
                 <.error :for={msg <- get_field_errors(f[:last_name], :last_name)}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("Last Name") %>
-                  <% end) <> " " <> msg %>
+                    <%= gettext("Last Name") <> " " <> msg %>
+                  <% end) %>
                 </.error>
               </div>
             </div>
@@ -209,8 +209,8 @@ defmodule OmedisWeb.RegisterLive do
                 ) %>
                 <.error :for={msg <- get_field_errors(f[:gender], :gender)}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("Gender") %>
-                  <% end) <> " " <> msg %>
+                    <%= gettext("Gender") <> " " <> msg %>
+                  <% end) %>
                 </.error>
               </div>
             </div>
@@ -231,8 +231,8 @@ defmodule OmedisWeb.RegisterLive do
                 ) %>
                 <.error :for={msg <- get_field_errors(f[:birthdate], :birthdate)}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("Birthdate") %>
-                  <% end) <> " " <> msg %>
+                    <%= gettext("Birthdate") <> " " <> msg %>
+                  <% end) %>
                 </.error>
               </div>
             </div>
@@ -254,8 +254,8 @@ defmodule OmedisWeb.RegisterLive do
                 ) %>
                 <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("Language") %>
-                  <% end) <> " " <> msg %>
+                    <%= gettext("Language") <> " " <> msg %>
+                  <% end) %>
                 </.error>
               </div>
             </div>
