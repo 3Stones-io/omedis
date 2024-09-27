@@ -7,7 +7,11 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage project records in your database.</:subtitle>
+        <:subtitle>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Use this form to manage project records in your database.") %>
+          <% end) %>
+        </:subtitle>
       </.header>
 
       <.simple_form
@@ -17,7 +21,11 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:name]} type="text" label="Name" />
+        <.input
+          field={@form[:name]}
+          type="text"
+          label={with_locale(@language, fn -> gettext("Name") end)}
+        />
         <input type="hidden" name="project[tenant_id]" value={@tenant.id} />
         <.input
           field={@form[:tenant_id]}
@@ -35,7 +43,11 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
         </div>
 
         <:actions>
-          <.button phx-disable-with="Saving...">Save Project</.button>
+          <.button phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Save Project") %>
+            <% end) %>
+          </.button>
         </:actions>
       </.simple_form>
     </div>
@@ -63,7 +75,10 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
 
         socket =
           socket
-          |> put_flash(:info, "Project #{socket.assigns.form.source.type}d successfully")
+          |> put_flash(
+            :info,
+            with_locale(socket.assigns.language, fn -> gettext("Project saved.") end)
+          )
           |> push_patch(to: socket.assigns.patch)
 
         {:noreply, socket}
@@ -72,7 +87,12 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
         {:noreply,
          socket
          |> assign(form: form)
-         |> put_flash(:error, "Please correct the errors below")}
+         |> put_flash(
+           :error,
+           with_locale(socket.assigns.language, fn ->
+             gettext("Please correct the errors below.")
+           end)
+         )}
     end
   end
 

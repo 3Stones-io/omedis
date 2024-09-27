@@ -66,72 +66,142 @@ defmodule OmedisWeb.TenantLive.FormComponent do
 
         <input type="hidden" value={@current_user.id} name="tenant[owner_id]" />
         <div class="space-y-3">
-          <.input field={@form[:daily_start_at]} type="time" label="Daily Start At" />
+          <.input
+            field={@form[:daily_start_at]}
+            type="time"
+            label={with_locale(@language, fn -> gettext("Daily Start At") end)}
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:daily_end_at]} type="time" label="Daily End At" />
+          <.input
+            field={@form[:daily_end_at]}
+            type="time"
+            label={with_locale(@language, fn -> gettext("Daily End At") end)}
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:additional_info]} type="text" label="Additional info" />
-        </div>
-
-        <div class="space-y-3">
-          <.input field={@form[:po_box]} type="text" label="Po box" />
-        </div>
-
-        <div class="space-y-3">
-          <.input field={@form[:canton]} type="text" label="Canton" />
-        </div>
-        <div class="space-y-3">
-          <.input field={@form[:phone]} type="text" label="Phone" />
-        </div>
-        <div class="space-y-3">
-          <.input field={@form[:fax]} type="text" label="Fax" />
+          <.input
+            field={@form[:additional_info]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Additional Info") end)}
+          />
         </div>
 
         <div class="space-y-3">
-          <.input field={@form[:email]} type="text" label="Email" />
+          <.input
+            field={@form[:po_box]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Po Box") end)}
+          />
+        </div>
+
+        <div class="space-y-3">
+          <.input
+            field={@form[:canton]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Canton") end)}
+          />
+        </div>
+        <div class="space-y-3">
+          <.input
+            field={@form[:phone]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Phone") end)}
+          />
+        </div>
+        <div class="space-y-3">
+          <.input
+            field={@form[:fax]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Fax") end)}
+          />
+        </div>
+
+        <div class="space-y-3">
+          <.input
+            field={@form[:email]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Email") end)}
+          />
           <.error :for={msg <- get_field_errors(f[:email], :email)}>
             <%= "Email" <> " " <> msg %>
           </.error>
         </div>
 
         <div class="space-y-3">
-          <.input field={@form[:website]} type="text" label="Website" />
+          <.input
+            field={@form[:website]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Website") end)}
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:zsr_number]} type="text" label="Zsr number" />
+          <.input
+            field={@form[:zsr_number]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Zsr Number") end)}
+          />
           <.error :for={msg <- get_field_errors(f[:zsr_number], :zsr_number)}>
             <%= "Zsr_number" <> " " <> msg %>
           </.error>
         </div>
         <div class="space-y-3">
-          <.input field={@form[:ean_gln]} type="text" label="Ean gln" />
+          <.input
+            field={@form[:ean_gln]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Ean Gln") end)}
+          />
         </div>
 
         <div class="space-y-3">
-          <.input field={@form[:uid_bfs_number]} type="text" label="Uid bfs number" />
+          <.input
+            field={@form[:uid_bfs_number]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Uid Bfs Number") end)}
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:trade_register_no]} type="text" label="Trade register no" />
+          <.input
+            field={@form[:trade_register_no]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Trade Register No") end)}
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:bank]} type="text" label="Bank" />
+          <.input
+            field={@form[:bank]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Bank") end)}
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:iban]} type="text" label="Iban" />
+          <.input
+            field={@form[:iban]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Iban") end)}
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:bic]} type="text" label="Bic" />
+          <.input
+            field={@form[:bic]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Bic") end)}
+          />
         </div>
 
         <div class="space-y-3">
-          <.input field={@form[:account_number]} type="text" label="Account number" />
+          <.input
+            field={@form[:account_number]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Account Number") end)}
+          />
         </div>
 
         <:actions>
-          <.button phx-disable-with="Saving...">
-            Save Tenant
+          <.button phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Save Tenant") %>
+            <% end) %>
           </.button>
         </:actions>
       </.simple_form>
@@ -172,7 +242,10 @@ defmodule OmedisWeb.TenantLive.FormComponent do
 
         socket =
           socket
-          |> put_flash(:info, "Tenant #{socket.assigns.form.source.type}d successfully")
+          |> put_flash(
+            :info,
+            with_locale(socket.assigns.language, fn -> gettext("Tenant saved.") end)
+          )
           |> push_patch(to: socket.assigns.patch)
 
         {:noreply, socket}

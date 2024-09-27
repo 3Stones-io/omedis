@@ -7,37 +7,64 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   def render(assigns) do
     ~H"""
     <.header>
-      Log category <%= @log_category.id %>
-      <:subtitle>This is a log_category record from your database.</:subtitle>
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Log category") %>
+      <% end) %>
+      <%= @log_category.id %>
+      <:subtitle>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("This is a log_category record from your database.") %>
+        <% end) %>
+      </:subtitle>
 
       <:actions>
         <.link
           patch={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/show/edit"}
           phx-click={JS.push_focus()}
         >
-          <.button>Edit log_category</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Edit log_category") %>
+            <% end) %>
+          </.button>
         </.link>
 
         <.link
           navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/log_entries"}
           phx-click={JS.push_focus()}
         >
-          <.button>View Log entries</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("View Log entries") %>
+            <% end) %>
+          </.button>
         </.link>
       </:actions>
     </.header>
 
     <.list>
-      <:item title="Id"><%= @log_category.id %></:item>
+      <:item title={with_locale(@language, fn -> gettext("ID") end)}><%= @log_category.id %></:item>
 
-      <:item title="Name"><%= @log_category.name %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Name") end)}>
+        <%= @log_category.name %>
+      </:item>
 
-      <:item title="Tenant id"><%= @log_category.tenant_id %></:item>
-      <:item title="Color code"><%= @log_category.color_code %></:item>
-      <:item title="position"><%= @log_category.position %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Tenant ID") end)}>
+        <%= @log_category.tenant_id %>
+      </:item>
+      <:item title={with_locale(@language, fn -> gettext("Color code") end)}>
+        <%= @log_category.color_code %>
+      </:item>
+      <:item title={with_locale(@language, fn -> gettext("Position") end)}>
+        <%= @log_category.position %>
+      </:item>
     </.list>
 
-    <.back navigate={~p"/tenants/#{@tenant.slug}/log_categories"}>Back to log categories</.back>
+    <.back navigate={~p"/tenants/#{@tenant.slug}/log_categories"}>
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Back to log categories") %>
+      <% end) %>
+    </.back>
 
     <.modal
       :if={@live_action == :edit}
@@ -55,6 +82,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
         is_custom_color={@is_custom_color}
         tenants={@tenants}
         next_position={@next_position}
+        language={@language}
         log_category={@log_category}
         patch={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}"}
       />
@@ -63,8 +91,10 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket}
+  def mount(_params, %{"language" => language} = _session, socket) do
+    {:ok,
+     socket
+     |> assign(:language, language)}
   end
 
   @impl true
@@ -75,7 +105,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
 
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
+     |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:log_category, log_category)
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:tenant, tenant)
@@ -84,6 +114,9 @@ defmodule OmedisWeb.LogCategoryLive.Show do
      |> assign(:next_position, next_position)}
   end
 
-  defp page_title(:show), do: "Show Log category"
-  defp page_title(:edit), do: "Edit Log category"
+  defp page_title(:show, language),
+    do: with_locale(language, fn -> gettext("Show Log category") end)
+
+  defp page_title(:edit, language),
+    do: with_locale(language, fn -> gettext("Edit Log category") end)
 end

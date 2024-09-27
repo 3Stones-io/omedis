@@ -43,23 +43,31 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
         <% end %>
 
         <div class="flex gap-5">
-          <p>Enter custom color</p>
+          <p>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Enter custom color") %>
+            <% end) %>
+          </p>
           <div
             role="switch"
             phx-click="toggle_color_mode"
             phx-target={@myself}
             class={
-    "relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out " <>
-    if @is_custom_color, do: "bg-green-500", else: "bg-gray-200"
-    }
+         "relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out " <>
+           if @is_custom_color, do: "bg-green-500", else: "bg-gray-200"
+           }
             aria-checked={@is_custom_color}
           >
-            <span class="sr-only">Enable or disable custom color input</span>
+            <span class="sr-only">
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Enable or disable custom color input") %>
+              <% end) %>
+            </span>
 
             <span class={
-      "block w-5 h-5 transform bg-white rounded-full transition duration-200 ease-in-out " <>
-      if @is_custom_color, do: "translate-x-5", else: "translate-x-0"
-    }>
+          "block w-5 h-5 transform bg-white rounded-full transition duration-200 ease-in-out " <>
+         if @is_custom_color, do: "translate-x-5", else: "translate-x-0"
+        }>
             </span>
           </div>
         </div>
@@ -123,9 +131,11 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
               end
             }
             disabled={@form.source.source.valid? == false}
-            phx-disable-with="Saving..."
+            phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}
           >
-            Save Log category
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Save Log category") %>
+            <% end) %>
           </.button>
         </:actions>
       </.simple_form>
@@ -163,7 +173,12 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
 
         socket =
           socket
-          |> put_flash(:info, "Log category #{socket.assigns.form.source.type}d successfully")
+          |> put_flash(
+            :info,
+            with_locale(socket.assigns.language, fn ->
+              gettext("Log category saved successfully")
+            end)
+          )
           |> push_patch(to: socket.assigns.patch)
 
         {:noreply, socket}
@@ -172,7 +187,12 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
         {:noreply,
          socket
          |> assign(form: form)
-         |> put_flash(:error, "Log category could not be saved")}
+         |> put_flash(
+           :error,
+           with_locale(socket.assigns.language, fn ->
+             gettext("Please correct the errors below")
+           end)
+         )}
     end
   end
 

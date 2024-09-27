@@ -7,25 +7,39 @@ defmodule OmedisWeb.ProjectLive.Show do
   def render(assigns) do
     ~H"""
     <.header>
-      Project
-      <:subtitle>This is a project record from your database.</:subtitle>
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Project") %>
+      <% end) %>
+      <:subtitle>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("This is a project record from your database.") %>
+        <% end) %>
+      </:subtitle>
 
       <:actions>
         <.link
           patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}/show/edit"}
           phx-click={JS.push_focus()}
         >
-          <.button>Edit project</.button>
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Edit project") %>
+            <% end) %>
+          </.button>
         </.link>
       </:actions>
     </.header>
 
     <.list>
-      <:item title="Name"><%= @project.name %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Name") end)}><%= @project.name %></:item>
 
-      <:item title="Tenant"><%= @project.tenant_id %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Tenant ID") end)}>
+        <%= @project.tenant_id %>
+      </:item>
 
-      <:item title="Position"><%= @project.position %></:item>
+      <:item title={with_locale(@language, fn -> gettext("Postion") end)}>
+        <%= @project.position %>
+      </:item>
     </.list>
 
     <.back navigate={~p"/tenants/#{@tenant.slug}/projects"}>Back to projects</.back>
@@ -44,6 +58,7 @@ defmodule OmedisWeb.ProjectLive.Show do
         tenants={@tenants}
         next_position={@next_position}
         action={@live_action}
+        language={@language}
         project={@project}
         patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}"}
       />
@@ -52,8 +67,10 @@ defmodule OmedisWeb.ProjectLive.Show do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket}
+  def mount(_params, %{"language" => language} = _session, socket) do
+    {:ok,
+     socket
+     |> assign(:language, language)}
   end
 
   @impl true
@@ -63,13 +80,13 @@ defmodule OmedisWeb.ProjectLive.Show do
 
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
+     |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:project, project)
      |> assign(:next_position, project.position)
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:tenant, tenant)}
   end
 
-  defp page_title(:show), do: "Show Project"
-  defp page_title(:edit), do: "Edit Project"
+  defp page_title(:show, language), do: with_locale(language, fn -> gettext("Project") end)
+  defp page_title(:edit, language), do: with_locale(language, fn -> gettext("Edit Project") end)
 end
