@@ -249,8 +249,6 @@ msgstr "Prénom"
 msgid "Gender"
 msgstr "Genre"
 
-
-
 #: lib/omedis_web/components/core_components.ex:173
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
@@ -676,3 +674,13 @@ msgstr "fermer"
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "nouveau mot de passe"
+
+#: lib/omedis_web/live/language_switcher.ex:22
+#, elixir-autogen, elixir-format
+msgid "Language switched successfully"
+msgstr "Langue changée avec succès"
+
+#: lib/omedis_web/live/language_switcher.ex:33
+#, elixir-autogen, elixir-format
+msgid "Please select your preferred language"
+msgstr "Veuillez sélectionner votre langue préférée"
