@@ -695,7 +695,7 @@ defmodule OmedisWeb.GeneralComponents do
   defp dropdown_items(assigns) do
     ~H"""
     <div
-      class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+      class="absolute right-0 z-10 mt-2.5  origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
       role="menu"
       @click.outside="open = false"
       @keydown.escape.window="open = false"
@@ -713,6 +713,9 @@ defmodule OmedisWeb.GeneralComponents do
         <.link navigate="/auth/user/sign-out">
           Sign out
         </.link>
+        <.link navigate="/language-switcher">
+          Change Language
+        </.link>
       </div>
 
       <div :if={@current_user == nil} class="flex p-2 flex-col gap-2">
@@ -721,6 +724,9 @@ defmodule OmedisWeb.GeneralComponents do
         </.link>
         <.link navigate="/register">
           Register
+        </.link>
+        <.link navigate="/language-switcher">
+          Change Language
         </.link>
       </div>
     </div>

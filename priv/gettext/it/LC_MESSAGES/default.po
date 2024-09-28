@@ -249,15 +249,7 @@ msgstr "Nome"
 msgid "Gender"
 msgstr "Genere"
 
-
-
-#: lib/omedis_web/live/login_live.ex:137
-#, elixir-autogen, elixir-format
-msgid "Signing in..."
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex:277
-#, elixir-autogen, elixir-format#: lib/omedis_web/components/core_components.ex:173
+#: lib/omedis_web/components/core_components.ex:173
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
 msgstr "Resisti mentre torniamo in carreggiata"
@@ -522,6 +514,16 @@ msgstr "Accedi"
 msgid "Sign up"
 msgstr "Registrati"
 
+#: lib/omedis_web/live/login_live.ex:137
+#, elixir-autogen, elixir-format
+msgid "Signing in..."
+msgstr ""
+
+#: lib/omedis_web/live/register_live.ex:277
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Signing up..."
+msgstr ""
+
 #: lib/omedis_web/live/tenant_live/show.ex:44
 #, elixir-autogen, elixir-format
 msgid "Slug"
@@ -656,7 +658,7 @@ msgid "Zip code"
 msgstr "Codice postale"
 
 #: lib/omedis_web/live/tenant_live/form_component.ex:142
-#: lib/omedis_web/live/tenant_live/show.ex:103=
+#: lib/omedis_web/live/tenant_live/show.ex:103
 #, elixir-autogen, elixir-format
 msgid "Zsr Number"
 msgstr "Numero Zsr"
@@ -672,3 +674,13 @@ msgstr "chiudi"
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "nuova password"
+
+#: lib/omedis_web/live/language_switcher.ex:22
+#, elixir-autogen, elixir-format
+msgid "Language switched successfully"
+msgstr "Lingua cambiata con successo"
+
+#: lib/omedis_web/live/language_switcher.ex:33
+#, elixir-autogen, elixir-format
+msgid "Please select your preferred language"
+msgstr "Si prega di selezionare la lingua preferita"
