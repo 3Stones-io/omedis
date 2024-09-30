@@ -1,8 +1,8 @@
 defmodule OmedisWeb.LogCategoryLive.Show do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Tenant
-  alias Omedis.Accounts.Group
 
   @impl true
   def render(assigns) do

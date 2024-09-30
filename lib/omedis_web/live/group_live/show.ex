@@ -44,11 +44,11 @@ defmodule OmedisWeb.GroupLive.Show do
       <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @group.slug %></:item>
     </.list>
 
-    <%!-- <.back navigate={~p"/tenants"}>
+    <.back navigate={~p"/tenants/#{@tenant.slug}/groups"}>
       <%= with_locale(@language, fn -> %>
-        <%= gettext("Back to tenants") %>
+        <%= gettext("Back to groups") %>
       <% end) %>
-    </.back> --%>
+    </.back>
 
     <.modal
       :if={@live_action == :edit}

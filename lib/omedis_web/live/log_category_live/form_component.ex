@@ -117,6 +117,7 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           <.input
             field={@form[:position]}
             value={@next_position}
+            class="hidden"
             label={Phoenix.HTML.raw("Position  <span class='text-red-600'>*</span>")}
           />
         </div>
@@ -153,7 +154,7 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"log_category" => log_category_params}, socket) do
-    form = AshPhoenix.Form.validate(socket.assigns.form, log_category_params) |> IO.inspect()
+    form = AshPhoenix.Form.validate(socket.assigns.form, log_category_params)
 
     {:noreply,
      socket

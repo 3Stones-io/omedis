@@ -1,8 +1,8 @@
 defmodule OmedisWeb.LogCategoryLive.Index do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Tenant
-  alias Omedis.Accounts.Group
 
   @impl true
   def render(assigns) do
@@ -53,14 +53,18 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
       <:action :let={{_id, log_category}}>
         <div class="sr-only">
-          <.link navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}"}>
+          <.link navigate={
+            ~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/#{log_category}"
+          }>
             <%= with_locale(@language, fn -> %>
               <%= gettext("Show") %>
             <% end) %>
           </.link>
         </div>
 
-        <.link patch={~p"/tenants/#{@tenant.slug}/log_categories/#{log_category}/edit"}>
+        <.link patch={
+          ~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/#{log_category}/edit"
+        }>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Edit") %>
           <% end) %>
@@ -124,7 +128,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    IO.inspect(params)
     group = Group.by_id!(params["group_id"])
     next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
 
