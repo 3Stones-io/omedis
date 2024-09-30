@@ -28,6 +28,7 @@ defmodule Omedis.Accounts.Group do
     define :read
     define :create
     define :update
+    define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_tenant_id
   end
