@@ -49,12 +49,10 @@ defmodule OmedisWeb.Router do
       live "/tenants/:slug/projects/:id/edit", ProjectLive.Index, :edit
       live "/tenants/:slug/projects/:id/show/edit", ProjectLive.Show, :edit
 
-      # live "/projects", ProjectLive.Index, :index
-      # live "/projects/new", ProjectLive.Index, :new
-      # live "/projects/:id/edit", ProjectLive.Index, :edit
+      live "/tenants/:slug/groups", GroupLive.Index, :index
+      live "/tenants/:slug/groups/new", GroupLive.Index, :new
+      live "/tenants/:slug/groups/:id/edit", GroupLive.Index, :edit
 
-      # live "/projects/:id", ProjectLive.Show, :show
-      # live "/projects/:id/show/edit", ProjectLive.Show, :edit
       live "/tenants/:slug/log_categories/:id", LogCategoryLive.Show, :show
       live "/tenants/:slug/log_categories/:id/edit", LogCategoryLive.Index, :edit
       live "/tenants/:slug/log_categories/:id/show/edit", LogCategoryLive.Show, :edit
