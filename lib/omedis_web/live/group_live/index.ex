@@ -21,7 +21,11 @@ defmodule OmedisWeb.GroupLive.Index do
       </:actions>
     </.header>
 
-    <.table id="groups" rows={@streams.groups}>
+    <.table
+      id="groups"
+      rows={@streams.groups}
+      row_click={fn {_id, group} -> JS.navigate(~p"/tenants/#{@tenant.slug}/groups/#{group.id}") end}
+    >
       <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("ID") end)}>
         <%= group.id %>
       </:col>

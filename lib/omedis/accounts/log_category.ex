@@ -26,7 +26,7 @@ defmodule Omedis.Accounts.LogCategory do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
+      reference :group, on_delete: :delete
     end
   end
 
@@ -41,20 +41,20 @@ defmodule Omedis.Accounts.LogCategory do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
-    define :by_tenant_id
-    define :max_position_by_tenant_id
+    define :by_group_id
+    define :max_position_by_group_id
   end
 
   identities do
-    identity :unique_color_code_position, [:color_code, :tenant_id]
-    identity :unique_position, [:position, :tenant_id]
+    identity :unique_color_code_position, [:color_code, :group_id]
+    identity :unique_position, [:position, :group_id]
   end
 
   actions do
     create :create do
       accept [
         :name,
-        :tenant_id,
+        :group_id,
         :color_code,
         :position
       ]
@@ -65,7 +65,7 @@ defmodule Omedis.Accounts.LogCategory do
     update :update do
       accept [
         :name,
-        :tenant_id,
+        :group_id,
         :color_code,
         :position
       ]
@@ -78,18 +78,18 @@ defmodule Omedis.Accounts.LogCategory do
       primary? true
     end
 
-    read :by_tenant_id do
-      argument :tenant_id, :uuid do
+    read :by_group_id do
+      argument :group_id, :uuid do
         allow_nil? false
       end
 
       prepare build(load: [:log_entries])
 
-      filter expr(tenant_id == ^arg(:tenant_id))
+      filter expr(group_id == ^arg(:group_id))
     end
 
-    read :max_position_by_tenant_id do
-      argument :tenant_id, :uuid do
+    read :max_position_by_group_id do
+      argument :group_id, :uuid do
         allow_nil? false
       end
 
@@ -97,7 +97,7 @@ defmodule Omedis.Accounts.LogCategory do
         max(:max_position, :position)
       end
 
-      filter expr(tenant_id == ^arg(:tenant_id))
+      filter expr(group_id == ^arg(:group_id))
     end
 
     destroy :destroy do
@@ -106,7 +106,6 @@ defmodule Omedis.Accounts.LogCategory do
 
   validations do
     validate present(:name)
-    validate present(:tenant_id)
 
     validate match(:color_code, ~r/^#[0-9A-Fa-f]{6}$/),
       message: "Color code must be a valid hex color code eg. #FF0000"
@@ -120,7 +119,7 @@ defmodule Omedis.Accounts.LogCategory do
     uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :tenant_id, :uuid, allow_nil?: false, public?: true
+    attribute :group_id, :uuid, allow_nil?: false, public?: true
 
     attribute :color_code, :string, allow_nil?: true, public?: true
 
@@ -130,9 +129,9 @@ defmodule Omedis.Accounts.LogCategory do
     update_timestamp :updated_at
   end
 
-  def get_max_position_by_tenant_id(tenant_id) do
+  def get_max_position_by_group_id(group_id) do
     __MODULE__
-    |> Ash.Query.filter(tenant_id: tenant_id)
+    |> Ash.Query.filter(group_id: group_id)
     |> Ash.Query.sort(position: :desc)
     |> Ash.Query.limit(1)
     |> Ash.Query.select([:position])
@@ -144,16 +143,16 @@ defmodule Omedis.Accounts.LogCategory do
     end
   end
 
-  def get_color_code_for_a_tenant(tenant_id) do
+  def get_color_code_for_a_group(group_id) do
     __MODULE__
-    |> Ash.Query.filter(tenant_id: tenant_id)
+    |> Ash.Query.filter(group_id: group_id)
     |> Ash.Query.select([:color_code])
     |> Ash.read!()
     |> Enum.map(& &1.color_code)
   end
 
-  def select_unused_color_code(tenant_id) do
-    existing_color_codes = get_color_code_for_a_tenant(tenant_id)
+  def select_unused_color_code(group_id) do
+    existing_color_codes = get_color_code_for_a_group(group_id)
 
     unused_color_code =
       @github_issue_color_codes
@@ -167,7 +166,7 @@ defmodule Omedis.Accounts.LogCategory do
   end
 
   relationships do
-    belongs_to :tenant, Omedis.Accounts.Tenant do
+    belongs_to :group, Omedis.Accounts.Group do
       allow_nil? true
       attribute_writable? true
     end

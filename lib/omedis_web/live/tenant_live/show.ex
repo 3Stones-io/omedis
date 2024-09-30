@@ -16,13 +16,7 @@ defmodule OmedisWeb.TenantLive.Show do
             <% end) %>
           </.button>
         </.link>
-        <.link patch={~p"/tenants/#{@tenant.slug}/log_categories"} phx-click={JS.push_focus()}>
-          <.button>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Log categories") %>
-            <% end) %>
-          </.button>
-        </.link>
+
         <.link patch={~p"/tenants/#{@tenant.slug}/projects"} phx-click={JS.push_focus()}>
           <.button>
             <%= with_locale(@language, fn -> %>
@@ -34,13 +28,6 @@ defmodule OmedisWeb.TenantLive.Show do
           <.button>
             <%= with_locale(@language, fn -> %>
               <%= gettext("Groups") %>
-            <% end) %>
-          </.button>
-        </.link>
-        <.link navigate={~p"/tenants/#{@tenant.slug}/today"} phx-click={JS.push_focus()}>
-          <.button>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Today") %>
             <% end) %>
           </.button>
         </.link>
@@ -167,23 +154,6 @@ defmodule OmedisWeb.TenantLive.Show do
         language={@language}
         tenant={@tenant}
         patch={~p"/tenants/#{@tenant.slug}"}
-      />
-    </.modal>
-    <.modal
-      :if={@live_action in [:new]}
-      id="log_category-modal"
-      show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/log_categories")}
-    >
-      <.live_component
-        module={OmedisWeb.LogCategoryLive.FormComponent}
-        id={(@log_category && @log_category.id) || :new}
-        title={@page_title}
-        tenants={@tenants}
-        action={@live_action}
-        language={@language}
-        log_category={@log_category}
-        patch={~p"/tenants/#{@tenant.slug}/log_categories"}
       />
     </.modal>
     """

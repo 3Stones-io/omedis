@@ -23,22 +23,22 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           label={Phoenix.HTML.raw("Name  <span class='text-red-600'>*</span>")}
         />
 
-        <%= if @tenant.id do %>
+        <%= if @group.id do %>
           <.input
-            field={@form[:tenant_id]}
+            field={@form[:group_id]}
             type="select"
-            label={Phoenix.HTML.raw("Tenant  <span class='text-red-600'>*</span>")}
-            options={Enum.map(@tenants, &{&1.name, &1.id})}
+            label={Phoenix.HTML.raw("Group <span class='text-red-600'>*</span>")}
+            options={Enum.map(@groups, &{&1.name, &1.id})}
             disabled={true}
-            value={@tenant.id}
+            value={@group.id}
           />
-          <input type="hidden" name="log_category[tenant_id]" value={@tenant.id} />
+          <input type="hidden" name="log_category[group_id]" value={@group.id} />
         <% else %>
           <.input
-            field={@form[:tenant_id]}
+            field={@form[:group_id]}
             type="select"
             label={Phoenix.HTML.raw("Tenant  <span class='text-red-600'>*</span>")}
-            options={Enum.map(@tenants, &{&1.name, &1.id})}
+            options={Enum.map(@groups, &{&1.name, &1.id})}
           />
         <% end %>
 
@@ -92,6 +92,8 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           />
         </div>
 
+        <input type="hidden" name="log_category[position]" value={@next_position} />
+
         <div :if={@is_custom_color}>
           <.input
             field={@form[:color_code]}
@@ -111,14 +113,6 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
               <%= @form[:name].value || "Name" %>
             </span>
           </div>
-        </div>
-
-        <div class="hidden">
-          <.input
-            field={@form[:position]}
-            value={@next_position}
-            label={Phoenix.HTML.raw("Position  <span class='text-red-600'>*</span>")}
-          />
         </div>
 
         <:actions>
