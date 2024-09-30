@@ -81,7 +81,8 @@ defmodule Omedis.Accounts.LogEntry do
         :end_at,
         :tenant_id,
         :log_category_id,
-        :user_id
+        :user_id,
+        :is_default
       ]
 
       primary? true
@@ -94,7 +95,8 @@ defmodule Omedis.Accounts.LogEntry do
         :end_at,
         :tenant_id,
         :log_category_id,
-        :user_id
+        :user_id,
+        :is_default
       ]
 
       primary? true
@@ -119,6 +121,8 @@ defmodule Omedis.Accounts.LogEntry do
 
     attribute :start_at, :time, allow_nil?: true, public?: true
     attribute :end_at, :time, allow_nil?: true, public?: true
+
+    attribute :is_default, :boolean, allow_nil?: true, public?: true, default: false
 
     create_timestamp :created_at
     update_timestamp :updated_at

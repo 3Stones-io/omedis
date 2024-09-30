@@ -2,12 +2,27 @@ defmodule Omedis.Accounts.Tenant do
   @moduledoc """
   This is the Tenant module
   """
+  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.LogEntry
   alias Omedis.Validations
   require Ash.Query
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
+
+  @github_issue_color_codes [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf"
+  ]
 
   postgres do
     table "tenants"
@@ -16,6 +31,33 @@ defmodule Omedis.Accounts.Tenant do
     references do
       reference :owner, on_delete: :delete
     end
+  end
+
+  changes do
+    change after_action(fn changeset, record, _ ->
+             with {:ok, cat} =
+                    LogCategory.create(%{
+                      tenant_id: record.id,
+                      name: "Pause",
+                      color_code: Enum.random(@github_issue_color_codes),
+                      position:
+                        Integer.to_string(
+                          LogCategory.get_max_position_by_tenant_id(record.id) + 1
+                        )
+                    }) do
+               LogEntry.create(%{
+                 tenant_id: record.id,
+                 log_category_id: cat.id,
+                 user_id: record.owner_id,
+                 start_at: record.daily_start_at,
+                 end_at: record.daily_end_at,
+                 is_default: true
+               })
+             end
+
+             {:ok, record}
+           end),
+           on: [:create]
   end
 
   resource do
