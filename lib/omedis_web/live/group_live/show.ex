@@ -19,6 +19,16 @@ defmodule OmedisWeb.GroupLive.Show do
           </.button>
         </.link>
         <.link
+          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/today"}
+          phx-click={JS.push_focus()}
+        >
+          <.button>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Today") %>
+            <% end) %>
+          </.button>
+        </.link>
+        <.link
           patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/show/edit"}
           phx-click={JS.push_focus()}
         >

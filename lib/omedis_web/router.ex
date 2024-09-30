@@ -41,7 +41,7 @@ defmodule OmedisWeb.Router do
 
       live "/tenants/:slug/groups/:group_id/log_categories", LogCategoryLive.Index, :index
       live "/tenants/:slug/groups/:group_id/log_categories/new", LogCategoryLive.Index, :new
-      live "/tenants/:slug/today", TenantLive.Today, :index
+      live "/tenants/:slug/groups/:group_id/today", TenantLive.Today, :index
 
       live "/tenants/:slug/projects", ProjectLive.Index, :index
       live "/tenants/:slug/projects/new", ProjectLive.Index, :new

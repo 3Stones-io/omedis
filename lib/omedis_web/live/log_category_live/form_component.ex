@@ -91,6 +91,15 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
             label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
           />
         </div>
+        <div class="hidden">
+          <.input
+            field={@form[:position]}
+            value={@next_position}
+            type="hidden"
+            class="hidden"
+            label={Phoenix.HTML.raw("Position  <span class='text-red-600'>*</span>")}
+          />
+        </div>
 
         <div :if={@is_custom_color}>
           <.input
@@ -111,15 +120,6 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
               <%= @form[:name].value || "Name" %>
             </span>
           </div>
-        </div>
-
-        <div class="hidden">
-          <.input
-            field={@form[:position]}
-            value={@next_position}
-            class="hidden"
-            label={Phoenix.HTML.raw("Position  <span class='text-red-600'>*</span>")}
-          />
         </div>
 
         <:actions>
