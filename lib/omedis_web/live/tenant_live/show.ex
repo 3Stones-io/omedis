@@ -156,23 +156,6 @@ defmodule OmedisWeb.TenantLive.Show do
         patch={~p"/tenants/#{@tenant.slug}"}
       />
     </.modal>
-    <.modal
-      :if={@live_action in [:new]}
-      id="log_category-modal"
-      show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/log_categories")}
-    >
-      <.live_component
-        module={OmedisWeb.LogCategoryLive.FormComponent}
-        id={(@log_category && @log_category.id) || :new}
-        title={@page_title}
-        tenants={@tenants}
-        action={@live_action}
-        language={@language}
-        log_category={@log_category}
-        patch={~p"/tenants/#{@tenant.slug}/log_categories"}
-      />
-    </.modal>
     """
   end
 
