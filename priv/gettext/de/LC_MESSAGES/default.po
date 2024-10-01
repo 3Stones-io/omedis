@@ -54,7 +54,7 @@ msgstr "Zurück zu den Protokollkategorien"
 #: lib/omedis_web/live/tenant_live/show.ex:144
 #, elixir-autogen, elixir-format
 msgid "Back to tenants"
-msgstr "Zurück zu den Mietern"
+msgstr "Zurück zu den Inhabern"
 
 #: lib/omedis_web/live/tenant_live/form_component.ex:174
 #: lib/omedis_web/live/tenant_live/show.ex:135
@@ -116,7 +116,7 @@ msgstr "Land"
 #: lib/omedis_web/live/edit_profile.ex:222
 #, elixir-autogen, elixir-format
 msgid "Current Tenant"
-msgstr "Aktueller Mieter"
+msgstr "Aktueller Inhaber"
 
 #: lib/omedis_web/live/tenant_live/form_component.ex:79
 #, elixir-autogen, elixir-format
@@ -171,7 +171,7 @@ msgstr "Projekt bearbeiten"
 #: lib/omedis_web/live/tenant_live/show.ex:201
 #, elixir-autogen, elixir-format
 msgid "Edit Tenant"
-msgstr "Mieter bearbeiten"
+msgstr "Inhaber bearbeiten"
 
 #: lib/omedis_web/live/log_category_live/show.ex:27
 #, elixir-autogen, elixir-format
@@ -186,7 +186,7 @@ msgstr "Projekt bearbeiten"
 #: lib/omedis_web/live/tenant_live/show.ex:15
 #, elixir-autogen, elixir-format
 msgid "Edit tenant"
-msgstr "Mieter bearbeiten"
+msgstr "Inhaber bearbeiten"
 
 #: lib/omedis_web/live/edit_profile.ex:110
 #, elixir-autogen, elixir-format
@@ -298,7 +298,7 @@ msgstr "Auflistung von Projekten"
 #: lib/omedis_web/live/tenant_live/index.ex:127
 #, elixir-autogen, elixir-format
 msgid "Listing Tenants"
-msgstr "Auflistung von Mietern"
+msgstr "Auflistung von Inhabern"
 
 #: lib/omedis_web/live/tenant_live/show.ex:22
 #, elixir-autogen, elixir-format
@@ -348,7 +348,7 @@ msgstr "Neues Projekt"
 #: lib/omedis_web/live/tenant_live/index.ex:119
 #, elixir-autogen, elixir-format
 msgid "New Tenant"
-msgstr "Neuer Mieter"
+msgstr "Neuer Inhaber"
 
 #: lib/omedis_web/live/tenant_live/show.ex:48
 #: lib/omedis_web/live/tenant_live/show.ex:83
@@ -454,7 +454,7 @@ msgstr "Projekt speichern"
 #: lib/omedis_web/live/tenant_live/form_component.ex:203
 #, elixir-autogen, elixir-format
 msgid "Save Tenant"
-msgstr "Mieter speichern"
+msgstr "Inhaber speichern"
 
 #: lib/omedis_web/live/edit_profile.ex:232
 #: lib/omedis_web/live/log_category_live/form_component.ex:134
@@ -472,7 +472,7 @@ msgstr "Geschlecht auswählen"
 #: lib/omedis_web/live/edit_profile.ex:214
 #, elixir-autogen, elixir-format
 msgid "Select Tenant"
-msgstr "Mieter auswählen"
+msgstr "Inhaber auswählen"
 
 #: lib/omedis_web/live/register_live.ex:204
 #, elixir-autogen, elixir-format
@@ -499,7 +499,7 @@ msgstr "Protokollkategorie anzeigen"
 #: lib/omedis_web/live/tenant_live/show.ex:200
 #, elixir-autogen, elixir-format
 msgid "Show Tenant"
-msgstr "Mieter anzeigen"
+msgstr "Inhaber anzeigen"
 
 #: lib/omedis_web/live/login_live.ex:29
 #: lib/omedis_web/live/login_live.ex:78
@@ -560,18 +560,18 @@ msgstr "Erfolg!"
 #: lib/omedis_web/live/project_live/index.ex:37
 #, elixir-autogen, elixir-format
 msgid "Tenant"
-msgstr "Mieter"
+msgstr "Inhaber"
 
 #: lib/omedis_web/live/log_category_live/show.ex:52
 #: lib/omedis_web/live/project_live/show.ex:36
 #, elixir-autogen, elixir-format
 msgid "Tenant ID"
-msgstr "Mieter-ID"
+msgstr "Inhaber-ID"
 
 #: lib/omedis_web/live/tenant_live/form_component.ex:247
 #, elixir-autogen, elixir-format
 msgid "Tenant saved."
-msgstr "Mieter gespeichert."
+msgstr "Inhaber gespeichert."
 
 #: lib/omedis_web/live/log_category_live/show.ex:16
 #, elixir-autogen, elixir-format

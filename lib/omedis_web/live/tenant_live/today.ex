@@ -1,5 +1,6 @@
 defmodule OmedisWeb.TenantLive.Today do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
@@ -8,6 +9,7 @@ defmodule OmedisWeb.TenantLive.Today do
   def render(assigns) do
     ~H"""
     <div>
+      <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}"} class="button ">Back</.link>
       <.dashboard_component
         categories={@categories}
         start_at={@start_at}
@@ -28,8 +30,9 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug}, _, socket) do
+  def handle_params(%{"group_id" => group_id, "slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
+    group = Group.by_id!(group_id)
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
@@ -44,7 +47,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     update_categories_and_current_time_every_minute()
 
-    categories = categories(tenant.id)
+    categories = categories(group.id)
 
     log_entries = format_entries(categories, tenant)
 
@@ -56,6 +59,7 @@ defmodule OmedisWeb.TenantLive.Today do
      |> assign(:tenant, tenant)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
+     |> assign(:group, group)
      |> assign(:log_entries, log_entries)
      |> assign(:current_time, current_time)
      |> assign(:categories, categories)}
@@ -80,8 +84,9 @@ defmodule OmedisWeb.TenantLive.Today do
   @impl true
   def handle_info(:update_categories_and_current_time, socket) do
     tenant = socket.assigns.tenant
+    group = socket.assigns.group
 
-    categories = categories(tenant.id)
+    categories = categories(group.id)
 
     log_entries =
       format_entries(categories, tenant)
@@ -168,8 +173,8 @@ defmodule OmedisWeb.TenantLive.Today do
     end_time
   end
 
-  defp categories(tenant_id) do
-    case LogCategory.by_tenant_id(%{tenant_id: tenant_id}) do
+  defp categories(group_id) do
+    case LogCategory.by_group_id(%{group_id: group_id}) do
       {:ok, categories} ->
         categories
 
