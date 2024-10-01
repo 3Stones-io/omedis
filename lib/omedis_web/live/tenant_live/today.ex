@@ -9,7 +9,9 @@ defmodule OmedisWeb.TenantLive.Today do
   def render(assigns) do
     ~H"""
     <div>
-      <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}"} class="button ">Back</.link>
+      <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"} class="button ">
+        Back
+      </.link>
       <.dashboard_component
         categories={@categories}
         start_at={@start_at}
@@ -30,9 +32,9 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   @impl true
-  def handle_params(%{"group_id" => group_id, "slug" => slug}, _, socket) do
+  def handle_params(%{"group_slug" => group_slug, "slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
-    group = Group.by_id!(group_id)
+    group = Group.by_slug!(group_slug)
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
@@ -234,7 +236,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {:noreply,
      socket
-     |> assign(:categories, categories(socket.assigns.tenant.id))}
+     |> assign(:categories, categories(socket.assigns.group.id))}
   end
 
   defp create_or_stop_log_entry(log_category_id, tenant_id, user_id) do
