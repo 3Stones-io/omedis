@@ -22,7 +22,6 @@ defmodule OmedisWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live "/language-switcher", LanguageSwitcherLive, :index
 
     live "/login", LoginLive, :index
     live "/register", RegisterLive, :index
