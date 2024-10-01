@@ -9,7 +9,7 @@ defmodule OmedisWeb.GroupLive.Show do
     <.header>
       <:actions>
         <.link
-          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories"}
+          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
           phx-click={JS.push_focus()}
         >
           <.button>
@@ -19,7 +19,7 @@ defmodule OmedisWeb.GroupLive.Show do
           </.button>
         </.link>
         <.link
-          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/today"}
+          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/today"}
           phx-click={JS.push_focus()}
         >
           <.button>
@@ -28,8 +28,8 @@ defmodule OmedisWeb.GroupLive.Show do
             <% end) %>
           </.button>
         </.link>
-        <.link
-          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/show/edit"}
+        <%!-- <.link
+          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/show/edit"}
           phx-click={JS.push_focus()}
         >
           <.button>
@@ -37,7 +37,7 @@ defmodule OmedisWeb.GroupLive.Show do
               <%= gettext("Edit Group") %>
             <% end) %>
           </.button>
-        </.link>
+        </.link> --%>
 
         <%!-- <.link navigate={~p"/tenants/#{@tenant.slug}/today"} phx-click={JS.push_focus()}>
           <.button>
@@ -64,7 +64,7 @@ defmodule OmedisWeb.GroupLive.Show do
       :if={@live_action == :edit}
       id="group-modal"
       show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group}")}
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}")}
     >
       <.live_component
         module={OmedisWeb.GroupLive.FormComponent}
@@ -74,7 +74,7 @@ defmodule OmedisWeb.GroupLive.Show do
         tenant={@tenant}
         language={@language}
         group={@group}
-        patch={~p"/tenants/#{@tenant.slug}/groups/#{@group}"}
+        patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"}
       />
     </.modal>
     """
@@ -89,12 +89,12 @@ defmodule OmedisWeb.GroupLive.Show do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "group_id" => group_id}, _, socket) do
+  def handle_params(%{"slug" => slug, "group_slug" => group_slug}, _, socket) do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:tenant, Tenant.by_slug!(slug))
-     |> assign(:group, Group.by_id!(group_id))}
+     |> assign(:group, Group.by_slug!(group_slug))}
   end
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Show Tenant") end)

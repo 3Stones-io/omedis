@@ -39,9 +39,9 @@ defmodule OmedisWeb.Router do
       live "/tenants/new", TenantLive.Index, :new
       live "/tenants/:slug/edit", TenantLive.Index, :edit
 
-      live "/tenants/:slug/groups/:group_id/log_categories", LogCategoryLive.Index, :index
-      live "/tenants/:slug/groups/:group_id/log_categories/new", LogCategoryLive.Index, :new
-      live "/tenants/:slug/groups/:group_id/today", TenantLive.Today, :index
+      live "/tenants/:slug/groups/:group_slug/log_categories", LogCategoryLive.Index, :index
+      live "/tenants/:slug/groups/:group_slug/log_categories/new", LogCategoryLive.Index, :new
+      live "/tenants/:slug/groups/:group_slug/today", TenantLive.Today, :index
 
       live "/tenants/:slug/projects", ProjectLive.Index, :index
       live "/tenants/:slug/projects/new", ProjectLive.Index, :new
@@ -51,14 +51,17 @@ defmodule OmedisWeb.Router do
 
       live "/tenants/:slug/groups", GroupLive.Index, :index
       live "/tenants/:slug/groups/new", GroupLive.Index, :new
-      live "/tenants/:slug/groups/:group_id/show/edit", GroupLive.Show, :edit
-      live "/tenants/:slug/groups/:group_id", GroupLive.Show, :show
-      live "/tenants/:slug/groups/:group_id/edit", GroupLive.Index, :edit
+      live "/tenants/:slug/groups/:group_slug/show/edit", GroupLive.Show, :edit
+      live "/tenants/:slug/groups/:group_slug", GroupLive.Show, :show
+      live "/tenants/:slug/groups/:group_slug/edit", GroupLive.Index, :edit
 
-      live "/tenants/:slug/groups/:group_id/log_categories/:id", LogCategoryLive.Show, :show
-      live "/tenants/:slug/groups/:group_id/log_categories/:id/edit", LogCategoryLive.Index, :edit
+      live "/tenants/:slug/groups/:group_slug/log_categories/:id", LogCategoryLive.Show, :show
 
-      live "/tenants/:slug/groups/:group_id/log_categories/:id/show/edit",
+      live "/tenants/:slug/groups/:group_slug/log_categories/:id/edit",
+           LogCategoryLive.Index,
+           :edit
+
+      live "/tenants/:slug/groups/:group_slug/log_categories/:id/show/edit",
            LogCategoryLive.Show,
            :edit
 

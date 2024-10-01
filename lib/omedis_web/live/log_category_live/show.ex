@@ -21,7 +21,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
       <:actions>
         <.link
           patch={
-            ~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/#{@log_category}/show/edit"
+            ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}/show/edit"
           }
           phx-click={JS.push_focus()}
         >
@@ -63,7 +63,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
       </:item>
     </.list>
 
-    <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories"}>
+    <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}>
       <%= with_locale(@language, fn -> %>
         <%= gettext("Back to log categories") %>
       <% end) %>
@@ -74,7 +74,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
       id="log_category-modal"
       show
       on_cancel={
-        JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/#{@log_category}")
+        JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}")
       }
     >
       <.live_component
@@ -91,7 +91,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
         next_position={@next_position}
         language={@language}
         log_category={@log_category}
-        patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/#{@log_category}"}
+        patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"}
       />
     </.modal>
     """
@@ -105,9 +105,9 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "id" => id, "group_id" => group_id}, _, socket) do
+  def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
-    group = Group.by_id!(group_id)
+    group = Group.by_slug!(group_slug)
     groups = Ash.read!(Group)
     log_category = LogCategory.by_id!(id)
     next_position = log_category.position

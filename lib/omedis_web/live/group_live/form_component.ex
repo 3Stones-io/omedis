@@ -1,6 +1,9 @@
 defmodule OmedisWeb.GroupLive.FormComponent do
   use OmedisWeb, :live_component
 
+  alias AshPhoenix.Form
+  alias Omedis.Accounts.Group
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -70,7 +73,25 @@ defmodule OmedisWeb.GroupLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"group" => group_params}, socket) do
-    {:noreply, assign(socket, form: AshPhoenix.Form.validate(socket.assigns.form, group_params))}
+    current_name = socket.assigns.form.source.params["name"]
+    new_name = group_params["name"]
+
+    new_group_params =
+      if current_name != new_name do
+        if new_name == "" || new_name == nil do
+          group_params
+        else
+          Map.put(group_params, "slug", update_slug(Slug.slugify(new_name)))
+        end
+      else
+        group_params
+      end
+
+    form = Form.validate(socket.assigns.form, new_group_params, errors: true)
+
+    {:noreply,
+     socket
+     |> assign(form: form)}
   end
 
   def handle_event("save", %{"group" => group_params}, socket) do
@@ -87,6 +108,22 @@ defmodule OmedisWeb.GroupLive.FormComponent do
 
       {:error, form} ->
         {:noreply, assign(socket, form: form)}
+    end
+  end
+
+  defp update_slug(slug) do
+    case Group.slug_exists?(slug) do
+      true -> generate_unique_slug(slug)
+      false -> Slug.slugify(slug)
+    end
+  end
+
+  defp generate_unique_slug(base_slug) do
+    new_slug = "#{base_slug}#{:rand.uniform(99)}"
+
+    case Group.slug_exists?(new_slug) do
+      true -> generate_unique_slug(base_slug)
+      false -> Slug.slugify(new_slug)
     end
   end
 

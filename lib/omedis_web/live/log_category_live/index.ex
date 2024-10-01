@@ -7,14 +7,14 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}"} class="button ">Back</.link>
+    <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"} class="button ">Back</.link>
     <.header>
       <%= with_locale(@language, fn -> %>
         <%= gettext("Listing Log categories") %>
       <% end) %>
 
       <:actions>
-        <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/new"}>
+        <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/new"}>
           <.button>
             <%= with_locale(@language, fn -> %>
               <%= gettext("New Log category") %>
@@ -29,7 +29,9 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       rows={@streams.log_categories}
       row_click={
         fn {_id, log_category} ->
-          JS.navigate(~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/#{log_category}")
+          JS.navigate(
+            ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}"
+          )
         end
       }
     >
@@ -54,7 +56,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       <:action :let={{_id, log_category}}>
         <div class="sr-only">
           <.link navigate={
-            ~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/#{log_category}"
+            ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}"
           }>
             <%= with_locale(@language, fn -> %>
               <%= gettext("Show") %>
@@ -63,7 +65,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         </div>
 
         <.link patch={
-          ~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories/#{log_category}/edit"
+          ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}/edit"
         }>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Edit") %>
@@ -76,7 +78,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       :if={@live_action in [:new, :edit]}
       id="log_category-modal"
       show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories")}
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories")}
     >
       <.live_component
         module={OmedisWeb.LogCategoryLive.FormComponent}
@@ -90,18 +92,19 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         language={@language}
         action={@live_action}
         log_category={@log_category}
-        patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.id}/log_categories"}
+        patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
       />
     </.modal>
     """
   end
 
   def mount(
-        %{"slug" => slug, "group_id" => group_id},
+        %{"slug" => slug, "group_slug" => group_slug},
         %{"language" => language} = _session,
         socket
       ) do
-    group = Group.by_id!(group_id)
+    group = Group.by_slug!(group_slug)
+
     tenant = Tenant.by_slug!(slug)
     next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
 
@@ -128,7 +131,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    group = Group.by_id!(params["group_id"])
+    group = Group.by_slug!(params["group_slug"])
     next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
 
     {:noreply,

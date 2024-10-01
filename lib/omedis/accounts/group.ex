@@ -23,6 +23,10 @@ defmodule Omedis.Accounts.Group do
     plural_name :groups
   end
 
+  identities do
+    identity :unique_slug, [:slug]
+  end
+
   code_interface do
     domain Omedis.Accounts
     define :read
@@ -31,6 +35,7 @@ defmodule Omedis.Accounts.Group do
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_tenant_id
+    define :by_slug, get_by: [:slug], action: :read
   end
 
   actions do
@@ -59,6 +64,14 @@ defmodule Omedis.Accounts.Group do
       primary? true
     end
 
+    read :by_slug do
+      argument :slug, :string do
+        allow_nil? false
+      end
+
+      filter expr(slug == ^arg(:slug))
+    end
+
     read :by_tenant_id do
       argument :tenant_id, :uuid do
         allow_nil? false
@@ -73,6 +86,16 @@ defmodule Omedis.Accounts.Group do
 
   validations do
     validate present(:name)
+  end
+
+  def slug_exists?(slug) do
+    __MODULE__
+    |> Ash.Query.filter(slug: slug)
+    |> Ash.read_one!()
+    |> case do
+      nil -> false
+      _ -> true
+    end
   end
 
   attributes do
