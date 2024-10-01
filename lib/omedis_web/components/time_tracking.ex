@@ -331,10 +331,11 @@ defmodule OmedisWeb.TimeTracking do
 
   def minutes_to_hhmm(minutes) do
     hours = div(minutes, 60)
+    remaining_minutes = rem(minutes, 60)
 
-    # Always set remaining minutes to 00 to display full hours
+    # Format to ensure two digits for both hours and minutes
     formatted_time =
-      :io_lib.format("~2..0B:00", [hours])
+      :io_lib.format("~2..0B:~2..0B", [hours, remaining_minutes])
       |> IO.iodata_to_binary()
 
     "(#{formatted_time})"
