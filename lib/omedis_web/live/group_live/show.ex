@@ -64,7 +64,7 @@ defmodule OmedisWeb.GroupLive.Show do
       :if={@live_action == :edit}
       id="group-modal"
       show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group}")}
+      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}")}
     >
       <.live_component
         module={OmedisWeb.GroupLive.FormComponent}
