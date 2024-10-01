@@ -24,7 +24,9 @@ defmodule OmedisWeb.GroupLive.Index do
     <.table
       id="groups"
       rows={@streams.groups}
-      row_click={fn {_id, group} -> JS.navigate(~p"/tenants/#{@tenant.slug}/groups/#{group.id}") end}
+      row_click={
+        fn {_id, group} -> JS.navigate(~p"/tenants/#{@tenant.slug}/groups/#{group.slug}") end
+      }
     >
       <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("ID") end)}>
         <%= group.id %>
@@ -39,7 +41,7 @@ defmodule OmedisWeb.GroupLive.Index do
       </:col>
 
       <:action :let={{_id, group}}>
-        <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{group}/edit"}>
+        <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{group.slug}/edit"}>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Edit") %>
           <% end) %>
@@ -55,7 +57,7 @@ defmodule OmedisWeb.GroupLive.Index do
     >
       <.live_component
         module={OmedisWeb.GroupLive.FormComponent}
-        id={(@group && @group.id) || :new}
+        id={(@group && @group.slug) || :new}
         title={@page_title}
         action={@live_action}
         language={@language}
@@ -85,10 +87,10 @@ defmodule OmedisWeb.GroupLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :edit, %{"group_slug" => group_slug}) do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Edit Group") end))
-    |> assign(:group, Ash.get!(Omedis.Accounts.Group, id))
+    |> assign(:group, Group.by_slug!(group_slug))
   end
 
   defp apply_action(socket, :new, _params) do
