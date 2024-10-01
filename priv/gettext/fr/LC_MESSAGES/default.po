@@ -675,7 +675,18 @@ msgstr "fermer"
 msgid "new password"
 msgstr "nouveau mot de passe"
 
-#: lib/omedis_web/live/language_switcher.ex:22
+
+#: lib/omedis_web/live/register_live.ex:128
+#, elixir-autogen, elixir-format
+msgid "Change language"
+msgstr "Changer de langue"
+
+
+#: lib/omedis_web/live/register_live.ex:55
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Language changed"
+msgstr "Langue modifiée"
+
 #, elixir-autogen, elixir-format
 msgid "Language switched successfully"
 msgstr "Langue changée avec succès"

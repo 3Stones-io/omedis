@@ -45,6 +45,18 @@ defmodule OmedisWeb.RegisterLive do
   end
 
   @impl true
+  def handle_event("change_language", %{"language" => language}, socket) do
+    {
+      :noreply,
+      socket
+      |> assign(:language, language)
+      |> put_flash(
+        :info,
+        with_locale(language, fn -> gettext("Language changed") end)
+      )
+    }
+  end
+
   def handle_event("validate", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user, errors: true)
 
@@ -65,6 +77,15 @@ defmodule OmedisWeb.RegisterLive do
      |> assign(:form, form)
      |> assign(:errors, Form.errors(form))
      |> assign(:trigger_action, form.valid?)}
+  end
+
+  defp language_to_flag(language) do
+    case language do
+      "de" -> "🇩🇪"
+      "fr" -> "🇫🇷"
+      "it" -> "🇮🇹"
+      _ -> "🇬🇧"
+    end
   end
 
   defp get_field_errors(field, _name) do
@@ -88,16 +109,39 @@ defmodule OmedisWeb.RegisterLive do
     >
       <div class="space-y-6">
         <div class="border-b border-gray-900/10 pb-12">
-          <h2 class="text-base font-semibold leading-7 text-gray-900">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Register") %>
-            <% end) %>
-          </h2>
-          <p class="mt-1 text-sm leading-6 text-gray-600">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Use a permanent address where you can receive mail.") %>
-            <% end) %>
-          </p>
+          <div class="grid grid-cols-2 lg:grid-cols-6 gap-x-2 lg:gap-x-6">
+            <div class="lg:col-span-3 flex flex-col">
+              <h2 class="text-base font-semibold leading-7 text-gray-900">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Register") %>
+                <% end) %>
+              </h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Use a permanent address where you can receive mail.") %>
+                <% end) %>
+              </p>
+            </div>
+            <div class="lg:col-span-3 flex flex-col space-x-2 items-end md:items-start">
+              <p class="text-base font-semibold leading-7 text-gray-900">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Change language") %>
+                <% end) %>
+              </p>
+              <div class="flex items-center space-x-2">
+                <%= for {_language, lang_code} <- @supported_languages do %>
+                  <button
+                    class={"text-2xl #{if @language == lang_code, do: "opacity-100", else: "opacity-50 hover:opacity-75"}"}
+                    phx-click="change_language"
+                    phx-value-language={lang_code}
+                    type="button"
+                  >
+                    <%= language_to_flag(lang_code) %>
+                  </button>
+                <% end %>
+              </div>
+            </div>
+          </div>
           <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div class="sm:col-span-3">
               <label class="block text-sm font-medium leading-6 text-gray-900">
