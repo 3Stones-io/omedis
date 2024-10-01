@@ -4,6 +4,13 @@ defmodule OmedisWeb.EditProfileLive do
 
   use OmedisWeb, :live_view
 
+  @supported_languages [
+    {"English", "en"},
+    {"Deutsch", "de"},
+    {"Français", "fr"},
+    {"Italiano", "it"}
+  ]
+
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     tenants_for_an_owner =
@@ -13,6 +20,7 @@ defmodule OmedisWeb.EditProfileLive do
       socket
       |> assign(:tenants_for_an_owner, tenants_for_an_owner)
       |> assign(:language, language)
+      |> assign(:supported_languages, @supported_languages)
       |> assign(:errors, [])
 
     {:ok, socket}
@@ -50,9 +58,10 @@ defmodule OmedisWeb.EditProfileLive do
       {:ok, user} ->
         socket =
           socket
+          |> redirect(to: "/edit_profile?locale=#{user.lang}")
           |> put_flash(
             :info,
-            with_locale(socket.assigns.language, fn -> gettext("Profile updated successfully") end)
+            with_locale(user.lang, fn -> gettext("Profile updated successfully") end)
           )
           |> assign(:current_user, user)
           |> assign(:form, to_form(AshPhoenix.Form.for_update(user, :update, as: "user")))
@@ -221,6 +230,28 @@ defmodule OmedisWeb.EditProfileLive do
                   <%= with_locale(@language, fn -> %>
                     <%= gettext("Current Tenant") %>
                   <% end) <> " " <> msg %>
+                </.error>
+              </div>
+            </div>
+
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Language") %>
+                <% end) %>
+              </label>
+
+              <div phx-feedback-for={f[:lang].name} class="mt-2">
+                <%= select(f, :lang, @supported_languages,
+                  prompt: with_locale(@language, fn -> gettext("Select Your Language") end),
+                  class:
+                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                  "phx-debounce": "blur"
+                ) %>
+                <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("Language") <> " " <> msg %>
+                  <% end) %>
                 </.error>
               </div>
             </div>

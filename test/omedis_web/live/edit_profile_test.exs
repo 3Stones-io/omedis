@@ -35,16 +35,27 @@ defmodule OmedisWeb.EditProfileTest do
 
       assert html =~ "Edit Profile"
 
-      html =
-        index_live
-        |> form("#basic_user_edit_profile_form", user: %{"first_name" => "Jane"})
-        |> render_submit()
+      assert {_,
+              {:redirect,
+               %{
+                 to: url,
+                 flash: _
+               }}} =
+               index_live
+               |> form("#basic_user_edit_profile_form", user: %{"first_name" => "Jane"})
+               |> render_submit()
 
       {:ok, user} = User.by_email(@valid_create_params["email"])
 
-      assert user.first_name == "Jane"
+      assert {:ok, _index_live, html} =
+               conn
+               |> log_in_user(user)
+               |> live(url)
 
-      assert html =~ "Profile updated successfully"
+      assert html =~ "Edit Profile"
+      assert html =~ "Jane"
+
+      assert user.first_name == "Jane"
     end
 
     defp log_in_user(conn, user) do
