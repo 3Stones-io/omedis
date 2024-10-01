@@ -226,7 +226,11 @@ defmodule OmedisWeb.TenantLive.FormComponent do
 
     new_tenant_params =
       if current_name != new_name do
-        Map.put(tenant_params, "slug", update_slug(Slug.slugify(new_name)))
+        if new_name == "" || new_name == nil do
+          tenant_params
+        else
+          Map.put(tenant_params, "slug", update_slug(Slug.slugify(new_name)))
+        end
       else
         tenant_params
       end
