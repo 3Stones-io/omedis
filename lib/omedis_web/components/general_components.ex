@@ -713,9 +713,6 @@ defmodule OmedisWeb.GeneralComponents do
         <.link navigate="/auth/user/sign-out">
           Sign out
         </.link>
-        <.link navigate="/language-switcher">
-          Change Language
-        </.link>
       </div>
 
       <div :if={@current_user == nil} class="flex p-2 flex-col gap-2">
@@ -724,9 +721,6 @@ defmodule OmedisWeb.GeneralComponents do
         </.link>
         <.link navigate="/register">
           Register
-        </.link>
-        <.link navigate="/language-switcher">
-          Change Language
         </.link>
       </div>
     </div>
