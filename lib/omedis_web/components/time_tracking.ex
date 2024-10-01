@@ -136,18 +136,7 @@ defmodule OmedisWeb.TimeTracking do
        ~T[18:00:00]]
   """
   def get_time_intervals_array(start_at, end_at) do
-    # Round down start time to nearest full hour
-    rounded_start = Time.new!(start_at.hour, 0, 0)
-
-    # Round up end time to nearest full hour
-    rounded_end =
-      if end_at.minute > 0 or end_at.second > 0 do
-        Time.add(Time.new!(end_at.hour, 0, 0), 3600, :second)
-      else
-        Time.new!(end_at.hour, 0, 0)
-      end
-
-    total_hours = Time.diff(rounded_end, rounded_start, :hour)
+    total_hours = Time.diff(end_at, start_at, :hour)
     max_intervals = 12
 
     interval_step =
@@ -159,7 +148,7 @@ defmodule OmedisWeb.TimeTracking do
 
     Enum.to_list(0..total_hours)
     |> Enum.filter(fn hour -> rem(hour, interval_step) == 0 end)
-    |> Enum.map(fn hour -> Time.add(rounded_start, hour * 3600, :second) end)
+    |> Enum.map(fn hour -> Time.add(start_at, hour * 3600, :second) end)
   end
 
   @doc """

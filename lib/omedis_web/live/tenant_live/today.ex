@@ -42,10 +42,12 @@ defmodule OmedisWeb.TenantLive.Today do
     start_at =
       get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
       |> format_timezone(tenant.timezone)
+      |> round_down_start_at()
 
     end_at =
       get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
       |> format_timezone(tenant.timezone)
+      |> round_up_end_at()
 
     update_categories_and_current_time_every_minute()
 
@@ -99,10 +101,12 @@ defmodule OmedisWeb.TenantLive.Today do
     start_at =
       get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
       |> format_timezone(tenant.timezone)
+      |> round_down_start_at()
 
     end_at =
       get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
       |> format_timezone(tenant.timezone)
+      |> round_up_end_at()
 
     current_time = Time.utc_now() |> format_timezone(tenant.timezone)
 
@@ -222,6 +226,18 @@ defmodule OmedisWeb.TenantLive.Today do
     case max_end do
       nil -> end_at
       _ -> if Time.compare(end_at, max_end) == :gt, do: end_at, else: max_end
+    end
+  end
+
+  def round_down_start_at(start_at) do
+    Time.new!(start_at.hour, 0, 0)
+  end
+
+  def round_up_end_at(end_at) do
+    if end_at.minute > 0 or end_at.second > 0 do
+      Time.add(Time.new!(end_at.hour, 0, 0), 3600, :second)
+    else
+      Time.new!(end_at.hour, 0, 0)
     end
   end
 
