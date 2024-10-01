@@ -6,6 +6,9 @@ defmodule OmedisWeb.GroupLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <div>
+      <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button">Back</.link>
+    </div>
     <.header>
       <%= with_locale(@language, fn -> %>
         <%= gettext("Listing Groups") %>
@@ -40,13 +43,22 @@ defmodule OmedisWeb.GroupLive.Index do
         <%= group.slug %>
       </:col>
 
-      <:action :let={{_id, group}}>
-        <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{group.slug}/edit"}>
-          <%= with_locale(@language, fn -> %>
-            <%= gettext("Edit") %>
-          <% end) %>
-        </.link>
-      </:action>
+      <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Actions") end)}>
+        <div class="flex gap-4">
+          <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{group}/edit"} class="font-semibold">
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Edit") %>
+            <% end) %>
+          </.link>
+          <.link>
+            <p class="font-semibold" phx-click="delete" phx-value-id={group.id}>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Delete") %>
+              <% end) %>
+            </p>
+          </.link>
+        </div>
+      </:col>
     </.table>
 
     <.modal
@@ -106,6 +118,19 @@ defmodule OmedisWeb.GroupLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Listing Groups") end)
     )
     |> assign(:group, nil)
+  end
+
+  @impl true
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    group = Ash.get!(Omedis.Accounts.Group, id)
+
+    Group.destroy(group)
+
+    {:noreply,
+     socket
+     |> stream_delete(:groups, group)
+     |> put_flash(:info, with_locale(socket.assigns.language, fn -> gettext("Group deleted") end))}
   end
 
   @impl true
