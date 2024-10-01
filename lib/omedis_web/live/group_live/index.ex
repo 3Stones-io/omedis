@@ -45,7 +45,7 @@ defmodule OmedisWeb.GroupLive.Index do
 
       <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Actions") end)}>
         <div class="flex gap-4">
-          <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{group}/edit"} class="font-semibold">
+          <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{group.slug}/edit"} class="font-semibold">
             <%= with_locale(@language, fn -> %>
               <%= gettext("Edit") %>
             <% end) %>
