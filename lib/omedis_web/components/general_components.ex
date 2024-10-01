@@ -385,11 +385,13 @@ defmodule OmedisWeb.GeneralComponents do
                       <%= if @current_user do %>
                         <%= @current_user.as_string %>
                       <% else %>
-                        <.link navigate="/login" class="text-blue-500">Login</.link>
+                        <.link navigate="/login" class="text-blue-500"><%= gettext("Login") %></.link>
                         <span>
                           Or
                         </span>
-                        <.link navigate="/register" class="text-blue-500">Register</.link>
+                        <.link navigate="/register" class="text-blue-500">
+                          <%= gettext("Register") %>
+                        </.link>
                       <% end %>
                     </span>
                     <svg
