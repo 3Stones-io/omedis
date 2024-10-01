@@ -1,8 +1,8 @@
 defmodule OmedisWeb.GroupLive.FormComponent do
   use OmedisWeb, :live_component
 
-  alias Omedis.Accounts.Group
   alias AshPhoenix.Form
+  alias Omedis.Accounts.Group
 
   @impl true
   def render(assigns) do

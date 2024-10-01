@@ -28,7 +28,7 @@ defmodule OmedisWeb.GroupLive.Show do
             <% end) %>
           </.button>
         </.link>
-        <.link
+        <%!-- <.link
           patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/show/edit"}
           phx-click={JS.push_focus()}
         >
@@ -37,7 +37,7 @@ defmodule OmedisWeb.GroupLive.Show do
               <%= gettext("Edit Group") %>
             <% end) %>
           </.button>
-        </.link>
+        </.link> --%>
 
         <%!-- <.link navigate={~p"/tenants/#{@tenant.slug}/today"} phx-click={JS.push_focus()}>
           <.button>
