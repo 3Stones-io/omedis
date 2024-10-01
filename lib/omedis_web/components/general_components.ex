@@ -7,10 +7,12 @@ defmodule OmedisWeb.GeneralComponents do
   use Gettext, backend: OmedisWeb.Gettext
   alias Omedis.Accounts.Tenant
 
+  import Gettext, only: [with_locale: 2]
+
   def side_and_topbar(assigns) do
     ~H"""
     <div>
-      <.topbar current_user={@current_user} />
+      <.topbar language={@language} current_user={@current_user} />
       <.desktop_sidebar current_user={@current_user} />
     </div>
     """
@@ -385,12 +387,18 @@ defmodule OmedisWeb.GeneralComponents do
                       <%= if @current_user do %>
                         <%= @current_user.as_string %>
                       <% else %>
-                        <.link navigate="/login" class="text-blue-500"><%= gettext("Login") %></.link>
+                        <.link navigate="/login" class="text-blue-500">
+                          <%= with_locale(@language, fn -> %>
+                            <%= gettext("Login") %>
+                          <% end) %>
+                        </.link>
                         <span>
                           Or
                         </span>
                         <.link navigate="/register" class="text-blue-500">
-                          <%= gettext("Register") %>
+                          <%= with_locale(@language, fn -> %>
+                            <%= gettext("Register") %>
+                          <% end) %>
                         </.link>
                       <% end %>
                     </span>
