@@ -17,7 +17,7 @@ defmodule OmedisWeb.LanguageSwitcherLive do
      |> redirect(to: "/language-switcher?locale=#{language}")
      |> put_flash(
        :info,
-       with_locale(socket.assigns.language, fn -> gettext("Language switched successfully") end)
+       with_locale(language, fn -> gettext("Language switched successfully") end)
      )}
   end
 
