@@ -43,9 +43,12 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         <%= log_category.name %> ><%= log_category.name %>
       </:col>
 
-      <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Group") end)}>
-        <%= log_category.group_id %>
+      <:col :let={{_id, _log_category}} label={with_locale(@language, fn -> gettext("Group") end)}>
+        <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"}>
+          <%= @group.slug %>
+        </.link>
       </:col>
+
       <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Color code") end)}>
         <%= log_category.color_code %>
       </:col>
