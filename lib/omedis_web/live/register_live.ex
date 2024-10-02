@@ -84,7 +84,8 @@ defmodule OmedisWeb.RegisterLive do
       "de" -> "🇩🇪"
       "fr" -> "🇫🇷"
       "it" -> "🇮🇹"
-      _other -> "🇬🇧"
+      "en" -> "🇬🇧"
+      _ -> nil
     end
   end
 
