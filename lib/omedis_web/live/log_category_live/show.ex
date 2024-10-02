@@ -46,8 +46,6 @@ defmodule OmedisWeb.LogCategoryLive.Show do
     </.header>
 
     <.list>
-      <:item title={with_locale(@language, fn -> gettext("ID") end)}><%= @log_category.id %></:item>
-
       <:item title={with_locale(@language, fn -> gettext("Name") end)}>
         <%= @log_category.name %>
       </:item>
