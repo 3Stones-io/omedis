@@ -35,17 +35,18 @@ defmodule OmedisWeb.TenantLive.Today do
   def handle_params(%{"group_slug" => group_slug, "slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
     group = Group.by_slug!(group_slug)
+    current_user = socket.assigns.current_user
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
 
     start_at =
-      get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+      get_start_time_to_use(min_start_in_entries, current_user.daily_start_at)
       |> format_timezone(tenant.timezone)
       |> round_down_start_at()
 
     end_at =
-      get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+      get_end_time_to_use(max_end_in_entries, current_user.daily_end_at)
       |> format_timezone(tenant.timezone)
       |> round_up_end_at()
 
@@ -89,6 +90,7 @@ defmodule OmedisWeb.TenantLive.Today do
   def handle_info(:update_categories_and_current_time, socket) do
     tenant = socket.assigns.tenant
     group = socket.assigns.group
+    current_user = socket.assigns.current_user
 
     categories = categories(group.id)
 
@@ -99,12 +101,12 @@ defmodule OmedisWeb.TenantLive.Today do
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
 
     start_at =
-      get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+      get_start_time_to_use(min_start_in_entries, current_user.daily_start_at)
       |> format_timezone(tenant.timezone)
       |> round_down_start_at()
 
     end_at =
-      get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+      get_end_time_to_use(max_end_in_entries, current_user.daily_end_at)
       |> format_timezone(tenant.timezone)
       |> round_up_end_at()
 
@@ -123,27 +125,27 @@ defmodule OmedisWeb.TenantLive.Today do
     :timer.send_interval(1000, self(), :update_categories_and_current_time)
   end
 
-  defp get_start_time_to_use(nil, tenant_daily_start_at) do
-    tenant_daily_start_at
+  defp get_start_time_to_use(nil, daily_start_at) do
+    daily_start_at
   end
 
-  defp get_start_time_to_use(min_start_in_entries, tenant_daily_start_at) do
-    if Time.compare(min_start_in_entries, tenant_daily_start_at) == :lt do
+  defp get_start_time_to_use(min_start_in_entries, daily_start_at) do
+    if Time.compare(min_start_in_entries, daily_start_at) == :lt do
       min_start_in_entries
     else
-      tenant_daily_start_at
+      daily_start_at
     end
   end
 
-  defp get_end_time_to_use(nil, tenant_daily_end_at) do
-    tenant_daily_end_at
+  defp get_end_time_to_use(nil, daily_end_at) do
+    daily_end_at
   end
 
-  defp get_end_time_to_use(max_end_in_entries, tenant_daily_end_at) do
-    if Time.compare(max_end_in_entries, tenant_daily_end_at) == :gt do
+  defp get_end_time_to_use(max_end_in_entries, daily_end_at) do
+    if Time.compare(max_end_in_entries, daily_end_at) == :gt do
       max_end_in_entries
     else
-      tenant_daily_end_at
+      daily_end_at
     end
   end
 

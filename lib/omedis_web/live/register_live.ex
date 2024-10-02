@@ -259,6 +259,50 @@ defmodule OmedisWeb.RegisterLive do
                 </.error>
               </div>
             </div>
+
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Daily Start Time") %>
+                <% end) %>
+              </label>
+
+              <div phx-feedback-for={f[:daily_start_at].name} class="mt-2">
+                <%= time_input(f, :daily_start_at,
+                  class:
+                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                  value: f[:daily_start_at].value,
+                  "phx-debounce": "blur"
+                ) %>
+                <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("Daily Start Time") <> " " <> msg %>
+                  <% end) %>
+                </.error>
+              </div>
+            </div>
+
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Daily End Time") %>
+                <% end) %>
+              </label>
+
+              <div phx-feedback-for={f[:daily_end_at].name} class="mt-2">
+                <%= time_input(f, :daily_end_at,
+                  class:
+                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                  value: f[:daily_end_at].value,
+                  "phx-debounce": "blur"
+                ) %>
+                <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("Daily End Time") <> " " <> msg %>
+                  <% end) %>
+                </.error>
+              </div>
+            </div>
           </div>
 
           <div class="w-[100%] flex mt-6 justify-between items-center">
