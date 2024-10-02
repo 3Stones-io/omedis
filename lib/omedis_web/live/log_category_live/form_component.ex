@@ -23,6 +23,12 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           label={Phoenix.HTML.raw("Name  <span class='text-red-600'>*</span>")}
         />
 
+        <.input
+          field={@form[:slug]}
+          type="text"
+          label={Phoenix.HTML.raw("Slug <span class='text-red-600'>*</span>")}
+        />
+
         <%= if @group.id do %>
           <.input
             field={@form[:group_id]}
@@ -147,11 +153,23 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"log_category" => log_category_params}, socket) do
-    form = AshPhoenix.Form.validate(socket.assigns.form, log_category_params)
+    current_name = socket.assigns.form.source.params["name"]
+    new_name = log_category_params["name"]
 
-    {:noreply,
-     socket
-     |> assign(form: form)}
+    new_log_category_params =
+      if current_name != new_name do
+        if new_name == "" || new_name == nil do
+          log_category_params
+        else
+          Map.put(log_category_params, "slug", update_slug(Slug.slugify(new_name)))
+        end
+      else
+        log_category_params
+      end
+
+    form = AshPhoenix.Form.validate(socket.assigns.form, new_log_category_params)
+
+    {:noreply, assign(socket, form: form)}
   end
 
   def handle_event("toggle_color_mode", _params, socket) do
@@ -204,5 +222,23 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
       LogCategory.select_unused_color_code(socket.assigns.tenant.id)
 
     assign(socket, form: to_form(form), color_code: color_code)
+  end
+
+  defp generate_unique_slug(base_slug) do
+    new_slug = "#{base_slug}#{:rand.uniform(99)}"
+
+    if LogCategory.slug_exists?(new_slug) do
+      Slug.slugify(new_slug)
+    else
+      generate_unique_slug(base_slug)
+    end
+  end
+
+  defp update_slug(slug) do
+    if LogCategory.slug_exists?(slug) do
+      generate_unique_slug(slug)
+    else
+      Slug.slugify(slug)
+    end
   end
 end

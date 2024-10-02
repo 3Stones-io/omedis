@@ -34,6 +34,10 @@ defmodule Omedis.Accounts.LogCategory do
     plural_name :log_categories
   end
 
+  identities do
+    identity :unique_slug, [:slug]
+  end
+
   code_interface do
     domain Omedis.Accounts
     define :read
@@ -53,10 +57,11 @@ defmodule Omedis.Accounts.LogCategory do
   actions do
     create :create do
       accept [
-        :name,
-        :group_id,
         :color_code,
-        :position
+        :group_id,
+        :name,
+        :position,
+        :slug
       ]
 
       primary? true
@@ -67,7 +72,8 @@ defmodule Omedis.Accounts.LogCategory do
         :name,
         :group_id,
         :color_code,
-        :position
+        :position,
+        :slug
       ]
 
       primary? true
@@ -125,8 +131,19 @@ defmodule Omedis.Accounts.LogCategory do
 
     attribute :position, :string, allow_nil?: true, public?: true
 
+    attribute :slug, :string do
+      constraints max_length: 80
+      allow_nil? false
+    end
+
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  def slug_exists?(slug) do
+    __MODULE__
+    |> Ash.Query.filter(slug: slug)
+    |> Ash.read_one!()
   end
 
   def get_max_position_by_group_id(group_id) do
