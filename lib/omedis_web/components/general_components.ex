@@ -730,7 +730,6 @@ defmodule OmedisWeb.GeneralComponents do
     """
   end
 
-  # TODO: Use verified routes after fixing Today's Time Tracker link
   defp get_current_tenant_path(nil), do: "/tenants"
   defp get_current_tenant_path(current_tenant), do: "/tenants/#{current_tenant.slug}"
 end
