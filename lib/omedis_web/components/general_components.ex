@@ -2,18 +2,18 @@ defmodule OmedisWeb.GeneralComponents do
   @moduledoc """
   Provides general components for the application.
   """
+  use OmedisWeb, :verified_routes
   use Phoenix.Component
 
   use Gettext, backend: OmedisWeb.Gettext
-  alias Omedis.Accounts.Tenant
 
   import Gettext, only: [with_locale: 2]
 
   def side_and_topbar(assigns) do
     ~H"""
     <div>
-      <.topbar language={@language} current_user={@current_user} />
-      <.desktop_sidebar current_user={@current_user} />
+      <.topbar language={@language} current_tenant={@current_tenant} current_user={@current_user} />
+      <.desktop_sidebar current_tenant={@current_tenant} current_user={@current_user} />
     </div>
     """
   end
@@ -81,8 +81,8 @@ defmodule OmedisWeb.GeneralComponents do
 
                 <li>
                   <.link
-                    :if={@current_user && @current_user.current_tenant_id}
-                    navigate={get_current_tenant_path(@current_user)}
+                    :if={@current_tenant}
+                    navigate={get_current_tenant_path(@current_tenant)}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -220,43 +220,32 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
               </ul>
             </li>
-            <li>
+            <li :if={@current_tenant}>
               <div class="text-xs font-semibold leading-6 text-gray-400">
-                Your teams
+                <%= @current_tenant.name %>
               </div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
-                  <a
-                    href="#"
+                  <.link
+                    navigate={~p"/tenants/#{@current_tenant.slug}/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      H
+                      G
                     </span>
-                    <span class="truncate">Heroicons</span>
-                  </a>
+                    <span class="truncate">Groups</span>
+                  </.link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <.link
+                    navigate={~p"/tenants/#{@current_tenant.slug}/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      T
+                      P
                     </span>
-                    <span class="truncate">Tailwind Labs</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      W
-                    </span>
-                    <span class="truncate">Workcation</span>
-                  </a>
+                    <span class="truncate">Projects</span>
+                  </.link>
                 </li>
               </ul>
             </li>
@@ -330,7 +319,7 @@ defmodule OmedisWeb.GeneralComponents do
               x-cloak
               class="w-[75%]   h-[100vh] "
             >
-              <.mobile_sidebar current_user={@current_user} />
+              <.mobile_sidebar current_tenant={@current_tenant} current_user={@current_user} />
             </div>
 
             <div class="p-4 text-black" @click="open = false" x-show="open" x-transition x-cloak>
@@ -489,8 +478,8 @@ defmodule OmedisWeb.GeneralComponents do
 
                 <li>
                   <.link
-                    :if={@current_user && @current_user.current_tenant_id}
-                    navigate={get_current_tenant_path(@current_user)}
+                    :if={@current_tenant}
+                    navigate={get_current_tenant_path(@current_tenant)}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -628,43 +617,32 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
               </ul>
             </li>
-            <li>
+            <li :if={@current_tenant}>
               <div class="text-xs font-semibold leading-6 text-gray-400">
-                Your teams
+                <%= @current_tenant.name %>
               </div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
-                  <a
-                    href="#"
+                  <.link
+                    navigate={~p"/tenants/#{@current_tenant.slug}/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      H
+                      G
                     </span>
-                    <span class="truncate">Heroicons</span>
-                  </a>
+                    <span class="truncate">Groups</span>
+                  </.link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <.link
+                    navigate={~p"/tenants/#{@current_tenant.slug}/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      T
+                      P
                     </span>
-                    <span class="truncate">Tailwind Labs</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      W
-                    </span>
-                    <span class="truncate">Workcation</span>
-                  </a>
+                    <span class="truncate">Projects</span>
+                  </.link>
                 </li>
               </ul>
             </li>
@@ -752,10 +730,7 @@ defmodule OmedisWeb.GeneralComponents do
     """
   end
 
-  defp get_current_tenant_path(current_user) do
-    case Tenant.by_id(current_user.current_tenant_id) do
-      {:ok, tenant} -> "/tenants/#{tenant.slug}/today"
-      _ -> "/tenants"
-    end
-  end
+  # TODO: Use verified routes after fixing Today's Time Tracker link
+  defp get_current_tenant_path(nil), do: "/tenants"
+  defp get_current_tenant_path(current_tenant), do: "/tenants/#{current_tenant.slug}"
 end
