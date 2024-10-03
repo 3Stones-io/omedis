@@ -52,7 +52,20 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       </:col>
 
       <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Position") end)}>
-        <%= log_category.position %>
+        <.form for={@change_position_form} phx-change="update-position" class="w-[50%] mx-auto">
+          <.input
+            field={@change_position_form[:position]}
+            type="number"
+            value={log_category.position}
+            id="log_category_position_input"
+            phx-hook="LogCategoryPositionInput"
+          />
+          <.input
+            field={@change_position_form[:log_category_id]}
+            type="hidden"
+            value={log_category.id}
+          />
+        </.form>
       </:col>
 
       <:action :let={{_id, log_category}}>
@@ -109,6 +122,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
     tenant = Tenant.by_slug!(slug)
     next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
+    change_position_form_fields = %{"position" => "", "log_category_id" => ""}
 
     {:ok,
      socket
@@ -118,7 +132,8 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> assign(:groups, Ash.read!(Group))
      |> assign(:group, group)
      |> assign(:is_custom_color, false)
-     |> assign(:next_position, next_position)}
+     |> assign(:next_position, next_position)
+     |> assign(:change_position_form, to_form(change_position_form_fields))}
   end
 
   @impl true
@@ -172,5 +187,28 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   @impl true
   def handle_info({OmedisWeb.LogCategoryLive.FormComponent, {:saved, log_category}}, socket) do
     {:noreply, stream_insert(socket, :log_categories, log_category)}
+  end
+
+  @impl true
+  def handle_event("update-position", params, socket) do
+    %{"log_category_id" => log_category_id, "position" => position} = params
+
+    case Ash.get(LogCategory, log_category_id) do
+      {:ok, log_category} ->
+        update_log_category_position(log_category, position, socket)
+
+      {:error, _changeset} ->
+        {:noreply, socket}
+    end
+  end
+
+  defp update_log_category_position(log_category, position, socket) do
+    case LogCategory.update_position(log_category, position) do
+      {:ok, log_category} ->
+        {:noreply, stream_insert(socket, :log_categories, log_category)}
+
+      _error ->
+        {:noreply, socket}
+    end
   end
 end

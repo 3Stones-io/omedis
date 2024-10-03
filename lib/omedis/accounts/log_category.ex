@@ -39,6 +39,7 @@ defmodule Omedis.Accounts.LogCategory do
     define :read
     define :create
     define :update
+    define :update_position, action: :update_position, args: [:position]
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_group_id
@@ -71,6 +72,13 @@ defmodule Omedis.Accounts.LogCategory do
       ]
 
       primary? true
+      require_atomic? false
+    end
+
+    update :update_position do
+      argument :position, :string
+
+      change set_attribute(:position, arg(:position))
       require_atomic? false
     end
 
