@@ -29,13 +29,22 @@ Alpine.start();
 
 let Hooks = {};
 
+Hooks.FlashAutoDisappear = {
+  mounted() {
+    if (!this.el.hidden) {
+      let delay = this.el.dataset.delay;
 
+      setTimeout(() => {
+        this.el.click();
+      }, delay * 1000);
+    }
+  }
+};
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
-  
   longPollFallbackMs: 2500,
   dom: {
     onBeforeElUpdated(from, to) {
@@ -44,6 +53,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
       }
     },
   },
+  hooks: Hooks,
   params: { _csrf_token: csrfToken },
 });
 

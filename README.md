@@ -131,3 +131,15 @@ User.destroy(user)
 ```
 
 ```
+
+## Configuration
+
+### Auto-disappearing flash messages
+
+To enable auto-disappearing flash messages, set the `FLASH_AUTO_DISAPPEAR` environment variable to an integer representing the delay in seconds. E.g.
+
+```
+FLASH_AUTO_DISAPPEAR=3
+```
+
+will make flash messages disappear after 3 seconds.
