@@ -34,10 +34,6 @@ defmodule Omedis.Accounts.LogCategory do
     plural_name :log_categories
   end
 
-  identities do
-    identity :unique_slug, [:slug]
-  end
-
   code_interface do
     domain Omedis.Accounts
     define :read
@@ -52,6 +48,7 @@ defmodule Omedis.Accounts.LogCategory do
   identities do
     identity :unique_color_code_position, [:color_code, :group_id]
     identity :unique_position, [:position, :group_id]
+    identity :unique_slug, [:slug, :group_id], eager_check?: true
   end
 
   actions do

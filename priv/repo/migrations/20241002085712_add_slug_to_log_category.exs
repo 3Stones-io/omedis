@@ -11,15 +11,9 @@ defmodule Omedis.Repo.Migrations.AddSlugToLogCategory do
     alter table(:log_categories) do
       add :slug, :text, null: false
     end
-
-    create unique_index(:log_categories, [:slug], name: "log_categories_unique_slug_index")
   end
 
   def down do
-    drop_if_exists unique_index(:log_categories, [:slug],
-                     name: "log_categories_unique_slug_index"
-                   )
-
     alter table(:log_categories) do
       remove :slug
     end
