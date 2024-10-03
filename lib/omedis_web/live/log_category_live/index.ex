@@ -40,7 +40,11 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       </:col>
 
       <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Name") end)}>
-        <%= log_category.name %> ><%= log_category.name %>
+        <span style={[
+          "background: #{log_category.color_code}; display: inline-block; padding: 0.15rem; border-radius: 5px"
+        ]}>
+          <%= log_category.name %>
+        </span>
       </:col>
 
       <:col :let={{_id, _log_category}} label={with_locale(@language, fn -> gettext("Group") end)}>
@@ -49,9 +53,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         </.link>
       </:col>
 
-      <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Color code") end)}>
-        <%= log_category.color_code %>
-      </:col>
       <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Position") end)}>
         <%= log_category.position %>
       </:col>
