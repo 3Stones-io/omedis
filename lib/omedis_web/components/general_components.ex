@@ -382,7 +382,7 @@ defmodule OmedisWeb.GeneralComponents do
                           <% end) %>
                         </.link>
                         <span>
-                          Or
+                          |
                         </span>
                         <.link navigate="/register" class="text-blue-500">
                           <%= with_locale(@language, fn -> %>
