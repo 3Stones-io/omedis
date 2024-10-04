@@ -20,9 +20,11 @@ if System.get_env("PHX_SERVER") do
   config :omedis, OmedisWeb.Endpoint, server: true
 end
 
-flash_auto_disappear = String.to_integer(System.get_env("FLASH_AUTO_DISAPPEAR") || "0")
+flash_auto_disappear = System.get_env("FLASH_AUTO_DISAPPEAR")
 
-config :omedis, :flash_auto_disappear, flash_auto_disappear
+if flash_auto_disappear do
+  config :omedis, :flash_auto_disappear, String.to_integer(flash_auto_disappear)
+end
 
 if config_env() == :prod do
   database_url =

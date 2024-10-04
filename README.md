@@ -143,3 +143,7 @@ FLASH_AUTO_DISAPPEAR=3
 ```
 
 will make flash messages disappear after 3 seconds.
+
+To disable, set to 0.
+
+The default is 4 seconds.
