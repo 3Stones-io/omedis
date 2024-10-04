@@ -736,6 +736,7 @@ defmodule OmedisWeb.GeneralComponents do
   defp tenants_link_path(0), do: ~p"/tenants/new"
   defp tenants_link_path(_tenants_count), do: ~p"/tenants"
 
+  defp tenants_link_text(nil), do: "Tenants"
   defp tenants_link_text(0), do: "Create first tenant"
   defp tenants_link_text(tenants_count), do: "Tenants (#{tenants_count})"
 end

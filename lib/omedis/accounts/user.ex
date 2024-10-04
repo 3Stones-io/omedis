@@ -122,4 +122,14 @@ defmodule Omedis.Accounts.User do
   identities do
     identity :unique_email, [:email]
   end
+
+  aggregates do
+    count :tenants_count, :tenants
+  end
+
+  relationships do
+    has_many :tenants, Omedis.Accounts.Tenant do
+      destination_attribute :owner_id
+    end
+  end
 end

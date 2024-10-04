@@ -5,12 +5,15 @@ defmodule OmedisWeb.Plugs.TenantsCount do
 
   import Plug.Conn
 
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.User
+  alias Plug.Conn
 
   def init(_opts), do: nil
 
-  def call(conn, _opts) do
-    {:ok, tenant_count} = Ash.count(Tenant)
-    assign(conn, :tenants_count, tenant_count)
+  def call(%Conn{assigns: %{current_user: %User{} = user}} = conn, _opts) do
+    {:ok, user_with_count} = Ash.load(user, [:tenants_count])
+    assign(conn, :tenants_count, user_with_count.tenants_count)
   end
+
+  def call(conn, _opts), do: assign(conn, :tenants_count, nil)
 end

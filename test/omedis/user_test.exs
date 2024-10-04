@@ -1,12 +1,13 @@
 defmodule Omedis.FarmersTest do
   use Omedis.DataCase
 
+  import Omedis.Fixtures
+
   alias Omedis.Accounts.User
-  alias Omedis.Factory
 
   describe "User Resource Unit Tests" do
-    test "read/0  returns all users" do
-      Factory.insert(:user, %{email: "test@gmail.com"})
+    test "read/0 returns all users" do
+      user_fixture()
 
       {:ok, users} = User.read()
       assert Enum.empty?(users) == false
@@ -34,8 +35,7 @@ defmodule Omedis.FarmersTest do
     end
 
     test "update/2 updates a user given valid attributes" do
-      {:ok, user} =
-        Factory.insert_user(%{email: "test@gmail.com"})
+      user = user_fixture(%{email: "test@gmail.com"})
 
       assert {:ok, user} =
                User.update(user, %{
@@ -46,8 +46,7 @@ defmodule Omedis.FarmersTest do
     end
 
     test "destroy/1 deletes a user" do
-      {:ok, user} =
-        Factory.insert_user(%{email: "test@gmail.com"})
+      user = user_fixture(%{email: "test@gmail.com"})
 
       {:ok, users} = User.read()
       assert Enum.empty?(users) == false
@@ -59,8 +58,7 @@ defmodule Omedis.FarmersTest do
     end
 
     test "by_id/1 returns a user given a valid id" do
-      {:ok, user} =
-        Factory.insert_user(%{email: "test@gmail.com"})
+      user = user_fixture(%{email: "test@gmail.com"})
 
       {:ok, fetched_user} = User.by_id(user.id)
 
@@ -68,8 +66,7 @@ defmodule Omedis.FarmersTest do
     end
 
     test "by_email/1 returns a user given a valid email" do
-      {:ok, user} =
-        Factory.insert_user(%{email: "test@gmail.com"})
+      user = user_fixture(%{email: "test@gmail.com"})
 
       {:ok, fetched_user} = User.by_email(user.email)
 

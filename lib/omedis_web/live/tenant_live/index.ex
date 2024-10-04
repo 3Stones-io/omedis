@@ -100,7 +100,8 @@ defmodule OmedisWeb.TenantLive.Index do
       socket
       |> assign(:language, language)
 
-    {:ok, stream(socket, :tenants, Ash.read!(Tenant))}
+    {:ok, current_user_with_tenants} = Ash.load(socket.assigns.current_user, [:tenants])
+    {:ok, stream(socket, :tenants, current_user_with_tenants.tenants)}
   end
 
   @impl true
