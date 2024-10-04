@@ -35,10 +35,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         end
       }
     >
-      <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("ID") end)}>
-        <%= log_category.id %>
-      </:col>
-
       <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Name") end)}>
         <span style={[
           "background: #{log_category.color_code}; display: inline-block; padding: 0.15rem; border-radius: 5px"
