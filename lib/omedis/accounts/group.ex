@@ -24,7 +24,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   identities do
-    identity :unique_slug, [:slug]
+    identity :unique_slug_per_tenant, [:slug, :tenant_id]
   end
 
   code_interface do
@@ -88,9 +88,9 @@ defmodule Omedis.Accounts.Group do
     validate present(:name)
   end
 
-  def slug_exists?(slug) do
+  def slug_exists?(slug, tenant_id) do
     __MODULE__
-    |> Ash.Query.filter(slug: slug)
+    |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
     |> Ash.read_one!()
     |> case do
       nil -> false
