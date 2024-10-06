@@ -12,6 +12,7 @@ defmodule OmedisWeb.Router do
     plug :load_from_session
     plug OmedisWeb.Plugs.Locale
     plug OmedisWeb.Plugs.CurrentTenant
+    plug OmedisWeb.Plugs.TenantsCount
   end
 
   pipeline :api do
@@ -35,7 +36,8 @@ defmodule OmedisWeb.Router do
     ash_authentication_live_session :authentication_required,
       on_mount: [
         {OmedisWeb.LiveUserAuth, :live_user_required},
-        {OmedisWeb.LiveTenant, :assign_current_tenant}
+        {OmedisWeb.LiveTenant, :assign_current_tenant},
+        {OmedisWeb.LiveTenant, :assign_tenants_count}
       ] do
       live "/edit_profile", EditProfileLive, :index
       live "/tenants", TenantLive.Index, :index
