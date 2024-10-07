@@ -24,21 +24,15 @@ import topbar from "../vendor/topbar";
 
 import Alpine from "alpinejs";
 
+import FlashAutoDisappear from "./hooks/flash_auto_disappear"
+import SlugInput from "./hooks/slug_input"
+
 window.Alpine = Alpine;
 Alpine.start();
 
-let Hooks = {};
-
-Hooks.FlashAutoDisappear = {
-  mounted() {
-    if (!this.el.hidden) {
-      let delay = this.el.dataset.delay;
-
-      setTimeout(() => {
-        this.el.click();
-      }, delay * 1000);
-    }
-  }
+let Hooks = {
+  FlashAutoDisappear,
+  SlugInput,
 };
 
 let csrfToken = document

@@ -12,8 +12,17 @@ defmodule OmedisWeb.GeneralComponents do
   def side_and_topbar(assigns) do
     ~H"""
     <div>
-      <.topbar language={@language} current_tenant={@current_tenant} current_user={@current_user} />
-      <.desktop_sidebar current_tenant={@current_tenant} current_user={@current_user} />
+      <.topbar
+        language={@language}
+        current_tenant={@current_tenant}
+        current_user={@current_user}
+        tenants_count={@tenants_count}
+      />
+      <.desktop_sidebar
+        current_tenant={@current_tenant}
+        current_user={@current_user}
+        tenants_count={@tenants_count}
+      />
     </div>
     """
   end
@@ -57,26 +66,7 @@ defmodule OmedisWeb.GeneralComponents do
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/tenants"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <svg
-                      class="h-6 w-6 shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                      />
-                    </svg>
-                    Tenants
-                  </a>
+                  <.tenants_link tenants_count={@tenants_count} />
                 </li>
 
                 <li>
@@ -319,7 +309,11 @@ defmodule OmedisWeb.GeneralComponents do
               x-cloak
               class="w-[75%]   h-[100vh] "
             >
-              <.mobile_sidebar current_tenant={@current_tenant} current_user={@current_user} />
+              <.mobile_sidebar
+                current_tenant={@current_tenant}
+                current_user={@current_user}
+                tenants_count={@tenants_count}
+              />
             </div>
 
             <div class="p-4 text-black" @click="open = false" x-show="open" x-transition x-cloak>
@@ -382,7 +376,7 @@ defmodule OmedisWeb.GeneralComponents do
                           <% end) %>
                         </.link>
                         <span>
-                          Or
+                          |
                         </span>
                         <.link navigate="/register" class="text-blue-500">
                           <%= with_locale(@language, fn -> %>
@@ -454,26 +448,7 @@ defmodule OmedisWeb.GeneralComponents do
                   </a>
                 </li>
                 <li>
-                  <.link
-                    navigate="/tenants"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <svg
-                      class="h-6 w-6 shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                      />
-                    </svg>
-                    Tenants
-                  </.link>
+                  <.tenants_link tenants_count={@tenants_count} />
                 </li>
 
                 <li>
@@ -732,4 +707,35 @@ defmodule OmedisWeb.GeneralComponents do
 
   defp get_current_tenant_path(nil), do: "/tenants"
   defp get_current_tenant_path(current_tenant), do: "/tenants/#{current_tenant.slug}"
+
+  defp tenants_link(assigns) do
+    ~H"""
+    <.link
+      navigate={tenants_link_path(@tenants_count)}
+      class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+    >
+      <svg
+        class="h-6 w-6 shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+        />
+      </svg>
+      <%= tenants_link_text(@tenants_count) %>
+    </.link>
+    """
+  end
+
+  defp tenants_link_path(0), do: ~p"/tenants/new"
+  defp tenants_link_path(_tenants_count), do: ~p"/tenants"
+
+  defp tenants_link_text(0), do: "Create first tenant"
+  defp tenants_link_text(tenants_count), do: "Tenants (#{tenants_count})"
 end

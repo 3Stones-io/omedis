@@ -12,24 +12,8 @@ defmodule OmedisWeb.LogEntryLive.Index do
     </.header>
 
     <.table id="log_entries" rows={@streams.log_entries}>
-      <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("ID") end)}>
-        <%= log_entry.id %>
-      </:col>
-
       <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Comment") end)}>
         <%= log_entry.comment %>
-      </:col>
-
-      <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Tenant") end)}>
-        <%= log_entry.tenant_id %>
-      </:col>
-
-      <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Log category") end)}>
-        <%= log_entry.log_category_id %>
-      </:col>
-
-      <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("User id") end)}>
-        <%= log_entry.user_id %>
       </:col>
 
       <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Start at") end)}>
