@@ -74,10 +74,6 @@ defmodule OmedisWeb.TenantLive.Show do
         <%= @tenant.description %>
       </:item>
 
-      <:item title={with_locale(@language, fn -> gettext("Owner") end)}>
-        <%= @tenant.owner_id %>
-      </:item>
-
       <:item title={with_locale(@language, fn -> gettext("Phone") end)}>
         <%= @tenant.phone %>
       </:item>

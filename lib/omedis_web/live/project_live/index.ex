@@ -34,10 +34,6 @@ defmodule OmedisWeb.ProjectLive.Index do
         <%= project.name %>
       </:col>
 
-      <:col :let={{_id, project}} label={with_locale(@language, fn -> gettext("Tenant") end)}>
-        <%= project.tenant_id %>
-      </:col>
-
       <:col :let={{_id, project}} label={with_locale(@language, fn -> gettext("Position") end)}>
         <%= project.position %>
       </:col>

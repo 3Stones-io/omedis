@@ -11,7 +11,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
       <%= with_locale(@language, fn -> %>
         <%= gettext("Log category") %>
       <% end) %>
-      <%= @log_category.id %>
+
       <:subtitle>
         <%= with_locale(@language, fn -> %>
           <%= gettext("This is a log_category record from your database.") %>
@@ -50,9 +50,6 @@ defmodule OmedisWeb.LogCategoryLive.Show do
         <%= @log_category.name %>
       </:item>
 
-      <:item title={with_locale(@language, fn -> gettext("Group ID") end)}>
-        <%= @log_category.group_id %>
-      </:item>
       <:item title={with_locale(@language, fn -> gettext("Color code") end)}>
         <%= @log_category.color_code %>
       </:item>
