@@ -33,10 +33,6 @@ defmodule OmedisWeb.ProjectLive.Show do
     <.list>
       <:item title={with_locale(@language, fn -> gettext("Name") end)}><%= @project.name %></:item>
 
-      <:item title={with_locale(@language, fn -> gettext("Tenant ID") end)}>
-        <%= @project.tenant_id %>
-      </:item>
-
       <:item title={with_locale(@language, fn -> gettext("Postion") end)}>
         <%= @project.position %>
       </:item>
