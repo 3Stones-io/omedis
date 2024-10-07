@@ -7,6 +7,13 @@ defmodule OmedisWeb.ProjectLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <.breadcrumb items={[
+      {"Home", ~p"/", false},
+      {"Tenants", ~p"/tenants", false},
+      {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+      {"Projects", ~p"/tenants/#{@tenant.slug}", true}
+    ]} />
+
     <.header>
       <%= with_locale(@language, fn -> %>
         <%= gettext("Listing Projects") %>

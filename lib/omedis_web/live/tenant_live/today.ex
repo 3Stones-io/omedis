@@ -9,9 +9,15 @@ defmodule OmedisWeb.TenantLive.Today do
   def render(assigns) do
     ~H"""
     <div>
-      <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"} class="button ">
-        Back
-      </.link>
+      <.breadcrumb items={[
+        {"Home", ~p"/", false},
+        {"Tenants", ~p"/tenants", false},
+        {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+        {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
+        {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+        {"Today", "", true}
+      ]} />
+
       <.dashboard_component
         categories={@categories}
         start_at={@start_at}
