@@ -133,11 +133,6 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:268
-#, elixir-autogen, elixir-format
-msgid "Don't have an account? Sign up"
-msgstr ""
-
 #: lib/omedis_web/live/tenant_live/form_component.ex:152
 #, elixir-autogen, elixir-format
 msgid "Ean Gln"

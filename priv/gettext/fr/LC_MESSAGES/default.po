@@ -133,11 +133,6 @@ msgstr "Début quotidien à"
 msgid "Description"
 msgstr "Description"
 
-#: lib/omedis_web/live/register_live.ex:268
-#, elixir-autogen, elixir-format
-msgid "Don't have an account? Sign up"
-msgstr "Vous n'avez pas de compte ? Inscrivez-vous"
-
 #: lib/omedis_web/live/tenant_live/form_component.ex:152
 #, elixir-autogen, elixir-format
 msgid "Ean Gln"

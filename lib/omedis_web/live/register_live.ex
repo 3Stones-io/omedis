@@ -222,16 +222,6 @@ defmodule OmedisWeb.RegisterLive do
               />
             </div>
           </div>
-
-          <div class="w-[100%] flex mt-6 justify-between items-center">
-            <.link navigate="/login">
-              <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Don't have an account? Sign up") %>
-                <% end) %>
-              </p>
-            </.link>
-          </div>
         </div>
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
