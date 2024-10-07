@@ -180,7 +180,7 @@ defmodule Omedis.Accounts.Tenant do
       public?: true,
       default: "GMT+0200 (Europe/Berlin)"
 
-    attribute :slug, :string do
+    attribute :slug, :ci_string do
       constraints max_length: 80
       allow_nil? false
     end
