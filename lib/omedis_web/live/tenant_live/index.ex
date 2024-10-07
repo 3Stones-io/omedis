@@ -55,7 +55,7 @@ defmodule OmedisWeb.TenantLive.Index do
           <%= tenant.canton %>
         </:col>
         <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Country") end)}>
-          <%= tenant.website %>
+          <%= tenant.country %>
         </:col>
         <:action :let={{_id, tenant}}>
           <div class="sr-only">

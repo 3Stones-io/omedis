@@ -133,11 +133,6 @@ msgstr "Inizio giornaliero alle"
 msgid "Description"
 msgstr "Descrizione"
 
-#: lib/omedis_web/live/register_live.ex:268
-#, elixir-autogen, elixir-format
-msgid "Don't have an account? Sign up"
-msgstr "Non hai un conto? Iscriviti"
-
 #: lib/omedis_web/live/tenant_live/form_component.ex:152
 #, elixir-autogen, elixir-format
 msgid "Ean Gln"
@@ -675,7 +670,18 @@ msgstr "chiudi"
 msgid "new password"
 msgstr "nuova password"
 
-#: lib/omedis_web/live/language_switcher.ex:22
+
+#: lib/omedis_web/live/register_live.ex:128
+#, elixir-autogen, elixir-format
+msgid "Change language"
+msgstr "Cambia lingua"
+
+
+#: lib/omedis_web/live/register_live.ex:55
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Language changed"
+msgstr "La lingua è cambiata"
+
 #, elixir-autogen, elixir-format
 msgid "Language switched successfully"
 msgstr "Lingua cambiata con successo"

@@ -31,8 +31,7 @@ defmodule OmedisWeb.RegisterTest do
         |> form("#basic_user_sign_up_form", user: %{"password" => "1"})
         |> render_change()
 
-      assert html =~ "Last Name is required"
-      assert html =~ "First Name is required"
+      assert html =~ "length must be greater than or equal to 8"
     end
 
     test "You can sign in with valid data", %{conn: conn} do
