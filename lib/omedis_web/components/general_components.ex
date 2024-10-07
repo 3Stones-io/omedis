@@ -11,10 +11,10 @@ defmodule OmedisWeb.GeneralComponents do
 
   def breadcrumb(assigns) do
     ~H"""
-    <div class="lg:hidden">
+    <div class="lg:hidden -mt-10 mb-3 -mx-6 lg:-mx-8">
       <.mobile_breadcrumb items={assigns.items} />
     </div>
-    <div class="hidden lg:flex">
+    <div class="hidden lg:block -mt-10 mb-3 -mx-6 lg:-mx-8">
       <.desktop_breadcrumb items={assigns.items} />
     </div>
     """
@@ -22,43 +22,41 @@ defmodule OmedisWeb.GeneralComponents do
 
   def desktop_breadcrumb(assigns) do
     ~H"""
-    <div class="-mt-10 mb-3 -mx-6 lg:-mx-8">
-      <nav
-        class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
-        aria-label="Navigation Breadcrumb"
-      >
-        <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
-          <%= for {label, path, is_current} <- @items do %>
-            <%= if label === "Home" do %>
-              <div class="flex items-center">
-                <%= if is_current do %>
-                  <div class="text-sm font-medium text-gray-700" aria-current="page">
-                    <.home_icon />
-                  </div>
-                <% else %>
-                  <a href={path} class="text-sm font-medium text-gray-500 hover:text-gray-900">
-                    <.home_icon />
-                  </a>
-                <% end %>
-                <%= if not is_current do %>
-                  <svg
-                    class="h-full w-6 flex-shrink-0 text-gray-200"
-                    viewBox="0 0 24 44"
-                    preserveAspectRatio="none"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
-                  </svg>
-                <% end %>
-              </div>
-            <% else %>
-              <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
-            <% end %>
+    <nav
+      class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
+      aria-label="Navigation Breadcrumb"
+    >
+      <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
+        <%= for {label, path, is_current} <- @items do %>
+          <%= if label === "Home" do %>
+            <div class="flex items-center">
+              <%= if is_current do %>
+                <div class="text-sm font-medium text-gray-700" aria-current="page">
+                  <.home_icon />
+                </div>
+              <% else %>
+                <a href={path} class="text-sm font-medium text-gray-500 hover:text-gray-900">
+                  <.home_icon />
+                </a>
+              <% end %>
+              <%= if not is_current do %>
+                <svg
+                  class="h-full w-6 flex-shrink-0 text-gray-200"
+                  viewBox="0 0 24 44"
+                  preserveAspectRatio="none"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+                </svg>
+              <% end %>
+            </div>
+          <% else %>
+            <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
           <% end %>
-        </ol>
-      </nav>
-    </div>
+        <% end %>
+      </ol>
+    </nav>
     """
   end
 
@@ -69,28 +67,26 @@ defmodule OmedisWeb.GeneralComponents do
     assigns = assign(assigns, :show_full_breadcrumb, show_full_breadcrumb)
 
     ~H"""
-    <div class="-mt-10 mb-3 -mx-6 lg:-mx-8">
-      <nav
-        class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
-        aria-label="Navigation Breadcrumb"
-      >
-        <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
-          <%= if @show_full_breadcrumb do %>
-            <%= for {label, path, is_current} <- @items do %>
-              <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
-            <% end %>
-          <% else %>
-            <%= for {label, path, is_current} <- Enum.take(@items, 2) do %>
-              <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
-            <% end %>
-            <li class="flex items-center pb-3 text-gray-500 text-2xl">...</li>
-            <%= for {label, path, is_current} <- Enum.take(@items, -2) do %>
-              <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
-            <% end %>
+    <nav
+      class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
+      aria-label="Navigation Breadcrumb"
+    >
+      <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
+        <%= if @show_full_breadcrumb do %>
+          <%= for {label, path, is_current} <- @items do %>
+            <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
           <% end %>
-        </ol>
-      </nav>
-    </div>
+        <% else %>
+          <%= for {label, path, is_current} <- Enum.take(@items, 2) do %>
+            <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
+          <% end %>
+          <li class="flex items-center pb-3 text-gray-500 text-2xl">...</li>
+          <%= for {label, path, is_current} <- Enum.take(@items, -2) do %>
+            <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
+          <% end %>
+        <% end %>
+      </ol>
+    </nav>
     """
   end
 
