@@ -6,82 +6,94 @@ defmodule OmedisWeb.GroupLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.breadcrumb items={[
-      {"Home", ~p"/", false},
-      {"Tenants", ~p"/tenants", false},
-      {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-      {"Groups", ~p"/tenants/#{@tenant.slug}", true}
-    ]} />
-
-    <div>
-      <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button">Back</.link>
-    </div>
-    <.header>
-      <%= with_locale(@language, fn -> %>
-        <%= gettext("Listing Groups") %>
-      <% end) %>
-      <:actions>
-        <.link patch={~p"/tenants/#{@tenant.slug}/groups/new"}>
-          <.button>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("New Group") %>
-            <% end) %>
-          </.button>
-        </.link>
-      </:actions>
-    </.header>
-
-    <.table
-      id="groups"
-      rows={@streams.groups}
-      row_click={
-        fn {_id, group} -> JS.navigate(~p"/tenants/#{@tenant.slug}/groups/#{group.slug}") end
-      }
+    <.side_and_topbar
+      current_user={@current_user}
+      current_tenant={@current_tenant}
+      language={@language}
+      tenants_count={@tenants_count}
     >
-      <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Name") end)}>
-        <%= group.name %>
-      </:col>
+      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.breadcrumb items={[
+          {"Home", ~p"/", false},
+          {"Tenants", ~p"/tenants", false},
+          {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+          {"Groups", ~p"/tenants/#{@tenant.slug}", true}
+        ]} />
 
-      <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Slug") end)}>
-        <%= group.slug %>
-      </:col>
-
-      <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Actions") end)}>
-        <div class="flex gap-4">
-          <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{group.slug}/edit"} class="font-semibold">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Edit") %>
-            <% end) %>
-          </.link>
-          <.link>
-            <p class="font-semibold" phx-click="delete" phx-value-id={group.id}>
-              <%= with_locale(@language, fn -> %>
-                <%= gettext("Delete") %>
-              <% end) %>
-            </p>
-          </.link>
+        <div>
+          <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button">Back</.link>
         </div>
-      </:col>
-    </.table>
+        <.header>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Listing Groups") %>
+          <% end) %>
+          <:actions>
+            <.link patch={~p"/tenants/#{@tenant.slug}/groups/new"}>
+              <.button>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("New Group") %>
+                <% end) %>
+              </.button>
+            </.link>
+          </:actions>
+        </.header>
 
-    <.modal
-      :if={@live_action in [:new, :edit]}
-      id="group-modal"
-      show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups")}
-    >
-      <.live_component
-        module={OmedisWeb.GroupLive.FormComponent}
-        id={(@group && @group.slug) || :new}
-        title={@page_title}
-        action={@live_action}
-        language={@language}
-        group={@group}
-        current_user={@current_user}
-        tenant={@tenant}
-        patch={~p"/tenants/#{@tenant.slug}/groups"}
-      />
-    </.modal>
+        <.table
+          id="groups"
+          rows={@streams.groups}
+          row_click={
+            fn {_id, group} -> JS.navigate(~p"/tenants/#{@tenant.slug}/groups/#{group.slug}") end
+          }
+        >
+          <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Name") end)}>
+            <%= group.name %>
+          </:col>
+
+          <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Slug") end)}>
+            <%= group.slug %>
+          </:col>
+
+          <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Actions") end)}>
+            <div class="flex gap-4">
+              <.link
+                patch={~p"/tenants/#{@tenant.slug}/groups/#{group.slug}/edit"}
+                class="font-semibold"
+              >
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Edit") %>
+                <% end) %>
+              </.link>
+              <.link>
+                <p class="font-semibold" phx-click="delete" phx-value-id={group.id}>
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("Delete") %>
+                  <% end) %>
+                </p>
+              </.link>
+            </div>
+          </:col>
+        </.table>
+
+        <.modal
+          :if={@live_action in [:new, :edit]}
+          id="group-modal"
+          show
+          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups")}
+        >
+          <.live_component
+            module={OmedisWeb.GroupLive.FormComponent}
+            id={(@group && @group.slug) || :new}
+            title={@page_title}
+            action={@live_action}
+            language={@language}
+            group={@group}
+            current_user={@current_user}
+            tenant={@tenant}
+            patch={~p"/tenants/#{@tenant.slug}/groups"}
+          />
+        </.modal>
+      </div>
+    </.side_and_topbar>
     """
   end
 

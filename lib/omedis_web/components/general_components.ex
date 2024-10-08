@@ -165,6 +165,7 @@ defmodule OmedisWeb.GeneralComponents do
         current_user={@current_user}
         tenants_count={@tenants_count}
       />
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
