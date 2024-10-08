@@ -8,25 +8,32 @@ defmodule OmedisWeb.TenantLive.Today do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
-      <.breadcrumb items={[
-        {"Home", ~p"/", false},
-        {"Tenants", ~p"/tenants", false},
-        {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-        {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
-        {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-        {"Today", "", true}
-      ]} />
+    <.side_and_topbar
+      current_user={@current_user}
+      current_tenant={@current_tenant}
+      language={@language}
+      tenants_count={@tenants_count}
+    >
+      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.breadcrumb items={[
+          {"Home", ~p"/", false},
+          {"Tenants", ~p"/tenants", false},
+          {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+          {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
+          {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+          {"Today", "", true}
+        ]} />
 
-      <.dashboard_component
-        categories={@categories}
-        start_at={@start_at}
-        end_at={@end_at}
-        log_entries={@log_entries}
-        language={@language}
-        current_time={@current_time}
-      />
-    </div>
+        <.dashboard_component
+          categories={@categories}
+          start_at={@start_at}
+          end_at={@end_at}
+          log_entries={@log_entries}
+          language={@language}
+          current_time={@current_time}
+        />
+      </div>
+    </.side_and_topbar>
     """
   end
 

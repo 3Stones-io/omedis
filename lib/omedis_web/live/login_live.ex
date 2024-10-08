@@ -11,6 +11,7 @@ defmodule OmedisWeb.LoginLive do
       socket
       |> assign(current_user: nil)
       |> assign(:language, language)
+      |> assign(:tenants_count, 0)
       |> assign(trigger_action: false)
       |> assign(:errors, [])
 
@@ -60,88 +61,97 @@ defmodule OmedisWeb.LoginLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.form
-      :let={f}
-      id="basic_user_sign_in_form"
-      for={@form}
-      action={@action}
-      phx-trigger-action={@trigger_action}
-      method="POST"
-      class="space-y-2 group"
-      phx-change="validate"
-      phx-submit="submit"
+    <.side_and_topbar
+      current_user={@current_user}
+      current_tenant={nil}
+      language={@language}
+      tenants_count={@tenants_count}
     >
-      <div class="space-y-6">
-        <div class="border-b border-gray-900/10 pb-12">
-          <h2 class="text-base font-semibold leading-7 text-gray-900">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Sign in") %>
-            <% end) %>
-          </h2>
-          <p class="mt-1 text-sm leading-6 text-gray-600">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Use your credentials to sign in") %>
-            <% end) %>
-          </p>
-
-          <div>
-            <label class="block text-sm font-medium leading-6 text-gray-900">
-              <%= with_locale(@language, fn -> %>
-                <%= gettext("Email") %>
-              <% end) %>
-            </label>
-            <div phx-feedback-for={f[:email].name} class="mt-2">
-              <%= text_input(f, :email,
-                class:
-                  "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                placeholder: with_locale(@language, fn -> gettext("Email") end),
-                value: f[:email].value,
-                required: true,
-                autocomplete: :email,
-                "phx-debounce": "200"
-              ) %>
-              <.error :for={msg <- get_field_errors(f[:email], :email)}>
+      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.form
+          :let={f}
+          id="basic_user_sign_in_form"
+          for={@form}
+          action={@action}
+          phx-trigger-action={@trigger_action}
+          method="POST"
+          class="space-y-2 group"
+          phx-change="validate"
+          phx-submit="submit"
+        >
+          <div class="space-y-6">
+            <div class="border-b border-gray-900/10 pb-12">
+              <h2 class="text-base font-semibold leading-7 text-gray-900">
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Email") <> " " <> msg %>
+                  <%= gettext("Sign in") %>
                 <% end) %>
-              </.error>
+              </h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Use your credentials to sign in") %>
+                <% end) %>
+              </p>
+
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("Email") %>
+                  <% end) %>
+                </label>
+                <div phx-feedback-for={f[:email].name} class="mt-2">
+                  <%= text_input(f, :email,
+                    class:
+                      "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                    placeholder: with_locale(@language, fn -> gettext("Email") end),
+                    value: f[:email].value,
+                    required: true,
+                    autocomplete: :email,
+                    "phx-debounce": "200"
+                  ) %>
+                  <.error :for={msg <- get_field_errors(f[:email], :email)}>
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Email") <> " " <> msg %>
+                    <% end) %>
+                  </.error>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("Password") %>
+                  <% end) %>
+                </label>
+
+                <div phx-feedback-for={f[:password].name} class="mt-2">
+                  <%= password_input(f, :password,
+                    class:
+                      "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                    placeholder: with_locale(@language, fn -> gettext("Password") end),
+                    value: f[:password].value,
+                    autocomplete: gettext("new password"),
+                    "phx-debounce": "blur"
+                  ) %>
+                  <.error :for={msg <- get_field_errors(f[:password], :password)}>
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Password") <> " " <> msg %>
+                    <% end) %>
+                  </.error>
+                </div>
+              </div>
+
+              <div class="mt-6 flex items-center justify-end gap-x-6">
+                <%= submit(with_locale(@language, fn -> gettext("Sign in") end),
+                  phx_disable_with: with_locale(@language, fn -> gettext("Signing in...") end),
+                  class:
+                    "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                ) %>
+              </div>
             </div>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium leading-6 text-gray-900">
-              <%= with_locale(@language, fn -> %>
-                <%= gettext("Password") %>
-              <% end) %>
-            </label>
-
-            <div phx-feedback-for={f[:password].name} class="mt-2">
-              <%= password_input(f, :password,
-                class:
-                  "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                placeholder: with_locale(@language, fn -> gettext("Password") end),
-                value: f[:password].value,
-                autocomplete: gettext("new password"),
-                "phx-debounce": "blur"
-              ) %>
-              <.error :for={msg <- get_field_errors(f[:password], :password)}>
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Password") <> " " <> msg %>
-                <% end) %>
-              </.error>
-            </div>
-          </div>
-
-          <div class="mt-6 flex items-center justify-end gap-x-6">
-            <%= submit(with_locale(@language, fn -> gettext("Sign in") end),
-              phx_disable_with: with_locale(@language, fn -> gettext("Signing in...") end),
-              class:
-                "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            ) %>
-          </div>
-        </div>
+        </.form>
       </div>
-    </.form>
+    </.side_and_topbar>
     """
   end
 end
