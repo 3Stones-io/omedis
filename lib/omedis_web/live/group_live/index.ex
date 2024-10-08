@@ -6,6 +6,13 @@ defmodule OmedisWeb.GroupLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <.breadcrumb items={[
+      {"Home", ~p"/", false},
+      {"Tenants", ~p"/tenants", false},
+      {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+      {"Groups", ~p"/tenants/#{@tenant.slug}", true}
+    ]} />
+
     <div>
       <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button">Back</.link>
     </div>
