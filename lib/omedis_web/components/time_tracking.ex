@@ -276,6 +276,31 @@ defmodule OmedisWeb.TimeTracking do
     """
   end
 
+  def select_for_groups(assigns) do
+    ~H"""
+    <div class="flex flex-col mb-3 gap-1">
+      <p>
+        <%= @header_text %>
+      </p>
+
+      <form phx-change="select_group" phx-submit="select_group" class="form-control">
+        <select
+          name="group_id"
+          id="group_id"
+          defa
+          class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+        >
+          <%= for {name , id} <- @groups do %>
+            <option selected={id == @group.id} value={id}>
+              <%= name %>
+            </option>
+          <% end %>
+        </select>
+      </form>
+    </div>
+    """
+  end
+
   @doc """
   Calculates the top position for an event as a percentage of the timeline.
 

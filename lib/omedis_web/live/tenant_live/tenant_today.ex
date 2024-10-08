@@ -1,4 +1,4 @@
-defmodule OmedisWeb.TenantLive.Today do
+defmodule OmedisWeb.TenantLive.TenantToday do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
@@ -9,9 +9,16 @@ defmodule OmedisWeb.TenantLive.Today do
   def render(assigns) do
     ~H"""
     <div>
-      <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"} class="button ">
+      <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button ">
         Back
       </.link>
+
+      <.select_for_groups
+        groups={@groups}
+        group={@group}
+        header_text={with_locale(@language, fn -> gettext("Select group") end)}
+      />
+
       <.dashboard_component
         categories={@categories}
         start_at={@start_at}
@@ -32,9 +39,9 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   @impl true
-  def handle_params(%{"group_slug" => group_slug, "slug" => slug}, _, socket) do
+  def handle_params(%{"group_id" => id, "slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
-    group = Group.by_slug!(group_slug)
+    group = Group.by_id!(id)
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
@@ -63,10 +70,27 @@ defmodule OmedisWeb.TenantLive.Today do
      |> assign(:tenant, tenant)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
+     |> assign(:groups, groups_for_a_tenant(tenant.id))
      |> assign(:group, group)
      |> assign(:log_entries, log_entries)
      |> assign(:current_time, current_time)
      |> assign(:categories, categories)}
+  end
+
+  @impl true
+  def handle_params(%{"slug" => slug}, _, socket) do
+    tenant = Tenant.by_slug!(slug)
+    group = latest_group_for_a_tenant(tenant.id)
+
+    {:noreply,
+     socket
+     |> push_navigate(to: "/tenants/#{tenant.slug}/today?group_id=#{group.id}")}
+  end
+
+  def handle_event("select_group", %{"group_id" => id}, socket) do
+    {:noreply,
+     socket
+     |> push_navigate(to: "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{id}")}
   end
 
   # Defaults to German Timezone
@@ -300,5 +324,26 @@ defmodule OmedisWeb.TenantLive.Today do
 
   def stop_log_entry(log_entry) do
     LogEntry.update(log_entry, %{end_at: Time.utc_now()})
+  end
+
+  defp latest_group_for_a_tenant(tenant_id) do
+    case Group.by_tenant_id(%{tenant_id: tenant_id}) do
+      {:ok, groups} ->
+        Enum.min_by(groups, & &1.created_at)
+
+      _ ->
+        nil
+    end
+  end
+
+  defp groups_for_a_tenant(tenant_id) do
+    case Group.by_tenant_id(%{tenant_id: tenant_id}) do
+      {:ok, groups} ->
+        groups
+        |> Enum.map(fn group -> {group.name, group.id} end)
+
+      _ ->
+        []
+    end
   end
 end
