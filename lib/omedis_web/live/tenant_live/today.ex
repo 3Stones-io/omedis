@@ -9,9 +9,12 @@ defmodule OmedisWeb.TenantLive.Today do
   def render(assigns) do
     ~H"""
     <div>
-      <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button ">
-        Back
-      </.link>
+      <.breadcrumb items={[
+        {"Home", ~p"/", false},
+        {"Tenants", ~p"/tenants", false},
+        {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+        {"Today", "", true}
+      ]} />
 
       <.select_for_groups
         groups={@groups}
@@ -86,7 +89,6 @@ defmodule OmedisWeb.TenantLive.Today do
      socket
      |> push_navigate(to: "/tenants/#{tenant.slug}/today?group_id=#{group.id}")}
   end
-
 
   # Defaults to German Timezone
   defp format_timezone(time, nil), do: Time.add(time, 2, :hour)
@@ -279,7 +281,6 @@ defmodule OmedisWeb.TenantLive.Today do
      socket
      |> push_navigate(to: "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{id}")}
   end
-
 
   defp create_or_stop_log_entry(log_category_id, tenant_id, user_id) do
     {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category_id})

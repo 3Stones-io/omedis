@@ -7,6 +7,16 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
+    <.breadcrumb items={[
+      {"Home", ~p"/", false},
+      {"Tenants", ~p"/tenants", false},
+      {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+      {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
+      {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+      {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
+      {@log_category.name, "", true}
+    ]} />
+
     <.header>
       <%= with_locale(@language, fn -> %>
         <%= gettext("Log category") %>

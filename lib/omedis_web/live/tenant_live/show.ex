@@ -5,6 +5,12 @@ defmodule OmedisWeb.TenantLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
+    <.breadcrumb items={[
+      {"Home", ~p"/", false},
+      {"Tenants", ~p"/tenants", false},
+      {@tenant.name, ~p"/tenants/#{@tenant.slug}", true}
+    ]} />
+
     <.header>
       <%= @tenant.slug %>
 

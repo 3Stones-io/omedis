@@ -7,6 +7,18 @@ defmodule OmedisWeb.LogEntryLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <.breadcrumb items={[
+      {"Home", ~p"/", false},
+      {"Tenants", ~p"/tenants", false},
+      {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+      {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
+      {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+      {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
+      {@log_category.name,
+       ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}", false},
+      {"Log Entries", "", true}
+    ]} />
+
     <.header>
       Listing Log entries for <%= @log_category.name %>
     </.header>
@@ -50,10 +62,14 @@ defmodule OmedisWeb.LogEntryLive.Index do
   def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
     tenant = Tenant.by_slug!(slug)
 
-    log_category = LogCategory.by_id!(id)
+    {:ok, log_category} =
+      id
+      |> LogCategory.by_id!()
+      |> Ash.load(:group)
 
     {:noreply,
      socket
+     |> assign(:group, log_category.group)
      |> assign(:log_category, log_category)
      |> assign(:tenant, tenant)
      |> apply_action(socket.assigns.live_action, params)}

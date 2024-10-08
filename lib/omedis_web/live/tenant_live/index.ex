@@ -5,6 +5,11 @@ defmodule OmedisWeb.TenantLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <.breadcrumb items={[
+      {"Home", ~p"/", false},
+      {"Tenants", ~p"/tenants", true}
+    ]} />
+
     <.header>
       <%= with_locale(@language, fn -> %>
         <%= gettext("Listing Tenants") %>

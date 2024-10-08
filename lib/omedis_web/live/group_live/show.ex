@@ -6,6 +6,14 @@ defmodule OmedisWeb.GroupLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
+    <.breadcrumb items={[
+      {"Home", ~p"/", false},
+      {"Tenants", ~p"/tenants", false},
+      {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+      {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
+      {@group.name, "", true}
+    ]} />
+
     <.header>
       <:actions>
         <.link
