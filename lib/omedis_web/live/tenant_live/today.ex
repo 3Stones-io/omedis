@@ -1,4 +1,4 @@
-defmodule OmedisWeb.TenantLive.TenantToday do
+defmodule OmedisWeb.TenantLive.Today do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
