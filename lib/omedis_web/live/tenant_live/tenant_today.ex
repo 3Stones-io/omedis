@@ -87,11 +87,6 @@ defmodule OmedisWeb.TenantLive.TenantToday do
      |> push_navigate(to: "/tenants/#{tenant.slug}/today?group_id=#{group.id}")}
   end
 
-  def handle_event("select_group", %{"group_id" => id}, socket) do
-    {:noreply,
-     socket
-     |> push_navigate(to: "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{id}")}
-  end
 
   # Defaults to German Timezone
   defp format_timezone(time, nil), do: Time.add(time, 2, :hour)
@@ -278,6 +273,13 @@ defmodule OmedisWeb.TenantLive.TenantToday do
      socket
      |> assign(:categories, categories(socket.assigns.group.id))}
   end
+
+  def handle_event("select_group", %{"group_id" => id}, socket) do
+    {:noreply,
+     socket
+     |> push_navigate(to: "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{id}")}
+  end
+
 
   defp create_or_stop_log_entry(log_category_id, tenant_id, user_id) do
     {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category_id})
