@@ -3,6 +3,8 @@ defmodule OmedisWeb.LogEntryLive.Index do
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
+  alias Omedis.PaginationUtils
+  alias OmedisWeb.PaginationComponent
 
   @impl true
   def render(assigns) do
@@ -45,28 +47,25 @@ defmodule OmedisWeb.LogEntryLive.Index do
             <%= log_entry.end_at %>
           </:col>
         </.table>
+        <PaginationComponent.pagination
+          current_page={@current_page}
+          language={@language}
+          limit={@limit}
+          page_start={@page_start}
+          total_count={@total_count}
+          total_pages={@total_pages}
+        />
       </div>
     </.side_and_topbar>
     """
   end
 
   @impl true
-  def mount(%{"id" => id} = _params, %{"language" => language} = _session, socket) do
-    case LogEntry.by_log_category(%{log_category_id: id}) do
-      {:ok, log_entries} ->
-        socket =
-          socket
-          |> assign(:language, language)
-
-        {:ok, stream(socket, :log_entries, log_entries)}
-
-      _ ->
-        socket =
-          socket
-          |> assign(:language, language)
-
-        {:ok, stream(socket, :log_entries, [])}
-    end
+  def mount(params, %{"language" => language} = _session, socket) do
+    {:ok,
+     socket
+     |> assign(:language, language)
+     |> list_paginated_log_entries(params)}
   end
 
   @impl true
@@ -90,5 +89,73 @@ defmodule OmedisWeb.LogEntryLive.Index do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
     |> assign(:log_entry, nil)
+  end
+
+  defp list_paginated_log_entries(socket, params, opts \\ [reset_stream: false]) do
+    limit = PaginationUtils.maybe_parse_value(:limit, params["limit"])
+    page = PaginationUtils.maybe_parse_value(:page, params["page"])
+
+    case list_paginated_log_entries(params) do
+      {:ok, %{count: total_count, results: log_entries}} ->
+        reset_stream = opts[:reset_stream]
+        total_pages = ceil(total_count / limit)
+
+        socket
+        |> assign(:current_page, page)
+        |> assign(:limit, limit)
+        |> assign(:page_start, page)
+        |> assign(:total_count, total_count)
+        |> assign(:total_pages, total_pages)
+        |> stream(:log_entries, log_entries, reset: reset_stream)
+
+      {:error, _error} ->
+        socket
+        |> assign(:current_page, 1)
+        |> assign(:limit, limit)
+        |> assign(:page_start, page)
+        |> assign(:total_count, 0)
+        |> assign(:total_pages, 0)
+        |> stream(:tenants, [])
+    end
+  end
+
+  defp list_paginated_log_entries(params) do
+    case params do
+      %{"limit" => limit, "page" => offset} when not is_nil(limit) and not is_nil(offset) ->
+        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
+        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
+
+        LogEntry.by_log_category(%{log_category_id: params["id"]},
+          page: [count: true, limit: limit_value, offset: offset_value]
+        )
+
+      %{"limit" => limit} when not is_nil(limit) ->
+        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
+
+        LogEntry.by_log_category(%{log_category_id: params["id"]},
+          page: [count: true, limit: limit_value]
+        )
+
+      %{"page" => offset} when not is_nil(offset) ->
+        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
+
+        LogEntry.by_log_category(%{log_category_id: params["id"]},
+          page: [count: true, offset: offset_value]
+        )
+
+      _other ->
+        LogEntry.by_log_category(%{log_category_id: params["id"]}, page: [count: true])
+    end
+  end
+
+  @impl true
+  def handle_event("change_page", %{"limit" => limit, "page" => page} = params, socket) do
+    {:noreply,
+     socket
+     |> list_paginated_log_entries(params, reset_stream: true)
+     |> push_navigate(
+       to:
+         ~p"/tenants/#{socket.assigns.tenant.slug}/log_categories/#{socket.assigns.log_category.id}/log_entries?page=#{page}&limit=#{limit}"
+     )}
   end
 end

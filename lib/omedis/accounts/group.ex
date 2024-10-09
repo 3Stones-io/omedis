@@ -77,6 +77,9 @@ defmodule Omedis.Accounts.Group do
         allow_nil? false
       end
 
+      pagination offset?: true, default_limit: 10
+      prepare build(sort: :created_at)
+
       filter expr(tenant_id == ^arg(:tenant_id))
     end
 

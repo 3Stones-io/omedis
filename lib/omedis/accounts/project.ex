@@ -30,6 +30,7 @@ defmodule Omedis.Accounts.Project do
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_tenant_id
+    define :list_paginated
     define :max_position_by_tenant_id
   end
 
@@ -83,6 +84,11 @@ defmodule Omedis.Accounts.Project do
       end
 
       filter expr(tenant_id == ^arg(:tenant_id))
+    end
+
+    read :list_paginated do
+      pagination offset?: true, default_limit: 10
+      prepare build(sort: :created_at)
     end
 
     destroy :destroy do

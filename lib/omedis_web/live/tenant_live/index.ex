@@ -1,6 +1,8 @@
 defmodule OmedisWeb.TenantLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Tenant
+  alias Omedis.PaginationUtils
+  alias OmedisWeb.PaginationComponent
 
   @impl true
   def render(assigns) do
@@ -103,18 +105,25 @@ defmodule OmedisWeb.TenantLive.Index do
             patch={~p"/tenants"}
           />
         </.modal>
+        <PaginationComponent.pagination
+          current_page={@current_page}
+          language={@language}
+          limit={@limit}
+          page_start={@page_start}
+          total_count={@total_count}
+          total_pages={@total_pages}
+        />
       </div>
     </.side_and_topbar>
     """
   end
 
   @impl true
-  def mount(_params, %{"language" => language} = _session, socket) do
-    socket =
-      socket
-      |> assign(:language, language)
-
-    {:ok, stream(socket, :tenants, Ash.read!(Tenant))}
+  def mount(params, %{"language" => language} = _session, socket) do
+    {:ok,
+     socket
+     |> assign(:language, language)
+     |> list_paginated_tenants(params)}
   end
 
   @impl true
@@ -141,6 +150,65 @@ defmodule OmedisWeb.TenantLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Listing Tenants") end)
     )
     |> assign(:tenant, nil)
+  end
+
+  defp list_paginated_tenants(socket, params, opts \\ [reset_stream: false]) do
+    limit = PaginationUtils.maybe_parse_value(:limit, params["limit"])
+    page = PaginationUtils.maybe_parse_value(:page, params["page"])
+
+    case list_paginated_tenants(params) do
+      {:ok, %{count: total_count, results: tenants}} ->
+        reset_stream = opts[:reset_stream]
+        total_pages = ceil(total_count / limit)
+
+        socket
+        |> assign(:current_page, page)
+        |> assign(:limit, limit)
+        |> assign(:page_start, page)
+        |> assign(:total_count, total_count)
+        |> assign(:total_pages, total_pages)
+        |> stream(:tenants, tenants, reset: reset_stream)
+
+      {:error, _error} ->
+        socket
+        |> assign(:current_page, 1)
+        |> assign(:limit, limit)
+        |> assign(:page_start, page)
+        |> assign(:total_count, 0)
+        |> assign(:total_pages, 0)
+        |> stream(:tenants, [])
+    end
+  end
+
+  defp list_paginated_tenants(params) do
+    case params do
+      %{"limit" => limit, "page" => offset} when not is_nil(limit) and not is_nil(offset) ->
+        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
+        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
+
+        Tenant.list_paginated(page: [count: true, limit: limit_value, offset: offset_value])
+
+      %{"limit" => limit} when not is_nil(limit) ->
+        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
+
+        Tenant.list_paginated(page: [count: true, limit: limit_value])
+
+      %{"page" => offset} when not is_nil(offset) ->
+        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
+
+        Tenant.list_paginated(page: [count: true, offset: offset_value])
+
+      _other ->
+        Tenant.list_paginated(page: [count: true])
+    end
+  end
+
+  @impl true
+  def handle_event("change_page", %{"limit" => limit, "page" => page} = params, socket) do
+    {:noreply,
+     socket
+     |> list_paginated_tenants(params, reset_stream: true)
+     |> push_patch(to: ~p"/tenants?page=#{page}&limit=#{limit}")}
   end
 
   @impl true
