@@ -102,7 +102,7 @@ defmodule Omedis.Accounts.Group do
     uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :slug, :string, allow_nil?: true, public?: true
+    attribute :slug, :ci_string, allow_nil?: true, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at

@@ -23,4 +23,9 @@ defmodule OmedisWeb.LiveTenant do
 
     {:cont, assign(socket, :current_tenant, current_tenant)}
   end
+
+  def on_mount(:assign_tenants_count, _params, _session, socket) do
+    {:ok, tenant_count} = Ash.count(Tenant)
+    {:cont, assign(socket, :tenants_count, tenant_count)}
+  end
 end

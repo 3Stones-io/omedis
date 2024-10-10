@@ -7,91 +7,110 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.header>
-      <%= with_locale(@language, fn -> %>
-        <%= gettext("Log category") %>
-      <% end) %>
-      <%= @log_category.id %>
-      <:subtitle>
-        <%= with_locale(@language, fn -> %>
-          <%= gettext("This is a log_category record from your database.") %>
-        <% end) %>
-      </:subtitle>
-
-      <:actions>
-        <.link
-          patch={
-            ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}/show/edit"
-          }
-          phx-click={JS.push_focus()}
-        >
-          <.button>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Edit log_category") %>
-            <% end) %>
-          </.button>
-        </.link>
-
-        <.link
-          navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/log_entries"}
-          phx-click={JS.push_focus()}
-        >
-          <.button>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("View Log entries") %>
-            <% end) %>
-          </.button>
-        </.link>
-      </:actions>
-    </.header>
-
-    <.list>
-      <:item title={with_locale(@language, fn -> gettext("Name") end)}>
-        <%= @log_category.name %>
-      </:item>
-
-      <:item title={with_locale(@language, fn -> gettext("Group ID") end)}>
-        <%= @log_category.group_id %>
-      </:item>
-      <:item title={with_locale(@language, fn -> gettext("Color code") end)}>
-        <%= @log_category.color_code %>
-      </:item>
-      <:item title={with_locale(@language, fn -> gettext("Position") end)}>
-        <%= @log_category.position %>
-      </:item>
-    </.list>
-
-    <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}>
-      <%= with_locale(@language, fn -> %>
-        <%= gettext("Back to log categories") %>
-      <% end) %>
-    </.back>
-
-    <.modal
-      :if={@live_action == :edit}
-      id="log_category-modal"
-      show
-      on_cancel={
-        JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}")
-      }
+    <.side_and_topbar
+      current_user={@current_user}
+      current_tenant={@current_tenant}
+      language={@language}
+      tenants_count={@tenants_count}
     >
-      <.live_component
-        module={OmedisWeb.LogCategoryLive.FormComponent}
-        id={@log_category.id}
-        title={@page_title}
-        action={@live_action}
-        tenant={@tenant}
-        groups={@groups}
-        color_code={@color_code}
-        is_custom_color={@is_custom_color}
-        tenants={@tenants}
-        group={@group}
-        next_position={@next_position}
-        language={@language}
-        log_category={@log_category}
-        patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"}
-      />
-    </.modal>
+      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.breadcrumb items={[
+          {"Home", ~p"/", false},
+          {"Tenants", ~p"/tenants", false},
+          {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+          {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
+          {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+          {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories",
+           false},
+          {@log_category.name, "", true}
+        ]} />
+
+        <.header>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Log category") %>
+          <% end) %>
+
+          <:subtitle>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("This is a log_category record from your database.") %>
+            <% end) %>
+          </:subtitle>
+
+          <:actions>
+            <.link
+              patch={
+                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}/show/edit"
+              }
+              phx-click={JS.push_focus()}
+            >
+              <.button>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Edit log_category") %>
+                <% end) %>
+              </.button>
+            </.link>
+
+            <.link
+              navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/log_entries"}
+              phx-click={JS.push_focus()}
+            >
+              <.button>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("View Log entries") %>
+                <% end) %>
+              </.button>
+            </.link>
+          </:actions>
+        </.header>
+
+        <.list>
+          <:item title={with_locale(@language, fn -> gettext("Name") end)}>
+            <%= @log_category.name %>
+          </:item>
+
+          <:item title={with_locale(@language, fn -> gettext("Color code") end)}>
+            <%= @log_category.color_code %>
+          </:item>
+          <:item title={with_locale(@language, fn -> gettext("Position") end)}>
+            <%= @log_category.position %>
+          </:item>
+        </.list>
+
+        <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Back to log categories") %>
+          <% end) %>
+        </.back>
+
+        <.modal
+          :if={@live_action == :edit}
+          id="log_category-modal"
+          show
+          on_cancel={
+            JS.patch(
+              ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"
+            )
+          }
+        >
+          <.live_component
+            module={OmedisWeb.LogCategoryLive.FormComponent}
+            id={@log_category.id}
+            title={@page_title}
+            action={@live_action}
+            tenant={@tenant}
+            groups={@groups}
+            color_code={@color_code}
+            is_custom_color={@is_custom_color}
+            tenants={@tenants}
+            group={@group}
+            next_position={@next_position}
+            language={@language}
+            log_category={@log_category}
+            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"}
+          />
+        </.modal>
+      </div>
+    </.side_and_topbar>
     """
   end
 
