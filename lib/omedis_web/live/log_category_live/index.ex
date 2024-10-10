@@ -132,7 +132,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   end
 
   def mount(
-        %{"slug" => slug, "group_slug" => group_slug} = _params,
+        %{"slug" => slug, "group_slug" => group_slug},
         %{"language" => language} = _session,
         socket
       ) do
