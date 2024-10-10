@@ -51,8 +51,6 @@ defmodule OmedisWeb.LogEntryLive.Index do
           current_page={@current_page}
           language={@language}
           limit={@limit}
-          page_start={@page_start}
-          total_count={@total_count}
           total_pages={@total_pages}
         />
       </div>
@@ -61,11 +59,14 @@ defmodule OmedisWeb.LogEntryLive.Index do
   end
 
   @impl true
-  def mount(params, %{"language" => language} = _session, socket) do
+  def mount(_params, %{"language" => language} = _session, socket) do
     {:ok,
      socket
+     |> assign(:current_page, 1)
      |> assign(:language, language)
-     |> list_paginated_log_entries(params)}
+     |> assign(:limit, 10)
+     |> assign(:total_pages, 0)
+     |> stream(:log_entries, [])}
   end
 
   @impl true
@@ -85,10 +86,11 @@ defmodule OmedisWeb.LogEntryLive.Index do
      |> apply_action(socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
     |> assign(:log_entry, nil)
+    |> list_paginated_log_entries(params, reset_stream: true)
   end
 
   defp list_paginated_log_entries(socket, params, opts \\ [reset_stream: false]) do
@@ -97,25 +99,20 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
     case list_paginated_log_entries(params) do
       {:ok, %{count: total_count, results: log_entries}} ->
-        reset_stream = opts[:reset_stream]
         total_pages = ceil(total_count / limit)
 
         socket
         |> assign(:current_page, page)
         |> assign(:limit, limit)
-        |> assign(:page_start, page)
-        |> assign(:total_count, total_count)
         |> assign(:total_pages, total_pages)
-        |> stream(:log_entries, log_entries, reset: reset_stream)
+        |> stream(:log_entries, log_entries, reset: opts[:reset_stream])
 
       {:error, _error} ->
         socket
         |> assign(:current_page, 1)
         |> assign(:limit, limit)
-        |> assign(:page_start, page)
-        |> assign(:total_count, 0)
         |> assign(:total_pages, 0)
-        |> stream(:tenants, [])
+        |> stream(:log_entries, [])
     end
   end
 
@@ -146,16 +143,5 @@ defmodule OmedisWeb.LogEntryLive.Index do
       _other ->
         LogEntry.by_log_category(%{log_category_id: params["id"]}, page: [count: true])
     end
-  end
-
-  @impl true
-  def handle_event("change_page", %{"limit" => limit, "page" => page} = params, socket) do
-    {:noreply,
-     socket
-     |> list_paginated_log_entries(params, reset_stream: true)
-     |> push_navigate(
-       to:
-         ~p"/tenants/#{socket.assigns.tenant.slug}/log_categories/#{socket.assigns.log_category.id}/log_entries?page=#{page}&limit=#{limit}"
-     )}
   end
 end

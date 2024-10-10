@@ -98,8 +98,6 @@ defmodule OmedisWeb.GroupLive.Index do
           current_page={@current_page}
           language={@language}
           limit={@limit}
-          page_start={@page_start}
-          total_count={@total_count}
           total_pages={@total_pages}
         />
       </div>
@@ -110,13 +108,15 @@ defmodule OmedisWeb.GroupLive.Index do
   @impl true
   def mount(%{"slug" => slug} = params, %{"language" => language} = _session, socket) do
     tenant = Tenant.by_slug!(slug)
-    # groups = Group.by_tenant_id!(%{tenant_id: tenant.id})
 
     {:ok,
      socket
-     |> assign(:tenant, tenant)
+     |> assign(:current_page, 0)
      |> assign(:language, language)
-     |> list_paginated_groups(params)}
+     |> assign(:limit, 10)
+     |> assign(:total_pages, 0)
+     |> assign(:tenant, tenant)
+     |> stream(:groups, [])}
   end
 
   @impl true
@@ -136,13 +136,14 @@ defmodule OmedisWeb.GroupLive.Index do
     |> assign(:group, nil)
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
     socket
     |> assign(
       :page_title,
       with_locale(socket.assigns.language, fn -> gettext("Listing Groups") end)
     )
     |> assign(:group, nil)
+    |> list_paginated_groups(params)
   end
 
   defp list_paginated_groups(socket, params, opts \\ [reset_stream: false]) do
@@ -157,17 +158,13 @@ defmodule OmedisWeb.GroupLive.Index do
         socket
         |> assign(:current_page, page)
         |> assign(:limit, limit)
-        |> assign(:page_start, page)
-        |> assign(:total_count, total_count)
         |> assign(:total_pages, total_pages)
         |> stream(:groups, groups, reset: reset_stream)
 
       {:error, _error} ->
         socket
-        |> assign(:current_page, 1)
+        |> assign(:current_page, 0)
         |> assign(:limit, limit)
-        |> assign(:page_start, page)
-        |> assign(:total_count, 0)
         |> assign(:total_pages, 0)
         |> stream(:groups, [])
     end
@@ -199,15 +196,6 @@ defmodule OmedisWeb.GroupLive.Index do
   end
 
   @impl true
-  def handle_event("change_page", %{"limit" => limit, "page" => page} = params, socket) do
-    {:noreply,
-     socket
-     |> list_paginated_groups(params, reset_stream: true)
-     |> push_patch(
-       to: ~p"/tenants/#{socket.assigns.tenant.slug}/groups?page=#{page}&limit=#{limit}"
-     )}
-  end
-
   def handle_event("delete", %{"id" => id}, socket) do
     group = Ash.get!(Omedis.Accounts.Group, id)
 

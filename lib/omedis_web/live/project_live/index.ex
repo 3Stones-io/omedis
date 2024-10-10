@@ -94,8 +94,6 @@ defmodule OmedisWeb.ProjectLive.Index do
           current_page={@current_page}
           language={@language}
           limit={@limit}
-          page_start={@page_start}
-          total_count={@total_count}
           total_pages={@total_pages}
         />
       </div>
@@ -114,58 +112,7 @@ defmodule OmedisWeb.ProjectLive.Index do
      |> assign(:language, language)
      |> assign(:tenant, Tenant.by_id!(tenant.id))
      |> assign(:next_position, next_position)
-     |> list_paginated_projects(params)}
-  end
-
-  defp list_paginated_projects(socket, params, opts \\ [reset_stream: false]) do
-    limit = PaginationUtils.maybe_parse_value(:limit, params["limit"])
-    page = PaginationUtils.maybe_parse_value(:page, params["page"])
-
-    case list_paginated_projects(params) do
-      {:ok, %{count: total_count, results: tenants}} ->
-        reset_stream = opts[:reset_stream]
-        total_pages = ceil(total_count / limit)
-
-        socket
-        |> assign(:current_page, page)
-        |> assign(:limit, limit)
-        |> assign(:page_start, page)
-        |> assign(:total_count, total_count)
-        |> assign(:total_pages, total_pages)
-        |> stream(:projects, tenants, reset: reset_stream)
-
-      {:error, _error} ->
-        socket
-        |> assign(:current_page, 1)
-        |> assign(:limit, limit)
-        |> assign(:page_start, page)
-        |> assign(:total_count, 0)
-        |> assign(:total_pages, 0)
-        |> stream(:projects, [])
-    end
-  end
-
-  defp list_paginated_projects(params) do
-    case params do
-      %{"limit" => limit, "page" => offset} when not is_nil(limit) and not is_nil(offset) ->
-        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
-        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
-
-        Project.list_paginated(page: [count: true, limit: limit_value, offset: offset_value])
-
-      %{"limit" => limit} when not is_nil(limit) ->
-        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
-
-        Project.list_paginated(page: [count: true, limit: limit_value])
-
-      %{"page" => offset} when not is_nil(offset) ->
-        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
-
-        Project.list_paginated(page: [count: true, offset: offset_value])
-
-      _other ->
-        Project.list_paginated(page: [count: true])
-    end
+     |> stream(:projects, [])}
   end
 
   @impl true
@@ -194,20 +141,58 @@ defmodule OmedisWeb.ProjectLive.Index do
     |> assign(:project, nil)
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
     |> assign(:project, nil)
+    |> list_paginated_projects(params)
   end
 
-  @impl true
-  def handle_event("change_page", %{"limit" => limit, "page" => page} = params, socket) do
-    {:noreply,
-     socket
-     |> list_paginated_projects(params, reset_stream: true)
-     |> push_patch(
-       to: ~p"/tenants/#{socket.assigns.tenant.slug}/projects?page=#{page}&limit=#{limit}"
-     )}
+  defp list_paginated_projects(socket, params, opts \\ [reset_stream: false]) do
+    limit = PaginationUtils.maybe_parse_value(:limit, params["limit"])
+    page = PaginationUtils.maybe_parse_value(:page, params["page"])
+
+    case list_paginated_projects(params) do
+      {:ok, %{count: total_count, results: tenants}} ->
+        reset_stream = opts[:reset_stream]
+        total_pages = ceil(total_count / limit)
+
+        socket
+        |> assign(:current_page, page)
+        |> assign(:limit, limit)
+        |> assign(:total_pages, total_pages)
+        |> stream(:projects, tenants, reset: reset_stream)
+
+      {:error, _error} ->
+        socket
+        |> assign(:current_page, 1)
+        |> assign(:limit, limit)
+        |> assign(:total_pages, 0)
+        |> stream(:projects, [])
+    end
+  end
+
+  defp list_paginated_projects(params) do
+    case params do
+      %{"limit" => limit, "page" => offset} when not is_nil(limit) and not is_nil(offset) ->
+        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
+        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
+
+        Project.list_paginated(page: [count: true, limit: limit_value, offset: offset_value])
+
+      %{"limit" => limit} when not is_nil(limit) ->
+        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
+
+        Project.list_paginated(page: [count: true, limit: limit_value])
+
+      %{"page" => offset} when not is_nil(offset) ->
+        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
+
+        Project.list_paginated(page: [count: true, offset: offset_value])
+
+      _other ->
+        Project.list_paginated(page: [count: true])
+    end
   end
 
   @impl true
