@@ -7,35 +7,46 @@ defmodule OmedisWeb.LogEntryLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.breadcrumb items={[
-      {"Home", ~p"/", false},
-      {"Tenants", ~p"/tenants", false},
-      {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-      {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
-      {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-      {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
-      {@log_category.name,
-       ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}", false},
-      {"Log Entries", "", true}
-    ]} />
+    <.side_and_topbar
+      current_user={@current_user}
+      current_tenant={@current_tenant}
+      language={@language}
+      tenants_count={@tenants_count}
+    >
+      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.breadcrumb items={[
+          {"Home", ~p"/", false},
+          {"Tenants", ~p"/tenants", false},
+          {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+          {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
+          {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+          {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories",
+           false},
+          {@log_category.name,
+           ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
+           false},
+          {"Log Entries", "", true}
+        ]} />
 
-    <.header>
-      Listing Log entries for <%= @log_category.name %>
-    </.header>
+        <.header>
+          Listing Log entries for <%= @log_category.name %>
+        </.header>
 
-    <.table id="log_entries" rows={@streams.log_entries}>
-      <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Comment") end)}>
-        <%= log_entry.comment %>
-      </:col>
+        <.table id="log_entries" rows={@streams.log_entries}>
+          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Comment") end)}>
+            <%= log_entry.comment %>
+          </:col>
 
-      <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Start at") end)}>
-        <%= log_entry.start_at %>
-      </:col>
+          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Start at") end)}>
+            <%= log_entry.start_at %>
+          </:col>
 
-      <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("End at") end)}>
-        <%= log_entry.end_at %>
-      </:col>
-    </.table>
+          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("End at") end)}>
+            <%= log_entry.end_at %>
+          </:col>
+        </.table>
+      </div>
+    </.side_and_topbar>
     """
   end
 

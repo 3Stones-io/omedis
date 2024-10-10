@@ -6,76 +6,76 @@ defmodule OmedisWeb.GroupLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.breadcrumb items={[
-      {"Home", ~p"/", false},
-      {"Tenants", ~p"/tenants", false},
-      {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-      {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
-      {@group.name, "", true}
-    ]} />
-
-    <.header>
-      <:actions>
-        <.link
-          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
-          phx-click={JS.push_focus()}
-        >
-          <.button>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Log categories") %>
-            <% end) %>
-          </.button>
-        </.link>
-
-        <%!-- <.link
-          patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/show/edit"}
-          phx-click={JS.push_focus()}
-        >
-          <.button>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Edit Group") %>
-            <% end) %>
-          </.button>
-        </.link> --%>
-
-        <%!-- <.link navigate={~p"/tenants/#{@tenant.slug}/today"} phx-click={JS.push_focus()}>
-          <.button>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Today") %>
-            <% end) %>
-          </.button>
-        </.link> --%>
-      </:actions>
-    </.header>
-
-    <.list>
-      <:item title={with_locale(@language, fn -> gettext("Name") end)}><%= @group.name %></:item>
-      <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @group.slug %></:item>
-    </.list>
-
-    <.back navigate={~p"/tenants/#{@tenant.slug}/groups"}>
-      <%= with_locale(@language, fn -> %>
-        <%= gettext("Back to groups") %>
-      <% end) %>
-    </.back>
-
-    <.modal
-      :if={@live_action == :edit}
-      id="group-modal"
-      show
-      on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}")}
+    <.side_and_topbar
+      current_user={@current_user}
+      current_tenant={@current_tenant}
+      language={@language}
+      tenants_count={@tenants_count}
     >
-      <.live_component
-        module={OmedisWeb.GroupLive.FormComponent}
-        id={@group.id}
-        title={@page_title}
-        action={@live_action}
-        tenant={@tenant}
-        language={@language}
-        group={@group}
-        patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"}
-      />
-    </.modal>
+      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.breadcrumb items={[
+          {"Home", ~p"/", false},
+          {"Tenants", ~p"/tenants", false},
+          {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+          {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
+          {@group.name, "", true}
+        ]} />
+
+        <.header>
+          <:actions>
+            <.link
+              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
+              phx-click={JS.push_focus()}
+            >
+              <.button>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Log categories") %>
+                <% end) %>
+              </.button>
+            </.link>
+            <.link
+              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/today"}
+              phx-click={JS.push_focus()}
+            >
+              <.button>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Today") %>
+                <% end) %>
+              </.button>
+            </.link>
+          </:actions>
+        </.header>
+
+        <.list>
+          <:item title={with_locale(@language, fn -> gettext("Name") end)}><%= @group.name %></:item>
+          <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @group.slug %></:item>
+        </.list>
+
+        <.back navigate={~p"/tenants/#{@tenant.slug}/groups"}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Back to groups") %>
+          <% end) %>
+        </.back>
+
+        <.modal
+          :if={@live_action == :edit}
+          id="group-modal"
+          show
+          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}")}
+        >
+          <.live_component
+            module={OmedisWeb.GroupLive.FormComponent}
+            id={@group.id}
+            title={@page_title}
+            action={@live_action}
+            tenant={@tenant}
+            language={@language}
+            group={@group}
+            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"}
+          />
+        </.modal>
+      </div>
+    </.side_and_topbar>
     """
   end
 
