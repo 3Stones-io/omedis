@@ -9,6 +9,8 @@ defmodule OmedisWeb.TimeTracking do
   alias Omedis.Accounts.LogEntry
   use Gettext, backend: OmedisWeb.Gettext
 
+  import Gettext, only: [with_locale: 2]
+
   attr :categories, :list, required: true
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
@@ -276,31 +278,6 @@ defmodule OmedisWeb.TimeTracking do
     """
   end
 
-  def select_for_groups(assigns) do
-    ~H"""
-    <div class="flex flex-col mb-3 gap-1">
-      <p>
-        <%= @header_text %>
-      </p>
-
-      <form phx-change="select_group" phx-submit="select_group" class="form-control">
-        <select
-          name="group_id"
-          id="group_id"
-          defa
-          class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
-        >
-          <%= for {name , id} <- @groups do %>
-            <option selected={id == @group.id} value={id}>
-              <%= name %>
-            </option>
-          <% end %>
-        </select>
-      </form>
-    </div>
-    """
-  end
-
   @doc """
   Calculates the top position for an event as a percentage of the timeline.
 
@@ -361,5 +338,58 @@ defmodule OmedisWeb.TimeTracking do
       |> IO.iodata_to_binary()
 
     "(#{formatted_time})"
+  end
+
+  def select_for_groups_and_project(assigns) do
+    ~H"""
+    <div class="flex flex-col mb-3 gap-1">
+      <p>
+        <%= @header_text %>
+      </p>
+
+      <div class="w-[100%] flex justify-between">
+        <form phx-change="select_group" phx-submit="select_group" class="w-[48%] form-control">
+          <p>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Select Group") %>
+            <% end) %>
+          </p>
+
+          <select
+            name="group_id"
+            id="group_id"
+            defa
+            class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+          >
+            <%= for {name , id} <- @groups do %>
+              <option selected={id == @group.id} value={id}>
+                <%= name %>
+              </option>
+            <% end %>
+          </select>
+        </form>
+
+        <form phx-change="select_project" phx-submit="select_project" class=" w-[48%] form-control">
+          <p>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Select Project") %>
+            <% end) %>
+          </p>
+          <select
+            name="project_id"
+            id="project_id"
+            defa
+            class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+          >
+            <%= for {name , id} <- @projects do %>
+              <option selected={id == @project.id} value={id}>
+                <%= name %>
+              </option>
+            <% end %>
+          </select>
+        </form>
+      </div>
+    </div>
+    """
   end
 end

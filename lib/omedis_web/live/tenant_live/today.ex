@@ -4,6 +4,7 @@ defmodule OmedisWeb.TenantLive.Today do
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Project
 
   @impl true
   def render(assigns) do
@@ -23,6 +24,15 @@ defmodule OmedisWeb.TenantLive.Today do
           {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
           {"Today", "", true}
         ]} />
+
+        <.select_for_groups_and_project
+          groups={@groups}
+          group={@group}
+          project={@project}
+          language={@language}
+          projects={@projects}
+          header_text={with_locale(@language, fn -> gettext("Select group and project") end)}
+        />
 
         <.dashboard_component
           categories={@categories}
@@ -45,9 +55,10 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   @impl true
-  def handle_params(%{"group_id" => id, "slug" => slug}, _, socket) do
+  def handle_params(%{"group_id" => id, "project_id" => project_id, "slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
     group = Group.by_id!(id)
+    project = Project.by_id!(project_id)
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
@@ -77,7 +88,9 @@ defmodule OmedisWeb.TenantLive.Today do
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
      |> assign(:groups, groups_for_a_tenant(tenant.id))
+     |> assign(:projects, projects_for_a_tenant(tenant.id))
      |> assign(:group, group)
+     |> assign(:project, project)
      |> assign(:log_entries, log_entries)
      |> assign(:current_time, current_time)
      |> assign(:categories, categories)}
@@ -87,10 +100,13 @@ defmodule OmedisWeb.TenantLive.Today do
   def handle_params(%{"slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
     group = latest_group_for_a_tenant(tenant.id)
+    project = latest_project_for_a_tenant(tenant.id)
 
     {:noreply,
      socket
-     |> push_navigate(to: "/tenants/#{tenant.slug}/today?group_id=#{group.id}")}
+     |> push_navigate(
+       to: "/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+     )}
   end
 
   # Defaults to German Timezone
@@ -282,7 +298,19 @@ defmodule OmedisWeb.TenantLive.Today do
   def handle_event("select_group", %{"group_id" => id}, socket) do
     {:noreply,
      socket
-     |> push_navigate(to: "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{id}")}
+     |> push_navigate(
+       to:
+         "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{id}&project_id=#{socket.assigns.project.id}"
+     )}
+  end
+
+  def handle_event("select_project", %{"project_id" => id}, socket) do
+    {:noreply,
+     socket
+     |> push_navigate(
+       to:
+         "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{socket.assigns.group.id}&project_id=#{id}"
+     )}
   end
 
   defp create_or_stop_log_entry(log_category_id, tenant_id, user_id) do
@@ -342,11 +370,32 @@ defmodule OmedisWeb.TenantLive.Today do
     end
   end
 
+  defp latest_project_for_a_tenant(tenant_id) do
+    case Project.by_tenant_id(%{tenant_id: tenant_id}) do
+      {:ok, projects} ->
+        Enum.min_by(projects, & &1.created_at)
+
+      _ ->
+        nil
+    end
+  end
+
   defp groups_for_a_tenant(tenant_id) do
     case Group.by_tenant_id(%{tenant_id: tenant_id}) do
       {:ok, groups} ->
         groups
         |> Enum.map(fn group -> {group.name, group.id} end)
+
+      _ ->
+        []
+    end
+  end
+
+  defp projects_for_a_tenant(tenant_id) do
+    case Project.by_tenant_id(%{tenant_id: tenant_id}) do
+      {:ok, projects} ->
+        projects
+        |> Enum.map(fn project -> {project.name, project.id} end)
 
       _ ->
         []

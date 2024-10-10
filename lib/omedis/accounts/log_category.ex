@@ -27,6 +27,7 @@ defmodule Omedis.Accounts.LogCategory do
 
     references do
       reference :group, on_delete: :delete
+      reference :project, on_delete: :delete
     end
   end
 
@@ -47,6 +48,7 @@ defmodule Omedis.Accounts.LogCategory do
 
   identities do
     identity :unique_color_code_position, [:color_code, :group_id]
+
     identity :unique_position, [:position, :group_id]
     identity :unique_slug, [:slug, :group_id], eager_check?: true
   end
@@ -56,6 +58,7 @@ defmodule Omedis.Accounts.LogCategory do
       accept [
         :color_code,
         :group_id,
+        :project_id,
         :name,
         :position,
         :slug
@@ -68,6 +71,7 @@ defmodule Omedis.Accounts.LogCategory do
       accept [
         :name,
         :group_id,
+        :project_id,
         :color_code,
         :position,
         :slug
@@ -123,6 +127,7 @@ defmodule Omedis.Accounts.LogCategory do
 
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :group_id, :uuid, allow_nil?: false, public?: true
+    attribute :project_id, :uuid, allow_nil?: true, public?: true
 
     attribute :color_code, :string, allow_nil?: true, public?: true
 
@@ -181,6 +186,11 @@ defmodule Omedis.Accounts.LogCategory do
 
   relationships do
     belongs_to :group, Omedis.Accounts.Group do
+      allow_nil? true
+      attribute_writable? true
+    end
+
+    belongs_to :project, Omedis.Accounts.Project do
       allow_nil? true
       attribute_writable? true
     end
