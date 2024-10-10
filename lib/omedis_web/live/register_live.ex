@@ -90,6 +90,10 @@ defmodule OmedisWeb.RegisterLive do
     end
   end
 
+  defp get_field_errors(field, _name) do
+    Enum.map(field.errors, &translate_error(&1))
+  end
+
   @impl true
 
   def render(assigns) do
