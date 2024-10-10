@@ -6,6 +6,10 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
 
+  on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
+
+  @number_of_records_per_page 10
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -118,7 +122,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          limit={@limit}
           total_pages={@total_pages}
         />
       </div>
@@ -138,10 +141,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
     {:ok,
      socket
-     |> assign(:current_page, 1)
      |> assign(:language, language)
-     |> assign(:limit, 10)
-     |> assign(:total_pages, 0)
      |> assign(:tenant, tenant)
      |> assign(:groups, Ash.read!(Group))
      |> assign(:group, group)
@@ -156,7 +156,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      socket
      |> assign(:current_page, 1)
      |> assign(:language, language)
-     |> assign(:limit, 10)
      |> assign(:total_pages, 0)
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:tenant, nil)
@@ -203,44 +202,28 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   end
 
   defp list_paginated_log_categories(socket, params, opts \\ [reset_stream: false]) do
-    limit = PaginationUtils.maybe_parse_value(:limit, params["limit"])
-    page = PaginationUtils.maybe_parse_value(:page, params["page"])
+    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
 
     case list_paginated_log_categories(params) do
       {:ok, %{count: total_count, results: tenants}} ->
-        reset_stream = opts[:reset_stream]
-        total_pages = ceil(total_count / limit)
+        total_pages = max(1, ceil(total_count / @number_of_records_per_page))
+        current_page = min(page, total_pages)
 
         socket
         |> assign(:current_page, page)
-        |> assign(:limit, limit)
         |> assign(:total_pages, total_pages)
-        |> stream(:log_categories, tenants, reset: reset_stream)
+        |> stream(:log_categories, tenants, reset: opts[:reset_stream])
 
       {:error, _error} ->
         socket
-        |> assign(:current_page, 1)
-        |> assign(:limit, limit)
-        |> assign(:total_pages, 0)
-        |> stream(:log_categories, [])
     end
   end
 
   defp list_paginated_log_categories(params) do
     case params do
-      %{"limit" => limit, "page" => offset} when not is_nil(limit) and not is_nil(offset) ->
-        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
-        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
-
-        LogCategory.list_paginated(page: [count: true, limit: limit_value, offset: offset_value])
-
-      %{"limit" => limit} when not is_nil(limit) ->
-        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
-
-        LogCategory.list_paginated(page: [count: true, limit: limit_value])
-
-      %{"page" => offset} when not is_nil(offset) ->
-        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
+      %{"page" => page} when not is_nil(page) ->
+        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
+        offset_value = (page_value - 1) * 10
 
         LogCategory.list_paginated(page: [count: true, offset: offset_value])
 

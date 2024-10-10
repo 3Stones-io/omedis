@@ -4,6 +4,10 @@ defmodule OmedisWeb.TenantLive.Index do
   alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
 
+  on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
+
+  @number_of_records_per_page 10
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -108,7 +112,6 @@ defmodule OmedisWeb.TenantLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          limit={@limit}
           total_pages={@total_pages}
         />
       </div>
@@ -120,10 +123,7 @@ defmodule OmedisWeb.TenantLive.Index do
   def mount(_params, %{"language" => language} = _session, socket) do
     {:ok,
      socket
-     |> assign(:current_page, 0)
      |> assign(:language, language)
-     |> assign(:limit, 10)
-     |> assign(:total_pages, 0)
      |> stream(:tenants, [])}
   end
 
@@ -155,43 +155,28 @@ defmodule OmedisWeb.TenantLive.Index do
   end
 
   defp list_paginated_tenants(socket, params, opts \\ [reset_stream: false]) do
-    limit = PaginationUtils.maybe_parse_value(:limit, params["limit"])
-    page = PaginationUtils.maybe_parse_value(:page, params["page"])
+    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
 
     case list_paginated_tenants(params) do
       {:ok, %{count: total_count, results: tenants}} ->
-        total_pages = ceil(total_count / limit)
+        total_pages = max(1, ceil(total_count / @number_of_records_per_page))
+        current_page = min(page, total_pages)
 
         socket
-        |> assign(:current_page, page)
-        |> assign(:limit, limit)
+        |> assign(:current_page, current_page)
         |> assign(:total_pages, total_pages)
         |> stream(:tenants, tenants, reset: opts[:reset_stream])
 
       {:error, _error} ->
         socket
-        |> assign(:current_page, 0)
-        |> assign(:limit, limit)
-        |> assign(:total_pages, 0)
-        |> stream(:tenants, [])
     end
   end
 
   defp list_paginated_tenants(params) do
     case params do
-      %{"limit" => limit, "page" => offset} when not is_nil(limit) and not is_nil(offset) ->
-        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
-        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
-
-        Tenant.list_paginated(page: [count: true, limit: limit_value, offset: offset_value])
-
-      %{"limit" => limit} when not is_nil(limit) ->
-        limit_value = PaginationUtils.maybe_parse_value(:limit, limit)
-
-        Tenant.list_paginated(page: [count: true, limit: limit_value])
-
-      %{"page" => offset} when not is_nil(offset) ->
-        offset_value = PaginationUtils.maybe_parse_value(:page, offset)
+      %{"page" => page} when not is_nil(page) ->
+        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
+        offset_value = (page_value - 1) * 10
 
         Tenant.list_paginated(page: [count: true, offset: offset_value])
 
