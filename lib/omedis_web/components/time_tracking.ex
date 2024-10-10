@@ -35,14 +35,30 @@ defmodule OmedisWeb.TimeTracking do
   def dashboard_component(assigns) do
     ~H"""
     <div class="w-[100%] flex flex-col gap-1 ">
-      <.dashboard_card
-        categories={@categories}
-        start_at={@start_at}
-        end_at={@end_at}
-        log_entries={@log_entries}
-        language={@language}
-        current_time={@current_time}
-      />
+      <%= if Enum.empty?(@categories) do %>
+        <.no_log_categories language={@language} />
+      <% else %>
+        <.dashboard_card
+          categories={@categories}
+          start_at={@start_at}
+          end_at={@end_at}
+          log_entries={@log_entries}
+          language={@language}
+          current_time={@current_time}
+        />
+      <% end %>
+    </div>
+    """
+  end
+
+  def no_log_categories(assigns) do
+    ~H"""
+    <div class="w-[100%] h-[30vh] flex justify-center items-center">
+      <%= with_locale(@language, fn -> %>
+        <p>
+          <%= gettext("No log categories are defined yet.") %>
+        </p>
+      <% end) %>
     </div>
     """
   end

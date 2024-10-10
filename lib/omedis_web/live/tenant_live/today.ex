@@ -3,8 +3,8 @@ defmodule OmedisWeb.TenantLive.Today do
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.LogEntry
-  alias Omedis.Accounts.Tenant
   alias Omedis.Accounts.Project
+  alias Omedis.Accounts.Tenant
 
   @impl true
   def render(assigns) do
@@ -75,7 +75,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     update_categories_and_current_time_every_minute()
 
-    categories = categories(group.id)
+    categories = categories(group.id, project.id)
 
     log_entries = format_entries(categories, tenant)
 
@@ -129,8 +129,9 @@ defmodule OmedisWeb.TenantLive.Today do
   def handle_info(:update_categories_and_current_time, socket) do
     tenant = socket.assigns.tenant
     group = socket.assigns.group
+    project = socket.assigns.project
 
-    categories = categories(group.id)
+    categories = categories(group.id, project.id)
 
     log_entries =
       format_entries(categories, tenant)
@@ -219,8 +220,8 @@ defmodule OmedisWeb.TenantLive.Today do
     end_time
   end
 
-  defp categories(group_id) do
-    case LogCategory.by_group_id(%{group_id: group_id}) do
+  defp categories(group_id, project_id) do
+    case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
       {:ok, categories} ->
         categories
 
@@ -292,7 +293,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {:noreply,
      socket
-     |> assign(:categories, categories(socket.assigns.group.id))}
+     |> assign(:categories, categories(socket.assigns.group.id, socket.assigns.project.id))}
   end
 
   def handle_event("select_group", %{"group_id" => id}, socket) do
@@ -366,7 +367,9 @@ defmodule OmedisWeb.TenantLive.Today do
         Enum.min_by(groups, & &1.created_at)
 
       _ ->
-        nil
+        %{
+          id: ""
+        }
     end
   end
 
@@ -376,7 +379,9 @@ defmodule OmedisWeb.TenantLive.Today do
         Enum.min_by(projects, & &1.created_at)
 
       _ ->
-        nil
+        %{
+          id: ""
+        }
     end
   end
 

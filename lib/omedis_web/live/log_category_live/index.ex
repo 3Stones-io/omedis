@@ -1,8 +1,8 @@
 defmodule OmedisWeb.LogCategoryLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.Project
   alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
 
   @impl true

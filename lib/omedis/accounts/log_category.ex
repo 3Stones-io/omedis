@@ -43,6 +43,7 @@ defmodule Omedis.Accounts.LogCategory do
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_group_id
+    define :by_group_id_and_project_id
     define :max_position_by_group_id
   end
 
@@ -95,6 +96,20 @@ defmodule Omedis.Accounts.LogCategory do
       filter expr(group_id == ^arg(:group_id))
     end
 
+    read :by_group_id_and_project_id do
+      argument :group_id, :uuid do
+        allow_nil? false
+      end
+
+      argument :project_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:log_entries])
+
+      filter expr(group_id == ^arg(:group_id) and project_id == ^arg(:project_id))
+    end
+
     read :max_position_by_group_id do
       argument :group_id, :uuid do
         allow_nil? false
@@ -127,7 +142,7 @@ defmodule Omedis.Accounts.LogCategory do
 
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :group_id, :uuid, allow_nil?: false, public?: true
-    attribute :project_id, :uuid, allow_nil?: true, public?: true
+    attribute :project_id, :uuid, allow_nil?: false, public?: true
 
     attribute :color_code, :string, allow_nil?: true, public?: true
 
@@ -186,12 +201,12 @@ defmodule Omedis.Accounts.LogCategory do
 
   relationships do
     belongs_to :group, Omedis.Accounts.Group do
-      allow_nil? true
+      allow_nil? false
       attribute_writable? true
     end
 
     belongs_to :project, Omedis.Accounts.Project do
-      allow_nil? true
+      allow_nil? false
       attribute_writable? true
     end
 
