@@ -8,6 +8,7 @@
 import Config
 
 config :omedis,
+  flash_auto_disappear: 4,
   ecto_repos: [Omedis.Repo],
   generators: [timestamp_type: :utc_datetime]
 

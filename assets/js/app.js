@@ -23,13 +23,16 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 
 import Alpine from "alpinejs";
-import SlugInputHooks from "./hooks/slug_input"
+
+import FlashAutoDisappear from "./hooks/flash_auto_disappear"
+import SlugInput from "./hooks/slug_input"
 
 window.Alpine = Alpine;
 Alpine.start();
 
 let Hooks = {
-  ...SlugInputHooks
+  FlashAutoDisappear,
+  SlugInput,
 };
 
 let csrfToken = document
@@ -44,8 +47,8 @@ let liveSocket = new LiveSocket("/live", Socket, {
       }
     },
   },
-  params: { _csrf_token: csrfToken },
   hooks: Hooks,
+  params: { _csrf_token: csrfToken },
 });
 
 // Show progress bar on live navigation and form submits
