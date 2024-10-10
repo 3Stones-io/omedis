@@ -105,7 +105,7 @@ defmodule OmedisWeb.ProjectLive.Index do
   end
 
   @impl true
-  def mount(%{"slug" => slug} = params, %{"language" => language} = _session, socket) do
+  def mount(%{"slug" => slug} = _params, %{"language" => language} = _session, socket) do
     tenant = Tenant.by_slug!(slug)
     next_position = Project.get_max_position_by_tenant_id(tenant.id) + 1
 
@@ -151,7 +151,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     |> list_paginated_projects(params)
   end
 
-  defp list_paginated_projects(socket, params, opts \\ [reset_stream: false]) do
+  defp list_paginated_projects(socket, params) do
     page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
 
     case list_paginated_projects(params) do
@@ -160,9 +160,9 @@ defmodule OmedisWeb.ProjectLive.Index do
         current_page = min(page, total_pages)
 
         socket
-        |> assign(:current_page, page)
+        |> assign(:current_page, current_page)
         |> assign(:total_pages, total_pages)
-        |> stream(:projects, tenants, reset: opts[:reset_stream])
+        |> stream(:projects, tenants, reset: true)
 
       {:error, _error} ->
         socket

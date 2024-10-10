@@ -151,10 +151,10 @@ defmodule OmedisWeb.TenantLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Listing Tenants") end)
     )
     |> assign(:tenant, nil)
-    |> list_paginated_tenants(params, reset_stream: true)
+    |> list_paginated_tenants(params)
   end
 
-  defp list_paginated_tenants(socket, params, opts \\ [reset_stream: false]) do
+  defp list_paginated_tenants(socket, params) do
     page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
 
     case list_paginated_tenants(params) do
@@ -165,7 +165,7 @@ defmodule OmedisWeb.TenantLive.Index do
         socket
         |> assign(:current_page, current_page)
         |> assign(:total_pages, total_pages)
-        |> stream(:tenants, tenants, reset: opts[:reset_stream])
+        |> stream(:tenants, tenants, reset: true)
 
       {:error, _error} ->
         socket

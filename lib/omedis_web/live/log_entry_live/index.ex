@@ -90,10 +90,10 @@ defmodule OmedisWeb.LogEntryLive.Index do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
     |> assign(:log_entry, nil)
-    |> list_paginated_log_entries(params, reset_stream: true)
+    |> list_paginated_log_entries(params)
   end
 
-  defp list_paginated_log_entries(socket, params, opts \\ [reset_stream: false]) do
+  defp list_paginated_log_entries(socket, params) do
     page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
 
     case list_paginated_log_entries(params) do
@@ -102,9 +102,9 @@ defmodule OmedisWeb.LogEntryLive.Index do
         current_page = min(page, total_pages)
 
         socket
-        |> assign(:current_page, page)
+        |> assign(:current_page, current_page)
         |> assign(:total_pages, total_pages)
-        |> stream(:log_entries, log_entries, reset: opts[:reset_stream])
+        |> stream(:log_entries, log_entries, reset: true)
 
       {:error, _error} ->
         socket

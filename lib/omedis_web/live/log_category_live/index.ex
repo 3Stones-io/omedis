@@ -132,7 +132,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   end
 
   def mount(
-        %{"slug" => slug, "group_slug" => group_slug} = params,
+        %{"slug" => slug, "group_slug" => group_slug} = _params,
         %{"language" => language} = _session,
         socket
       ) do
@@ -154,7 +154,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   end
 
   @impl true
-  def mount(params, %{"language" => language} = _session, socket) do
+  def mount(_params, %{"language" => language} = _session, socket) do
     {:ok,
      socket
      |> assign(:current_page, 1)
@@ -201,10 +201,10 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Listing Log categories") end)
     )
     |> assign(:log_category, nil)
-    |> list_paginated_log_categories(params, reset_stream: true)
+    |> list_paginated_log_categories(params)
   end
 
-  defp list_paginated_log_categories(socket, params, opts \\ [reset_stream: false]) do
+  defp list_paginated_log_categories(socket, params) do
     page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
 
     case list_paginated_log_categories(params) do
@@ -213,9 +213,9 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         current_page = min(page, total_pages)
 
         socket
-        |> assign(:current_page, page)
+        |> assign(:current_page, current_page)
         |> assign(:total_pages, total_pages)
-        |> stream(:log_categories, tenants, reset: opts[:reset_stream])
+        |> stream(:log_categories, tenants, reset: true)
 
       {:error, _error} ->
         socket

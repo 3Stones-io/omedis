@@ -109,7 +109,7 @@ defmodule OmedisWeb.GroupLive.Index do
   end
 
   @impl true
-  def mount(%{"slug" => slug} = params, %{"language" => language} = _session, socket) do
+  def mount(%{"slug" => slug} = _params, %{"language" => language} = _session, socket) do
     tenant = Tenant.by_slug!(slug)
 
     {:ok,
@@ -146,7 +146,7 @@ defmodule OmedisWeb.GroupLive.Index do
     |> list_paginated_groups(params)
   end
 
-  defp list_paginated_groups(socket, params, opts \\ [reset_stream: false]) do
+  defp list_paginated_groups(socket, params) do
     page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
 
     case list_paginated_groups_by_tenant_id(socket.assigns.tenant.id, params) do
@@ -155,9 +155,9 @@ defmodule OmedisWeb.GroupLive.Index do
         current_page = min(page, total_pages)
 
         socket
-        |> assign(:current_page, page)
+        |> assign(:current_page, current_page)
         |> assign(:total_pages, total_pages)
-        |> stream(:groups, groups, reset: opts[:reset_stream])
+        |> stream(:groups, groups, reset: true)
 
       {:error, _error} ->
         socket
