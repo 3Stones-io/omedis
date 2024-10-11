@@ -110,7 +110,7 @@ defmodule OmedisWeb.GroupLive.Index do
   end
 
   @impl true
-  def mount(%{"slug" => slug} = _params, %{"language" => language} = _session, socket) do
+  def mount(%{"slug" => slug}, %{"language" => language} = _session, socket) do
     tenant = Tenant.by_slug!(slug)
 
     {:ok,
