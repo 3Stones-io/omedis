@@ -222,7 +222,7 @@ defmodule OmedisWeb.RegisterLive do
                     type="select"
                     field={f[:lang]}
                     required
-                    label={with_locale(@language, fn -> gettext("Gender") end)}
+                    label={with_locale(@language, fn -> gettext("Language") end)}
                     options={@supported_languages}
                     prompt={with_locale(@language, fn -> gettext("Select Your Language") end)}
                     value={@default_language}
