@@ -8,8 +8,6 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
-  @number_of_records_per_page 10
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -99,7 +97,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
     case list_paginated_log_entries(params) do
       {:ok, %{count: total_count, results: log_entries}} ->
-        total_pages = max(1, ceil(total_count / @number_of_records_per_page))
+        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
         current_page = min(page, total_pages)
 
         socket

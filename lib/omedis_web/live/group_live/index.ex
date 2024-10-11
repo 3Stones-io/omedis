@@ -7,8 +7,6 @@ defmodule OmedisWeb.GroupLive.Index do
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
-  @number_of_records_per_page 10
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -152,7 +150,7 @@ defmodule OmedisWeb.GroupLive.Index do
 
     case list_paginated_groups_by_tenant_id(socket.assigns.tenant.id, params) do
       {:ok, %{count: total_count, results: groups}} ->
-        total_pages = max(1, ceil(total_count / @number_of_records_per_page))
+        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
         current_page = min(page, total_pages)
 
         socket

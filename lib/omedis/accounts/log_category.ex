@@ -92,7 +92,9 @@ defmodule Omedis.Accounts.LogCategory do
         allow_nil? false
       end
 
-      pagination offset?: true, default_limit: 10
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
       prepare build(load: [:log_entries])
       prepare build(sort: :created_at)
 
@@ -100,14 +102,19 @@ defmodule Omedis.Accounts.LogCategory do
     end
 
     read :list_paginated do
-      pagination offset?: true, default_limit: 10
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
       prepare build(sort: :created_at)
     end
 
     read :by_group_id_and_project_id do
       argument :group_id, :uuid do
         allow_nil? false
-        pagination offset?: true, default_limit: 10
+
+        pagination offset?: true,
+                   default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
         prepare build(sort: :created_at)
       end
 

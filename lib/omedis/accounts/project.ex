@@ -87,7 +87,9 @@ defmodule Omedis.Accounts.Project do
     end
 
     read :list_paginated do
-      pagination offset?: true, default_limit: 10
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
       prepare build(sort: :created_at)
     end
 
