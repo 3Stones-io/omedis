@@ -7,6 +7,12 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
+# Seed data
+
+If you want to seed the database with demo data, run `mix seed.demo`.
+
+You can safely run it as many times as you want without duplicating the data.
+
 # Developers
 
 Please use the Pull Request workflow to submit your changes. For a guide on how to create Pull Requests, check out [GitHub's tutorial on creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
