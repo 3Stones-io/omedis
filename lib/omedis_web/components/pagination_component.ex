@@ -4,9 +4,8 @@ defmodule OmedisWeb.PaginationComponent do
   use OmedisWeb, :html
 
   def pagination(assigns) do
-    show_full_pagination = assigns.total_pages <= 6
-
-    assigns = assign(assigns, :show_full_pagination, show_full_pagination)
+    assigns =
+      assign(assigns, :visible_pages, visible_pages(assigns.current_page, assigns.total_pages))
 
     ~H"""
     <div class="flex items-center justify-between border-t border-gray-200 bg-white py-5">
@@ -76,43 +75,15 @@ defmodule OmedisWeb.PaginationComponent do
                 />
               </svg>
             </.page_link>
-            <%= if @show_full_pagination do %>
-              <%= for page <- 1..@total_pages do %>
+            <%= for page <- @visible_pages do %>
+              <%= if page == :ellipsis do %>
+                <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
+                  ...
+                </span>
+              <% else %>
                 <.page_link
                   patch={@resource_path <> "?page=#{page}"}
-                  aria-current="page"
-                  class={[
-                    "px-4 py-2",
-                    page == @current_page && "bg-zinc-900 hover:bg-zinc-700 text-white",
-                    page != @current_page &&
-                      "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
-                  ]}
-                >
-                  <%= page %>
-                </.page_link>
-              <% end %>
-            <% else %>
-              <%= for page <- Enum.take(1..@total_pages, 3) do %>
-                <.page_link
-                  patch={@resource_path <> "?page=#{page}"}
-                  aria-current="page"
-                  class={[
-                    "px-4 py-2",
-                    page == @current_page && "bg-zinc-900 hover:bg-zinc-700 text-white",
-                    page != @current_page &&
-                      "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
-                  ]}
-                >
-                  <%= page %>
-                </.page_link>
-              <% end %>
-              <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
-                ...
-              </span>
-              <%= for page <- Enum.take(1..@total_pages, -3) do %>
-                <.page_link
-                  patch={@resource_path <> "?page=#{page}"}
-                  aria-current="page"
+                  aria-current={page == @current_page && "page"}
                   class={[
                     "px-4 py-2",
                     page == @current_page && "bg-zinc-900 hover:bg-zinc-700 text-white",
@@ -155,6 +126,30 @@ defmodule OmedisWeb.PaginationComponent do
       </div>
     </div>
     """
+  end
+
+  defp visible_pages(current_page, total_pages) do
+    cond do
+      total_pages <= 7 ->
+        Enum.to_list(1..total_pages)
+
+      current_page <= 4 ->
+        [1, 2, 3, 4, 5, :ellipsis, total_pages]
+
+      current_page >= total_pages - 3 ->
+        [
+          1,
+          :ellipsis,
+          total_pages - 4,
+          total_pages - 3,
+          total_pages - 2,
+          total_pages - 1,
+          total_pages
+        ]
+
+      true ->
+        [1, :ellipsis, current_page - 1, current_page, current_page + 1, :ellipsis, total_pages]
+    end
   end
 
   attr :class, :list, default: []
