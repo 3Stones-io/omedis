@@ -11,28 +11,28 @@ defmodule OmedisWeb.PaginationComponent do
     ~H"""
     <div class="flex items-center justify-between border-t border-gray-200 bg-white py-5">
       <div class="flex flex-1 justify-between sm:hidden">
-        <.link
-          patch={@current_page > 1 && ~p"/tenants?page=#{@current_page - 1}"}
+        <.page_link
+          patch={@current_page > 1 && @resource_path <> "?page=#{@current_page - 1}"}
           class={[
-            "relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50",
+            "border rounded-md border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50",
             @current_page <= 1 && "cursor-not-allowed opacity-50"
           ]}
         >
           <%= with_locale(@language, fn -> %>
             <%= gettext("Previous") %>
           <% end) %>
-        </.link>
-        <.link
-          patch={@current_page != @total_pages && ~p"/tenants?page=#{@current_page + 1}"}
+        </.page_link>
+        <.page_link
+          patch={@current_page != @total_pages && @resource_path <> "?page=#{@current_page + 1}"}
           class={[
-            "relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50",
+            "ml-3 border rounded-md border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50",
             @current_page == @total_pages && "cursor-not-allowed opacity-50"
           ]}
         >
           <%= with_locale(@language, fn -> %>
             <%= gettext("Next") %>
           <% end) %>
-        </.link>
+        </.page_link>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
@@ -49,10 +49,10 @@ defmodule OmedisWeb.PaginationComponent do
         </div>
         <div>
           <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <.link
-              patch={@current_page > 1 && ~p"/tenants?page=#{@current_page - 1}"}
+            <.page_link
+              patch={@current_page > 1 && @resource_path <> "?page=#{@current_page - 1}"}
               class={[
-                "relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
+                "rounded-l-md p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
                 @current_page <= 1 && "cursor-not-allowed opacity-50"
               ]}
             >
@@ -75,62 +75,59 @@ defmodule OmedisWeb.PaginationComponent do
                   clip-rule="evenodd"
                 />
               </svg>
-            </.link>
+            </.page_link>
             <%= if @show_full_pagination do %>
               <%= for page <- 1..@total_pages do %>
-                <.link
-                  patch={~p"/tenants?page=#{page}"}
+                <.page_link
+                  patch={@resource_path <> "?page=#{page}"}
                   aria-current="page"
                   class={[
-                    "relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
-                    if(page == @current_page,
-                      do: "bg-zinc-900 hover:bg-zinc-700 text-white",
-                      else: "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
-                    )
+                    "px-4 py-2",
+                    page == @current_page && "bg-zinc-900 hover:bg-zinc-700 text-white",
+                    page != @current_page &&
+                      "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
                   ]}
                 >
                   <%= page %>
-                </.link>
+                </.page_link>
               <% end %>
             <% else %>
               <%= for page <- Enum.take(1..@total_pages, 3) do %>
-                <.link
-                  patch={~p"/tenants?page=#{page}"}
+                <.page_link
+                  patch={@resource_path <> "?page=#{page}"}
                   aria-current="page"
                   class={[
-                    "relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
-                    if(page == @current_page,
-                      do: "bg-zinc-900 hover:bg-zinc-700 text-white",
-                      else: "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
-                    )
+                    "px-4 py-2",
+                    page == @current_page && "bg-zinc-900 hover:bg-zinc-700 text-white",
+                    page != @current_page &&
+                      "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
                   ]}
                 >
                   <%= page %>
-                </.link>
+                </.page_link>
               <% end %>
               <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
                 ...
               </span>
               <%= for page <- Enum.take(1..@total_pages, -3) do %>
-                <.link
-                  patch={~p"/tenants?page=#{page}"}
+                <.page_link
+                  patch={@resource_path <> "?page=#{page}"}
                   aria-current="page"
                   class={[
-                    "relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
-                    if(page == @current_page,
-                      do: "bg-zinc-900 hover:bg-zinc-700 text-white",
-                      else: "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
-                    )
+                    "px-4 py-2",
+                    page == @current_page && "bg-zinc-900 hover:bg-zinc-700 text-white",
+                    page != @current_page &&
+                      "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
                   ]}
                 >
                   <%= page %>
-                </.link>
+                </.page_link>
               <% end %>
             <% end %>
-            <.link
-              patch={@current_page < @total_pages && ~p"/tenants?page=#{@current_page + 1}"}
+            <.page_link
+              patch={@current_page < @total_pages && @resource_path <> "?page=#{@current_page + 1}"}
               class={[
-                "relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
+                "p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
                 @current_page == @total_pages && "cursor-not-allowed opacity-50"
               ]}
             >
@@ -152,11 +149,31 @@ defmodule OmedisWeb.PaginationComponent do
                   clip-rule="evenodd"
                 />
               </svg>
-            </.link>
+            </.page_link>
           </nav>
         </div>
       </div>
     </div>
+    """
+  end
+
+  attr :class, :list, default: []
+  attr :patch, :string, required: true
+  attr :rest, :global, doc: "arbitrary HTML attributes to add to the component."
+
+  slot :inner_block, required: true
+
+  def page_link(assigns) do
+    ~H"""
+    <.link
+      patch={@patch}
+      class={[
+        "relative z-10 inline-flex items-center text-sm focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
+        @class
+      ]}
+    >
+      <%= render_slot(@inner_block) %>
+    </.link>
     """
   end
 end

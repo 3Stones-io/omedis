@@ -101,6 +101,7 @@ defmodule OmedisWeb.GroupLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
+          resource_path={~p"/tenants/#{@tenant.slug}/groups"}
           total_pages={@total_pages}
         />
       </div>

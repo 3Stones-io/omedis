@@ -124,6 +124,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
+          resource_path={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
           total_pages={@total_pages}
         />
       </div>

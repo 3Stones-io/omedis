@@ -112,6 +112,7 @@ defmodule OmedisWeb.TenantLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
+          resource_path={~p"/tenants"}
           total_pages={@total_pages}
         />
       </div>
