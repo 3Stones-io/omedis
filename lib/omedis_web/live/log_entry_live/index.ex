@@ -54,9 +54,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={
-            ~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category.id}/log_entries"
-          }
+          resource_path={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category.id}/log_entries"}
           total_pages={@total_pages}
         />
       </div>
