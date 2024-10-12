@@ -9,3 +9,21 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+alias Omedis.Accounts.Tenant
+
+case Ash.read(Tenant) do
+  {:ok, []} ->
+    {:ok, _tenant} =
+      Tenant.create!(%{
+        city: "Dummy City",
+        country: "Dummy republic",
+        name: "Initial Tenant",
+        slug: "initial-tenant",
+        street: "Dummy Street",
+        zip_code: "12345"
+      })
+
+  {:ok, _tenants} ->
+    IO.puts("Tenants already exist. Skipping initial tenant creation.")
+end
