@@ -9,6 +9,9 @@ defmodule Omedis.Accounts.Group do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.GroupUser
+  alias Omedis.Accounts.User
+
   postgres do
     table "groups"
     repo Omedis.Repo
@@ -114,9 +117,13 @@ defmodule Omedis.Accounts.Group do
       attribute_writable? true
     end
 
-    belongs_to :user, Omedis.Accounts.User do
+    belongs_to :user, User do
       allow_nil? true
       attribute_writable? true
+    end
+
+    many_to_many :users, User do
+      through GroupUser
     end
   end
 end

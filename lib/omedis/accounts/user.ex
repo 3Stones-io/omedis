@@ -3,12 +3,14 @@ defmodule Omedis.Accounts.User do
   Represents a user in the system.
   """
 
-  alias Omedis.Validations
-
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication],
     domain: Omedis.Accounts
+
+  alias Omedis.Accounts.Group
+  alias Omedis.Accounts.GroupUser
+  alias Omedis.Validations
 
   attributes do
     uuid_primary_key :id
@@ -74,6 +76,12 @@ defmodule Omedis.Accounts.User do
 
       primary? true
       require_atomic? false
+    end
+  end
+
+  relationships do
+    many_to_many :groups, Group do
+      through GroupUser
     end
   end
 
