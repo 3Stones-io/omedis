@@ -20,8 +20,8 @@ defmodule Omedis.Accounts.User do
     attribute :birthdate, :date, allow_nil?: false, public?: true
     attribute :current_tenant_id, :uuid, allow_nil?: true, public?: false
     attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
-    attribute :daily_start_at, :time, allow_nil?: true, public?: true, default: ~T[08:00:00]
-    attribute :daily_end_at, :time, allow_nil?: true, public?: true, default: ~T[18:00:00]
+    attribute :daily_start_at, :time, allow_nil?: true, public?: true
+    attribute :daily_end_at, :time, allow_nil?: true, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at

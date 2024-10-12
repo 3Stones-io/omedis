@@ -1,6 +1,7 @@
 defmodule OmedisWeb.RegisterLive do
   alias AshPhoenix.Form
   alias Omedis.Accounts
+  alias Omedis.Accounts.Tenant
   alias Omedis.Accounts.User
 
   @supported_languages [
@@ -14,12 +15,17 @@ defmodule OmedisWeb.RegisterLive do
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
+    tenants = Ash.read!(Tenant)
+
     socket =
       socket
       |> assign(current_user: nil)
       |> assign(:language, language)
       |> assign(:default_language, language)
+      |> assign(:selected_tenant, nil)
       |> assign(:supported_languages, @supported_languages)
+      |> assign(:tenant_form, to_form(%{}, as: :tenant))
+      |> assign(:tenants, tenants)
       |> assign(:tenants_count, 0)
       |> assign(trigger_action: false)
       |> assign(:errors, [])
@@ -56,6 +62,27 @@ defmodule OmedisWeb.RegisterLive do
         with_locale(language, fn -> gettext("Language changed") end)
       )
     }
+  end
+
+  def handle_event("select_tenant", %{"tenant" => %{"id" => tenant_id}} = _params, socket) do
+    case tenant_id do
+      "" ->
+        {:noreply, assign(socket, selected_tenant: nil)}
+
+      tenant_id ->
+        tenant = Enum.find(socket.assigns.tenants, &(&1.id == tenant_id))
+
+        form =
+          Form.validate(socket.assigns.form, %{
+            daily_start_at: tenant.default_daily_start_at,
+            daily_end_at: tenant.default_daily_end_at
+          })
+
+        {:noreply,
+         socket
+         |> assign(:selected_tenant, tenant)
+         |> assign(:form, form)}
+    end
   end
 
   def handle_event("validate", %{"user" => user}, socket) do
@@ -153,8 +180,22 @@ defmodule OmedisWeb.RegisterLive do
               </div>
               <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div class="sm:col-span-3">
+                  <div>
+                    <.input
+                      type="select"
+                      field={@tenant_form[:id]}
+                      phx-change="select_tenant"
+                      label={with_locale(@language, fn -> gettext("Select a Tenant") end)}
+                      options={Enum.map(@tenants, &{&1.name, &1.id})}
+                      prompt={with_locale(@language, fn -> gettext("Select a Tenant") end)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
                   <.input
                     type="email"
+                    disabled={@selected_tenant == nil}
                     field={f[:email]}
                     placeholder={with_locale(@language, fn -> gettext("Email") end)}
                     autocomplete="email"
@@ -163,9 +204,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class="sm:col-span-3">
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
                   <.input
                     type="password"
+                    disabled={@selected_tenant == nil}
                     field={f[:password]}
                     placeholder={with_locale(@language, fn -> gettext("Password") end)}
                     autocomplete={gettext("new password")}
@@ -175,9 +217,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class="sm:col-span-3">
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
                   <.input
                     type="text"
+                    disabled={@selected_tenant == nil}
                     field={f[:first_name]}
                     placeholder={with_locale(@language, fn -> gettext("First Name") end)}
                     required
@@ -186,9 +229,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class="sm:col-span-3">
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
                   <.input
                     type="text"
+                    disabled={@selected_tenant == nil}
                     field={f[:last_name]}
                     placeholder={with_locale(@language, fn -> gettext("Last Name") end)}
                     required
@@ -197,9 +241,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class="sm:col-span-3">
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
                   <.input
                     type="select"
+                    disabled={@selected_tenant == nil}
                     field={f[:gender]}
                     required
                     label={with_locale(@language, fn -> gettext("Gender") end)}
@@ -211,9 +256,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class="sm:col-span-3">
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
                   <.input
                     type="date"
+                    disabled={@selected_tenant == nil}
                     field={f[:birthdate]}
                     required
                     label={with_locale(@language, fn -> gettext("Birthdate") end)}
@@ -221,88 +267,92 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Language") %>
-                <% end) %>
-              </label>
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Language") %>
+                    <% end) %>
+                  </label>
 
-              <div phx-feedback-for={f[:lang].name} class="mt-2">
-                <%= select(f, :lang, @supported_languages,
-                  prompt: with_locale(@language, fn -> gettext("Select Your Language") end),
-                  value: @default_language,
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("Language") <> " " <> msg %>
-                  <% end) %>
-                </.error>
+                  <div phx-feedback-for={f[:lang].name} class="mt-2">
+                    <%= select(f, :lang, @supported_languages,
+                      prompt: with_locale(@language, fn -> gettext("Select Your Language") end),
+                      value: @default_language,
+                      disabled: @selected_tenant == nil,
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Language") <> " " <> msg %>
+                      <% end) %>
+                    </.error>
+                  </div>
+                </div>
+
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Daily Start Time") %>
+                    <% end) %>
+                  </label>
+
+                  <div phx-feedback-for={f[:daily_start_at].name} class="mt-2">
+                    <%= time_input(f, :daily_start_at,
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      value: f[:daily_start_at].value,
+                      disabled: @selected_tenant == nil,
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Daily Start Time") <> " " <> msg %>
+                      <% end) %>
+                    </.error>
+                  </div>
+                </div>
+
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Daily End Time") %>
+                    <% end) %>
+                  </label>
+
+                  <div phx-feedback-for={f[:daily_end_at].name} class="mt-2">
+                    <%= time_input(f, :daily_end_at,
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      value: f[:daily_end_at].value,
+                      disabled: @selected_tenant == nil,
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Daily End Time") <> " " <> msg %>
+                      <% end) %>
+                    </.error>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w-[100%] flex mt-6 justify-between items-center">
+                <.link navigate="/login">
+                  <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Don't have an account? Sign up") %>
+                    <% end) %>
+                  </p>
+                </.link>
               </div>
             </div>
-
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Daily Start Time") %>
-                <% end) %>
-              </label>
-
-              <div phx-feedback-for={f[:daily_start_at].name} class="mt-2">
-                <%= time_input(f, :daily_start_at,
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  value: f[:daily_start_at].value,
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("Daily Start Time") <> " " <> msg %>
-                  <% end) %>
-                </.error>
-              </div>
-            </div>
-
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Daily End Time") %>
-                <% end) %>
-              </label>
-
-              <div phx-feedback-for={f[:daily_end_at].name} class="mt-2">
-                <%= time_input(f, :daily_end_at,
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  value: f[:daily_end_at].value,
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("Daily End Time") <> " " <> msg %>
-                  <% end) %>
-                </.error>
-              </div>
-            </div>
-          </div>
-
-          <div class="w-[100%] flex mt-6 justify-between items-center">
-            <.link navigate="/login">
-              <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Don't have an account? Sign up") %>
-                <% end) %>
-              </p>
-            </.link>
-          </div>
-        </div>
 
             <div class="mt-6 flex items-center justify-end gap-x-6">
               <%= submit(with_locale(@language, fn -> gettext("Sign up") end),
                 phx_disable_with: with_locale(@language, fn -> gettext("Signing up...") end),
+                disabled: @selected_tenant == nil,
                 class:
                   "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               ) %>
