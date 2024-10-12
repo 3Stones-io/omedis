@@ -183,6 +183,7 @@ defmodule OmedisWeb.RegisterLive do
                   <div>
                     <.input
                       type="select"
+                      id="select_tenant"
                       field={@tenant_form[:id]}
                       phx-change="select_tenant"
                       label={with_locale(@language, fn -> gettext("Select a Tenant") end)}
