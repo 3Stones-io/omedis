@@ -12,5 +12,6 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.LogEntry
     resource Omedis.Accounts.Project
     resource Omedis.Accounts.Group
+    resource Omedis.Accounts.GroupUser
   end
 end

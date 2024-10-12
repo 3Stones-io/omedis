@@ -51,6 +51,13 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           />
         <% end %>
 
+        <.input
+          field={@form[:project_id]}
+          type="select"
+          label={Phoenix.HTML.raw("Project  <span class='text-red-600'>*</span>")}
+          options={Enum.map(@projects, &{&1.name, &1.id})}
+        />
+
         <div class="flex gap-5">
           <p>
             <%= with_locale(@language, fn -> %>

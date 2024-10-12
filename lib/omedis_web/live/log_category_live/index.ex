@@ -2,6 +2,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
 
   @impl true
@@ -104,6 +105,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             title={@page_title}
             groups={@groups}
             tenant={@tenant}
+            projects={@projects}
             group={@group}
             is_custom_color={@is_custom_color}
             next_position={@next_position}
@@ -134,6 +136,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> assign(:language, language)
      |> assign(:tenant, tenant)
      |> assign(:groups, Ash.read!(Group))
+     |> assign(:projects, Project.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:group, group)
      |> assign(:is_custom_color, false)
      |> assign(:next_position, next_position)}
