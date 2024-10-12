@@ -1,4 +1,8 @@
 defmodule Omedis.Accounts.GroupUser do
+  @moduledoc """
+  Represents a user in a group.
+  """
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts

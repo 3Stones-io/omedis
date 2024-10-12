@@ -1,4 +1,8 @@
 defmodule Omedis.Fixtures do
+  @moduledoc """
+  Fixtures for the Omedis system.
+  """
+
   alias Omedis.Accounts
 
   def create_group(attrs \\ %{}) do
