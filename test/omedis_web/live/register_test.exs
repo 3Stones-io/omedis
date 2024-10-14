@@ -18,12 +18,12 @@ defmodule OmedisWeb.RegisterTest do
   }
 
   @valid_tenant_params %{
-    name: "Test Tenant",
-    street: "123 Test St",
-    zip_code: "12345",
-    city: "Test City",
-    country: "Test Country",
-    slug: "test-tenant"
+    "name" => "Test Tenant",
+    "street" => "123 Test St",
+    "zip_code" => "12345",
+    "city" => "Test City",
+    "country" => "Test Country",
+    "slug" => "test-tenant"
   }
 
   setup do
