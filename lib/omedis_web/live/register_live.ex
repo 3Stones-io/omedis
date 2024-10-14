@@ -207,19 +207,6 @@ defmodule OmedisWeb.RegisterLive do
 
                 <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
                   <.input
-                    type="password"
-                    disabled={@selected_tenant == nil}
-                    field={f[:password]}
-                    placeholder={with_locale(@language, fn -> gettext("Password") end)}
-                    autocomplete={gettext("new password")}
-                    required
-                    label={with_locale(@language, fn -> gettext("Password") end)}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
-                  <.input
                     type="text"
                     disabled={@selected_tenant == nil}
                     field={f[:first_name]}
@@ -238,6 +225,19 @@ defmodule OmedisWeb.RegisterLive do
                     placeholder={with_locale(@language, fn -> gettext("Last Name") end)}
                     required
                     label={with_locale(@language, fn -> gettext("Last Name") end)}
+                    phx-debounce="blur"
+                  />
+                </div>
+
+                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                  <.input
+                    type="password"
+                    disabled={@selected_tenant == nil}
+                    field={f[:password]}
+                    placeholder={with_locale(@language, fn -> gettext("Password") end)}
+                    autocomplete={gettext("new password")}
+                    required
+                    label={with_locale(@language, fn -> gettext("Password") end)}
                     phx-debounce="blur"
                   />
                 </div>
