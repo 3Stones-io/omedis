@@ -59,17 +59,11 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             </span>
           </:col>
 
-          <:col :let={{_id, _log_category}} label={with_locale(@language, fn -> gettext("Group") end)}>
-            <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"}>
-              <%= @group.slug %>
-            </.link>
-          </:col>
-
           <:col
             :let={{_id, log_category}}
             label={with_locale(@language, fn -> gettext("Position") end)}
           >
-            <p class="position flex items-center justify-center gap-x-2">
+            <p class="position flex items-center">
               <span class="inline-flex flex-col">
                 <button
                   type="button"
@@ -84,7 +78,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
                     )
                   }
                 >
-                  <.icon name="hero-arrow-up-circle-solid" class="h-5 w-5" />
+                  <.icon name="hero-arrow-up-circle-solid" class="h-5 w-5 arrow" />
                 </button>
                 <button
                   type="button"
@@ -99,11 +93,9 @@ defmodule OmedisWeb.LogCategoryLive.Index do
                     )
                   }
                 >
-                  <.icon name="hero-arrow-down-circle-solid" class="h-5 w-5" />
+                  <.icon name="hero-arrow-down-circle-solid" class="h-5 w-5 arrow" />
                 </button>
               </span>
-
-              <span><%= log_category.position %></span>
             </p>
           </:col>
 
