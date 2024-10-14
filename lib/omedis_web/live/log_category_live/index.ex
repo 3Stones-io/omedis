@@ -41,7 +41,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         </.header>
 
         <.table
-          id="log_categories"
+          id="log-categories"
           rows={@streams.log_categories}
           row_click={
             fn {_id, log_category} ->
@@ -69,7 +69,42 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             :let={{_id, log_category}}
             label={with_locale(@language, fn -> gettext("Position") end)}
           >
-            <%= log_category.position %>
+            <p class="position flex items-center justify-center gap-x-2">
+              <span class="inline-flex flex-col">
+                <button
+                  type="button"
+                  class="position-up"
+                  phx-click={
+                    JS.push(
+                      "update-position",
+                      value: %{
+                        "log_category_id" => log_category.id,
+                        "direction" => -1
+                      }
+                    )
+                  }
+                >
+                  <.icon name="hero-arrow-up-circle-solid" class="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  class="position-down"
+                  phx-click={
+                    JS.push(
+                      "update-position",
+                      value: %{
+                        "log_category_id" => log_category.id,
+                        "direction" => 1
+                      }
+                    )
+                  }
+                >
+                  <.icon name="hero-arrow-down-circle-solid" class="h-5 w-5" />
+                </button>
+              </span>
+
+              <span><%= log_category.position %></span>
+            </p>
           </:col>
 
           <:action :let={{_id, log_category}}>
@@ -125,30 +160,34 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         %{"language" => language} = _session,
         socket
       ) do
+    if connected?(socket),
+      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
+
     group = Group.by_slug!(group_slug)
 
     tenant = Tenant.by_slug!(slug)
     next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
-    change_position_form_fields = %{"position" => "", "log_category_id" => ""}
 
     {:ok,
      socket
-     |> stream(:log_categories, LogCategory.by_group_id!(%{group_id: group.id}))
+     |> stream(:log_categories, LogCategory.by_group_id!(%{group_id: group.id}), reset: true)
      |> assign(:language, language)
      |> assign(:tenant, tenant)
      |> assign(:groups, Ash.read!(Group))
      |> assign(:projects, Project.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:group, group)
      |> assign(:is_custom_color, false)
-     |> assign(:next_position, next_position)
-     |> assign(:change_position_form, to_form(change_position_form_fields))}
+     |> assign(:next_position, next_position)}
   end
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
+    if connected?(socket),
+      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
+
     {:ok,
      socket
-     |> stream(:log_categories, Ash.read!(LogCategory))
+     |> stream(:log_categories, Ash.read!(LogCategory), reset: true)
      |> assign(:language, language)
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:tenant, nil)}
@@ -198,22 +237,26 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   end
 
   @impl true
+  def handle_info("updated_positions", socket) do
+    {:noreply,
+     stream(
+       socket,
+       :log_categories,
+       LogCategory.by_group_id!(%{group_id: socket.assigns.group.id}),
+       reset: true
+     )}
+  end
+
+  @impl true
   def handle_event("update-position", params, socket) do
-    %{"log_category_id" => log_category_id, "position" => position} = params
+    %{"direction" => direction, "log_category_id" => log_category_id} = params
 
     case Ash.get(LogCategory, log_category_id) do
       {:ok, log_category} ->
-        update_log_category_position(log_category, position, socket)
+        new_position = (log_category.position + direction) |> IO.inspect(label: "DIRECTION:::")
+        LogCategory.update_position(log_category, new_position)
 
-      {:error, _changeset} ->
         {:noreply, socket}
-    end
-  end
-
-  defp update_log_category_position(log_category, position, socket) do
-    case LogCategory.update_position(log_category, position) do
-      {:ok, log_category} ->
-        {:noreply, stream_insert(socket, :log_categories, log_category)}
 
       _error ->
         {:noreply, socket}

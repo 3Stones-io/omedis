@@ -4,3 +4,10 @@
 @import "tailwindcss/forms";
 
 /* This file is for your main application CSS */
+table:has(#log-categories) #log-categories > tr:first-child > td:has(.position) .position-up {
+  @apply hidden;
+}
+
+table:has(#log-categories) #log-categories > tr:last-child > td:has(.position) .position-down {
+  @apply hidden;
+}

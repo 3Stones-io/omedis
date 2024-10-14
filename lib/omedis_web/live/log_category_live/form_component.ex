@@ -108,8 +108,6 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           />
         </div>
 
-        <input type="hidden" name="log_category[position]" value={@next_position} />
-
         <div :if={@is_custom_color}>
           <.input
             field={@form[:color_code]}

@@ -7,7 +7,8 @@ defmodule Omedis.Accounts.LogCategory do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Accounts,
+    notifiers: [Omedis.Accounts.Notifiers]
 
   @github_issue_color_codes [
     "#1f77b4",
@@ -40,7 +41,7 @@ defmodule Omedis.Accounts.LogCategory do
     define :read
     define :create
     define :update
-    define :update_position, action: :update_position, args: [:position]
+    define :update_position, action: :update_position, args: [:new_position]
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_group_id
@@ -84,9 +85,9 @@ defmodule Omedis.Accounts.LogCategory do
     end
 
     update :update_position do
-      argument :position, :string
+      argument :new_position, :integer
 
-      change set_attribute(:position, arg(:position))
+      change Omedis.Accounts.Changes.UpdateLogCategoryPositions
       require_atomic? false
     end
 
@@ -99,7 +100,7 @@ defmodule Omedis.Accounts.LogCategory do
         allow_nil? false
       end
 
-      prepare build(load: [:log_entries])
+      prepare build(load: [:log_entries], sort: [position: :asc])
 
       filter expr(group_id == ^arg(:group_id))
     end
@@ -154,7 +155,7 @@ defmodule Omedis.Accounts.LogCategory do
 
     attribute :color_code, :string, allow_nil?: true, public?: true
 
-    attribute :position, :string, allow_nil?: true, public?: true
+    attribute :position, :integer, allow_nil?: true, public?: true
 
     attribute :slug, :string do
       constraints max_length: 80
@@ -181,7 +182,7 @@ defmodule Omedis.Accounts.LogCategory do
     |> Enum.at(0)
     |> case do
       nil -> 0
-      record -> record.position |> String.to_integer()
+      record -> record.position
     end
   end
 
