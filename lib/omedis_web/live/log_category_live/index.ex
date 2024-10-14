@@ -253,7 +253,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
     case Ash.get(LogCategory, log_category_id) do
       {:ok, log_category} ->
-        new_position = (log_category.position + direction) |> IO.inspect(label: "DIRECTION:::")
+        new_position = log_category.position + direction
         LogCategory.update_position(log_category, new_position)
 
         {:noreply, socket}

@@ -1,4 +1,5 @@
 defmodule Omedis.Accounts.Notifiers do
+  @moduledoc false
   use Ash.Notifier
 
   @impl true

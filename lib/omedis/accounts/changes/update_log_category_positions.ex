@@ -1,4 +1,6 @@
 defmodule Omedis.Accounts.Changes.UpdateLogCategoryPositions do
+  @moduledoc false
+
   use Ash.Resource.Change
 
   alias Omedis.Accounts.LogCategory
@@ -27,7 +29,6 @@ defmodule Omedis.Accounts.Changes.UpdateLogCategoryPositions do
         LogCategory
         |> Ash.Query.filter(position == ^new_position and id != ^id)
         |> Ash.read_one()
-        |> IO.inspect()
 
       case log_category do
         {:ok, log} ->
