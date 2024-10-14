@@ -23,7 +23,6 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 
 import Alpine from "alpinejs";
-import LogCategoryPositionInputHooks from "./hooks/log_category_position_input";
 
 import FlashAutoDisappear from "./hooks/flash_auto_disappear"
 import SlugInput from "./hooks/slug_input"
@@ -50,7 +49,6 @@ let liveSocket = new LiveSocket("/live", Socket, {
   },
   hooks: Hooks,
   params: { _csrf_token: csrfToken },
-  hooks: Hooks
 });
 
 // Show progress bar on live navigation and form submits
