@@ -9,6 +9,8 @@ defmodule OmedisWeb.TimeTracking do
   alias Omedis.Accounts.LogEntry
   use Gettext, backend: OmedisWeb.Gettext
 
+  import Gettext, only: [with_locale: 2]
+
   attr :categories, :list, required: true
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
@@ -33,14 +35,30 @@ defmodule OmedisWeb.TimeTracking do
   def dashboard_component(assigns) do
     ~H"""
     <div class="w-[100%] flex flex-col gap-1 ">
-      <.dashboard_card
-        categories={@categories}
-        start_at={@start_at}
-        end_at={@end_at}
-        log_entries={@log_entries}
-        language={@language}
-        current_time={@current_time}
-      />
+      <%= if Enum.empty?(@categories) do %>
+        <.no_log_categories language={@language} />
+      <% else %>
+        <.dashboard_card
+          categories={@categories}
+          start_at={@start_at}
+          end_at={@end_at}
+          log_entries={@log_entries}
+          language={@language}
+          current_time={@current_time}
+        />
+      <% end %>
+    </div>
+    """
+  end
+
+  def no_log_categories(assigns) do
+    ~H"""
+    <div class="w-[100%] h-[30vh] flex justify-center items-center">
+      <%= with_locale(@language, fn -> %>
+        <p>
+          <%= gettext("No log categories are defined yet.") %>
+        </p>
+      <% end) %>
     </div>
     """
   end
@@ -336,5 +354,58 @@ defmodule OmedisWeb.TimeTracking do
       |> IO.iodata_to_binary()
 
     "(#{formatted_time})"
+  end
+
+  def select_for_groups_and_project(assigns) do
+    ~H"""
+    <div class="flex flex-col mb-3 gap-1">
+      <p>
+        <%= @header_text %>
+      </p>
+
+      <div class="w-[100%] flex justify-between">
+        <form phx-change="select_group" phx-submit="select_group" class="w-[48%] form-control">
+          <p>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Select Group") %>
+            <% end) %>
+          </p>
+
+          <select
+            name="group_id"
+            id="group_id"
+            defa
+            class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+          >
+            <%= for {name , id} <- @groups do %>
+              <option selected={id == @group.id} value={id}>
+                <%= name %>
+              </option>
+            <% end %>
+          </select>
+        </form>
+
+        <form phx-change="select_project" phx-submit="select_project" class=" w-[48%] form-control">
+          <p>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Select Project") %>
+            <% end) %>
+          </p>
+          <select
+            name="project_id"
+            id="project_id"
+            defa
+            class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+          >
+            <%= for {name , id} <- @projects do %>
+              <option selected={id == @project.id} value={id}>
+                <%= name %>
+              </option>
+            <% end %>
+          </select>
+        </form>
+      </div>
+    </div>
+    """
   end
 end

@@ -2,18 +2,170 @@ defmodule OmedisWeb.GeneralComponents do
   @moduledoc """
   Provides general components for the application.
   """
+  use OmedisWeb, :verified_routes
   use Phoenix.Component
 
   use Gettext, backend: OmedisWeb.Gettext
-  alias Omedis.Accounts.Tenant
 
   import Gettext, only: [with_locale: 2]
+
+  def breadcrumb(assigns) do
+    ~H"""
+    <div class="lg:hidden -mt-10 mb-3 -mx-6 lg:-mx-8">
+      <.mobile_breadcrumb items={assigns.items} />
+    </div>
+    <div class="hidden lg:block -mt-10 mb-3 -mx-6 lg:-mx-8">
+      <.desktop_breadcrumb items={assigns.items} />
+    </div>
+    """
+  end
+
+  def desktop_breadcrumb(assigns) do
+    ~H"""
+    <nav
+      class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
+      aria-label="Navigation Breadcrumb"
+    >
+      <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
+        <%= for {label, path, is_current} <- @items do %>
+          <%= if label === "Home" do %>
+            <div class="flex items-center">
+              <%= if is_current do %>
+                <div class="text-sm font-medium text-gray-700" aria-current="page">
+                  <.home_icon />
+                </div>
+              <% else %>
+                <a href={path} class="text-sm font-medium text-gray-500 hover:text-gray-900">
+                  <.home_icon />
+                </a>
+              <% end %>
+              <%= if not is_current do %>
+                <svg
+                  class="h-full w-6 flex-shrink-0 text-gray-200"
+                  viewBox="0 0 24 44"
+                  preserveAspectRatio="none"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+                </svg>
+              <% end %>
+            </div>
+          <% else %>
+            <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
+          <% end %>
+        <% end %>
+      </ol>
+    </nav>
+    """
+  end
+
+  def mobile_breadcrumb(assigns) do
+    items_count = length(assigns.items)
+    show_full_breadcrumb = items_count <= 4
+
+    assigns = assign(assigns, :show_full_breadcrumb, show_full_breadcrumb)
+
+    ~H"""
+    <nav
+      class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
+      aria-label="Navigation Breadcrumb"
+    >
+      <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
+        <%= if @show_full_breadcrumb do %>
+          <%= for {label, path, is_current} <- @items do %>
+            <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
+          <% end %>
+        <% else %>
+          <%= for {label, path, is_current} <- Enum.take(@items, 2) do %>
+            <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
+          <% end %>
+          <li class="flex items-center pb-3 text-gray-500 text-2xl">...</li>
+          <%= for {label, path, is_current} <- Enum.take(@items, -2) do %>
+            <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
+          <% end %>
+        <% end %>
+      </ol>
+    </nav>
+    """
+  end
+
+  def render_breadcrumb_item(assigns) do
+    ~H"""
+    <li class="flex">
+      <div class="flex items-center">
+        <%= if @label === "Home" do %>
+          <div class="flex items-center">
+            <%= if @is_current do %>
+              <div class="text-sm font-medium text-gray-700" aria-current="page">
+                <.home_icon />
+              </div>
+            <% else %>
+              <a href={@path} class="text-sm font-medium text-gray-500 hover:text-gray-900">
+                <.home_icon />
+              </a>
+            <% end %>
+          </div>
+        <% else %>
+          <%= if @is_current do %>
+            <p class="truncate text-sm font-medium text-gray-900" aria-current="page">
+              <%= @label %>
+            </p>
+          <% else %>
+            <a href={@path} class="truncate text-sm font-medium text-gray-500 hover:text-gray-900">
+              <%= @label %>
+            </a>
+          <% end %>
+        <% end %>
+        <%= if not @is_current do %>
+          <svg
+            class="h-full w-6 flex-shrink-0 text-gray-200"
+            viewBox="0 0 24 44"
+            preserveAspectRatio="none"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+          </svg>
+        <% end %>
+      </div>
+    </li>
+    """
+  end
+
+  def home_icon(assigns) do
+    ~H"""
+    <svg
+      class="h-5 w-5 flex-shrink-0"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+      data-slot="icon"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+    """
+  end
 
   def side_and_topbar(assigns) do
     ~H"""
     <div>
-      <.topbar language={@language} current_user={@current_user} />
-      <.desktop_sidebar current_user={@current_user} />
+      <.topbar
+        language={@language}
+        current_tenant={@current_tenant}
+        current_user={@current_user}
+        tenants_count={@tenants_count}
+      />
+      <.desktop_sidebar
+        current_tenant={@current_tenant}
+        current_user={@current_user}
+        tenants_count={@tenants_count}
+      />
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
@@ -57,32 +209,13 @@ defmodule OmedisWeb.GeneralComponents do
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/tenants"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <svg
-                      class="h-6 w-6 shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                      />
-                    </svg>
-                    Tenants
-                  </a>
+                  <.tenants_link tenants_count={@tenants_count} />
                 </li>
 
                 <li>
                   <.link
-                    :if={@current_user && @current_user.current_tenant_id}
-                    navigate={get_current_tenant_path(@current_user)}
+                    :if={@current_tenant}
+                    navigate={get_current_tenant_path(@current_tenant)}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -220,43 +353,32 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
               </ul>
             </li>
-            <li>
+            <li :if={@current_tenant}>
               <div class="text-xs font-semibold leading-6 text-gray-400">
-                Your teams
+                <%= @current_tenant.name %>
               </div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
-                  <a
-                    href="#"
+                  <.link
+                    navigate={~p"/tenants/#{@current_tenant.slug}/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      H
+                      G
                     </span>
-                    <span class="truncate">Heroicons</span>
-                  </a>
+                    <span class="truncate">Groups</span>
+                  </.link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <.link
+                    navigate={~p"/tenants/#{@current_tenant.slug}/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      T
+                      P
                     </span>
-                    <span class="truncate">Tailwind Labs</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      W
-                    </span>
-                    <span class="truncate">Workcation</span>
-                  </a>
+                    <span class="truncate">Projects</span>
+                  </.link>
                 </li>
               </ul>
             </li>
@@ -330,7 +452,11 @@ defmodule OmedisWeb.GeneralComponents do
               x-cloak
               class="w-[75%]   h-[100vh] "
             >
-              <.mobile_sidebar current_user={@current_user} />
+              <.mobile_sidebar
+                current_tenant={@current_tenant}
+                current_user={@current_user}
+                tenants_count={@tenants_count}
+              />
             </div>
 
             <div class="p-4 text-black" @click="open = false" x-show="open" x-transition x-cloak>
@@ -393,7 +519,7 @@ defmodule OmedisWeb.GeneralComponents do
                           <% end) %>
                         </.link>
                         <span>
-                          Or
+                          |
                         </span>
                         <.link navigate="/register" class="text-blue-500">
                           <%= with_locale(@language, fn -> %>
@@ -465,32 +591,13 @@ defmodule OmedisWeb.GeneralComponents do
                   </a>
                 </li>
                 <li>
-                  <.link
-                    navigate="/tenants"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <svg
-                      class="h-6 w-6 shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                      />
-                    </svg>
-                    Tenants
-                  </.link>
+                  <.tenants_link tenants_count={@tenants_count} />
                 </li>
 
                 <li>
                   <.link
-                    :if={@current_user && @current_user.current_tenant_id}
-                    navigate={get_current_tenant_path(@current_user)}
+                    :if={@current_tenant}
+                    navigate={get_current_tenant_path(@current_tenant)}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -628,43 +735,32 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
               </ul>
             </li>
-            <li>
+            <li :if={@current_tenant}>
               <div class="text-xs font-semibold leading-6 text-gray-400">
-                Your teams
+                <%= @current_tenant.name %>
               </div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
-                  <a
-                    href="#"
+                  <.link
+                    navigate={~p"/tenants/#{@current_tenant.slug}/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      H
+                      G
                     </span>
-                    <span class="truncate">Heroicons</span>
-                  </a>
+                    <span class="truncate">Groups</span>
+                  </.link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <.link
+                    navigate={~p"/tenants/#{@current_tenant.slug}/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      T
+                      P
                     </span>
-                    <span class="truncate">Tailwind Labs</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                      W
-                    </span>
-                    <span class="truncate">Workcation</span>
-                  </a>
+                    <span class="truncate">Projects</span>
+                  </.link>
                 </li>
               </ul>
             </li>
@@ -752,10 +848,37 @@ defmodule OmedisWeb.GeneralComponents do
     """
   end
 
-  defp get_current_tenant_path(current_user) do
-    case Tenant.by_id(current_user.current_tenant_id) do
-      {:ok, tenant} -> "/tenants/#{tenant.slug}/today"
-      _ -> "/tenants"
-    end
+  defp get_current_tenant_path(nil), do: "/tenants"
+  defp get_current_tenant_path(current_tenant), do: "/tenants/#{current_tenant.slug}"
+
+  defp tenants_link(assigns) do
+    ~H"""
+    <.link
+      navigate={tenants_link_path(@tenants_count)}
+      class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+    >
+      <svg
+        class="h-6 w-6 shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+        />
+      </svg>
+      <%= tenants_link_text(@tenants_count) %>
+    </.link>
+    """
   end
+
+  defp tenants_link_path(0), do: ~p"/tenants/new"
+  defp tenants_link_path(_tenants_count), do: ~p"/tenants"
+
+  defp tenants_link_text(0), do: "Create first tenant"
+  defp tenants_link_text(tenants_count), do: "Tenants (#{tenants_count})"
 end

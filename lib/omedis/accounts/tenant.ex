@@ -9,6 +9,8 @@ defmodule Omedis.Accounts.Tenant do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.Group
+
   postgres do
     table "tenants"
     repo Omedis.Repo
@@ -180,7 +182,7 @@ defmodule Omedis.Accounts.Tenant do
       public?: true,
       default: "GMT+0200 (Europe/Berlin)"
 
-    attribute :slug, :string do
+    attribute :slug, :ci_string do
       constraints max_length: 80
       allow_nil? false
     end
@@ -219,5 +221,7 @@ defmodule Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true
     end
+
+    has_many :groups, Group
   end
 end

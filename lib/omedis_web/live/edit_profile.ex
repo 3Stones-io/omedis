@@ -99,174 +99,183 @@ defmodule OmedisWeb.EditProfileLive do
 
   def render(assigns) do
     ~H"""
-    <.form
-      :let={f}
-      id="basic_user_edit_profile_form"
-      for={@form}
-      class="space-y-2 group"
-      phx-change="validate"
-      phx-submit="submit"
+    <.side_and_topbar
+      current_user={@current_user}
+      current_tenant={@current_tenant}
+      language={@language}
+      tenants_count={@tenants_count}
     >
-      <div class="space-y-6">
-        <div class="border-b border-gray-900/10 pb-12">
-          <h2 class="text-base font-semibold leading-7 text-gray-900">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Update Profile") %>
-            <% end) %>
-          </h2>
-          <p class="mt-1 text-sm leading-6 text-gray-600">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Edit your profile details") %>
-            <% end) %>
-          </p>
-          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
+      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.form
+          :let={f}
+          id="basic_user_edit_profile_form"
+          for={@form}
+          class="space-y-2 group"
+          phx-change="validate"
+          phx-submit="submit"
+        >
+          <div class="space-y-6">
+            <div class="border-b border-gray-900/10 pb-12">
+              <h2 class="text-base font-semibold leading-7 text-gray-900">
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("First Name") %>
+                  <%= gettext("Update Profile") %>
                 <% end) %>
-              </label>
+              </h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Edit your profile details") %>
+                <% end) %>
+              </p>
+              <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div class="sm:col-span-3">
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("First Name") %>
+                    <% end) %>
+                  </label>
 
-              <div phx-feedback-for={f[:first_name].name} class="mt-2">
-                <%= text_input(f, :first_name,
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  placeholder: with_locale(@language, fn -> gettext("First Name") end),
-                  value: f[:first_name].value,
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:first_name], :first_name)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("First Name") %>
-                  <% end) <> " " <> msg %>
-                </.error>
+                  <div phx-feedback-for={f[:first_name].name} class="mt-2">
+                    <%= text_input(f, :first_name,
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      placeholder: with_locale(@language, fn -> gettext("First Name") end),
+                      value: f[:first_name].value,
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:first_name], :first_name)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("First Name") %>
+                      <% end) <> " " <> msg %>
+                    </.error>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Last Name") %>
+                    <% end) %>
+                  </label>
+                  <div phx-feedback-for={f[:last_name].name} class="mt-2">
+                    <%= text_input(f, :last_name,
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      placeholder: with_locale(@language, fn -> gettext("Last Name") end),
+                      value: f[:last_name].value,
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:last_name], :last_name)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Last Name") %>
+                      <% end) <> " " <> msg %>
+                    </.error>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Gender") %>
+                    <% end) %>
+                  </label>
+
+                  <div phx-feedback-for={f[:gender].name} class="mt-2">
+                    <%= select(f, :gender, ["Male", "Female"],
+                      prompt: with_locale(@language, fn -> gettext("Select Gender") end),
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      value: f[:gender].value,
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:gender], :gender)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Gender") %>
+                      <% end) <> " " <> msg %>
+                    </.error>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Birthdate") %>
+                    <% end) %>
+                  </label>
+
+                  <div phx-feedback-for={f[:birthdate].name} class="mt-2">
+                    <%= date_input(f, :birthdate,
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      placeholder: with_locale(@language, fn -> gettext("Birthdate") end),
+                      value: f[:birthdate].value,
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:birthdate], :birthdate)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Birthdate") %>
+                      <% end) <> " " <> msg %>
+                    </.error>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Current Tenant") %>
+                    <% end) %>
+                  </label>
+
+                  <div phx-feedback-for={f[:current_tenant_id].name} class="mt-2">
+                    <%= select(f, :current_tenant_id, @tenants_for_an_owner,
+                      prompt: with_locale(@language, fn -> gettext("Select Tenant") end),
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      value: f[:current_tenant_id].value,
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:current_tenant_id], :current_tenant_id)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Current Tenant") %>
+                      <% end) <> " " <> msg %>
+                    </.error>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <label class="block text-sm font-medium leading-6 text-gray-900">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Language") %>
+                    <% end) %>
+                  </label>
+
+                  <div phx-feedback-for={f[:lang].name} class="mt-2">
+                    <%= select(f, :lang, @supported_languages,
+                      prompt: with_locale(@language, fn -> gettext("Select Your Language") end),
+                      class:
+                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                      "phx-debounce": "blur"
+                    ) %>
+                    <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Language") <> " " <> msg %>
+                      <% end) %>
+                    </.error>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Last Name") %>
-                <% end) %>
-              </label>
-              <div phx-feedback-for={f[:last_name].name} class="mt-2">
-                <%= text_input(f, :last_name,
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  placeholder: with_locale(@language, fn -> gettext("Last Name") end),
-                  value: f[:last_name].value,
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:last_name], :last_name)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("Last Name") %>
-                  <% end) <> " " <> msg %>
-                </.error>
-              </div>
-            </div>
-
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Gender") %>
-                <% end) %>
-              </label>
-
-              <div phx-feedback-for={f[:gender].name} class="mt-2">
-                <%= select(f, :gender, ["Male", "Female"],
-                  prompt: with_locale(@language, fn -> gettext("Select Gender") end),
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  value: f[:gender].value,
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:gender], :gender)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("Gender") %>
-                  <% end) <> " " <> msg %>
-                </.error>
-              </div>
-            </div>
-
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Birthdate") %>
-                <% end) %>
-              </label>
-
-              <div phx-feedback-for={f[:birthdate].name} class="mt-2">
-                <%= date_input(f, :birthdate,
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  placeholder: with_locale(@language, fn -> gettext("Birthdate") end),
-                  value: f[:birthdate].value,
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:birthdate], :birthdate)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("Birthdate") %>
-                  <% end) <> " " <> msg %>
-                </.error>
-              </div>
-            </div>
-
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Current Tenant") %>
-                <% end) %>
-              </label>
-
-              <div phx-feedback-for={f[:current_tenant_id].name} class="mt-2">
-                <%= select(f, :current_tenant_id, @tenants_for_an_owner,
-                  prompt: with_locale(@language, fn -> gettext("Select Tenant") end),
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  value: f[:current_tenant_id].value,
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:current_tenant_id], :current_tenant_id)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("Current Tenant") %>
-                  <% end) <> " " <> msg %>
-                </.error>
-              </div>
-            </div>
-
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Language") %>
-                <% end) %>
-              </label>
-
-              <div phx-feedback-for={f[:lang].name} class="mt-2">
-                <%= select(f, :lang, @supported_languages,
-                  prompt: with_locale(@language, fn -> gettext("Select Your Language") end),
-                  class:
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                  "phx-debounce": "blur"
-                ) %>
-                <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
-                  <%= with_locale(@language, fn -> %>
-                    <%= gettext("Language") <> " " <> msg %>
-                  <% end) %>
-                </.error>
-              </div>
+            <div class="mt-6 flex items-center justify-end gap-x-6">
+              <%= submit(with_locale(@language, fn -> gettext("Save Profile") end),
+                phx_disable_with: with_locale(@language, fn -> gettext("Saving...") end),
+                class:
+                  "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              ) %>
             </div>
           </div>
-        </div>
-
-        <div class="mt-6 flex items-center justify-end gap-x-6">
-          <%= submit(with_locale(@language, fn -> gettext("Save Profile") end),
-            phx_disable_with: with_locale(@language, fn -> gettext("Saving...") end),
-            class:
-              "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          ) %>
-        </div>
+        </.form>
       </div>
-    </.form>
+    </.side_and_topbar>
     """
   end
 end

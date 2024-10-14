@@ -21,6 +21,15 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           field={@form[:name]}
           type="text"
           label={Phoenix.HTML.raw("Name  <span class='text-red-600'>*</span>")}
+          phx-change={JS.push("generate-slug", value: %{"name" => input_value(@form, :name)})}
+        />
+
+        <.input
+          field={@form[:slug]}
+          type="text"
+          label={Phoenix.HTML.raw("Slug <span class='text-red-600'>*</span>")}
+          id="log-category-slug"
+          phx-hook="SlugInput"
         />
 
         <%= if @group.id do %>
@@ -41,6 +50,13 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
             options={Enum.map(@groups, &{&1.name, &1.id})}
           />
         <% end %>
+
+        <.input
+          field={@form[:project_id]}
+          type="select"
+          label={Phoenix.HTML.raw("Project  <span class='text-red-600'>*</span>")}
+          options={Enum.map(@projects, &{&1.name, &1.id})}
+        />
 
         <div class="flex gap-5">
           <p>
@@ -147,11 +163,22 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"log_category" => log_category_params}, socket) do
-    form = AshPhoenix.Form.validate(socket.assigns.form, log_category_params)
+    form =
+      AshPhoenix.Form.validate(socket.assigns.form, log_category_params)
+
+    {:noreply, assign(socket, form: form)}
+  end
+
+  def handle_event("generate-slug", %{"log_category" => %{"name" => name}}, socket) do
+    slug =
+      name
+      |> String.trim()
+      |> Slug.slugify()
 
     {:noreply,
      socket
-     |> assign(form: form)}
+     |> assign(:form, AshPhoenix.Form.validate(socket.assigns.form, %{"name" => name}))
+     |> push_event("update-slug", %{"slug" => slug})}
   end
 
   def handle_event("toggle_color_mode", _params, socket) do
@@ -203,6 +230,9 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
     color_code =
       LogCategory.select_unused_color_code(socket.assigns.tenant.id)
 
-    assign(socket, form: to_form(form), color_code: color_code)
+    assign(socket,
+      form: to_form(form),
+      color_code: color_code
+    )
   end
 end

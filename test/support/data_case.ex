@@ -25,6 +25,7 @@ defmodule Omedis.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Omedis.DataCase
+      import Omedis.Fixtures
     end
   end
 

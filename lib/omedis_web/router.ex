@@ -11,6 +11,8 @@ defmodule OmedisWeb.Router do
     plug :put_secure_browser_headers
     plug :load_from_session
     plug OmedisWeb.Plugs.Locale
+    plug OmedisWeb.Plugs.CurrentTenant
+    plug OmedisWeb.Plugs.TenantsCount
   end
 
   pipeline :api do
@@ -32,15 +34,20 @@ defmodule OmedisWeb.Router do
     reset_route([])
 
     ash_authentication_live_session :authentication_required,
-      on_mount: {OmedisWeb.LiveUserAuth, :live_user_required} do
+      on_mount: [
+        {OmedisWeb.LiveUserAuth, :live_user_required},
+        {OmedisWeb.LiveTenant, :assign_current_tenant},
+        {OmedisWeb.LiveTenant, :assign_tenants_count}
+      ] do
       live "/edit_profile", EditProfileLive, :index
       live "/tenants", TenantLive.Index, :index
       live "/tenants/new", TenantLive.Index, :new
       live "/tenants/:slug/edit", TenantLive.Index, :edit
 
+      live "/tenants/:slug/today", TenantLive.Today, :index
+
       live "/tenants/:slug/groups/:group_slug/log_categories", LogCategoryLive.Index, :index
       live "/tenants/:slug/groups/:group_slug/log_categories/new", LogCategoryLive.Index, :new
-      live "/tenants/:slug/groups/:group_slug/today", TenantLive.Today, :index
 
       live "/tenants/:slug/projects", ProjectLive.Index, :index
       live "/tenants/:slug/projects/new", ProjectLive.Index, :new

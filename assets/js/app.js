@@ -25,18 +25,21 @@ import topbar from "../vendor/topbar";
 import Alpine from "alpinejs";
 import LogCategoryPositionInputHooks from "./hooks/log_category_position_input";
 
+import FlashAutoDisappear from "./hooks/flash_auto_disappear"
+import SlugInput from "./hooks/slug_input"
+
 window.Alpine = Alpine;
 Alpine.start();
 
 let Hooks = {
-  ...LogCategoryPositionInputHooks,
+  FlashAutoDisappear,
+  SlugInput,
 };
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
-  
   longPollFallbackMs: 2500,
   dom: {
     onBeforeElUpdated(from, to) {
@@ -45,6 +48,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
       }
     },
   },
+  hooks: Hooks,
   params: { _csrf_token: csrfToken },
   hooks: Hooks
 });

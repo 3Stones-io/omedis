@@ -66,8 +66,8 @@ defmodule Omedis.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:faker, "~> 0.18"},
       {:bandit, "~> 1.5"},
-      {:ex_machina, "~> 2.8.0", only: :test},
       {:ash_phoenix, "~> 2.1.2"},
       {:slugify, "~> 1.3"}
     ]
@@ -83,9 +83,14 @@ defmodule Omedis.MixProject do
     [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "seed.demo": ["run priv/repo/demo_seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.setup": [
+        "cmd --cd assets npm install",
+        "tailwind.install --if-missing",
+        "esbuild.install --if-missing"
+      ],
       "assets.build": ["tailwind omedis", "esbuild omedis"],
       "assets.deploy": [
         "tailwind omedis --minify",

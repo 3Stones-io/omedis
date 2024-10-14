@@ -9,6 +9,9 @@ defmodule Omedis.Accounts.Group do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.GroupUser
+  alias Omedis.Accounts.User
+
   postgres do
     table "groups"
     repo Omedis.Repo
@@ -24,7 +27,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   identities do
-    identity :unique_slug, [:slug]
+    identity :unique_slug_per_tenant, [:slug, :tenant_id]
   end
 
   code_interface do
@@ -88,9 +91,9 @@ defmodule Omedis.Accounts.Group do
     validate present(:name)
   end
 
-  def slug_exists?(slug) do
+  def slug_exists?(slug, tenant_id) do
     __MODULE__
-    |> Ash.Query.filter(slug: slug)
+    |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
     |> Ash.read_one!()
     |> case do
       nil -> false
@@ -102,7 +105,7 @@ defmodule Omedis.Accounts.Group do
     uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :slug, :string, allow_nil?: true, public?: true
+    attribute :slug, :ci_string, allow_nil?: true, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at
@@ -114,9 +117,13 @@ defmodule Omedis.Accounts.Group do
       attribute_writable? true
     end
 
-    belongs_to :user, Omedis.Accounts.User do
+    belongs_to :user, User do
       allow_nil? true
       attribute_writable? true
+    end
+
+    many_to_many :users, User do
+      through GroupUser
     end
   end
 end

@@ -3,10 +3,15 @@
 To start your Phoenix server:
 
 - Run `mix setup` to install and setup dependencies
-- Move to the assets folder with `cd assets` and run `npm install` to install the frontend dependencies.
 - Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+# Seed data
+
+If you want to seed the database with demo data, run `mix seed.demo`.
+
+You can safely run it as many times as you want without duplicating the data.
 
 # Developers
 
@@ -132,3 +137,19 @@ User.destroy(user)
 ```
 
 ```
+
+## Configuration
+
+### Auto-disappearing flash messages
+
+To enable auto-disappearing flash messages, set the `FLASH_AUTO_DISAPPEAR` environment variable to an integer representing the delay in seconds. E.g.
+
+```
+FLASH_AUTO_DISAPPEAR=3
+```
+
+will make flash messages disappear after 3 seconds.
+
+To disable, set to 0.
+
+The default is 4 seconds.
