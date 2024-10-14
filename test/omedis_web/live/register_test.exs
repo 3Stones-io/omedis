@@ -11,7 +11,7 @@ defmodule OmedisWeb.RegisterTest do
     "email" => "test@gmail.com",
     "password" => "12345678",
     "gender" => "Male",
-    "birthdate" => "1990-01-01",
+    "birthdate" => ~D[1990-01-01],
     "lang" => "en",
     "daily_start_at" => "09:00:00",
     "daily_end_at" => "17:00:00"
@@ -28,7 +28,8 @@ defmodule OmedisWeb.RegisterTest do
 
   setup do
     {:ok, tenant} =
-      Ash.Changeset.new(Tenant)
+      Tenant
+      |> Ash.Changeset.new()
       |> Ash.Changeset.for_create(:create, @valid_tenant_params)
       |> Ash.create()
 

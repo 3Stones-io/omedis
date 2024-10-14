@@ -24,7 +24,6 @@ defmodule OmedisWeb.RegisterLive do
       |> assign(:default_language, language)
       |> assign(:selected_tenant_id, nil)
       |> assign(:supported_languages, @supported_languages)
-      |> assign(:tenant_form, to_form(%{}, as: :tenant))
       |> assign(:tenants, tenants)
       |> assign(:tenants_count, 0)
       |> assign(trigger_action: false)
@@ -76,15 +75,7 @@ defmodule OmedisWeb.RegisterLive do
       tenant_id ->
         tenant = Enum.find(socket.assigns.tenants, &(&1.id == tenant_id))
 
-        updated_user_params =
-          Map.merge(
-            user_params,
-            %{
-              "daily_start_at" => tenant.default_daily_start_at,
-              "daily_end_at" => tenant.default_daily_end_at
-            },
-            fn _k, v1, _v2 -> v1 end
-          )
+        updated_user_params = update_user_params(user_params, tenant)
 
         form = Form.validate(socket.assigns.form, updated_user_params, errors: true)
 
@@ -107,6 +98,24 @@ defmodule OmedisWeb.RegisterLive do
      |> assign(:form, form)
      |> assign(:errors, Form.errors(form))
      |> assign(:trigger_action, form.valid?)}
+  end
+
+  defp update_user_params(user_params, tenant) do
+    Map.merge(
+      user_params,
+      %{
+        "daily_start_at" => tenant.default_daily_start_at,
+        "daily_end_at" => tenant.default_daily_end_at
+      },
+      fn _k, v1, v2 ->
+        if Map.has_key?(user_params, "_unused_daily_start_at") ||
+             Map.has_key?(user_params, "_unused_daily_end_at") do
+          v2
+        else
+          v1
+        end
+      end
+    )
   end
 
   defp language_to_flag(language) do
