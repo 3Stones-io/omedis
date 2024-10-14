@@ -10,6 +10,7 @@ defmodule Omedis.Accounts.User do
 
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupUser
+  alias Omedis.Accounts.Tenant
   alias Omedis.Validations
 
   attributes do
@@ -52,6 +53,7 @@ defmodule Omedis.Accounts.User do
 
     create :create do
       accept [
+        :current_tenant_id,
         :email,
         :hashed_password,
         :first_name,
@@ -64,6 +66,12 @@ defmodule Omedis.Accounts.User do
       ]
 
       primary? true
+
+      change fn changeset, _context ->
+        Ash.Changeset.before_action(changeset, fn changeset ->
+          maybe_add_tenant_defaults_to_changeset(changeset)
+        end)
+      end
     end
 
     update :update do
@@ -136,5 +144,28 @@ defmodule Omedis.Accounts.User do
 
   identities do
     identity :unique_email, [:email]
+  end
+
+  defp maybe_add_tenant_defaults_to_changeset(changeset) do
+    tenant_id = Ash.Changeset.get_attribute(changeset, :current_tenant_id)
+
+    if tenant_id do
+      tenant = Tenant.by_id!(tenant_id)
+
+      changeset_attributes =
+        changeset.attributes
+        |> Map.drop([:id, :created_at, :updated_at, :current_tenant_id])
+        |> Map.merge(
+          %{
+            daily_start_at: tenant.default_daily_start_at,
+            daily_end_at: tenant.default_daily_end_at
+          },
+          fn _key, v1, _v2 -> v1 end
+        )
+
+      Ash.Changeset.change_attributes(changeset, changeset_attributes)
+    else
+      changeset
+    end
   end
 end
