@@ -98,6 +98,7 @@ defmodule Omedis.Accounts.User do
         confirmation_required?(false)
 
         register_action_accept([
+          :current_tenant_id,
           :email,
           :first_name,
           :last_name,

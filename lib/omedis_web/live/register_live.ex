@@ -22,7 +22,7 @@ defmodule OmedisWeb.RegisterLive do
       |> assign(current_user: nil)
       |> assign(:language, language)
       |> assign(:default_language, language)
-      |> assign(:selected_tenant, nil)
+      |> assign(:selected_tenant_id, nil)
       |> assign(:supported_languages, @supported_languages)
       |> assign(:tenant_form, to_form(%{}, as: :tenant))
       |> assign(:tenants, tenants)
@@ -64,36 +64,38 @@ defmodule OmedisWeb.RegisterLive do
     }
   end
 
-  def handle_event("select_tenant", %{"tenant" => %{"id" => tenant_id}} = _params, socket) do
+  def handle_event(
+        "validate",
+        %{"user" => %{"current_tenant_id" => tenant_id} = user_params},
+        socket
+      ) do
     case tenant_id do
       "" ->
-        {:noreply, assign(socket, selected_tenant: nil)}
+        {:noreply, assign(socket, selected_tenant_id: nil)}
 
       tenant_id ->
         tenant = Enum.find(socket.assigns.tenants, &(&1.id == tenant_id))
 
-        form =
-          Form.validate(socket.assigns.form, %{
-            daily_start_at: tenant.default_daily_start_at,
-            daily_end_at: tenant.default_daily_end_at
-          })
+        updated_user_params =
+          Map.merge(
+            user_params,
+            %{
+              "daily_start_at" => tenant.default_daily_start_at,
+              "daily_end_at" => tenant.default_daily_end_at
+            },
+            fn _k, v1, _v2 -> v1 end
+          )
+
+        form = Form.validate(socket.assigns.form, updated_user_params, errors: true)
+
+        default_language = user_params["lang"] || socket.assigns.default_language
 
         {:noreply,
          socket
-         |> assign(:selected_tenant, tenant)
+         |> assign(default_language: default_language)
+         |> assign(:selected_tenant_id, tenant_id)
          |> assign(:form, form)}
     end
-  end
-
-  def handle_event("validate", %{"user" => user}, socket) do
-    form = Form.validate(socket.assigns.form, user, errors: true)
-
-    default_language = user["lang"] || socket.assigns.default_language
-
-    {:noreply,
-     socket
-     |> assign(default_language: default_language)
-     |> assign(form: form)}
   end
 
   @impl true
@@ -184,8 +186,7 @@ defmodule OmedisWeb.RegisterLive do
                     <.input
                       type="select"
                       id="select_tenant"
-                      field={@tenant_form[:id]}
-                      phx-change="select_tenant"
+                      field={f[:current_tenant_id]}
                       label={with_locale(@language, fn -> gettext("Select a Tenant") end)}
                       options={Enum.map(@tenants, &{&1.name, &1.id})}
                       prompt={with_locale(@language, fn -> gettext("Select a Tenant") end)}
@@ -193,10 +194,11 @@ defmodule OmedisWeb.RegisterLive do
                     />
                   </div>
                 </div>
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <.input
                     type="email"
-                    disabled={@selected_tenant == nil}
+                    disabled={@selected_tenant_id == nil}
                     field={f[:email]}
                     placeholder={with_locale(@language, fn -> gettext("Email") end)}
                     autocomplete="email"
@@ -205,10 +207,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <.input
                     type="text"
-                    disabled={@selected_tenant == nil}
+                    disabled={@selected_tenant_id == nil}
                     field={f[:first_name]}
                     placeholder={with_locale(@language, fn -> gettext("First Name") end)}
                     required
@@ -217,10 +219,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <.input
                     type="text"
-                    disabled={@selected_tenant == nil}
+                    disabled={@selected_tenant_id == nil}
                     field={f[:last_name]}
                     placeholder={with_locale(@language, fn -> gettext("Last Name") end)}
                     required
@@ -229,10 +231,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <.input
                     type="password"
-                    disabled={@selected_tenant == nil}
+                    disabled={@selected_tenant_id == nil}
                     field={f[:password]}
                     placeholder={with_locale(@language, fn -> gettext("Password") end)}
                     autocomplete={gettext("new password")}
@@ -242,10 +244,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <.input
                     type="select"
-                    disabled={@selected_tenant == nil}
+                    disabled={@selected_tenant_id == nil}
                     field={f[:gender]}
                     required
                     label={with_locale(@language, fn -> gettext("Gender") end)}
@@ -257,10 +259,10 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <.input
                     type="date"
-                    disabled={@selected_tenant == nil}
+                    disabled={@selected_tenant_id == nil}
                     field={f[:birthdate]}
                     required
                     label={with_locale(@language, fn -> gettext("Birthdate") end)}
@@ -268,7 +270,7 @@ defmodule OmedisWeb.RegisterLive do
                   />
                 </div>
 
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn -> %>
                       <%= gettext("Language") %>
@@ -279,7 +281,7 @@ defmodule OmedisWeb.RegisterLive do
                     <%= select(f, :lang, @supported_languages,
                       prompt: with_locale(@language, fn -> gettext("Select Your Language") end),
                       value: @default_language,
-                      disabled: @selected_tenant == nil,
+                      disabled: @selected_tenant_id == nil,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       "phx-debounce": "blur"
@@ -292,7 +294,7 @@ defmodule OmedisWeb.RegisterLive do
                   </div>
                 </div>
 
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn -> %>
                       <%= gettext("Daily Start Time") %>
@@ -304,7 +306,7 @@ defmodule OmedisWeb.RegisterLive do
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       value: f[:daily_start_at].value,
-                      disabled: @selected_tenant == nil,
+                      disabled: @selected_tenant_id == nil,
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
@@ -315,7 +317,7 @@ defmodule OmedisWeb.RegisterLive do
                   </div>
                 </div>
 
-                <div class={["sm:col-span-3", @selected_tenant == nil && "opacity-50"]}>
+                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn -> %>
                       <%= gettext("Daily End Time") %>
@@ -327,7 +329,7 @@ defmodule OmedisWeb.RegisterLive do
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       value: f[:daily_end_at].value,
-                      disabled: @selected_tenant == nil,
+                      disabled: @selected_tenant_id == nil,
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
@@ -353,7 +355,7 @@ defmodule OmedisWeb.RegisterLive do
             <div class="mt-6 flex items-center justify-end gap-x-6">
               <%= submit(with_locale(@language, fn -> gettext("Sign up") end),
                 phx_disable_with: with_locale(@language, fn -> gettext("Signing up...") end),
-                disabled: @selected_tenant == nil,
+                disabled: @selected_tenant_id == nil,
                 class:
                   "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               ) %>

@@ -48,8 +48,8 @@ defmodule OmedisWeb.RegisterTest do
       assert view |> element("#user_email") |> render() =~ "disabled"
 
       view
-      |> element("#select_tenant")
-      |> render_change(tenant: %{id: tenant.id})
+      |> form("#basic_user_sign_up_form")
+      |> render_change(user: %{current_tenant_id: tenant.id})
 
       refute view |> element("#user_email") |> render() =~ "disabled"
     end
@@ -61,8 +61,8 @@ defmodule OmedisWeb.RegisterTest do
       {:ok, view, _html} = live(conn, "/register")
 
       view
-      |> element("#select_tenant")
-      |> render_change(tenant: %{id: tenant.id})
+      |> form("#basic_user_sign_up_form")
+      |> render_change(user: %{current_tenant_id: tenant.id})
 
       html =
         view
@@ -78,8 +78,8 @@ defmodule OmedisWeb.RegisterTest do
       {:error, _} = User.by_email(@valid_registration_params["email"])
 
       view
-      |> element("#select_tenant")
-      |> render_change(tenant: %{id: tenant.id})
+      |> form("#basic_user_sign_up_form")
+      |> render_change(user: %{current_tenant_id: tenant.id})
 
       params =
         @valid_registration_params
