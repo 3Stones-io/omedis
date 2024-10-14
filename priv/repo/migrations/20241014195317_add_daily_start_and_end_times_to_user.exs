@@ -9,28 +9,26 @@ defmodule Omedis.Repo.Migrations.AddDailyStartAndEndTimesToUser do
 
   def up do
     alter table(:users) do
-      add :daily_start_at, :time, default: fragment("'08:00:00'")
-      add :daily_end_at, :time, default: fragment("'18:00:00'")
+      add :daily_start_at, :time
+      add :daily_end_at, :time
     end
 
     rename table(:tenants), :daily_start_at, to: :default_daily_start_at
-
     rename table(:tenants), :daily_end_at, to: :default_daily_end_at
 
     alter table(:tenants) do
-      modify :default_daily_end_at, :time, default: nil
-      modify :default_daily_start_at, :time, default: nil
+      modify :default_daily_end_at, :time
+      modify :default_daily_start_at, :time
     end
   end
 
   def down do
     alter table(:tenants) do
-      modify :daily_start_at, :time, default: fragment("'08:00:00'")
-      modify :daily_end_at, :time, default: fragment("'18:00:00'")
+      modify :daily_start_at, :time
+      modify :daily_end_at, :time
     end
 
     rename table(:tenants), :default_daily_end_at, to: :daily_end_at
-
     rename table(:tenants), :default_daily_start_at, to: :daily_start_at
 
     alter table(:users) do
