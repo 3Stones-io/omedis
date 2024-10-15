@@ -41,7 +41,8 @@ defmodule Omedis.Accounts.LogCategory do
     define :read
     define :create
     define :update
-    define :update_position, action: :update_position, args: [:new_position]
+    define :increment_position, action: :increment_position
+    define :decrement_position, action: :decrement_position
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_group_id
@@ -84,10 +85,13 @@ defmodule Omedis.Accounts.LogCategory do
       require_atomic? false
     end
 
-    update :update_position do
-      argument :new_position, :integer
+    update :increment_position do
+      change {Omedis.Accounts.Changes.UpdateLogCategoryPositions, direction: :inc}
+      require_atomic? false
+    end
 
-      change Omedis.Accounts.Changes.UpdateLogCategoryPositions
+    update :decrement_position do
+      change {Omedis.Accounts.Changes.UpdateLogCategoryPositions, direction: :dec}
       require_atomic? false
     end
 

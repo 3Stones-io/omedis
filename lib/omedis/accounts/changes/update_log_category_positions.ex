@@ -3,42 +3,54 @@ defmodule Omedis.Accounts.Changes.UpdateLogCategoryPositions do
 
   use Ash.Resource.Change
 
-  alias Omedis.Accounts.LogCategory
+  import Ecto.Query, warn: false
 
   @impl true
-  def change(changeset, _, _) do
-    id = changeset.data.id
-    old_position = changeset.data.position
-    new_position = Ash.Changeset.get_argument(changeset, :new_position)
+  def change(changeset, opts, _context) do
+    log_category = changeset.data
+    old_position = log_category.position
+    new_idx = if(opts[:direction] == :inc, do: old_position - 1, else: old_position + 1)
 
-    # change the target column to it's new position
+    Ecto.Multi.new()
+    |> multi_reposition(:new, log_category, new_idx)
+    |> Omedis.Repo.transaction()
+
     changeset
-    |> Ash.Changeset.change_attribute(:position, new_position)
-    |> Ash.update!()
+  end
 
-    # temporarily disable unique constraint checks
-    Ash.Changeset.before_action(changeset, fn changeset ->
-      Omedis.Repo.query("SET CONSTRAINTS unique_order DEFERRED")
+  defp multi_reposition(%Ecto.Multi{} = multi, name, %type{} = struct, new_idx) do
+    old_position = from(og in type, where: og.id == ^struct.id, select: og.position)
 
-      changeset
-    end)
-
-    Ash.Changeset.after_action(changeset, fn _changeset, results ->
-      # swapping positions with record that had the old position
-      log_category =
-        LogCategory
-        |> Ash.Query.filter(position == ^new_position and id != ^id)
-        |> Ash.read_one()
-
-      case log_category do
-        {:ok, log} ->
-          Ash.update!(log, %{position: old_position})
-
-        _else ->
-          :do_nothing
+    multi
+    |> Ecto.Multi.run({:index, name}, fn repo, _changes ->
+      case repo.one(from(t in type, select: count(t.id))) do
+        count when new_idx < count -> {:ok, new_idx}
+        count -> {:ok, count - 1}
       end
-
-      {:ok, results}
     end)
+    |> multi_update_all({:dec_positions, name}, fn %{{:index, ^name} => computed_index} ->
+      from(t in type,
+        where: t.id != ^struct.id,
+        where: t.position > subquery(old_position) and t.position <= ^computed_index,
+        update: [inc: [position: -1]]
+      )
+    end)
+    |> multi_update_all({:inc_positions, name}, fn %{{:index, ^name} => computed_index} ->
+      from(t in type,
+        where: t.id != ^struct.id,
+        where: t.position < subquery(old_position) and t.position >= ^computed_index,
+        update: [inc: [position: 1]]
+      )
+    end)
+    |> multi_update_all({:position, name}, fn %{{:index, ^name} => computed_index} ->
+      from(t in type,
+        where: t.id == ^struct.id,
+        update: [set: [position: ^computed_index]]
+      )
+    end)
+  end
+
+  defp multi_update_all(multi, name, func, opts \\ []) do
+    Ecto.Multi.update_all(multi, name, func, opts)
   end
 end

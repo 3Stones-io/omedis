@@ -70,10 +70,9 @@ defmodule OmedisWeb.LogCategoryLive.Index do
                   class="position-up"
                   phx-click={
                     JS.push(
-                      "update-position",
+                      "move-up",
                       value: %{
-                        "log_category_id" => log_category.id,
-                        "direction" => -1
+                        "log_category_id" => log_category.id
                       }
                     )
                   }
@@ -85,10 +84,9 @@ defmodule OmedisWeb.LogCategoryLive.Index do
                   class="position-down"
                   phx-click={
                     JS.push(
-                      "update-position",
+                      "move-down",
                       value: %{
-                        "log_category_id" => log_category.id,
-                        "direction" => 1
+                        "log_category_id" => log_category.id
                       }
                     )
                   }
@@ -240,13 +238,26 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   end
 
   @impl true
-  def handle_event("update-position", params, socket) do
-    %{"direction" => direction, "log_category_id" => log_category_id} = params
+  def handle_event("move-up", params, socket) do
+    %{"log_category_id" => log_category_id} = params
 
     case Ash.get(LogCategory, log_category_id) do
       {:ok, log_category} ->
-        new_position = log_category.position + direction
-        LogCategory.update_position(log_category, new_position)
+        LogCategory.increment_position(log_category)
+
+        {:noreply, socket}
+
+      _error ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("move-down", params, socket) do
+    %{"log_category_id" => log_category_id} = params
+
+    case Ash.get(LogCategory, log_category_id) do
+      {:ok, log_category} ->
+        LogCategory.decrement_position(log_category)
 
         {:noreply, socket}
 
