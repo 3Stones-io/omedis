@@ -64,9 +64,10 @@ defmodule Omedis.Accounts.LogCategory do
         :group_id,
         :project_id,
         :name,
-        :position,
         :slug
       ]
+
+      change Omedis.Accounts.Changes.NewLogCategoryPosition
 
       primary? true
     end
@@ -146,8 +147,6 @@ defmodule Omedis.Accounts.LogCategory do
       message: "Color code must be a valid hex color code eg. #FF0000"
 
     validate present(:color_code)
-
-    validate present(:position)
   end
 
   attributes do
