@@ -3,6 +3,8 @@ defmodule Omedis.Accounts.Changes.NewLogCategoryPosition do
 
   use Ash.Resource.Change
 
+  alias Omedis.Accounts.LogCategory
+
   @impl true
   def change(changeset, _opts, _context) do
     Ash.Changeset.before_action(changeset, &generate_category_position/1)
@@ -11,7 +13,7 @@ defmodule Omedis.Accounts.Changes.NewLogCategoryPosition do
   defp generate_category_position(changeset) do
     case Ash.Changeset.get_attribute(changeset, :group_id) do
       group_id when is_binary(group_id) ->
-        position = Omedis.Accounts.LogCategory.get_max_position_by_group_id(group_id) + 1
+        position = LogCategory.get_max_position_by_group_id(group_id) + 1
 
         Ash.Changeset.change_attribute(changeset, :position, position)
 
