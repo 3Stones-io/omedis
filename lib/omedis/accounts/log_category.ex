@@ -43,6 +43,7 @@ defmodule Omedis.Accounts.LogCategory do
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_group_id
+    define :list_paginated
     define :by_group_id_and_project_id
     define :max_position_by_group_id
   end
@@ -91,14 +92,30 @@ defmodule Omedis.Accounts.LogCategory do
         allow_nil? false
       end
 
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
       prepare build(load: [:log_entries])
+      prepare build(sort: :created_at)
 
       filter expr(group_id == ^arg(:group_id))
+    end
+
+    read :list_paginated do
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
+      prepare build(sort: :created_at)
     end
 
     read :by_group_id_and_project_id do
       argument :group_id, :uuid do
         allow_nil? false
+
+        pagination offset?: true,
+                   default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
+        prepare build(sort: :created_at)
       end
 
       argument :project_id, :uuid do

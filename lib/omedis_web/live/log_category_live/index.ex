@@ -4,6 +4,10 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
+  alias Omedis.PaginationUtils
+  alias OmedisWeb.PaginationComponent
+
+  on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true
   def render(assigns) do
@@ -115,6 +119,12 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
           />
         </.modal>
+        <PaginationComponent.pagination
+          current_page={@current_page}
+          language={@language}
+          resource_path={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
+          total_pages={@total_pages}
+        />
       </div>
     </.side_and_topbar>
     """
@@ -132,24 +142,26 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
     {:ok,
      socket
-     |> stream(:log_categories, LogCategory.by_group_id!(%{group_id: group.id}))
      |> assign(:language, language)
      |> assign(:tenant, tenant)
      |> assign(:groups, Ash.read!(Group))
      |> assign(:projects, Project.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:group, group)
      |> assign(:is_custom_color, false)
-     |> assign(:next_position, next_position)}
+     |> assign(:next_position, next_position)
+     |> stream(:log_categories, [])}
   end
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     {:ok,
      socket
-     |> stream(:log_categories, Ash.read!(LogCategory))
+     |> assign(:current_page, 1)
      |> assign(:language, language)
+     |> assign(:total_pages, 0)
      |> assign(:tenants, Ash.read!(Tenant))
-     |> assign(:tenant, nil)}
+     |> assign(:tenant, nil)
+     |> stream(:log_categories, [])}
   end
 
   @impl true
@@ -181,13 +193,45 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     |> assign(:log_category, nil)
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
     socket
     |> assign(
       :page_title,
       with_locale(socket.assigns.language, fn -> gettext("Listing Log categories") end)
     )
     |> assign(:log_category, nil)
+    |> list_paginated_log_categories(params)
+  end
+
+  defp list_paginated_log_categories(socket, params) do
+    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
+
+    case list_paginated_log_categories(params) do
+      {:ok, %{count: total_count, results: tenants}} ->
+        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
+        current_page = min(page, total_pages)
+
+        socket
+        |> assign(:current_page, current_page)
+        |> assign(:total_pages, total_pages)
+        |> stream(:log_categories, tenants, reset: true)
+
+      {:error, _error} ->
+        socket
+    end
+  end
+
+  defp list_paginated_log_categories(params) do
+    case params do
+      %{"page" => page} when not is_nil(page) ->
+        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
+        offset_value = (page_value - 1) * 10
+
+        LogCategory.list_paginated(page: [count: true, offset: offset_value])
+
+      _other ->
+        LogCategory.list_paginated(page: [count: true])
+    end
   end
 
   @impl true
