@@ -47,23 +47,18 @@ defmodule OmedisWeb.RegisterTest do
       refute html =~ "Password is required"
       refute html =~ "First Name is required"
 
-      {:ok, _index_live, _html} =
-        conn
-        |> sign_in_user(@valid_registration_params)
-        |> live(~p"/tenants")
+      {:ok, lv, _html} = live(conn, ~p"/register")
+
+      form =
+        form(lv, "#basic_user_sign_up_form", user: @valid_registration_params)
+
+      conn = submit_form(form, conn)
+
+      {:ok, _index_live, _html} = live(conn, ~p"/tenants")
 
       {:ok, user} = User.by_email(@valid_registration_params["email"])
 
       assert user.first_name == @valid_registration_params["first_name"]
-    end
-
-    defp sign_in_user(conn, attributes) do
-      {:ok, lv, _html} = live(conn, ~p"/register")
-
-      form =
-        form(lv, "#basic_user_sign_up_form", user: attributes)
-
-      submit_form(form, conn)
     end
   end
 end

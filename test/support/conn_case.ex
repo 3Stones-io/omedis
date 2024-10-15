@@ -17,6 +17,10 @@ defmodule OmedisWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  import Omedis.Fixtures
+
+  alias Omedis.Accounts
+
   using do
     quote do
       # The default endpoint for testing
@@ -27,6 +31,7 @@ defmodule OmedisWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
+      import Omedis.Fixtures
       import OmedisWeb.ConnCase
     end
   end
@@ -34,5 +39,32 @@ defmodule OmedisWeb.ConnCase do
   setup tags do
     Omedis.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
+  end
+
+  @doc """
+  Setup helper that registers and logs in users.
+
+      setup :register_and_log_in_user
+
+  It stores an updated connection and a registered user in the
+  test context.
+  """
+  def register_and_log_in_user(%{conn: conn}) do
+    {:ok, user} = create_user()
+    conn = log_in_user(conn, user)
+    %{conn: conn, user: user}
+  end
+
+  @doc """
+  Logs the given `user` into the `conn`.
+
+  It returns an updated `conn`.
+  """
+  def log_in_user(%Plug.Conn{} = conn, %Accounts.User{} = user) do
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> AshAuthentication.Phoenix.Plug.store_in_session(user)
+    |> AshAuthentication.Phoenix.Plug.load_from_session(otp_app: :omedis)
+    |> Plug.Conn.assign(:current_user, user)
   end
 end
