@@ -19,6 +19,7 @@ defmodule OmedisWeb.ConnCase do
 
   import Omedis.Fixtures
 
+  alias AshAuthentication.Phoenix.Plug, as: AshAuthenticationPhoenixPlug
   alias Omedis.Accounts
 
   using do
@@ -63,8 +64,8 @@ defmodule OmedisWeb.ConnCase do
   def log_in_user(%Plug.Conn{} = conn, %Accounts.User{} = user) do
     conn
     |> Phoenix.ConnTest.init_test_session(%{})
-    |> AshAuthentication.Phoenix.Plug.store_in_session(user)
-    |> AshAuthentication.Phoenix.Plug.load_from_session(otp_app: :omedis)
+    |> AshAuthenticationPhoenixPlug.store_in_session(user)
+    |> AshAuthenticationPhoenixPlug.load_from_session(otp_app: :omedis)
     |> Plug.Conn.assign(:current_user, user)
   end
 end
