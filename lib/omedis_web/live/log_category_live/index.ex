@@ -137,7 +137,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             projects={@projects}
             group={@group}
             is_custom_color={@is_custom_color}
-            next_position={@next_position}
             language={@language}
             action={@live_action}
             log_category={@log_category}
@@ -166,7 +165,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     group = Group.by_slug!(group_slug)
 
     tenant = Tenant.by_slug!(slug)
-    next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
 
     {:ok,
      socket
@@ -176,7 +174,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> assign(:projects, Project.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:group, group)
      |> assign(:is_custom_color, false)
-     |> assign(:next_position, next_position)
      |> stream(:log_categories, [])}
   end
 
@@ -197,13 +194,9 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    group = Group.by_slug!(params["group_slug"])
-    next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
-
     {:noreply,
      socket
-     |> apply_action(socket.assigns.live_action, params)
-     |> assign(:next_position, next_position)}
+     |> apply_action(socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -231,6 +224,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Listing Log categories") end)
     )
     |> assign(:log_category, nil)
+    |> assign(:params, params)
     |> list_paginated_log_categories(params)
   end
 
@@ -272,13 +266,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   @impl true
   def handle_info("updated_positions", socket) do
-    {:noreply,
-     stream(
-       socket,
-       :log_categories,
-       LogCategory.by_group_id!(%{group_id: socket.assigns.group.id}),
-       reset: true
-     )}
+    {:noreply, list_paginated_log_categories(socket, socket.assigns.params)}
   end
 
   @impl true
@@ -287,7 +275,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
     case Ash.get(LogCategory, log_category_id) do
       {:ok, log_category} ->
-        LogCategory.increment_position(log_category)
+        LogCategory.move_up(log_category)
 
         {:noreply, socket}
 
@@ -301,7 +289,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
     case Ash.get(LogCategory, log_category_id) do
       {:ok, log_category} ->
-        LogCategory.decrement_position(log_category)
+        LogCategory.move_down(log_category)
 
         {:noreply, socket}
 

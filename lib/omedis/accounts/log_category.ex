@@ -41,8 +41,7 @@ defmodule Omedis.Accounts.LogCategory do
     define :read
     define :create
     define :update
-    define :increment_position, action: :increment_position
-    define :decrement_position, action: :decrement_position
+    define :update_position
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_group_id
@@ -87,18 +86,30 @@ defmodule Omedis.Accounts.LogCategory do
       require_atomic? false
     end
 
-    update :increment_position do
-      change {Omedis.Accounts.Changes.UpdateLogCategoryPositions, direction: :inc}
+    update :update_position do
+      accept [:position]
+
+      change Omedis.Accounts.Changes.UpdateLogCategoryPositions
+
       require_atomic? false
     end
 
     update :decrement_position do
-      change {Omedis.Accounts.Changes.UpdateLogCategoryPositions, direction: :dec}
-      require_atomic? false
+      accept []
+
+      change atomic_update(:position, expr(position - 1))
+    end
+
+    update :increment_position do
+      accept []
+
+      change atomic_update(:position, expr(position + 1))
     end
 
     read :read do
       primary? true
+
+      pagination offset?: true, keyset?: true, required?: false
     end
 
     read :by_group_id do
@@ -110,7 +121,6 @@ defmodule Omedis.Accounts.LogCategory do
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit)
 
       prepare build(load: [:log_entries], sort: [position: :asc])
-      prepare build(sort: :created_at)
 
       filter expr(group_id == ^arg(:group_id))
     end
@@ -119,7 +129,7 @@ defmodule Omedis.Accounts.LogCategory do
       pagination offset?: true,
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit)
 
-      prepare build(sort: :created_at)
+      prepare build(sort: [position: :asc])
     end
 
     read :by_group_id_and_project_id do
@@ -184,6 +194,28 @@ defmodule Omedis.Accounts.LogCategory do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  def move_up(log_category) do
+    case log_category.position do
+      1 ->
+        {:ok, log_category}
+
+      _ ->
+        __MODULE__.update_position(log_category, %{position: log_category.position - 1})
+    end
+  end
+
+  def move_down(log_category) do
+    last_position = get_max_position_by_group_id(log_category.group_id)
+
+    case log_category.position do
+      ^last_position ->
+        {:ok, log_category}
+
+      _ ->
+        __MODULE__.update_position(log_category, %{position: log_category.position + 1})
+    end
   end
 
   def slug_exists?(slug) do

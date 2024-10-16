@@ -13,9 +13,12 @@ defmodule Omedis.Accounts.Changes.NewLogCategoryPosition do
   defp generate_category_position(changeset) do
     case Ash.Changeset.get_attribute(changeset, :group_id) do
       group_id when is_binary(group_id) ->
-        position = LogCategory.get_max_position_by_group_id(group_id) + 1
+        max_position =
+          LogCategory
+          |> Ash.Query.filter(group_id == ^group_id)
+          |> Ash.count!()
 
-        Ash.Changeset.change_attribute(changeset, :position, position)
+        Ash.Changeset.change_attribute(changeset, :position, max_position + 1)
 
       _other ->
         Ash.Changeset.add_error(changeset, [:position, "Position is required"])
