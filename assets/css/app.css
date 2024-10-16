@@ -6,5 +6,5 @@
 /* This file is for your main application CSS */
 table:has(#log-categories) #log-categories > tr:first-child > td:has(.position) .position-up,
 table:has(#log-categories) #log-categories > tr:last-child > td:has(.position) .position-down {
-  @apply hidden;
+  @apply pointer-events-none cursor-none opacity-10;
 }
