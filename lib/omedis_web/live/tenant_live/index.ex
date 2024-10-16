@@ -1,6 +1,10 @@
 defmodule OmedisWeb.TenantLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Tenant
+  alias Omedis.PaginationUtils
+  alias OmedisWeb.PaginationComponent
+
+  on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true
   def render(assigns) do
@@ -103,6 +107,12 @@ defmodule OmedisWeb.TenantLive.Index do
             patch={~p"/tenants"}
           />
         </.modal>
+        <PaginationComponent.pagination
+          current_page={@current_page}
+          language={@language}
+          resource_path={~p"/tenants"}
+          total_pages={@total_pages}
+        />
       </div>
     </.side_and_topbar>
     """
@@ -110,11 +120,10 @@ defmodule OmedisWeb.TenantLive.Index do
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
-    socket =
-      socket
-      |> assign(:language, language)
-
-    {:ok, stream(socket, :tenants, Ash.read!(Tenant))}
+    {:ok,
+     socket
+     |> assign(:language, language)
+     |> stream(:tenants, [])}
   end
 
   @impl true
@@ -134,13 +143,45 @@ defmodule OmedisWeb.TenantLive.Index do
     |> assign(:tenant, nil)
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
     socket
     |> assign(
       :page_title,
       with_locale(socket.assigns.language, fn -> gettext("Listing Tenants") end)
     )
     |> assign(:tenant, nil)
+    |> list_paginated_tenants(params)
+  end
+
+  defp list_paginated_tenants(socket, params) do
+    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
+
+    case list_paginated_tenants(params) do
+      {:ok, %{count: total_count, results: tenants}} ->
+        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
+        current_page = min(page, total_pages)
+
+        socket
+        |> assign(:current_page, current_page)
+        |> assign(:total_pages, total_pages)
+        |> stream(:tenants, tenants, reset: true)
+
+      {:error, _error} ->
+        socket
+    end
+  end
+
+  defp list_paginated_tenants(params) do
+    case params do
+      %{"page" => page} when not is_nil(page) ->
+        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
+        offset_value = (page_value - 1) * 10
+
+        Tenant.list_paginated(page: [count: true, offset: offset_value])
+
+      _other ->
+        Tenant.list_paginated(page: [count: true])
+    end
   end
 
   @impl true

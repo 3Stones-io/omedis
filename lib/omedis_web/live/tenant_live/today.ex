@@ -222,7 +222,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
   defp categories(group_id, project_id) do
     case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
-      {:ok, categories} ->
+      {:ok, %{results: categories}} ->
         categories
 
       _ ->
@@ -363,7 +363,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
   defp latest_group_for_a_tenant(tenant_id) do
     case Group.by_tenant_id(%{tenant_id: tenant_id}) do
-      {:ok, groups} ->
+      {:ok, %{results: groups}} ->
         Enum.min_by(groups, & &1.created_at)
 
       _ ->
@@ -387,7 +387,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
   defp groups_for_a_tenant(tenant_id) do
     case Group.by_tenant_id(%{tenant_id: tenant_id}) do
-      {:ok, groups} ->
+      {:ok, %{results: groups}} ->
         groups
         |> Enum.map(fn group -> {group.name, group.id} end)
 
