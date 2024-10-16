@@ -8,13 +8,3 @@ table:has(#log-categories) #log-categories > tr:first-child > td:has(.position) 
 table:has(#log-categories) #log-categories > tr:last-child > td:has(.position) .position-down {
   @apply hidden;
 }
-
-table:has(#log-categories) #log-categories > tr:first-child > td:has(.position) .position-down,
-table:has(#log-categories) #log-categories > tr:last-child > td:has(.position) .position-up {
-  @apply pointer-events-none cursor-none;
-}
-
-table:has(#log-categories) #log-categories > tr:first-child > td:has(.position) .position-down .arrow,
-table:has(#log-categories) #log-categories > tr:last-child > td:has(.position) .position-up .arrow {
-  @apply text-gray-100 opacity-[0.5];
-}
