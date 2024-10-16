@@ -222,7 +222,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
   defp categories(group_id, project_id) do
     case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
-      {:ok, %{results: categories}} ->
+      {:ok, categories} ->
         categories
 
       _ ->
