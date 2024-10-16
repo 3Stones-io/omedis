@@ -9,6 +9,8 @@ defmodule Omedis.Accounts.LogCategory do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Validations
+
   @github_issue_color_codes [
     "#1f77b4",
     "#ff7f0e",
@@ -60,6 +62,7 @@ defmodule Omedis.Accounts.LogCategory do
       accept [
         :color_code,
         :group_id,
+        :is_default,
         :project_id,
         :name,
         :position,
@@ -71,6 +74,7 @@ defmodule Omedis.Accounts.LogCategory do
 
     update :update do
       accept [
+        :is_default,
         :name,
         :group_id,
         :project_id,
@@ -147,6 +151,8 @@ defmodule Omedis.Accounts.LogCategory do
     validate present(:color_code)
 
     validate present(:position)
+
+    validate {Validations.DefaultLogCategory, []}
   end
 
   attributes do
@@ -157,7 +163,7 @@ defmodule Omedis.Accounts.LogCategory do
     attribute :project_id, :uuid, allow_nil?: false, public?: true
 
     attribute :color_code, :string, allow_nil?: true, public?: true
-
+    attribute :is_default, :boolean, allow_nil?: false, default: false, public?: true
     attribute :position, :string, allow_nil?: true, public?: true
 
     attribute :slug, :string do
