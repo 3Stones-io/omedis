@@ -5,6 +5,10 @@ defmodule Omedis.Fixtures do
 
   alias Omedis.Accounts
 
+  def create_access_right(attrs \\ %{}) do
+    fixture(Accounts.AccessRight, attrs)
+  end
+
   def create_group(attrs \\ %{}) do
     fixture(Accounts.Group, attrs)
   end
@@ -19,6 +23,18 @@ defmodule Omedis.Fixtures do
 
   def create_user(attrs \\ %{}) do
     fixture(Accounts.User, attrs)
+  end
+
+  def attrs_for(Accounts.AccessRight) do
+    %{
+      create: Enum.random([true, false]),
+      group_id: fn -> create_group().id end,
+      read: Enum.random([true, false]),
+      resource_name: Enum.random(["tenant"]),
+      tenant_id: fn -> create_tenant().id end,
+      update: Enum.random([true, false]),
+      write: Enum.random([true, false])
+    }
   end
 
   def attrs_for(Accounts.Group) do
@@ -68,6 +84,6 @@ defmodule Omedis.Fixtures do
       end)
       |> Map.new()
 
-    Ash.create(module, attrs)
+    Ash.create(module, attrs, authorize?: false)
   end
 end

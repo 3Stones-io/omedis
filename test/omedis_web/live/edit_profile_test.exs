@@ -57,14 +57,5 @@ defmodule OmedisWeb.EditProfileTest do
 
       assert user.first_name == "Jane"
     end
-
-    defp log_in_user(conn, user) do
-      {:ok, lv, _html} = live(conn, ~p"/login")
-
-      form =
-        form(lv, "#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
-
-      submit_form(form, conn)
-    end
   end
 end
