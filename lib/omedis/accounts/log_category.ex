@@ -215,6 +215,12 @@ defmodule Omedis.Accounts.LogCategory do
     end
   end
 
+  def get_default_log_category(group_id) do
+    __MODULE__
+    |> Ash.Query.filter(group_id: group_id, is_default: true)
+    |> Ash.read_one!()
+  end
+
   relationships do
     belongs_to :group, Omedis.Accounts.Group do
       allow_nil? false

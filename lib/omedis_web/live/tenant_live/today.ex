@@ -35,6 +35,7 @@ defmodule OmedisWeb.TenantLive.Today do
         />
 
         <.dashboard_component
+          active_log_category_id={@active_log_category_id}
           categories={@categories}
           start_at={@start_at}
           end_at={@end_at}
@@ -83,6 +84,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {:noreply,
      socket
+     |> assign_active_log_category(categories, group.id, tenant.id)
      |> assign(:page_title, "Today")
      |> assign(:tenant, tenant)
      |> assign(:start_at, start_at)
@@ -123,6 +125,30 @@ defmodule OmedisWeb.TenantLive.Today do
       end
 
     Time.add(time, offset, :hour)
+  end
+
+  defp assign_active_log_category(socket, log_categories, group_id, tenant_id) do
+    entries = get_active_entry(log_categories)
+
+    if Enum.empty?(entries) do
+      default_log_category = LogCategory.get_default_log_category(group_id)
+      create_or_stop_log_entry(default_log_category.id, tenant_id, socket.assigns.current_user.id)
+      assign(socket, :active_log_category_id, default_log_category.id)
+    else
+      log_category_id = List.first(entries).log_category_id
+      assign(socket, :active_log_category_id, log_category_id)
+    end
+  end
+
+  defp get_active_entry(log_categories) do
+    log_categories
+    |> Stream.map(fn log_category ->
+      {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category.id})
+      Enum.filter(log_entries, &is_nil(&1.end_at))
+    end)
+    |> Stream.filter(&(!Enum.empty?(&1)))
+    |> Enum.to_list()
+    |> List.flatten()
   end
 
   @impl true
@@ -293,6 +319,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {:noreply,
      socket
+     |> assign(:active_log_category_id, log_category_id)
      |> assign(:categories, categories(socket.assigns.group.id, socket.assigns.project.id))}
   end
 

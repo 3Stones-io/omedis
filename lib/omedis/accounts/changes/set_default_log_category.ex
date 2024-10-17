@@ -15,17 +15,11 @@ defmodule Omedis.Accounts.Changes.SetDefaultLogCategory do
 
     if is_default do
       group_id
-      |> get_previous_default()
+      |> LogCategory.get_default_log_category()
       |> maybe_update_previous_default(changeset)
     else
       changeset
     end
-  end
-
-  defp get_previous_default(group_id) do
-    LogCategory
-    |> Ash.Query.filter(group_id: group_id, is_default: true)
-    |> Ash.read_one!()
   end
 
   defp maybe_update_previous_default(nil, changeset), do: changeset
