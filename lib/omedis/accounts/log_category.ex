@@ -7,7 +7,8 @@ defmodule Omedis.Accounts.LogCategory do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Accounts,
+    notifiers: [Omedis.Accounts.Notifiers]
 
   @github_issue_color_codes [
     "#1f77b4",
@@ -40,6 +41,7 @@ defmodule Omedis.Accounts.LogCategory do
     define :read
     define :create
     define :update
+    define :update_position
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_group_id
@@ -63,11 +65,12 @@ defmodule Omedis.Accounts.LogCategory do
         :is_default,
         :project_id,
         :name,
-        :position,
         :slug
       ]
 
+      change Omedis.Accounts.Changes.NewLogCategoryPosition
       change Omedis.Accounts.Changes.SetDefaultLogCategory
+
       primary? true
     end
 
@@ -83,12 +86,35 @@ defmodule Omedis.Accounts.LogCategory do
       ]
 
       change Omedis.Accounts.Changes.SetDefaultLogCategory
+
       primary? true
       require_atomic? false
     end
 
+    update :update_position do
+      accept [:position]
+
+      change Omedis.Accounts.Changes.UpdateLogCategoryPositions
+
+      require_atomic? false
+    end
+
+    update :decrement_position do
+      accept []
+
+      change atomic_update(:position, expr(position - 1))
+    end
+
+    update :increment_position do
+      accept []
+
+      change atomic_update(:position, expr(position + 1))
+    end
+
     read :read do
       primary? true
+
+      pagination offset?: true, keyset?: true, required?: false
     end
 
     read :by_group_id do
@@ -99,8 +125,7 @@ defmodule Omedis.Accounts.LogCategory do
       pagination offset?: true,
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit)
 
-      prepare build(load: [:log_entries])
-      prepare build(sort: :created_at)
+      prepare build(load: [:log_entries], sort: [position: :asc])
 
       filter expr(group_id == ^arg(:group_id))
     end
@@ -109,7 +134,7 @@ defmodule Omedis.Accounts.LogCategory do
       pagination offset?: true,
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit)
 
-      prepare build(sort: :created_at)
+      prepare build(sort: [position: :asc])
     end
 
     read :by_group_id_and_project_id do
@@ -149,8 +174,6 @@ defmodule Omedis.Accounts.LogCategory do
       message: "Color code must be a valid hex color code eg. #FF0000"
 
     validate present(:color_code)
-
-    validate present(:position)
   end
 
   attributes do
@@ -162,7 +185,7 @@ defmodule Omedis.Accounts.LogCategory do
 
     attribute :color_code, :string, allow_nil?: true, public?: true
     attribute :is_default, :boolean, allow_nil?: false, default: false, public?: true
-    attribute :position, :string, allow_nil?: true, public?: true
+    attribute :position, :integer, allow_nil?: true, public?: true
 
     attribute :slug, :string do
       constraints max_length: 80
@@ -171,6 +194,28 @@ defmodule Omedis.Accounts.LogCategory do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  def move_up(log_category) do
+    case log_category.position do
+      1 ->
+        {:ok, log_category}
+
+      _ ->
+        __MODULE__.update_position(log_category, %{position: log_category.position - 1})
+    end
+  end
+
+  def move_down(log_category) do
+    last_position = get_max_position_by_group_id(log_category.group_id)
+
+    case log_category.position do
+      ^last_position ->
+        {:ok, log_category}
+
+      _ ->
+        __MODULE__.update_position(log_category, %{position: log_category.position + 1})
+    end
   end
 
   def slug_exists?(slug) do
@@ -189,7 +234,7 @@ defmodule Omedis.Accounts.LogCategory do
     |> Enum.at(0)
     |> case do
       nil -> 0
-      record -> record.position |> String.to_integer()
+      record -> record.position
     end
   end
 
