@@ -23,19 +23,14 @@ defmodule OmedisWeb.LoginTest do
     test "You can log in with valid data", %{conn: conn} do
       {:ok, user} = User.create(@valid_create_params)
 
-      assert {:ok, _index_live, _html} =
-               conn
-               |> log_in_user(user)
-               |> live(~p"/tenants")
-    end
-
-    defp log_in_user(conn, user) do
       {:ok, lv, _html} = live(conn, ~p"/login")
 
       form =
         form(lv, "#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
 
-      submit_form(form, conn)
+      conn = submit_form(form, conn)
+
+      assert {:ok, _index_live, _html} = live(conn, ~p"/tenants")
     end
   end
 end

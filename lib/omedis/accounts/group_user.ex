@@ -24,10 +24,7 @@ defmodule Omedis.Accounts.GroupUser do
     defaults [:read, :destroy]
 
     create :create do
-      accept [
-        :group_id,
-        :user_id
-      ]
+      accept [:group_id, :user_id]
 
       primary? true
     end

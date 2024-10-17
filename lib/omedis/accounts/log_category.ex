@@ -62,18 +62,21 @@ defmodule Omedis.Accounts.LogCategory do
       accept [
         :color_code,
         :group_id,
+        :is_default,
         :project_id,
         :name,
         :slug
       ]
 
       change Omedis.Accounts.Changes.NewLogCategoryPosition
+      change Omedis.Accounts.Changes.SetDefaultLogCategory
 
       primary? true
     end
 
     update :update do
       accept [
+        :is_default,
         :name,
         :group_id,
         :project_id,
@@ -81,6 +84,8 @@ defmodule Omedis.Accounts.LogCategory do
         :position,
         :slug
       ]
+
+      change Omedis.Accounts.Changes.SetDefaultLogCategory
 
       primary? true
       require_atomic? false
@@ -135,11 +140,6 @@ defmodule Omedis.Accounts.LogCategory do
     read :by_group_id_and_project_id do
       argument :group_id, :uuid do
         allow_nil? false
-
-        pagination offset?: true,
-                   default_limit: Application.compile_env(:omedis, :pagination_default_limit)
-
-        prepare build(sort: :created_at)
       end
 
       argument :project_id, :uuid do
@@ -184,7 +184,7 @@ defmodule Omedis.Accounts.LogCategory do
     attribute :project_id, :uuid, allow_nil?: false, public?: true
 
     attribute :color_code, :string, allow_nil?: true, public?: true
-
+    attribute :is_default, :boolean, allow_nil?: false, default: false, public?: true
     attribute :position, :integer, allow_nil?: true, public?: true
 
     attribute :slug, :string do
@@ -258,6 +258,12 @@ defmodule Omedis.Accounts.LogCategory do
       nil -> Enum.random(@github_issue_color_codes)
       color_code -> color_code
     end
+  end
+
+  def get_default_log_category(group_id) do
+    __MODULE__
+    |> Ash.Query.filter(group_id: group_id, is_default: true)
+    |> Ash.read_one!()
   end
 
   relationships do

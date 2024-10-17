@@ -225,6 +225,8 @@ defmodule Omedis.Accounts.Tenant do
   end
 
   relationships do
+    has_many :access_rights, Omedis.Accounts.AccessRight
+
     belongs_to :owner, Omedis.Accounts.User do
       allow_nil? true
       attribute_writable? true

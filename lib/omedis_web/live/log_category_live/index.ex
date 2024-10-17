@@ -101,6 +101,14 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             </p>
           </:col>
 
+          <:col :let={{_id, log_category}}>
+            <%= if log_category.is_default do %>
+              <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                <%= with_locale(@language, fn -> gettext("Default") end) %>
+              </span>
+            <% end %>
+          </:col>
+
           <:action :let={{_id, log_category}}>
             <div class="sr-only">
               <.link navigate={

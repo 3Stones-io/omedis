@@ -7,6 +7,8 @@ defmodule OmedisWeb.LiveTenant do
 
   import Phoenix.Component
 
+  require Ash.Query
+
   alias Omedis.Accounts.Tenant
   alias Omedis.Accounts.User
 
@@ -25,7 +27,24 @@ defmodule OmedisWeb.LiveTenant do
   end
 
   def on_mount(:assign_tenants_count, _params, _session, socket) do
-    {:ok, tenant_count} = Ash.count(Tenant)
-    {:cont, assign(socket, :tenants_count, tenant_count)}
+    tenants_count =
+      case socket.assigns[:current_user] do
+        %User{id: user_id} ->
+          Tenant
+          |> Ash.Query.filter(
+            exists(
+              access_rights,
+              resource_name == "tenant" and
+                read == true and
+                exists(group.group_users, user_id == ^user_id)
+            )
+          )
+          |> Ash.count!(authorize?: false)
+
+        _ ->
+          0
+      end
+
+    {:cont, assign(socket, :tenants_count, tenants_count)}
   end
 end
