@@ -6,8 +6,11 @@ defmodule Omedis.Accounts.Project do
   require Ash.Query
 
   use Ash.Resource,
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
+
+  alias Omedis.Accounts.DebugAccessFilter
 
   postgres do
     table "projects"
@@ -116,13 +119,13 @@ defmodule Omedis.Accounts.Project do
     update_timestamp :updated_at
   end
 
-  def get_max_position_by_tenant_id(tenant_id) do
+  def get_max_position_by_tenant_id(tenant_id, opts) do
     __MODULE__
     |> Ash.Query.filter(tenant_id: tenant_id)
     |> Ash.Query.sort(position: :desc)
     |> Ash.Query.limit(1)
     |> Ash.Query.select([:position])
-    |> Ash.read!()
+    |> Ash.read!(opts)
     |> Enum.at(0)
     |> case do
       nil -> 0
@@ -134,6 +137,12 @@ defmodule Omedis.Accounts.Project do
     belongs_to :tenant, Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true
+    end
+  end
+
+  policies do
+    policy do
+      authorize_if DebugAccessFilter
     end
   end
 end

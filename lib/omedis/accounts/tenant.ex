@@ -13,6 +13,10 @@ defmodule Omedis.Accounts.Tenant do
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.TenantsAccessFilter
 
+  defimpl Ash.ToTenant do
+    def to_tenant(%{id: id}, _resource), do: "tenant_#{id}"
+  end
+
   postgres do
     table "tenants"
     repo Omedis.Repo
