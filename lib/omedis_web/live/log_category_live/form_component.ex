@@ -58,6 +58,8 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           options={Enum.map(@projects, &{&1.name, &1.id})}
         />
 
+        <.input field={@form[:is_default]} type="checkbox" label={Phoenix.HTML.raw("Is default")} />
+
         <div class="flex gap-5">
           <p>
             <%= with_locale(@language, fn -> %>
