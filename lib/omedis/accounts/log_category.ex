@@ -9,8 +9,6 @@ defmodule Omedis.Accounts.LogCategory do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
-  alias Omedis.Validations
-
   @github_issue_color_codes [
     "#1f77b4",
     "#ff7f0e",
@@ -69,6 +67,7 @@ defmodule Omedis.Accounts.LogCategory do
         :slug
       ]
 
+      change Omedis.Accounts.Changes.SetDefaultLogCategory
       primary? true
     end
 
@@ -83,6 +82,7 @@ defmodule Omedis.Accounts.LogCategory do
         :slug
       ]
 
+      change Omedis.Accounts.Changes.SetDefaultLogCategory
       primary? true
       require_atomic? false
     end
@@ -151,8 +151,6 @@ defmodule Omedis.Accounts.LogCategory do
     validate present(:color_code)
 
     validate present(:position)
-
-    validate {Validations.DefaultLogCategory, []}
   end
 
   attributes do
