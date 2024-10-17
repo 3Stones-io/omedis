@@ -45,7 +45,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         </.header>
 
         <.table
-          id="log_categories"
+          id="log-categories"
           rows={@streams.log_categories}
           row_click={
             fn {_id, log_category} ->
@@ -63,17 +63,42 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             </span>
           </:col>
 
-          <:col :let={{_id, _log_category}} label={with_locale(@language, fn -> gettext("Group") end)}>
-            <.link navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"}>
-              <%= @group.slug %>
-            </.link>
-          </:col>
-
           <:col
             :let={{_id, log_category}}
             label={with_locale(@language, fn -> gettext("Position") end)}
           >
-            <%= log_category.position %>
+            <p class="position flex items-center">
+              <span class="inline-flex flex-col">
+                <button
+                  type="button"
+                  class="position-up"
+                  phx-click={
+                    JS.push(
+                      "move-up",
+                      value: %{
+                        "log_category_id" => log_category.id
+                      }
+                    )
+                  }
+                >
+                  <.icon name="hero-arrow-up-circle-solid" class="h-5 w-5 arrow" />
+                </button>
+                <button
+                  type="button"
+                  class="position-down"
+                  phx-click={
+                    JS.push(
+                      "move-down",
+                      value: %{
+                        "log_category_id" => log_category.id
+                      }
+                    )
+                  }
+                >
+                  <.icon name="hero-arrow-down-circle-solid" class="h-5 w-5 arrow" />
+                </button>
+              </span>
+            </p>
           </:col>
 
           <:col :let={{_id, log_category}}>
@@ -120,7 +145,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             projects={@projects}
             group={@group}
             is_custom_color={@is_custom_color}
-            next_position={@next_position}
             language={@language}
             action={@live_action}
             log_category={@log_category}
@@ -143,10 +167,12 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         %{"language" => language} = _session,
         socket
       ) do
+    if connected?(socket),
+      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
+
     group = Group.by_slug!(group_slug)
 
     tenant = Tenant.by_slug!(slug)
-    next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
 
     {:ok,
      socket
@@ -156,12 +182,14 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> assign(:projects, Project.by_tenant_id!(%{tenant_id: tenant.id}))
      |> assign(:group, group)
      |> assign(:is_custom_color, false)
-     |> assign(:next_position, next_position)
      |> stream(:log_categories, [])}
   end
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
+    if connected?(socket),
+      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
+
     {:ok,
      socket
      |> assign(:current_page, 1)
@@ -174,13 +202,9 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    group = Group.by_slug!(params["group_slug"])
-    next_position = LogCategory.get_max_position_by_group_id(group.id) + 1
-
     {:noreply,
      socket
-     |> apply_action(socket.assigns.live_action, params)
-     |> assign(:next_position, next_position)}
+     |> apply_action(socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -208,6 +232,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Listing Log categories") end)
     )
     |> assign(:log_category, nil)
+    |> assign(:params, params)
     |> list_paginated_log_categories(params)
   end
 
@@ -245,6 +270,40 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   @impl true
   def handle_info({OmedisWeb.LogCategoryLive.FormComponent, {:saved, log_category}}, socket) do
     {:noreply, stream_insert(socket, :log_categories, log_category)}
+  end
+
+  @impl true
+  def handle_info("updated_positions", socket) do
+    {:noreply, list_paginated_log_categories(socket, socket.assigns.params)}
+  end
+
+  @impl true
+  def handle_event("move-up", params, socket) do
+    %{"log_category_id" => log_category_id} = params
+
+    case Ash.get(LogCategory, log_category_id) do
+      {:ok, log_category} ->
+        LogCategory.move_up(log_category)
+
+        {:noreply, socket}
+
+      _error ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("move-down", params, socket) do
+    %{"log_category_id" => log_category_id} = params
+
+    case Ash.get(LogCategory, log_category_id) do
+      {:ok, log_category} ->
+        LogCategory.move_down(log_category)
+
+        {:noreply, socket}
+
+      _error ->
+        {:noreply, socket}
+    end
   end
 
   @spec text_color_for_background(String.t()) :: String.t()
