@@ -124,10 +124,10 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
         <div
           :if={@form[:name].value}
           class="w-[25%] h-[100%] h-[40px] rounded-md"
-          style={"background-color: #{@form[:color_code].value || @color_code};"}
+          style={"background-color: #{@form[:color_code].value || @color_code}"}
         >
           <div class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
-            <span>
+            <span style={"color: #{OmedisWeb.LogCategoryLive.Index.text_color_for_background(@form[:color_code].value || @color_code)}"}>
               <%= @form[:name].value || "Name" %>
             </span>
           </div>
