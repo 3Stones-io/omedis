@@ -171,7 +171,7 @@ defmodule OmedisWeb.GroupLive.Index do
 
         Group.by_tenant_id(%{tenant_id: tenant_id}, page: [count: true, offset: offset_value])
 
-      _other ->
+      _ ->
         Group.by_tenant_id(%{tenant_id: tenant_id}, page: [count: true])
     end
   end

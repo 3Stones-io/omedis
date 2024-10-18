@@ -20,7 +20,7 @@ defmodule Omedis.Accounts.Changes.NewLogCategoryPosition do
 
         Ash.Changeset.change_attribute(changeset, :position, max_position + 1)
 
-      _other ->
+      _ ->
         Ash.Changeset.add_error(changeset, [:position, "Position is required"])
     end
   end
