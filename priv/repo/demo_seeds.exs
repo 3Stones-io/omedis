@@ -31,7 +31,7 @@ end
     :unique_email
   )
 
-%{records: [tenant_1 | _rest], status: :success} =
+%{records: [tenant_1, tenant_2 | _rest], status: :success} =
   bulk_create.(
     Accounts.Tenant,
     [
@@ -46,7 +46,8 @@ end
     Accounts.Group,
     [
       %{name: "Demo Group", slug: "demo-group", tenant_id: tenant_1.id},
-      %{name: "Demo Group 2", slug: "demo-group2", tenant_id: tenant_1.id}
+      %{name: "Demo Group 2", slug: "demo-group2", tenant_id: tenant_1.id},
+      %{name: "Demo Group 3", slug: "demo-group3", tenant_id: tenant_2.id}
     ],
     :unique_slug_per_tenant
   )
@@ -59,4 +60,42 @@ end
       %{group_id: group_2.id, user_id: user_2.id}
     ],
     nil
+  )
+
+%{records: _records, status: :success} =
+  bulk_create.(
+    Accounts.AccessRight,
+    [
+      %{
+        group_id: group_1.id,
+        tenant_id: tenant_1.id,
+        resource_name: "Project",
+        read: true,
+        write: true
+      }
+    ],
+    nil
+  )
+
+%{records: _records, status: :success} =
+  bulk_create.(
+    Accounts.Project,
+    [
+      %{
+        name: "Demo Project 1",
+        tenant_id: tenant_1.id,
+        position: "1"
+      },
+      %{
+        name: "Demo Project 2",
+        tenant_id: tenant_1.id,
+        position: "2"
+      },
+      %{
+        name: "Demo Project 3",
+        tenant_id: tenant_2.id,
+        position: "1"
+      }
+    ],
+    :unique_name
   )
