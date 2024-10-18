@@ -56,11 +56,14 @@ defmodule OmedisWeb.LogCategoryLive.Index do
           }
         >
           <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Name") end)}>
-            <span style={[
-              "background: #{log_category.color_code}; color: #{text_color_for_background(log_category.color_code)}; display: inline-block; padding: 0.15rem; border-radius: 5px;"
-            ]}>
+            <.button
+              is_custom?={true}
+              style={[
+                "background: #{log_category.color_code}; color: #{text_color_for_background(log_category.color_code)};"
+              ]}
+            >
               <%= log_category.name %>
-            </span>
+            </.button>
           </:col>
 
           <:col
@@ -317,7 +320,6 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     if luminance > 0.5, do: "#000000", else: "#ffffff"
   end
 
-  # Convert hex color to RGB
   defp hex_to_rgb(hex) do
     hex = String.replace(hex, "#", "")
 
