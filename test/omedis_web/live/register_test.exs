@@ -47,12 +47,28 @@ defmodule OmedisWeb.RegisterTest do
       {:ok, view, _html} = live(conn, "/register")
 
       assert view |> element("#user_email") |> render() =~ "disabled"
+      assert view |> element("#user_first_name") |> render() =~ "disabled"
+      assert view |> element("#user_last_name") |> render() =~ "disabled"
+      assert view |> element("#user_password") |> render() =~ "disabled"
+      assert view |> element("#user_gender") |> render() =~ "disabled"
+      assert view |> element("#user_birthdate") |> render() =~ "disabled"
+      assert view |> element("#user_lang") |> render() =~ "disabled"
+      assert view |> element("#user_daily_start_at") |> render() =~ "disabled"
+      assert view |> element("#user_daily_end_at") |> render() =~ "disabled"
 
       view
       |> form("#basic_user_sign_up_form")
       |> render_change(user: %{current_tenant_id: tenant.id})
 
       refute view |> element("#user_email") |> render() =~ "disabled"
+      refute view |> element("#user_first_name") |> render() =~ "disabled"
+      refute view |> element("#user_last_name") |> render() =~ "disabled"
+      refute view |> element("#user_password") |> render() =~ "disabled"
+      refute view |> element("#user_gender") |> render() =~ "disabled"
+      refute view |> element("#user_birthdate") |> render() =~ "disabled"
+      refute view |> element("#user_lang") |> render() =~ "disabled"
+      refute view |> element("#user_daily_start_at") |> render() =~ "disabled"
+      refute view |> element("#user_daily_end_at") |> render() =~ "disabled"
     end
 
     test "Once we make changes to the registration form, we see any errors if they are there", %{
@@ -91,14 +107,14 @@ defmodule OmedisWeb.RegisterTest do
       |> form("#basic_user_sign_up_form", user: params)
       |> render_change()
 
-      {:ok, lv, html} = live(conn, ~p"/register")
+      {:ok, lv, _html} = live(conn, ~p"/register")
 
       form =
         form(lv, "#basic_user_sign_up_form", user: params)
 
       conn = submit_form(form, conn)
 
-      {:ok, _index_live, html} = live(conn, ~p"/tenants")
+      {:ok, _index_live, _html} = live(conn, ~p"/tenants")
 
       assert {:ok, user} = User.by_email("test@user.com")
       assert user.first_name == "Mary"
