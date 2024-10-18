@@ -4,22 +4,12 @@ defmodule Omedis.Accounts.DebugAccessFilter do
   """
   use Ash.Policy.FilterCheck
 
-  alias Omedis.Accounts.AccessRight
-  alias Omedis.Accounts.Tenant
-
   def describe(_) do
     "Filtering resources based on user access rights"
   end
 
   def filter(actor, context, options) do
-    tenant_id =
-      case context.query.tenant do
-        %Tenant{id: tenant_id} ->
-          tenant_id
-
-        _ ->
-          String.replace(context.query.tenant, "tenant_", "")
-      end
+    tenant_id = context.subject.tenant.id
 
     resource_name =
       options[:resource]
@@ -27,18 +17,20 @@ defmodule Omedis.Accounts.DebugAccessFilter do
       |> String.split(".")
       |> List.last()
 
+    action_type = context.action.type
+
     expr(
       exists(
-        ^AccessRight,
+        Omedis.Accounts.AccessRight,
         tenant_id == ^tenant_id and
           resource_name == ^resource_name and
-          read == true and
+          ^action_type == true and
           exists(group.group_users, user_id == ^actor.id)
       )
     )
   end
 
-  def requires_original_data?(_a, _b) do
+  def requires_original_data?(_context, _options) do
     false
   end
 end

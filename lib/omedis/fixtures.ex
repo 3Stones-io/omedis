@@ -17,6 +17,10 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.GroupUser, attrs)
   end
 
+  def create_project(attrs \\ %{}) do
+    fixture(Accounts.Project, attrs)
+  end
+
   def create_tenant(attrs \\ %{}) do
     fixture(Accounts.Tenant, attrs)
   end
@@ -48,6 +52,14 @@ defmodule Omedis.Fixtures do
     %{
       group_id: fn -> create_group().id end,
       user_id: fn -> create_user().id end
+    }
+  end
+
+  def attrs_for(Accounts.Project) do
+    %{
+      name: Faker.Company.name(),
+      position: to_string(Faker.random_between(1, 100)),
+      tenant_id: fn -> create_tenant().id end
     }
   end
 
