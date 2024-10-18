@@ -64,8 +64,8 @@ defmodule Omedis.Accounts.Tenant do
         :bur_number,
         :account_number,
         :slug,
-        :daily_start_at,
-        :daily_end_at,
+        :default_daily_start_at,
+        :default_daily_end_at,
         :timezone
       ]
 
@@ -95,8 +95,8 @@ defmodule Omedis.Accounts.Tenant do
         :bur_number,
         :account_number,
         :slug,
-        :daily_start_at,
-        :daily_end_at,
+        :default_daily_start_at,
+        :default_daily_end_at,
         :timezone
       ]
 
@@ -195,8 +195,15 @@ defmodule Omedis.Accounts.Tenant do
       allow_nil? false
     end
 
-    attribute :daily_start_at, :time, allow_nil?: true, public?: true, default: ~T[08:00:00]
-    attribute :daily_end_at, :time, allow_nil?: true, public?: true, default: ~T[18:00:00]
+    attribute :default_daily_start_at, :time,
+      allow_nil?: true,
+      public?: true,
+      default: ~T[08:00:00]
+
+    attribute :default_daily_end_at, :time,
+      allow_nil?: true,
+      public?: true,
+      default: ~T[18:00:00]
 
     create_timestamp :created_at
     update_timestamp :updated_at

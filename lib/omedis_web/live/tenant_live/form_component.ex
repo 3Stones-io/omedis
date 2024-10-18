@@ -67,16 +67,22 @@ defmodule OmedisWeb.TenantLive.FormComponent do
         <input type="hidden" value={@current_user.id} name="tenant[owner_id]" />
         <div class="space-y-3">
           <.input
-            field={@form[:daily_start_at]}
+            field={@form[:default_daily_start_at]}
             type="time"
             label={with_locale(@language, fn -> gettext("Daily Start At") end)}
+            value={
+              (@tenant && input_value(@form, :default_daily_start_at)) || @current_user.daily_start_at
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
-            field={@form[:daily_end_at]}
+            field={@form[:default_daily_end_at]}
             type="time"
             label={with_locale(@language, fn -> gettext("Daily End At") end)}
+            value={
+              (@tenant && input_value(@form, :default_daily_end_at)) || @current_user.daily_end_at
+            }
           />
         </div>
         <div class="space-y-3">

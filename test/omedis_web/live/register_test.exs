@@ -1,5 +1,6 @@
 defmodule OmedisWeb.RegisterTest do
   use OmedisWeb.ConnCase
+  alias Omedis.Accounts.Tenant
   alias Omedis.Accounts.User
 
   import Phoenix.LiveViewTest
@@ -11,8 +12,29 @@ defmodule OmedisWeb.RegisterTest do
     "password" => "12345678",
     "gender" => "Male",
     "birthdate" => ~D[1990-01-01],
-    "lang" => "en"
+    "lang" => "en",
+    "daily_start_at" => "09:00:00",
+    "daily_end_at" => "17:00:00"
   }
+
+  @valid_tenant_params %{
+    "name" => "Test Tenant",
+    "street" => "123 Test St",
+    "zip_code" => "12345",
+    "city" => "Test City",
+    "country" => "Test Country",
+    "slug" => "test-tenant"
+  }
+
+  setup do
+    {:ok, tenant} =
+      Tenant
+      |> Ash.Changeset.new()
+      |> Ash.Changeset.for_create(:create, @valid_tenant_params)
+      |> Ash.create()
+
+    {:ok, %{tenant: tenant}}
+  end
 
   describe "Tests the Registration flow" do
     test "The registration form is displayed", %{conn: conn} do
@@ -21,10 +43,43 @@ defmodule OmedisWeb.RegisterTest do
       assert has_element?(view, "#basic_user_sign_up_form")
     end
 
-    test "Once we make changes to the registration form , we see any errors if they are there", %{
-      conn: conn
+    test "Form fields are disabled until a tenant is selected", %{conn: conn, tenant: tenant} do
+      {:ok, view, _html} = live(conn, "/register")
+
+      assert view |> element("#user_email") |> render() =~ "disabled"
+      assert view |> element("#user_first_name") |> render() =~ "disabled"
+      assert view |> element("#user_last_name") |> render() =~ "disabled"
+      assert view |> element("#user_password") |> render() =~ "disabled"
+      assert view |> element("#user_gender") |> render() =~ "disabled"
+      assert view |> element("#user_birthdate") |> render() =~ "disabled"
+      assert view |> element("#user_lang") |> render() =~ "disabled"
+      assert view |> element("#user_daily_start_at") |> render() =~ "disabled"
+      assert view |> element("#user_daily_end_at") |> render() =~ "disabled"
+
+      view
+      |> form("#basic_user_sign_up_form")
+      |> render_change(user: %{current_tenant_id: tenant.id})
+
+      refute view |> element("#user_email") |> render() =~ "disabled"
+      refute view |> element("#user_first_name") |> render() =~ "disabled"
+      refute view |> element("#user_last_name") |> render() =~ "disabled"
+      refute view |> element("#user_password") |> render() =~ "disabled"
+      refute view |> element("#user_gender") |> render() =~ "disabled"
+      refute view |> element("#user_birthdate") |> render() =~ "disabled"
+      refute view |> element("#user_lang") |> render() =~ "disabled"
+      refute view |> element("#user_daily_start_at") |> render() =~ "disabled"
+      refute view |> element("#user_daily_end_at") |> render() =~ "disabled"
+    end
+
+    test "Once we make changes to the registration form, we see any errors if they are there", %{
+      conn: conn,
+      tenant: tenant
     } do
       {:ok, view, _html} = live(conn, "/register")
+
+      view
+      |> form("#basic_user_sign_up_form")
+      |> render_change(user: %{current_tenant_id: tenant.id})
 
       html =
         view
@@ -34,31 +89,35 @@ defmodule OmedisWeb.RegisterTest do
       assert html =~ "length must be greater than or equal to 8"
     end
 
-    test "You can sign in with valid data", %{conn: conn} do
+    test "You can sign in with valid data", %{conn: conn, tenant: tenant} do
       {:ok, view, _html} = live(conn, "/register")
 
       {:error, _} = User.by_email(@valid_registration_params["email"])
 
-      html =
-        view
-        |> form("#basic_user_sign_up_form", user: @valid_registration_params)
-        |> render_change()
+      view
+      |> form("#basic_user_sign_up_form")
+      |> render_change(user: %{current_tenant_id: tenant.id})
 
-      refute html =~ "Password is required"
-      refute html =~ "First Name is required"
+      params =
+        @valid_registration_params
+        |> Map.replace("first_name", "Mary")
+        |> Map.replace("email", "test@user.com")
+
+      view
+      |> form("#basic_user_sign_up_form", user: params)
+      |> render_change()
 
       {:ok, lv, _html} = live(conn, ~p"/register")
 
       form =
-        form(lv, "#basic_user_sign_up_form", user: @valid_registration_params)
+        form(lv, "#basic_user_sign_up_form", user: params)
 
       conn = submit_form(form, conn)
 
       {:ok, _index_live, _html} = live(conn, ~p"/tenants")
 
-      {:ok, user} = User.by_email(@valid_registration_params["email"])
-
-      assert user.first_name == @valid_registration_params["first_name"]
+      assert {:ok, user} = User.by_email("test@user.com")
+      assert user.first_name == "Mary"
     end
   end
 end
