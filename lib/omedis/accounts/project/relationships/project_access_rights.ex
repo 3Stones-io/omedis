@@ -1,4 +1,7 @@
 defmodule Omedis.Accounts.Project.Relationships.ProjectAccessRights do
+  @moduledoc """
+  A relationship that allows us to access the project access rights for a project.
+  """
   use Ash.Resource.ManualRelationship
   use AshPostgres.ManualRelationship
 
