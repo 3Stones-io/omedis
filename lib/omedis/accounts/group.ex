@@ -9,6 +9,7 @@ defmodule Omedis.Accounts.Group do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.AccessRight
   alias Omedis.Accounts.GroupUser
   alias Omedis.Accounts.User
 
@@ -80,6 +81,11 @@ defmodule Omedis.Accounts.Group do
         allow_nil? false
       end
 
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
+      prepare build(sort: :created_at)
+
       filter expr(tenant_id == ^arg(:tenant_id))
     end
 
@@ -125,5 +131,8 @@ defmodule Omedis.Accounts.Group do
     many_to_many :users, User do
       through GroupUser
     end
+
+    has_many :access_rights, AccessRight
+    has_many :group_users, GroupUser
   end
 end

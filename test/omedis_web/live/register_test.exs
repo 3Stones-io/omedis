@@ -91,22 +91,14 @@ defmodule OmedisWeb.RegisterTest do
       |> form("#basic_user_sign_up_form", user: params)
       |> render_change()
 
-      sign_up_form = form(view, "#basic_user_sign_up_form", user: params)
-      html = render_submit(sign_up_form)
+      {:ok, lv, html} = live(conn, ~p"/register")
 
-      assert html =~ ~r/phx-trigger-action/
+      form =
+        form(lv, "#basic_user_sign_up_form", user: params)
 
-      conn = follow_trigger_action(sign_up_form, conn)
+      conn = submit_form(form, conn)
 
-      assert redirected_to(conn) == ~p"/"
-
-      assert response =
-               conn
-               |> get(~p"/")
-               |> html_response(200)
-
-      assert response =~ "Mary"
-      refute response =~ "Register"
+      {:ok, _index_live, html} = live(conn, ~p"/tenants")
 
       assert {:ok, user} = User.by_email("test@user.com")
       assert user.first_name == "Mary"

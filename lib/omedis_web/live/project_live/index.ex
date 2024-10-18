@@ -3,6 +3,10 @@ defmodule OmedisWeb.ProjectLive.Index do
 
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
+  alias Omedis.PaginationUtils
+  alias OmedisWeb.PaginationComponent
+
+  on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true
   def render(assigns) do
@@ -88,6 +92,12 @@ defmodule OmedisWeb.ProjectLive.Index do
             patch={~p"/tenants/#{@tenant.slug}/projects"}
           />
         </.modal>
+        <PaginationComponent.pagination
+          current_page={@current_page}
+          language={@language}
+          resource_path={~p"/tenants/#{@tenant.slug}/projects"}
+          total_pages={@total_pages}
+        />
       </div>
     </.side_and_topbar>
     """
@@ -100,11 +110,11 @@ defmodule OmedisWeb.ProjectLive.Index do
 
     {:ok,
      socket
-     |> stream(:projects, Ash.read!(Project))
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:language, language)
      |> assign(:tenant, Tenant.by_id!(tenant.id))
-     |> assign(:next_position, next_position)}
+     |> assign(:next_position, next_position)
+     |> stream(:projects, [])}
   end
 
   @impl true
@@ -133,10 +143,42 @@ defmodule OmedisWeb.ProjectLive.Index do
     |> assign(:project, nil)
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
     |> assign(:project, nil)
+    |> list_paginated_projects(params)
+  end
+
+  defp list_paginated_projects(socket, params) do
+    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
+
+    case list_paginated_projects(params) do
+      {:ok, %{count: total_count, results: tenants}} ->
+        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
+        current_page = min(page, total_pages)
+
+        socket
+        |> assign(:current_page, current_page)
+        |> assign(:total_pages, total_pages)
+        |> stream(:projects, tenants, reset: true)
+
+      {:error, _error} ->
+        socket
+    end
+  end
+
+  defp list_paginated_projects(params) do
+    case params do
+      %{"page" => page} when not is_nil(page) ->
+        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
+        offset_value = (page_value - 1) * 10
+
+        Project.list_paginated(page: [count: true, offset: offset_value])
+
+      _other ->
+        Project.list_paginated(page: [count: true])
+    end
   end
 
   @impl true

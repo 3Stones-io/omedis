@@ -41,6 +41,11 @@ defmodule Omedis.Accounts.LogEntry do
         allow_nil? false
       end
 
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
+      prepare build(sort: :created_at)
+
       filter expr(log_category_id == ^arg(:log_category_id))
     end
 

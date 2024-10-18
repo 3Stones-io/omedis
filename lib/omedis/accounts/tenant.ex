@@ -37,6 +37,7 @@ defmodule Omedis.Accounts.Tenant do
     define :destroy
     define :by_owner_id
     define :by_slug, get_by: [:slug], action: :read
+    define :list_paginated
   end
 
   actions do
@@ -113,6 +114,13 @@ defmodule Omedis.Accounts.Tenant do
       end
 
       filter expr(slug == ^arg(:slug))
+    end
+
+    read :list_paginated do
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+
+      prepare build(sort: :created_at)
     end
 
     destroy :destroy do
@@ -224,6 +232,8 @@ defmodule Omedis.Accounts.Tenant do
   end
 
   relationships do
+    has_many :access_rights, Omedis.Accounts.AccessRight
+
     belongs_to :owner, Omedis.Accounts.User do
       allow_nil? true
       attribute_writable? true

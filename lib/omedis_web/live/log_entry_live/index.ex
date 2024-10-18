@@ -3,6 +3,10 @@ defmodule OmedisWeb.LogEntryLive.Index do
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
+  alias Omedis.PaginationUtils
+  alias OmedisWeb.PaginationComponent
+
+  on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true
   def render(assigns) do
@@ -45,28 +49,23 @@ defmodule OmedisWeb.LogEntryLive.Index do
             <%= log_entry.end_at %>
           </:col>
         </.table>
+        <PaginationComponent.pagination
+          current_page={@current_page}
+          language={@language}
+          resource_path={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category.id}/log_entries"}
+          total_pages={@total_pages}
+        />
       </div>
     </.side_and_topbar>
     """
   end
 
   @impl true
-  def mount(%{"id" => id} = _params, %{"language" => language} = _session, socket) do
-    case LogEntry.by_log_category(%{log_category_id: id}) do
-      {:ok, log_entries} ->
-        socket =
-          socket
-          |> assign(:language, language)
-
-        {:ok, stream(socket, :log_entries, log_entries)}
-
-      _ ->
-        socket =
-          socket
-          |> assign(:language, language)
-
-        {:ok, stream(socket, :log_entries, [])}
-    end
+  def mount(_params, %{"language" => language} = _session, socket) do
+    {:ok,
+     socket
+     |> assign(:language, language)
+     |> stream(:log_entries, [])}
   end
 
   @impl true
@@ -86,9 +85,43 @@ defmodule OmedisWeb.LogEntryLive.Index do
      |> apply_action(socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
     |> assign(:log_entry, nil)
+    |> list_paginated_log_entries(params)
+  end
+
+  defp list_paginated_log_entries(socket, params) do
+    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
+
+    case list_paginated_log_entries(params) do
+      {:ok, %{count: total_count, results: log_entries}} ->
+        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
+        current_page = min(page, total_pages)
+
+        socket
+        |> assign(:current_page, current_page)
+        |> assign(:total_pages, total_pages)
+        |> stream(:log_entries, log_entries, reset: true)
+
+      {:error, _error} ->
+        socket
+    end
+  end
+
+  defp list_paginated_log_entries(params) do
+    case params do
+      %{"page" => page} when not is_nil(page) ->
+        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
+        offset_value = (page_value - 1) * 10
+
+        LogEntry.by_log_category(%{log_category_id: params["id"]},
+          page: [count: true, offset: offset_value]
+        )
+
+      _other ->
+        LogEntry.by_log_category(%{log_category_id: params["id"]}, page: [count: true])
+    end
   end
 end
