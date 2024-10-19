@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "alpinejs": "^3.14.1",
-    "prettier": "^3.3.3"
+    "alpinejs": "^3.14.1"
   }
 }

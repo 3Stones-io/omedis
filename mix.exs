@@ -102,11 +102,9 @@ defmodule Omedis.MixProject do
       ],
       ci: [
         "format --check-formatted",
-        "cmd npx prettier -c .",
         "credo --strict",
         "test --warnings-as-errors"
-      ],
-      prettier: ["cmd npx prettier -w ."]
+      ]
     ]
   end
 end
