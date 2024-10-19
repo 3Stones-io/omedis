@@ -5,7 +5,7 @@ defmodule Omedis.PaginationUtils do
   def maybe_convert_page_to_integer(value) when is_binary(value) do
     case Integer.parse(value) do
       {int_value, ""} -> int_value
-      _error -> 1
+      _ -> 1
     end
   end
 
