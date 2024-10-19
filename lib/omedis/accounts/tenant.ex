@@ -257,6 +257,10 @@ defmodule Omedis.Accounts.Tenant do
       authorize_if TenantsAccessFilter
     end
 
+    policy action(:list_paginated) do
+      authorize_if TenantsAccessFilter
+    end
+
     policy do
       authorize_if always()
     end
