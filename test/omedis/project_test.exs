@@ -182,11 +182,7 @@ defmodule Omedis.Accounts.ProjectTest do
           group_id: group.id
         })
 
-      # Don't create a group_user association
-
-      for i <- 1..5 do
-        {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project #{i}", position: "#{i}"})
-      end
+      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X", position: "1"})
 
       assert {:ok, paginated_result} =
                Project.list_paginated(
