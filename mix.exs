@@ -12,8 +12,7 @@ defmodule Omedis.MixProject do
       aliases: aliases(),
       deps: deps(),
       preferred_cli_env: [
-        ci: :test,
-        credo: :test
+        ci: :test
       ]
     ]
   end
