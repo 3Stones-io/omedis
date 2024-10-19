@@ -8,6 +8,8 @@ defmodule Omedis.Accounts.AccessFilter do
     "Filtering resources based on user access rights"
   end
 
+  def filter(nil, _context, _options), do: expr(false)
+
   def filter(actor, context, _options) do
     tenant = context.subject.tenant
 
