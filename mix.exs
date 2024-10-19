@@ -10,7 +10,11 @@ defmodule Omedis.MixProject do
       start_permanent: Mix.env() == :prod,
       consolidate_protocols: Mix.env() != :dev,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      preferred_cli_env: [
+        ci: :test,
+        credo: :test
+      ]
     ]
   end
 
@@ -96,7 +100,14 @@ defmodule Omedis.MixProject do
         "tailwind omedis --minify",
         "esbuild omedis --minify",
         "phx.digest"
-      ]
+      ],
+      ci: [
+        "format --check-formatted",
+        "cmd npx prettier -c .",
+        "credo --strict",
+        "test --warnings-as-errors"
+      ],
+      prettier: ["cmd npx prettier -w ."]
     ]
   end
 end

@@ -1,10 +1,18 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-@import "tailwindcss/forms";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import 'tailwindcss/forms';
 
 /* This file is for your main application CSS */
-table:has(#log-categories) #log-categories > tr:first-child > td:has(.position) .position-up,
-table:has(#log-categories) #log-categories > tr:last-child > td:has(.position) .position-down {
+table:has(#log-categories)
+  #log-categories
+  > tr:first-child
+  > td:has(.position)
+  .position-up,
+table:has(#log-categories)
+  #log-categories
+  > tr:last-child
+  > td:has(.position)
+  .position-down {
   @apply pointer-events-none cursor-none opacity-10;
 }
