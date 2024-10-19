@@ -28,8 +28,4 @@ defmodule Omedis.Accounts.AccessFilter do
         )
     end
   end
-
-  def requires_original_data?(_a, _b) do
-    false
-  end
 end
