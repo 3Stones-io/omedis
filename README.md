@@ -20,6 +20,10 @@ Please use the Pull Request workflow to submit your changes. For a guide on how 
 If that seems to be too complicated:
 Use https://gitbutler.com to create a pull request.
 
+## Contributing
+
+Make sure to execute `mix check_code` in order to run all the checks before committing the code.
+
 ## One PR per change
 
 Please create one PR per change. If you have multiple changes, please create multiple PRs. This allows for early feedback and reduces the risk of having to rework large parts of a PR.
