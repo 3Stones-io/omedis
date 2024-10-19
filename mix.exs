@@ -12,7 +12,7 @@ defmodule Omedis.MixProject do
       aliases: aliases(),
       deps: deps(),
       preferred_cli_env: [
-        ci: :test
+        check_code: :test
       ]
     ]
   end
@@ -100,7 +100,7 @@ defmodule Omedis.MixProject do
         "esbuild omedis --minify",
         "phx.digest"
       ],
-      ci: [
+      check_code: [
         "format --check-formatted",
         "credo --strict",
         "test --warnings-as-errors"
