@@ -1,4 +1,5 @@
 defmodule Omedis.Accounts.Checks.GroupAndProjectExist do
+  @moduledoc false
   use Ash.Policy.SimpleCheck
 
   @impl true

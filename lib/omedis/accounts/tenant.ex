@@ -2,9 +2,9 @@ defmodule Omedis.Accounts.Tenant do
   @moduledoc """
   This is the Tenant module
   """
-  alias Omedis.Validations
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Project
+  alias Omedis.Validations
 
   require Ash.Query
 
