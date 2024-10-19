@@ -179,7 +179,7 @@ defmodule OmedisWeb.TenantLive.Index do
 
         Tenant.list_paginated(page: [count: true, offset: offset_value])
 
-      _other ->
+      _ ->
         Tenant.list_paginated(page: [count: true])
     end
   end

@@ -2,7 +2,11 @@ defmodule Omedis.Accounts.Tenant do
   @moduledoc """
   This is the Tenant module
   """
+  alias Omedis.Accounts.Group
+  alias Omedis.Accounts.Project
+  alias Omedis.Accounts.TenantsAccessFilter
   alias Omedis.Validations
+
   require Ash.Query
 
   use Ash.Resource,
@@ -10,8 +14,9 @@ defmodule Omedis.Accounts.Tenant do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
-  alias Omedis.Accounts.Group
-  alias Omedis.Accounts.TenantsAccessFilter
+  defimpl Ash.ToTenant, for: Omedis.Accounts.Tenant do
+    def to_tenant(%{id: id}, _), do: "tenant_#{id}"
+  end
 
   postgres do
     table "tenants"
@@ -244,6 +249,7 @@ defmodule Omedis.Accounts.Tenant do
     end
 
     has_many :groups, Group
+    has_many :projects, Project
   end
 
   policies do
