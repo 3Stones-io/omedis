@@ -176,7 +176,7 @@ defmodule OmedisWeb.ProjectLive.Index do
 
         Project.list_paginated(page: [count: true, offset: offset_value])
 
-      _other ->
+      _ ->
         Project.list_paginated(page: [count: true])
     end
   end
