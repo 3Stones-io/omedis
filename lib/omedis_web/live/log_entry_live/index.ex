@@ -120,7 +120,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
           page: [count: true, offset: offset_value]
         )
 
-      _other ->
+      _ ->
         LogEntry.by_log_category(%{log_category_id: params["id"]}, page: [count: true])
     end
   end
