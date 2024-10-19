@@ -58,6 +58,8 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           options={Enum.map(@projects, &{&1.name, &1.id})}
         />
 
+        <.input field={@form[:is_default]} type="checkbox" label={Phoenix.HTML.raw("Is default")} />
+
         <div class="flex gap-5">
           <p>
             <%= with_locale(@language, fn -> %>
@@ -107,8 +109,6 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
             label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
           />
         </div>
-
-        <input type="hidden" name="log_category[position]" value={@next_position} />
 
         <div :if={@is_custom_color}>
           <.input

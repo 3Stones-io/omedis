@@ -35,6 +35,7 @@ defmodule OmedisWeb.TenantLive.Today do
         />
 
         <.dashboard_component
+          active_log_category_id={@active_log_category_id}
           categories={@categories}
           start_at={@start_at}
           end_at={@end_at}
@@ -58,18 +59,19 @@ defmodule OmedisWeb.TenantLive.Today do
   def handle_params(%{"group_id" => id, "project_id" => project_id, "slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug)
     group = Group.by_id!(id)
+    current_user = socket.assigns.current_user
     project = Project.by_id!(project_id)
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
 
     start_at =
-      get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+      get_start_time_to_use(min_start_in_entries, current_user.daily_start_at)
       |> format_timezone(tenant.timezone)
       |> round_down_start_at()
 
     end_at =
-      get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+      get_end_time_to_use(max_end_in_entries, current_user.daily_end_at)
       |> format_timezone(tenant.timezone)
       |> round_up_end_at()
 
@@ -83,6 +85,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {:noreply,
      socket
+     |> assign_active_log_category(categories, group.id, tenant.id)
      |> assign(:page_title, "Today")
      |> assign(:tenant, tenant)
      |> assign(:start_at, start_at)
@@ -125,10 +128,35 @@ defmodule OmedisWeb.TenantLive.Today do
     Time.add(time, offset, :hour)
   end
 
+  defp assign_active_log_category(socket, log_categories, group_id, tenant_id) do
+    entries = get_active_entry(log_categories)
+
+    if Enum.empty?(entries) do
+      default_log_category = LogCategory.get_default_log_category(group_id)
+      create_or_stop_log_entry(default_log_category.id, tenant_id, socket.assigns.current_user.id)
+      assign(socket, :active_log_category_id, default_log_category.id)
+    else
+      log_category_id = List.first(entries).log_category_id
+      assign(socket, :active_log_category_id, log_category_id)
+    end
+  end
+
+  defp get_active_entry(log_categories) do
+    log_categories
+    |> Stream.map(fn log_category ->
+      {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category.id})
+      Enum.filter(log_entries, &is_nil(&1.end_at))
+    end)
+    |> Stream.filter(&(!Enum.empty?(&1)))
+    |> Enum.to_list()
+    |> List.flatten()
+  end
+
   @impl true
   def handle_info(:update_categories_and_current_time, socket) do
     tenant = socket.assigns.tenant
     group = socket.assigns.group
+    current_user = socket.assigns.current_user
     project = socket.assigns.project
 
     categories = categories(group.id, project.id)
@@ -140,12 +168,12 @@ defmodule OmedisWeb.TenantLive.Today do
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
 
     start_at =
-      get_start_time_to_use(min_start_in_entries, tenant.daily_start_at)
+      get_start_time_to_use(min_start_in_entries, current_user.daily_start_at)
       |> format_timezone(tenant.timezone)
       |> round_down_start_at()
 
     end_at =
-      get_end_time_to_use(max_end_in_entries, tenant.daily_end_at)
+      get_end_time_to_use(max_end_in_entries, current_user.daily_end_at)
       |> format_timezone(tenant.timezone)
       |> round_up_end_at()
 
@@ -164,27 +192,27 @@ defmodule OmedisWeb.TenantLive.Today do
     :timer.send_interval(1000, self(), :update_categories_and_current_time)
   end
 
-  defp get_start_time_to_use(nil, tenant_daily_start_at) do
-    tenant_daily_start_at
+  defp get_start_time_to_use(nil, daily_start_at) do
+    daily_start_at
   end
 
-  defp get_start_time_to_use(min_start_in_entries, tenant_daily_start_at) do
-    if Time.compare(min_start_in_entries, tenant_daily_start_at) == :lt do
+  defp get_start_time_to_use(min_start_in_entries, daily_start_at) do
+    if Time.compare(min_start_in_entries, daily_start_at) == :lt do
       min_start_in_entries
     else
-      tenant_daily_start_at
+      daily_start_at
     end
   end
 
-  defp get_end_time_to_use(nil, tenant_daily_end_at) do
-    tenant_daily_end_at
+  defp get_end_time_to_use(nil, daily_end_at) do
+    daily_end_at
   end
 
-  defp get_end_time_to_use(max_end_in_entries, tenant_daily_end_at) do
-    if Time.compare(max_end_in_entries, tenant_daily_end_at) == :gt do
+  defp get_end_time_to_use(max_end_in_entries, daily_end_at) do
+    if Time.compare(max_end_in_entries, daily_end_at) == :gt do
       max_end_in_entries
     else
-      tenant_daily_end_at
+      daily_end_at
     end
   end
 
@@ -222,7 +250,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
   defp categories(group_id, project_id) do
     case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
-      {:ok, %{results: categories}} ->
+      {:ok, categories} ->
         categories
 
       _ ->
@@ -293,6 +321,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {:noreply,
      socket
+     |> assign(:active_log_category_id, log_category_id)
      |> assign(:categories, categories(socket.assigns.group.id, socket.assigns.project.id))}
   end
 
