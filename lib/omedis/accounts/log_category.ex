@@ -8,7 +8,8 @@ defmodule Omedis.Accounts.LogCategory do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts,
-    notifiers: [Omedis.Accounts.Notifiers]
+    notifiers: [Omedis.Accounts.Notifiers],
+    authorizers: [Ash.Policy.Authorizer]
 
   @github_issue_color_codes [
     "#1f77b4",
@@ -34,6 +35,16 @@ defmodule Omedis.Accounts.LogCategory do
 
   resource do
     plural_name :log_categories
+  end
+
+  policies do
+    policy action(:create) do
+      authorize_if Omedis.Accounts.Checks.GroupAndProjectExist
+    end
+
+    policy do
+      authorize_if always()
+    end
   end
 
   code_interface do

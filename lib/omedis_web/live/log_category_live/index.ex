@@ -265,7 +265,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
         LogCategory.list_paginated(page: [count: true, offset: offset_value])
 
-      _other ->
+      _ ->
         LogCategory.list_paginated(page: [count: true])
     end
   end
