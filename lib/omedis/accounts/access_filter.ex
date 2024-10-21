@@ -29,7 +29,7 @@ defmodule Omedis.Accounts.AccessFilter do
             access_rights,
             tenant_id == ^tenant.id and
               resource_name == ^resource and
-              (create == true or read == true or write == true or update == true) and
+              (create or read or write or update) and
               exists(group.group_users, user_id == ^actor.id)
           ) and exists(tenant, id == ^tenant.id)
         )
