@@ -8,10 +8,12 @@ defmodule Omedis.Accounts.ProjectTest do
 
     test "returns paginated list of projects the user has access to" do
       {:ok, user} = create_user()
-      {:ok, other_user} = create_user()
       {:ok, tenant} = create_tenant()
+      {:ok, other_tenant} = create_tenant()
       {:ok, group} = create_group(%{tenant_id: tenant.id})
-      {:ok, other_group} = create_group(%{tenant_id: tenant.id})
+      {:ok, other_group} = create_group(%{tenant_id: other_tenant.id})
+      {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
+      {:ok, _} = create_group_user(%{user_id: user.id, group_id: other_group.id})
 
       {:ok, _} =
         create_access_right(%{
@@ -26,12 +28,9 @@ defmodule Omedis.Accounts.ProjectTest do
         create_access_right(%{
           resource_name: "Project",
           read: false,
-          tenant_id: tenant.id,
+          tenant_id: other_tenant.id,
           group_id: other_group.id
         })
-
-      {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
-      {:ok, _} = create_group_user(%{user_id: other_user.id, group_id: other_group.id})
 
       for i <- 1..10 do
         {:ok, _} =
@@ -42,7 +41,16 @@ defmodule Omedis.Accounts.ProjectTest do
           })
       end
 
-      # Return projects for the user with access
+      for i <- 1..10 do
+        {:ok, _} =
+          create_project(%{
+            tenant_id: other_tenant.id,
+            name: "Inaccessible Project #{i}",
+            position: "#{i}"
+          })
+      end
+
+      # Return projects the user has access to
       assert {:ok, paginated_result} =
                Project.list_paginated(
                  page: [offset: 0, limit: 20, count: true],
@@ -59,12 +67,12 @@ defmodule Omedis.Accounts.ProjectTest do
                &String.starts_with?(&1.name, "Accessible Project")
              )
 
-      # Return projects for the user without access
+      # Return an empty list if the user doesn't have access
       assert {:ok, paginated_result} =
                Project.list_paginated(
                  page: [offset: 0, limit: 20, count: true],
-                 actor: other_user,
-                 tenant: tenant
+                 actor: user,
+                 tenant: other_tenant
                )
 
       assert Enum.empty?(paginated_result.results)
