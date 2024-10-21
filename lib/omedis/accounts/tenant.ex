@@ -2,6 +2,8 @@ defmodule Omedis.Accounts.Tenant do
   @moduledoc """
   This is the Tenant module
   """
+  alias Omedis.Accounts.CanCreateTenant
+  alias Omedis.Accounts.CanUpdateTenant
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.TenantsAccessFilter
@@ -125,7 +127,8 @@ defmodule Omedis.Accounts.Tenant do
 
     read :list_paginated do
       pagination offset?: true,
-                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 countable: :by_default
 
       prepare build(sort: :created_at)
     end
@@ -140,8 +143,6 @@ defmodule Omedis.Accounts.Tenant do
 
       filter expr(owner_id == ^arg(:owner_id))
     end
-
-    read :count
   end
 
   attributes do
@@ -225,7 +226,7 @@ defmodule Omedis.Accounts.Tenant do
   def slug_exists?(slug) do
     __MODULE__
     |> Ash.Query.filter(slug: slug)
-    |> Ash.read_one!()
+    |> Ash.read_one!(authorize?: false)
     |> case do
       nil -> false
       _ -> true
@@ -253,16 +254,16 @@ defmodule Omedis.Accounts.Tenant do
   end
 
   policies do
-    policy action(:count) do
+    policy action_type(:read) do
       authorize_if TenantsAccessFilter
     end
 
-    policy action(:list_paginated) do
-      authorize_if TenantsAccessFilter
+    policy action_type(:create) do
+      authorize_if CanCreateTenant
     end
 
-    policy do
-      authorize_if always()
+    policy action_type([:destroy, :update]) do
+      authorize_if CanUpdateTenant
     end
   end
 end

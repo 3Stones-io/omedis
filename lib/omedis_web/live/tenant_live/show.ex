@@ -22,7 +22,11 @@ defmodule OmedisWeb.TenantLive.Show do
           <%= @tenant.slug %>
 
           <:actions>
-            <.link patch={~p"/tenants/#{@tenant.slug}/show/edit"} phx-click={JS.push_focus()}>
+            <.link
+              :if={Ash.can?({@tenant, :update}, @current_user)}
+              patch={~p"/tenants/#{@tenant.slug}/show/edit"}
+              phx-click={JS.push_focus()}
+            >
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Edit tenant") %>
@@ -176,7 +180,6 @@ defmodule OmedisWeb.TenantLive.Show do
             action={@live_action}
             language={@language}
             tenant={@tenant}
-            patch={~p"/tenants/#{@tenant.slug}"}
           />
         </.modal>
       </div>
@@ -196,7 +199,7 @@ defmodule OmedisWeb.TenantLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:tenant, Tenant.by_slug!(slug))}
+     |> assign(:tenant, Tenant.by_slug!(slug, actor: socket.assigns.current_user))}
   end
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Show Tenant") end)

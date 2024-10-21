@@ -56,6 +56,10 @@ defmodule Omedis.Fixtures do
       city: Faker.Address.city(),
       country: Faker.Address.country(),
       name: Faker.Company.name(),
+      owner_id: fn ->
+        {:ok, user} = create_user()
+        user.id
+      end,
       slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}",
       street: Faker.Address.street_address(),
       zip_code: Faker.Address.zip_code()

@@ -13,8 +13,7 @@ defmodule OmedisWeb.EditProfileLive do
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
-    tenants_for_an_owner =
-      tenants_for_an_owner(socket.assigns.current_user.id)
+    tenants_for_an_owner = tenants_for_an_owner(socket.assigns.current_user)
 
     socket =
       socket
@@ -83,8 +82,8 @@ defmodule OmedisWeb.EditProfileLive do
     Enum.map(field.errors, &translate_error(&1))
   end
 
-  defp tenants_for_an_owner(owner_id) do
-    case Tenant.by_owner_id(%{owner_id: owner_id}) do
+  defp tenants_for_an_owner(owner) do
+    case Tenant.by_owner_id(%{owner_id: owner.id}, actor: owner) do
       {:ok, tenants} ->
         Enum.map(tenants, fn tenant ->
           {tenant.name, tenant.id}

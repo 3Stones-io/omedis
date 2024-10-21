@@ -256,7 +256,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
             :info,
             with_locale(socket.assigns.language, fn -> gettext("Tenant saved.") end)
           )
-          |> push_patch(to: socket.assigns.patch)
+          |> push_patch(to: path_for(socket.assigns.action, tenant))
 
         {:noreply, socket}
 
@@ -289,9 +289,15 @@ defmodule OmedisWeb.TenantLive.FormComponent do
   defp assign_form(%{assigns: %{tenant: tenant}} = socket) do
     form =
       if tenant do
-        AshPhoenix.Form.for_update(tenant, :update, as: "tenant")
+        AshPhoenix.Form.for_update(tenant, :update,
+          as: "tenant",
+          actor: socket.assigns.current_user
+        )
       else
-        AshPhoenix.Form.for_create(Omedis.Accounts.Tenant, :create, as: "tenant")
+        AshPhoenix.Form.for_create(Omedis.Accounts.Tenant, :create,
+          as: "tenant",
+          actor: socket.assigns.current_user
+        )
       end
 
     assign(socket, form: to_form(form))
@@ -300,4 +306,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
   end
+
+  defp path_for(:edit, tenant), do: ~p"/tenants/#{tenant.slug}"
+  defp path_for(:new, _tenant), do: ~p"/tenants"
 end

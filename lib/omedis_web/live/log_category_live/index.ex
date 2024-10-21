@@ -172,7 +172,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
     group = Group.by_slug!(group_slug)
 
-    tenant = Tenant.by_slug!(slug)
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
 
     {:ok,
      socket

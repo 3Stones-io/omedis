@@ -105,7 +105,6 @@ defmodule OmedisWeb.TenantLive.Index do
             tenant={@tenant}
             current_user={@current_user}
             language={@language}
-            patch={~p"/tenants"}
           />
         </.modal>
         <PaginationComponent.pagination
@@ -135,7 +134,7 @@ defmodule OmedisWeb.TenantLive.Index do
   defp apply_action(socket, :edit, %{"slug" => slug}) do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Edit Tenant") end))
-    |> assign(:tenant, Tenant.by_slug!(slug))
+    |> assign(:tenant, Tenant.by_slug!(slug, actor: socket.assigns.current_user))
   end
 
   defp apply_action(socket, :new, _params) do
