@@ -15,22 +15,23 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
       {:ok, group_2} = create_group()
       {:ok, group_3} = create_group()
 
-      create_group_user(%{group_id: group_1.id, user_id: user_1.id})
-      create_group_user(%{group_id: group_2.id, user_id: user_1.id})
+      {:ok, _group_user_1} = create_group_user(%{group_id: group_1.id, user_id: user_1.id})
+      {:ok, _group_user_2} = create_group_user(%{group_id: group_2.id, user_id: user_1.id})
 
-      create_group_user(%{group_id: group_1.id, user_id: user_2.id})
-      create_group_user(%{group_id: group_2.id, user_id: user_3.id})
+      {:ok, _group_user_3} = create_group_user(%{group_id: group_1.id, user_id: user_2.id})
+      {:ok, _group_user_4} = create_group_user(%{group_id: group_2.id, user_id: user_3.id})
 
       {:ok, tenant_1} = create_tenant()
       {:ok, tenant_2} = create_tenant()
       {:ok, tenant_3} = create_tenant()
+      {:ok, _tenant_4} = create_tenant(%{owner_id: user_1.id})
 
       {:ok, _} =
         create_access_right(%{
           group_id: group_1.id,
           tenant_id: tenant_1.id,
           read: true,
-          resource_name: "tenant"
+          resource_name: "Tenant"
         })
 
       {:ok, _} =
@@ -38,7 +39,7 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
           group_id: group_1.id,
           tenant_id: tenant_2.id,
           read: true,
-          resource_name: "user"
+          resource_name: "User"
         })
 
       {:ok, _} =
@@ -46,7 +47,7 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
           group_id: group_1.id,
           tenant_id: tenant_3.id,
           read: false,
-          resource_name: "tenant"
+          resource_name: "Tenant"
         })
 
       {:ok, _} =
@@ -54,21 +55,21 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
           group_id: group_2.id,
           tenant_id: tenant_1.id,
           read: true,
-          resource_name: "user"
+          resource_name: "User"
         })
 
       {:ok, _} =
         create_access_right(%{
           group_id: group_3.id,
           tenant_id: tenant_1.id,
-          resource_name: "tenant"
+          resource_name: "Tenant"
         })
 
       {:ok, _} =
         create_access_right(%{
           group_id: group_3.id,
           tenant_id: tenant_2.id,
-          resource_name: "tenant"
+          resource_name: "Tenant"
         })
 
       {:ok, _} =
@@ -80,7 +81,7 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
 
       conn = TenantsCount.call(conn, [])
 
-      assert conn.assigns[:tenants_count] == 1
+      assert conn.assigns[:tenants_count] == 2
     end
 
     test "when user is not logged in tenants_count is 0", %{conn: conn} do

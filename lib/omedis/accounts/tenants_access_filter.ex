@@ -12,10 +12,11 @@ defmodule Omedis.Accounts.TenantsAccessFilter do
     expr(
       exists(
         access_rights,
-        resource_name == "tenant" and
+        resource_name == "Tenant" and
           read == true and
           exists(group.group_users, user_id == ^actor.id)
-      )
+      ) or
+        owner_id == ^actor.id
     )
   end
 end
