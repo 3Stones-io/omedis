@@ -184,7 +184,7 @@ defmodule OmedisWeb.TenantLive.Index do
         )
 
       _ ->
-        Tenant.list_paginated(page: [count: true])
+        Tenant.list_paginated(page: [count: true], actor: current_user)
     end
   end
 
