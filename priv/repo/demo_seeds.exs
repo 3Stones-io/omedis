@@ -32,8 +32,7 @@ end
     :unique_email
   )
 
-%{records: [tenant_1, tenant_2 | _rest], status: :success} =
-  %{records: [tenant_1, tenant_2], status: :success} =
+%{records: [tenant_1, tenant_2], status: :success} =
   bulk_create.(
     Accounts.Tenant,
     [
