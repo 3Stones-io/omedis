@@ -11,7 +11,7 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n>1);\n"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:196
+#: lib/omedis_web/live/tenant_live/form_component.ex:202
 #, elixir-autogen, elixir-format
 msgid "Account Number"
 msgstr "Numéro de compte"
@@ -32,7 +32,7 @@ msgstr "Numéro de compte"
 msgid "Actions"
 msgstr "Actions"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:86
+#: lib/omedis_web/live/tenant_live/form_component.ex:92
 #, elixir-autogen, elixir-format
 msgid "Additional Info"
 msgstr "Informations supplémentaires"
@@ -57,13 +57,13 @@ msgstr "Retour aux catégories de logs"
 msgid "Back to tenants"
 msgstr "Retour aux locataires"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:174
+#: lib/omedis_web/live/tenant_live/form_component.ex:180
 #: lib/omedis_web/live/tenant_live/show.ex:152
 #, elixir-autogen, elixir-format
 msgid "Bank"
 msgstr "Banque"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:188
+#: lib/omedis_web/live/tenant_live/form_component.ex:194
 #: lib/omedis_web/live/tenant_live/show.ex:148
 #, elixir-autogen, elixir-format
 msgid "Bic"
@@ -72,7 +72,7 @@ msgstr "BIC"
 #: lib/omedis_web/live/edit_profile.ex:201
 #: lib/omedis_web/live/edit_profile.ex:209
 #: lib/omedis_web/live/edit_profile.ex:215
-#: lib/omedis_web/live/register_live.ex:215
+#: lib/omedis_web/live/register_live.ex:268
 #, elixir-autogen, elixir-format
 msgid "Birthdate"
 msgstr "Date de naissance"
@@ -82,7 +82,7 @@ msgstr "Date de naissance"
 msgid "Bur number"
 msgstr "Numéro d'asso"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:102
+#: lib/omedis_web/live/tenant_live/form_component.ex:108
 #: lib/omedis_web/live/tenant_live/index.ex:66
 #: lib/omedis_web/live/tenant_live/show.ex:92
 #, elixir-autogen, elixir-format
@@ -117,7 +117,7 @@ msgstr "Pays"
 msgid "Current Tenant"
 msgstr "Locataire actuel"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:79
+#: lib/omedis_web/live/tenant_live/form_component.ex:82
 #, elixir-autogen, elixir-format
 msgid "Daily End At"
 msgstr "Fin quotidienne à"
@@ -132,7 +132,7 @@ msgstr "Début quotidien à"
 msgid "Description"
 msgstr "Description"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:152
+#: lib/omedis_web/live/tenant_live/form_component.ex:158
 #, elixir-autogen, elixir-format
 msgid "Ean Gln"
 msgstr "EAN GLN"
@@ -192,9 +192,9 @@ msgstr "Modifier les détails de votre profil"
 #: lib/omedis_web/live/login_live.ex:98
 #: lib/omedis_web/live/login_live.ex:105
 #: lib/omedis_web/live/login_live.ex:113
-#: lib/omedis_web/live/register_live.ex:155
-#: lib/omedis_web/live/register_live.ex:158
-#: lib/omedis_web/live/tenant_live/form_component.ex:124
+#: lib/omedis_web/live/register_live.ex:203
+#: lib/omedis_web/live/register_live.ex:206
+#: lib/omedis_web/live/tenant_live/form_component.ex:130
 #: lib/omedis_web/live/tenant_live/show.ex:112
 #, elixir-autogen, elixir-format
 msgid "Email"
@@ -220,7 +220,7 @@ msgstr "Entrez une couleur personnalisée"
 msgid "Error!"
 msgstr "Erreur !"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:116
+#: lib/omedis_web/live/tenant_live/form_component.ex:122
 #: lib/omedis_web/live/tenant_live/show.ex:108
 #, elixir-autogen, elixir-format
 msgid "Fax"
@@ -229,15 +229,15 @@ msgstr "Fax"
 #: lib/omedis_web/live/edit_profile.ex:133
 #: lib/omedis_web/live/edit_profile.ex:141
 #: lib/omedis_web/live/edit_profile.ex:147
-#: lib/omedis_web/live/register_live.ex:178
-#: lib/omedis_web/live/register_live.ex:180
+#: lib/omedis_web/live/register_live.ex:215
+#: lib/omedis_web/live/register_live.ex:217
 #, elixir-autogen, elixir-format
 msgid "First Name"
 msgstr "Prénom"
 
 #: lib/omedis_web/live/edit_profile.ex:178
 #: lib/omedis_web/live/edit_profile.ex:192
-#: lib/omedis_web/live/register_live.ex:201
+#: lib/omedis_web/live/register_live.ex:253
 #, elixir-autogen, elixir-format
 msgid "Gender"
 msgstr "Genre"
@@ -247,7 +247,7 @@ msgstr "Genre"
 msgid "Hang in there while we get back on track"
 msgstr "Accrochez-vous pendant que nous nous remettons sur les rails"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:181
+#: lib/omedis_web/live/tenant_live/form_component.ex:187
 #: lib/omedis_web/live/tenant_live/show.ex:144
 #, elixir-autogen, elixir-format
 msgid "Iban"
@@ -255,7 +255,8 @@ msgstr "IBAN"
 
 #: lib/omedis_web/live/edit_profile.ex:247
 #: lib/omedis_web/live/edit_profile.ex:260
-#: lib/omedis_web/live/register_live.ex:225
+#: lib/omedis_web/live/register_live.ex:276
+#: lib/omedis_web/live/register_live.ex:291
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Langue"
@@ -263,8 +264,8 @@ msgstr "Langue"
 #: lib/omedis_web/live/edit_profile.ex:156
 #: lib/omedis_web/live/edit_profile.ex:163
 #: lib/omedis_web/live/edit_profile.ex:169
-#: lib/omedis_web/live/register_live.ex:189
-#: lib/omedis_web/live/register_live.ex:191
+#: lib/omedis_web/live/register_live.ex:227
+#: lib/omedis_web/live/register_live.ex:229
 #, elixir-autogen, elixir-format
 msgid "Last Name"
 msgstr "Nom de famille"
@@ -347,13 +348,13 @@ msgstr "Propriétaire"
 #: lib/omedis_web/live/login_live.ex:122
 #: lib/omedis_web/live/login_live.ex:130
 #: lib/omedis_web/live/login_live.ex:137
-#: lib/omedis_web/live/register_live.ex:166
-#: lib/omedis_web/live/register_live.ex:169
+#: lib/omedis_web/live/register_live.ex:239
+#: lib/omedis_web/live/register_live.ex:242
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Mot de passe"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:109
+#: lib/omedis_web/live/tenant_live/form_component.ex:115
 #: lib/omedis_web/live/tenant_live/show.ex:104
 #, elixir-autogen, elixir-format
 msgid "Phone"
@@ -369,7 +370,7 @@ msgstr "Veuillez corriger les erreurs ci-dessous"
 msgid "Please correct the errors below."
 msgstr "Veuillez corriger les erreurs ci-dessous."
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:94
+#: lib/omedis_web/live/tenant_live/form_component.ex:100
 #, elixir-autogen, elixir-format
 msgid "Po Box"
 msgstr "Boîte postale"
@@ -419,7 +420,7 @@ msgid "Projects"
 msgstr "Projets"
 
 #: lib/omedis_web/components/general_components.ex:526
-#: lib/omedis_web/live/register_live.ex:121
+#: lib/omedis_web/live/register_live.ex:154
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "S'inscrire"
@@ -439,7 +440,7 @@ msgstr "Enregistrer le profil"
 msgid "Save Project"
 msgstr "Enregistrer le projet"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:203
+#: lib/omedis_web/live/tenant_live/form_component.ex:209
 #, elixir-autogen, elixir-format
 msgid "Save Tenant"
 msgstr "Enregistrer le locataire"
@@ -448,7 +449,7 @@ msgstr "Enregistrer le locataire"
 #: lib/omedis_web/live/group_live/form_component.ex:55
 #: lib/omedis_web/live/log_category_live/form_component.ex:144
 #: lib/omedis_web/live/project_live/form_component.ex:46
-#: lib/omedis_web/live/tenant_live/form_component.ex:201
+#: lib/omedis_web/live/tenant_live/form_component.ex:207
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Enregistrement..."
@@ -463,13 +464,13 @@ msgstr "Sélectionnez le genre"
 msgid "Select Tenant"
 msgstr "Sélectionnez le locataire"
 
-#: lib/omedis_web/live/register_live.ex:206
+#: lib/omedis_web/live/register_live.ex:258
 #, elixir-autogen, elixir-format
 msgid "Select Your Gender"
 msgstr "Sélectionnez votre genre"
 
 #: lib/omedis_web/live/edit_profile.ex:253
-#: lib/omedis_web/live/register_live.ex:227
+#: lib/omedis_web/live/register_live.ex:282
 #, elixir-autogen, elixir-format
 msgid "Select Your Language"
 msgstr "Sélectionnez votre langue"
@@ -499,8 +500,8 @@ msgstr "Afficher le locataire"
 msgid "Sign in"
 msgstr "Se connecter"
 
-#: lib/omedis_web/live/register_live.ex:39
-#: lib/omedis_web/live/register_live.ex:236
+#: lib/omedis_web/live/register_live.ex:45
+#: lib/omedis_web/live/register_live.ex:356
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr "S'inscrire"
@@ -510,7 +511,7 @@ msgstr "S'inscrire"
 msgid "Signing in..."
 msgstr "Connexion en cours..."
 
-#: lib/omedis_web/live/register_live.ex:237
+#: lib/omedis_web/live/register_live.ex:357
 #, elixir-autogen, elixir-format
 msgid "Signing up..."
 msgstr "Inscription en cours..."
@@ -550,7 +551,7 @@ msgstr "Rue2"
 msgid "Success!"
 msgstr "Succès !"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:251
+#: lib/omedis_web/live/tenant_live/form_component.ex:257
 #, elixir-autogen, elixir-format
 msgid "Tenant saved."
 msgstr "Locataire enregistré."
@@ -575,7 +576,7 @@ msgstr "Fuseau horaire"
 msgid "Today"
 msgstr "Aujourd'hui"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:167
+#: lib/omedis_web/live/tenant_live/form_component.ex:173
 #, elixir-autogen, elixir-format
 msgid "Trade Register No"
 msgstr "Numéro de registre du commerce"
@@ -585,7 +586,7 @@ msgstr "Numéro de registre du commerce"
 msgid "Trade register no"
 msgstr "Numéro de registre du commerce"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:160
+#: lib/omedis_web/live/tenant_live/form_component.ex:166
 #: lib/omedis_web/live/tenant_live/show.ex:128
 #, elixir-autogen, elixir-format
 msgid "Uid Bfs Number"
@@ -597,7 +598,7 @@ msgstr "Numéro Uid Bfs"
 msgid "Update Profile"
 msgstr "Mettre à jour le profil"
 
-#: lib/omedis_web/live/register_live.ex:126
+#: lib/omedis_web/live/register_live.ex:159
 #, elixir-autogen, elixir-format
 msgid "Use a permanent address where you can receive mail."
 msgstr "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
@@ -622,7 +623,7 @@ msgstr "Voir les entrées de logs"
 msgid "We can't find the internet"
 msgstr "Nous ne pouvons pas trouver Internet"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:135
+#: lib/omedis_web/live/tenant_live/form_component.ex:141
 #: lib/omedis_web/live/tenant_live/show.ex:116
 #, elixir-autogen, elixir-format
 msgid "Website"
@@ -634,7 +635,7 @@ msgstr "Site Web"
 msgid "Zip code"
 msgstr "Code postal"
 
-#: lib/omedis_web/live/tenant_live/form_component.ex:142
+#: lib/omedis_web/live/tenant_live/form_component.ex:148
 #: lib/omedis_web/live/tenant_live/show.ex:120
 #, elixir-autogen, elixir-format
 msgid "Zsr Number"
@@ -647,17 +648,17 @@ msgid "close"
 msgstr "fermer"
 
 #: lib/omedis_web/live/login_live.ex:132
-#: lib/omedis_web/live/register_live.ex:167
+#: lib/omedis_web/live/register_live.ex:240
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "nouveau mot de passe"
 
-#: lib/omedis_web/live/register_live.ex:133
+#: lib/omedis_web/live/register_live.ex:166
 #, elixir-autogen, elixir-format
 msgid "Change language"
 msgstr "Changer de langue"
 
-#: lib/omedis_web/live/register_live.ex:56
+#: lib/omedis_web/live/register_live.ex:62
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Language changed"
 msgstr "Langue modifiée"
@@ -677,7 +678,7 @@ msgstr ""
 msgid "Edit Group"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:204
+#: lib/omedis_web/live/register_live.ex:256
 #, elixir-autogen, elixir-format
 msgid "Female"
 msgstr ""
@@ -708,7 +709,7 @@ msgstr "Liste des projets"
 msgid "Login"
 msgstr "Se connecter"
 
-#: lib/omedis_web/live/register_live.ex:203
+#: lib/omedis_web/live/register_live.ex:255
 #, elixir-autogen, elixir-format
 msgid "Male"
 msgstr ""
@@ -748,3 +749,26 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Use this form to manage group records in your database."
 msgstr "Utilisez ce formulaire pour gérer les enregistrements de projet dans votre base de données."
+
+#: lib/omedis_web/live/register_live.ex:323
+#: lib/omedis_web/live/register_live.ex:337
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Daily End Time"
+msgstr "Fin quotidienne à"
+
+#: lib/omedis_web/live/register_live.ex:300
+#: lib/omedis_web/live/register_live.ex:314
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Daily Start Time"
+msgstr "Début quotidien à"
+
+#: lib/omedis_web/live/register_live.ex:348
+#, elixir-autogen, elixir-format
+msgid "Don't have an account? Sign up"
+msgstr ""
+
+#: lib/omedis_web/live/register_live.ex:190
+#: lib/omedis_web/live/register_live.ex:192
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Select a Tenant"
+msgstr "Sélectionnez un locataire"

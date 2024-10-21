@@ -6,7 +6,6 @@ defmodule OmedisWeb.TimeTracking do
   individual time entries, and utility functions for time calculations.
   """
   use Phoenix.Component
-  alias Omedis.Accounts.LogEntry
   use Gettext, backend: OmedisWeb.Gettext
 
   import Gettext, only: [with_locale: 2]
@@ -17,6 +16,7 @@ defmodule OmedisWeb.TimeTracking do
   attr :current_time, :any, required: true
   attr :log_entries, :list, required: true
   attr :language, :any, required: true
+  attr :active_log_category_id, :string, required: true
 
   @doc """
   Renders the main dashboard component.
@@ -39,6 +39,7 @@ defmodule OmedisWeb.TimeTracking do
         <.no_log_categories language={@language} />
       <% else %>
         <.dashboard_card
+          active_log_category_id={@active_log_category_id}
           categories={@categories}
           start_at={@start_at}
           end_at={@end_at}
@@ -73,13 +74,19 @@ defmodule OmedisWeb.TimeTracking do
   attr :current_time, :any, required: true
   attr :log_entries, :list, required: true
   attr :language, :any, required: true
+  attr :active_log_category_id, :string, required: true
 
   def dashboard_card(assigns) do
     ~H"""
     <div class="md:w-[50%] w-[90%] h-[70vh]  m-auto flex justify-start gap-1 items-end">
       <div class="md:w-[40%]  flex justify-start flex-col gap-5 h-[100%]">
         <%= for category <- @categories do %>
-          <.category_button category={category} language={@language} current_time={@current_time} />
+          <.category_button
+            active_log_category_id={@active_log_category_id}
+            category={category}
+            language={@language}
+            current_time={@current_time}
+          />
         <% end %>
       </div>
 
@@ -224,13 +231,14 @@ defmodule OmedisWeb.TimeTracking do
   attr :category, :any, required: true
   attr :current_time, :any, required: true
   attr :language, :any, required: true
+  attr :active_log_category_id, :string, required: true
 
   def category_button(assigns) do
     ~H"""
     <div class="flex flex-col gap-0">
       <div class="flex flex-row gap-2 items-center">
         <p
-          :if={active_log_category?(@category.id)}
+          :if={@active_log_category_id == @category.id}
           class="h-[10px] w-[10px] bg-green-500 rounded-full"
         />
 
@@ -330,18 +338,6 @@ defmodule OmedisWeb.TimeTracking do
       </p>
     <% end %>
     """
-  end
-
-  defp active_log_category?(log_category_id) do
-    {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category_id})
-
-    case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
-      nil ->
-        false
-
-      _log_entry ->
-        true
-    end
   end
 
   def minutes_to_hhmm(minutes) do

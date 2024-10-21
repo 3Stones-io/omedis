@@ -8,7 +8,10 @@ defmodule OmedisWeb.PaginationComponent do
       assign(assigns, :visible_pages, visible_pages(assigns.current_page, assigns.total_pages))
 
     ~H"""
-    <div class="flex items-center justify-between border-t border-gray-200 bg-white py-5">
+    <div
+      :if={@total_pages > 1}
+      class="flex items-center justify-between border-t border-gray-200 bg-white py-5"
+    >
       <div class="flex flex-1 justify-between sm:hidden">
         <.page_link
           patch={@current_page > 1 && @resource_path <> "?page=#{@current_page - 1}"}
