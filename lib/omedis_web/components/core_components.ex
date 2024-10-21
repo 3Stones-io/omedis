@@ -231,7 +231,6 @@ defmodule OmedisWeb.CoreComponents do
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
-  attr :is_custom?, :boolean, default: false
 
   slot :inner_block, required: true
 
@@ -242,7 +241,7 @@ defmodule OmedisWeb.CoreComponents do
       class={[
         "phx-submit-loading:opacity-75 rounded-lg  py-2 px-3",
         "text-sm font-semibold leading-6",
-        !@is_custom? && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
+        "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
         @class
       ]}
       {@rest}

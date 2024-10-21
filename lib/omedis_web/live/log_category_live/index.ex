@@ -56,14 +56,9 @@ defmodule OmedisWeb.LogCategoryLive.Index do
           }
         >
           <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Name") end)}>
-            <.button
-              is_custom?={true}
-              style={[
-                "background: #{log_category.color_code}; color: #{text_color_for_background(log_category.color_code)};"
-              ]}
-            >
+            <.custom_color_button color={log_category.color_code}>
               <%= log_category.name %>
-            </.button>
+            </.custom_color_button>
           </:col>
 
           <:col
@@ -307,29 +302,5 @@ defmodule OmedisWeb.LogCategoryLive.Index do
       _error ->
         {:noreply, socket}
     end
-  end
-
-  @spec text_color_for_background(String.t()) :: String.t()
-  def text_color_for_background(color_code) do
-    if contrasting_color(color_code) == "#ffffff", do: "#ffffff", else: "#000000"
-  end
-
-  defp contrasting_color(hex_color) do
-    {r, g, b} = hex_to_rgb(hex_color)
-    luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-    if luminance > 0.5, do: "#000000", else: "#ffffff"
-  end
-
-  defp hex_to_rgb(hex) do
-    hex = String.replace(hex, "#", "")
-
-    {r, g, b} =
-      hex
-      |> String.to_charlist()
-      |> Enum.chunk_every(2)
-      |> Enum.map(&List.to_integer(&1, 16))
-      |> List.to_tuple()
-
-    {r, g, b}
   end
 end

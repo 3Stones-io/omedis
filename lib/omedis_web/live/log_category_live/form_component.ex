@@ -119,16 +119,9 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
           />
         </div>
 
-        <.button
-          :if={@form[:name].value}
-          is_custom?={true}
-          style={[
-            "background-color: #{@form[:color_code].value || @color_code};",
-            "color: #{OmedisWeb.LogCategoryLive.Index.text_color_for_background(@form[:color_code].value || @color_code)};"
-          ]}
-        >
+        <.custom_color_button :if={@form[:name].value} color={@form[:color_code].value || @color_code}>
           <%= @form[:name].value || "Name" %>
-        </.button>
+        </.custom_color_button>
 
         <:actions>
           <.button
