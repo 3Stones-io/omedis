@@ -4,11 +4,13 @@ defmodule Omedis.Accounts.Tenant do
   """
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Project
+  alias Omedis.Accounts.TenantsAccessFilter
   alias Omedis.Validations
 
   require Ash.Query
 
   use Ash.Resource,
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
@@ -138,6 +140,8 @@ defmodule Omedis.Accounts.Tenant do
 
       filter expr(owner_id == ^arg(:owner_id))
     end
+
+    read :count
   end
 
   attributes do
@@ -246,5 +250,19 @@ defmodule Omedis.Accounts.Tenant do
 
     has_many :groups, Group
     has_many :projects, Project
+  end
+
+  policies do
+    policy action(:count) do
+      authorize_if TenantsAccessFilter
+    end
+
+    policy action(:list_paginated) do
+      authorize_if TenantsAccessFilter
+    end
+
+    policy do
+      authorize_if always()
+    end
   end
 end

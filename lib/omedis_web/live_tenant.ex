@@ -29,17 +29,8 @@ defmodule OmedisWeb.LiveTenant do
   def on_mount(:assign_tenants_count, _params, _session, socket) do
     tenants_count =
       case socket.assigns[:current_user] do
-        %User{id: user_id} ->
-          Tenant
-          |> Ash.Query.filter(
-            exists(
-              access_rights,
-              resource_name == "tenant" and
-                read == true and
-                exists(group.group_users, user_id == ^user_id)
-            )
-          )
-          |> Ash.count!(authorize?: false)
+        %User{} = user ->
+          Ash.count!(Tenant, action: :count, actor: user)
 
         _ ->
           0

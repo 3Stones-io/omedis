@@ -15,17 +15,8 @@ defmodule OmedisWeb.Plugs.TenantsCount do
   def call(conn, _opts) do
     tenants_count =
       case conn.assigns[:current_user] do
-        %User{id: user_id} ->
-          Tenant
-          |> Ash.Query.filter(
-            exists(
-              access_rights,
-              resource_name == "tenant" and
-                read == true and
-                exists(group.group_users, user_id == ^user_id)
-            )
-          )
-          |> Ash.count!(authorize?: false)
+        %User{} = user ->
+          Ash.count!(Tenant, action: :count, actor: user)
 
         _ ->
           0
