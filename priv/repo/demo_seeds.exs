@@ -21,17 +21,18 @@ bulk_create = fn module, list, upsert_identity ->
   )
 end
 
-%{records: [user_1, user_2], status: :success} =
+%{records: [user_1, user_2, user_3], status: :success} =
   bulk_create.(
     Accounts.User,
     [
       %{email: "user@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")},
-      %{email: "user2@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")}
+      %{email: "user2@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")},
+      %{email: "user3@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")}
     ],
     :unique_email
   )
 
-%{records: [tenant_1, tenant_2 | _rest], status: :success} =
+%{records: [tenant_1, tenant_2], status: :success} =
   bulk_create.(
     Accounts.Tenant,
     [
@@ -41,7 +42,7 @@ end
     :unique_slug
   )
 
-%{records: [group_1, group_2 | _rest], status: :success} =
+%{records: [group_1, group_2, group_3], status: :success} =
   bulk_create.(
     Accounts.Group,
     [
@@ -57,7 +58,8 @@ end
     Accounts.GroupUser,
     [
       %{group_id: group_1.id, user_id: user_1.id},
-      %{group_id: group_2.id, user_id: user_2.id}
+      %{group_id: group_2.id, user_id: user_2.id},
+      %{group_id: group_3.id, user_id: user_3.id}
     ],
     nil
   )
@@ -72,7 +74,8 @@ end
         resource_name: "Project",
         read: true,
         write: true
-      }
+      },
+      %{group_id: group_3.id, read: true, resource_name: "Tenant", tenant_id: tenant_2.id}
     ],
     nil
   )

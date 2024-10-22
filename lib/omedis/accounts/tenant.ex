@@ -4,6 +4,7 @@ defmodule Omedis.Accounts.Tenant do
   """
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Project
+  alias Omedis.Accounts.TenantsAccessFilter
   alias Omedis.Validations
 
   require Ash.Query
@@ -256,6 +257,10 @@ defmodule Omedis.Accounts.Tenant do
 
   policies do
     policy action(:count) do
+      authorize_if TenantsAccessFilter
+    end
+
+    policy action(:list_paginated) do
       authorize_if TenantsAccessFilter
     end
 
