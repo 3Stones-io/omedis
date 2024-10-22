@@ -8,9 +8,9 @@ defmodule Omedis.Accounts.GroupUser do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
-  alias Omedis.Accounts.AccessFilter
   alias Omedis.Accounts.CanAccessResource
   alias Omedis.Accounts.Group
+  alias Omedis.Accounts.GroupUserAccessFilter
   alias Omedis.Accounts.User
 
   postgres do
@@ -45,11 +45,15 @@ defmodule Omedis.Accounts.GroupUser do
 
   policies do
     policy action_type(:read) do
-      authorize_if AccessFilter
+      authorize_if GroupUserAccessFilter
     end
 
     policy action_type([:create, :destroy]) do
       authorize_if CanAccessResource
     end
+  end
+
+  attributes do
+    uuid_primary_key :id
   end
 end

@@ -22,13 +22,13 @@ defmodule Omedis.GroupUserTest do
       })
 
     {:ok,
-     %{tenant: tenant, group: group, user: user, owner: owner, authorized_user: authorized_user}}
+     %{authorized_user: authorized_user, group: group, owner: owner, tenant: tenant, user: user}}
   end
 
   describe "create/1" do
     test "tenant owner can create a group_user", %{
-      owner: owner,
       group: group,
+      owner: owner,
       tenant: tenant,
       user: user
     } do
@@ -87,8 +87,8 @@ defmodule Omedis.GroupUserTest do
 
   describe "read/0" do
     test "tenant owner can read all group_users", %{
-      owner: owner,
       group: group,
+      owner: owner,
       tenant: tenant,
       user: user
     } do
@@ -128,9 +128,9 @@ defmodule Omedis.GroupUserTest do
 
     test "unauthorized user cannot read group_users", %{
       group: group,
+      owner: owner,
       tenant: tenant,
-      user: user,
-      owner: owner
+      user: user
     } do
       {:ok, _group_user} =
         GroupUser.create(
@@ -143,14 +143,14 @@ defmodule Omedis.GroupUserTest do
         )
 
       {:ok, unauthorized_user} = create_user()
-      assert {:error, _} = GroupUser.read(actor: unauthorized_user, tenant: tenant)
+      assert {:ok, []} = GroupUser.read(actor: unauthorized_user, tenant: tenant)
     end
   end
 
   describe "destroy/1" do
     test "tenant owner can delete a group_user", %{
-      owner: owner,
       group: group,
+      owner: owner,
       tenant: tenant,
       user: user
     } do
@@ -194,9 +194,9 @@ defmodule Omedis.GroupUserTest do
 
     test "unauthorized user cannot delete a group_user", %{
       group: group,
+      owner: owner,
       tenant: tenant,
-      user: user,
-      owner: owner
+      user: user
     } do
       {:ok, group_user} =
         GroupUser.create(
