@@ -11,6 +11,7 @@ defmodule Omedis.Accounts.Project do
     domain: Omedis.Accounts
 
   alias Omedis.Accounts.AccessFilter
+  alias Omedis.Accounts.CreateAccessFilter
 
   postgres do
     table "projects"
@@ -119,13 +120,13 @@ defmodule Omedis.Accounts.Project do
     update_timestamp :updated_at
   end
 
-  def get_max_position_by_tenant_id(tenant_id) do
+  def get_max_position_by_tenant_id(tenant_id, opts \\ []) do
     __MODULE__
     |> Ash.Query.filter(tenant_id: tenant_id)
     |> Ash.Query.sort(position: :desc)
     |> Ash.Query.limit(1)
     |> Ash.Query.select([:position])
-    |> Ash.read!()
+    |> Ash.read!(opts)
     |> Enum.at(0)
     |> case do
       nil -> 0
@@ -145,7 +146,11 @@ defmodule Omedis.Accounts.Project do
   end
 
   policies do
-    policy action(:list_paginated) do
+    policy action_type(:create) do
+      authorize_if CreateAccessFilter
+    end
+
+    policy action_type([:read, :update]) do
       authorize_if AccessFilter
     end
 

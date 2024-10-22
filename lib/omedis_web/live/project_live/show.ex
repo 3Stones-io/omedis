@@ -36,7 +36,7 @@ defmodule OmedisWeb.ProjectLive.Show do
               patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}/show/edit"}
               phx-click={JS.push_focus()}
             >
-              <.button>
+              <.button :if={@user_has_access_rights}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Edit project") %>
                 <% end) %>
@@ -58,7 +58,7 @@ defmodule OmedisWeb.ProjectLive.Show do
         <.back navigate={~p"/tenants/#{@tenant.slug}/projects"}>Back to projects</.back>
 
         <.modal
-          :if={@live_action == :edit}
+          :if={@live_action == :edit and @user_has_access_rights}
           id="project-modal"
           show
           on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/projects/#{@project}")}
@@ -66,6 +66,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
             id={@project.id}
+            current_user={@current_user}
             title={@page_title}
             tenant={@tenant}
             tenants={@tenants}
@@ -90,8 +91,10 @@ defmodule OmedisWeb.ProjectLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug, "id" => id}, _, socket) do
-    project = Project.by_id!(id)
+    actor = socket.assigns.current_user
     tenant = Tenant.by_slug!(slug)
+
+    project = Project.by_id!(id, actor: actor, tenant: tenant)
 
     {:noreply,
      socket
@@ -99,7 +102,29 @@ defmodule OmedisWeb.ProjectLive.Show do
      |> assign(:project, project)
      |> assign(:next_position, project.position)
      |> assign(:tenants, Ash.read!(Tenant))
-     |> assign(:tenant, tenant)}
+     |> assign(:tenant, tenant)
+     |> assign_access_rights()}
+  end
+
+  defp assign_access_rights(socket) do
+    actor = socket.assigns.current_user
+    tenant = socket.assigns.tenant
+
+    user_has_access_rights = Ash.can?({Project, :update}, actor: actor, tenant: tenant)
+
+    if user_has_access_rights do
+      assign(socket, :user_has_access_rights, true)
+    else
+      socket
+      |> assign(:user_has_access_rights, false)
+      |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects")
+      |> put_flash(
+        :error,
+        with_locale(socket.assigns.language, fn ->
+          gettext("You are not authorized to access this page")
+        end)
+      )
+    end
   end
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Project") end)
