@@ -28,9 +28,7 @@ defmodule Omedis.Accounts.CreateAccessFilter do
         |> Ash.Query.filter(exists(group.group_users, user_id == ^actor.id))
         |> Ash.exists?()
     end
-
   end
-
 
   defp get_resource_name(resource) do
     resource
