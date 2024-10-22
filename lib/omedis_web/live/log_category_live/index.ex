@@ -170,9 +170,8 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     if connected?(socket),
       do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
 
-    group = Group.by_slug!(group_slug)
-
     tenant = Tenant.by_slug!(slug)
+    group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
 
     {:ok,
      socket

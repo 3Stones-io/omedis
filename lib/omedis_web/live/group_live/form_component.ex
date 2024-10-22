@@ -84,7 +84,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           Map.put(
             group_params,
             "slug",
-            update_slug(Slug.slugify(new_name), socket.assigns.tenant.id)
+            update_slug(socket, Slug.slugify(new_name))
           )
         end
       else
@@ -115,19 +115,24 @@ defmodule OmedisWeb.GroupLive.FormComponent do
     end
   end
 
-  defp update_slug(slug, tenant_id) do
-    case Group.slug_exists?(slug, tenant_id) do
-      true -> generate_unique_slug(slug, tenant_id)
-      false -> Slug.slugify(slug)
+  defp update_slug(socket, slug) do
+    if Group.slug_exists?(slug, actor: socket.assigns.current_user, tenant: socket.assigns.tenant) do
+      generate_unique_slug(socket, slug)
+    else
+      Slug.slugify(slug)
     end
   end
 
-  defp generate_unique_slug(base_slug, tenant_id) do
+  defp generate_unique_slug(socket, base_slug) do
     new_slug = "#{base_slug}#{:rand.uniform(99)}"
 
-    case Group.slug_exists?(new_slug, tenant_id) do
-      true -> generate_unique_slug(base_slug, tenant_id)
-      false -> Slug.slugify(new_slug)
+    if Group.slug_exists?(new_slug,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       ) do
+      generate_unique_slug(socket, base_slug)
+    else
+      Slug.slugify(new_slug)
     end
   end
 
@@ -136,9 +141,21 @@ defmodule OmedisWeb.GroupLive.FormComponent do
   defp assign_form(%{assigns: %{group: group}} = socket) do
     form =
       if group do
-        AshPhoenix.Form.for_update(group, :update, as: "group")
+        AshPhoenix.Form.for_update(
+          group,
+          :update,
+          as: "group",
+          tenant: socket.assigns.tenant,
+          actor: socket.assigns.current_user
+        )
       else
-        AshPhoenix.Form.for_create(Omedis.Accounts.Group, :create, as: "group")
+        AshPhoenix.Form.for_create(
+          Omedis.Accounts.Group,
+          :create,
+          as: "group",
+          tenant: socket.assigns.tenant,
+          actor: socket.assigns.current_user
+        )
       end
 
     assign(socket, form: to_form(form))

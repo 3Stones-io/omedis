@@ -74,6 +74,20 @@ end
         resource_name: "Project",
         read: true,
         write: true
+      },
+      %{
+        group_id: group_1.id,
+        tenant_id: tenant_1.id,
+        resource_name: "Group",
+        read: true,
+        write: true
+      },
+      %{
+        group_id: group_2.id,
+        tenant_id: tenant_2.id,
+        resource_name: "Group",
+        read: true,
+        write: true
       }
     ],
     nil
