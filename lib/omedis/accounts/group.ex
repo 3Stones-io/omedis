@@ -7,7 +7,8 @@ defmodule Omedis.Accounts.Group do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Accounts,
+    authorizers: [Ash.Policy.Authorizer]
 
   alias Omedis.Accounts.AccessRight
   alias Omedis.Accounts.GroupUser
@@ -20,6 +21,24 @@ defmodule Omedis.Accounts.Group do
     references do
       reference :tenant, on_delete: :delete
       reference :user, on_delete: :delete
+    end
+  end
+
+  policies do
+    bypass action(:group_slug_exists) do
+      authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if Omedis.Accounts.CanCreateGroup
+    end
+
+    policy action_type([:update, :destroy]) do
+      authorize_if Omedis.Accounts.CanUpdateGroup
+    end
+
+    policy action_type([:read]) do
+      authorize_if Omedis.Accounts.GroupAccessFilter
     end
   end
 
@@ -40,6 +59,7 @@ defmodule Omedis.Accounts.Group do
     define :destroy
     define :by_tenant_id
     define :by_slug, get_by: [:slug], action: :read
+    define :group_slug_exists
   end
 
   actions do
@@ -89,8 +109,19 @@ defmodule Omedis.Accounts.Group do
       filter expr(tenant_id == ^arg(:tenant_id))
     end
 
-    destroy :destroy do
+    read :group_slug_exists do
+      argument :slug, :string do
+        allow_nil? false
+      end
+
+      argument :tenant_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(slug == ^arg(:slug) and tenant_id == ^arg(:tenant_id))
     end
+
+    destroy :destroy
   end
 
   validations do
@@ -98,13 +129,9 @@ defmodule Omedis.Accounts.Group do
   end
 
   def slug_exists?(slug, tenant_id) do
-    __MODULE__
-    |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
-    |> Ash.read_one!()
-    |> case do
-      nil -> false
-      _ -> true
-    end
+    group_with_slug = __MODULE__.group_slug_exists!(%{slug: slug, tenant_id: tenant_id})
+
+    !Enum.empty?(group_with_slug)
   end
 
   attributes do
