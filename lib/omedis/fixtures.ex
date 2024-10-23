@@ -17,6 +17,14 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.GroupUser, attrs)
   end
 
+  def create_log_category(attrs \\ %{}) do
+    fixture(Accounts.LogCategory, attrs)
+  end
+
+  def create_log_entry(attrs \\ %{}) do
+    fixture(Accounts.LogEntry, attrs)
+  end
+
   def create_project(attrs \\ %{}) do
     fixture(Accounts.Project, attrs)
   end
@@ -55,11 +63,30 @@ defmodule Omedis.Fixtures do
     }
   end
 
+  def attrs_for(Accounts.LogCategory) do
+    %{
+      color_code: "#" <> Faker.Color.rgb_hex(),
+      group_id: fn -> create_group().id end,
+      is_default: Enum.random([true, false]),
+      name: Faker.Lorem.word(),
+      project_id: fn -> create_project().id end,
+      slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}"
+    }
+  end
+
+  def attrs_for(Accounts.LogEntry) do
+    %{
+      log_category_id: fn -> create_log_category().id end,
+      tenant_id: fn -> create_tenant().id end,
+      user_id: fn -> create_user().id end
+    }
+  end
+
   def attrs_for(Accounts.Project) do
     %{
       name: Faker.Lorem.sentence(),
       tenant_id: fn -> create_tenant().id end,
-      position: Faker.random_between(1, 100)
+      position: Faker.random_between(1, 100) |> to_string()
     }
   end
 
