@@ -18,12 +18,6 @@ defmodule Omedis.Accounts.GroupUser do
     repo Omedis.Repo
   end
 
-  code_interface do
-    domain Omedis.Accounts
-    define :create
-    define :destroy
-  end
-
   relationships do
     belongs_to :group, Group, primary_key?: true, allow_nil?: false
     belongs_to :user, User, primary_key?: true, allow_nil?: false

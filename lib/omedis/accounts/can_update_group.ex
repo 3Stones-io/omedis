@@ -29,12 +29,12 @@ defmodule Omedis.Accounts.CanUpdateGroup do
   defp check_access_rights(tenant_id, group_id) do
     Omedis.Accounts.AccessRight
     |> Ash.Query.filter(tenant_id == ^tenant_id && group_id == ^group_id && (write || update))
-    |> Ash.exists?()
+    |> Ash.exists?(authorize?: false)
   end
 
   defp check_group_user(actor_id, group_id) do
     Omedis.Accounts.GroupUser
     |> Ash.Query.filter(user_id == ^actor_id && group_id == ^group_id)
-    |> Ash.exists?()
+    |> Ash.exists?(authorize?: false)
   end
 end
