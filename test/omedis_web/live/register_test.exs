@@ -1,6 +1,5 @@
 defmodule OmedisWeb.RegisterTest do
   use OmedisWeb.ConnCase
-  alias Omedis.Accounts.Tenant
   alias Omedis.Accounts.User
 
   import Phoenix.LiveViewTest
@@ -27,12 +26,7 @@ defmodule OmedisWeb.RegisterTest do
   }
 
   setup do
-    {:ok, tenant} =
-      Tenant
-      |> Ash.Changeset.new()
-      |> Ash.Changeset.for_create(:create, @valid_tenant_params)
-      |> Ash.create()
-
+    {:ok, tenant} = create_tenant(@valid_tenant_params)
     {:ok, %{tenant: tenant}}
   end
 
