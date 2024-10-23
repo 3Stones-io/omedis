@@ -3,38 +3,39 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
 
   import Phoenix.LiveViewTest
 
-  @update_attrs %{name: "Test Project", position: "1"}
-
   setup do
-    {:ok, tenant} = create_tenant()
-    {:ok, user} = create_user()
+    {:ok, owner} = create_user()
+    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
     {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
+    {:ok, authorized_user} = create_user()
+    {:ok, user} = create_user()
 
-    %{tenant: tenant, user: user, group: group}
-  end
+    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
 
-  describe "/tenants/:slug/projects/:id" do
-    test "renders project details if current user has read access", %{
-      conn: conn,
-      tenant: tenant,
-      user: user,
-      group: group
-    } do
+    {:ok, _} =
       create_access_right(%{
-        create: true,
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        tenant_id: tenant.id
+        tenant_id: tenant.id,
+        write: true
       })
 
-      {:ok, project} =
-        create_project(Map.put(@update_attrs, :tenant_id, tenant.id), actor: user, tenant: tenant)
+    %{authorized_user: authorized_user, group: group, owner: owner, tenant: tenant, user: user}
+  end
 
-      {:ok, index_live, html} =
+  describe "/tenants/:slug/projects/:id" do
+    test "renders project details if is the tenant owner", %{
+      conn: conn,
+      tenant: tenant,
+      owner: owner
+    } do
+      {:ok, project} =
+        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+
+      {:ok, _, html} =
         conn
-        |> log_in_user(user)
+        |> log_in_user(owner)
         |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}")
 
       assert html =~ "Project"
@@ -42,24 +43,33 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       assert html =~ project.name
     end
 
-    test "does not render project details if current user has no read access", %{
+    test "renders project details if user is authorized", %{
       conn: conn,
       tenant: tenant,
-      user: user,
-      group: group
+      authorized_user: authorized_user
     } do
-      create_access_right(%{
-        create: true,
-        group_id: group.id,
-        read: false,
-        resource_name: "Project",
-        tenant_id: tenant.id
-      })
-
       {:ok, project} =
-        create_project(Map.put(@update_attrs, :tenant_id, tenant.id), actor: user, tenant: tenant)
+        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
 
-      {:ok, index_live, html} =
+      {:ok, _, html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}")
+
+      assert html =~ "Project"
+      assert html =~ "Edit project"
+      assert html =~ project.name
+    end
+
+    test "does not render project details if user is unauthorized", %{
+      conn: conn,
+      tenant: tenant,
+      user: user
+    } do
+      {:ok, project} =
+        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+
+      {:ok, _, html} =
         conn
         |> log_in_user(user)
         |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}")
@@ -72,29 +82,20 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
   end
 
   describe "/tenants/:slug/projects/:id/show/edit" do
-    test "allows updating a project if current user has update access", %{
+    test "allows updating a project if user is the tenant owner", %{
       conn: conn,
       tenant: tenant,
-      user: user,
-      group: group
+      owner: owner
     } do
-      create_access_right(%{
-        resource_name: "Project",
-        read: true,
-        update: true,
-        tenant_id: tenant.id,
-        group_id: group.id
-      })
-
-      {:ok, project} =
-        create_project(Map.put(@update_attrs, :tenant_id, tenant.id), actor: user, tenant: tenant)
+      params = %{tenant_id: tenant.id, name: "Test Project", position: "1"}
+      {:ok, project} = create_project(params)
 
       {:ok, index_live, _} =
         conn
-        |> log_in_user(user)
+        |> log_in_user(owner)
         |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
 
-      params = Map.put(@update_attrs, :name, "Updated Project")
+      params = Map.put(params, :name, "Updated Project")
 
       assert html =
                index_live
@@ -107,31 +108,47 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       assert html =~ "Updated Project"
     end
 
-    test "doesn't allow updating a project if current user has no update access", %{
+    test "allows updating a project if user is authorized", %{
       conn: conn,
       tenant: tenant,
-      user: user,
-      group: group
+      authorized_user: authorized_user
     } do
-      create_access_right(%{
-        resource_name: "Project",
-        read: true,
-        update: true,
-        tenant_id: tenant.id,
-        group_id: group.id
-      })
+      params = %{tenant_id: tenant.id, name: "Test Project", position: "1"}
+      {:ok, project} = create_project(params)
 
+      {:ok, index_live, _} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+
+      params = Map.put(params, :name, "Updated Project")
+
+      assert html =
+               index_live
+               |> form("#project-form", project: params)
+               |> render_submit()
+
+      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+
+      assert html =~ "Project saved."
+      assert html =~ "Updated Project"
+    end
+
+    test "doesn't allow updating a project if user is unauthorized", %{
+      conn: conn,
+      tenant: tenant,
+      user: user
+    } do
       {:ok, project} =
-        create_project(Map.put(@update_attrs, :tenant_id, tenant.id), actor: user, tenant: tenant)
+        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
 
-      {:ok, index_live, html} =
+      {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn
         |> log_in_user(user)
         |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
 
-      refute html =~ "Use this form to manage project records in your database."
-      assert html =~ "You are not authorized to access this page"
-      assert redirected_to(conn, 302) == ~p"/tenants/#{tenant.slug}/projects"
+      assert redirect_path == ~p"/tenants/#{tenant.slug}/projects"
+      assert flash["error"] == "You are not authorized to access this page"
     end
   end
 end

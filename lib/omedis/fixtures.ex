@@ -17,8 +17,8 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.GroupUser, attrs)
   end
 
-  def create_project(attrs \\ %{}, opts \\ []) do
-    fixture(Accounts.Project, attrs, opts)
+  def create_project(attrs \\ %{}) do
+    fixture(Accounts.Project, attrs)
   end
 
   def create_tenant(attrs \\ %{}) do
@@ -85,7 +85,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  defp fixture(module, attrs, opts \\ []) do
+  defp fixture(module, attrs) do
     attrs =
       module
       |> attrs_for()
@@ -96,6 +96,6 @@ defmodule Omedis.Fixtures do
       end)
       |> Map.new()
 
-    Ash.create(module, attrs, opts)
+    Ash.create(module, attrs, authorize?: false)
   end
 end

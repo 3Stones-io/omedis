@@ -11,7 +11,7 @@ defmodule Omedis.Accounts.Project do
     domain: Omedis.Accounts
 
   alias Omedis.Accounts.AccessFilter
-  alias Omedis.Accounts.CreateAccessFilter
+  alias Omedis.Accounts.CanAccessResource
 
   postgres do
     table "projects"
@@ -129,11 +129,11 @@ defmodule Omedis.Accounts.Project do
   end
 
   policies do
-    policy action_type(:create) do
-      authorize_if CreateAccessFilter
+    policy action_type([:create, :update]) do
+      authorize_if CanAccessResource
     end
 
-    policy action_type([:read, :update]) do
+    policy action_type(:read) do
       authorize_if AccessFilter
     end
 

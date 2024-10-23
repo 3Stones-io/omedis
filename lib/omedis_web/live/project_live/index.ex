@@ -30,7 +30,10 @@ defmodule OmedisWeb.ProjectLive.Index do
             <%= gettext("Listing Projects") %>
           <% end) %>
           <:actions>
-            <.link :if={@user_has_access_rights} patch={~p"/tenants/#{@tenant.slug}/projects/new"}>
+            <.link
+              :if={Ash.can?({Project, :create}, @current_user, tenant: @tenant)}
+              patch={~p"/tenants/#{@tenant.slug}/projects/new"}
+            >
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("New Project") %>
@@ -65,7 +68,7 @@ defmodule OmedisWeb.ProjectLive.Index do
             </div>
 
             <.link
-              :if={@user_has_access_rights}
+              :if={Ash.can?({Project, :update}, @current_user, tenant: @tenant)}
               patch={~p"/tenants/#{@tenant.slug}/projects/#{project}/edit"}
             >
               <%= with_locale(@language, fn -> %>
@@ -143,7 +146,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     tenant = socket.assigns.tenant
 
     user_has_access_rights =
-      Ash.can?({Project, :update}, actor: actor, tenant: tenant)
+      Ash.can?({Project, :update}, actor, tenant: tenant)
 
     if user_has_access_rights do
       socket
@@ -168,26 +171,14 @@ defmodule OmedisWeb.ProjectLive.Index do
   end
 
   defp assign_access_rights_and_maybe_apply_action(socket, :index, params) do
-    actor = socket.assigns.current_user
-    tenant = socket.assigns.tenant
-
-    user_has_access_rights = Ash.can?({Project, :list_paginated}, actor: actor, tenant: tenant)
-
-    updated_socket =
-      assign(
-        socket,
-        :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("Projects") end)
-      )
-
-    if user_has_access_rights do
-      updated_socket
-      |> assign(:project, nil)
-      |> assign(:user_has_access_rights, user_has_access_rights)
-      |> list_paginated_projects(params)
-    else
-      assign(socket, :user_has_access_rights, false)
-    end
+    socket
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn -> gettext("Projects") end)
+    )
+    |> assign(:project, nil)
+    |> assign(:user_has_access_rights, false)
+    |> list_paginated_projects(params)
   end
 
   defp assign_access_rights_and_maybe_apply_action(socket, :new, _) do
@@ -195,7 +186,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     tenant = socket.assigns.tenant
 
     user_has_access_rights =
-      Ash.can?({Project, :create}, actor: actor, tenant: tenant)
+      Ash.can?({Project, :create}, actor, tenant: tenant)
 
     if user_has_access_rights do
       socket
@@ -203,7 +194,7 @@ defmodule OmedisWeb.ProjectLive.Index do
         :page_title,
         with_locale(socket.assigns.language, fn -> gettext("New Project") end)
       )
-      |> assign(:user_has_access_rights, user_has_access_rights)
+      |> assign(:user_has_access_rights, true)
     else
       socket
       |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))

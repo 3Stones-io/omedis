@@ -110,7 +110,7 @@ defmodule OmedisWeb.ProjectLive.Show do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
 
-    user_has_access_rights = Ash.can?({Project, :update}, actor: actor, tenant: tenant)
+    user_has_access_rights = Ash.can?({Project, :update}, actor, tenant: tenant)
 
     if user_has_access_rights do
       assign(socket, :user_has_access_rights, true)
