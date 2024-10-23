@@ -4,8 +4,12 @@ defmodule Omedis.Accounts.LogEntry do
   """
 
   use Ash.Resource,
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
+
+  alias Omedis.Accounts.AccessFilter
+  alias Omedis.Accounts.CanAccessResource
 
   postgres do
     table "log_entries"
@@ -81,6 +85,7 @@ defmodule Omedis.Accounts.LogEntry do
 
     create :create do
       accept [
+        :created_at,
         :comment,
         :start_at,
         :end_at,
@@ -143,6 +148,20 @@ defmodule Omedis.Accounts.LogEntry do
     belongs_to :user, Omedis.Accounts.User do
       allow_nil? true
       attribute_writable? true
+    end
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.LogEntry.Relationships.LogEntryAccessRights
+    end
+  end
+
+  policies do
+    policy action_type(:read) do
+      authorize_if AccessFilter
+    end
+
+    policy action_type([:create, :update]) do
+      authorize_if CanAccessResource
     end
   end
 end

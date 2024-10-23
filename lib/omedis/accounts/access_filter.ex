@@ -19,12 +19,12 @@ defmodule Omedis.Accounts.AccessFilter do
 
       tenant ->
         expr(
-          exists(
-            access_rights,
-            tenant_id == ^tenant.id and
-              read == true and
-              exists(group.group_users, user_id == ^actor.id)
-          ) and exists(tenant, id == ^tenant.id)
+          (exists(
+             access_rights,
+             tenant_id == ^tenant.id and
+               read == true and
+               exists(group.group_users, user_id == ^actor.id)
+           ) and exists(tenant, id == ^tenant.id)) or tenant.owner_id == ^actor.id
         )
     end
   end
