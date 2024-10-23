@@ -82,7 +82,7 @@ defmodule OmedisWeb.GroupLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:tenant, Tenant.by_slug!(slug))
+     |> assign(:tenant, Tenant.by_slug!(slug, actor: socket.assigns.current_user))
      |> assign(:group, Group.by_slug!(group_slug))}
   end
 

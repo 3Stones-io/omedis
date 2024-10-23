@@ -70,7 +70,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
   @impl true
   def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
-    tenant = Tenant.by_slug!(slug)
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
 
     {:ok, log_category} =
       id

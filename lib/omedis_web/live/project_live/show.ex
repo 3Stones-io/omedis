@@ -92,8 +92,7 @@ defmodule OmedisWeb.ProjectLive.Show do
   @impl true
   def handle_params(%{"slug" => slug, "id" => id}, _, socket) do
     actor = socket.assigns.current_user
-    tenant = Tenant.by_slug!(slug)
-
+    tenant = Tenant.by_slug!(slug, actor: actor)
     project = Project.by_id!(id, actor: actor, tenant: tenant)
 
     {:noreply,
@@ -101,7 +100,7 @@ defmodule OmedisWeb.ProjectLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:project, project)
      |> assign(:next_position, project.position)
-     |> assign(:tenants, Ash.read!(Tenant))
+     |> assign(:tenants, Ash.read!(Tenant, actor: actor))
      |> assign(:tenant, tenant)
      |> assign_access_rights()}
   end

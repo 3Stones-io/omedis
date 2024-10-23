@@ -150,7 +150,7 @@ defmodule Omedis.Accounts.User do
     tenant_id = Ash.Changeset.get_attribute(changeset, :current_tenant_id)
 
     if tenant_id do
-      tenant = Tenant.by_id!(tenant_id)
+      tenant = Tenant.by_id!(tenant_id, authorize?: false)
 
       changeset_attributes =
         changeset.attributes

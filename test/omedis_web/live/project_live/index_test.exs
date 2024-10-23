@@ -23,6 +23,25 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
         write: true
       })
 
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Tenant",
+        tenant_id: tenant.id
+      })
+
+    {:ok, another_group} = create_group(%{tenant_id: tenant.id})
+    {:ok, _} = create_group_user(%{group_id: another_group.id, user_id: user.id})
+
+    {:ok, _} =
+      create_access_right(%{
+        group_id: another_group.id,
+        read: true,
+        resource_name: "Tenant",
+        tenant_id: tenant.id
+      })
+
     %{authorized_user: authorized_user, group: group, owner: owner, tenant: tenant, user: user}
   end
 
