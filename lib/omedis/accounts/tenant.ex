@@ -16,6 +16,9 @@ defmodule Omedis.Accounts.Tenant do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.Group
+  alias Omedis.Accounts.TenantsAccessFilter
+
   defimpl Ash.ToTenant, for: Omedis.Accounts.Tenant do
     def to_tenant(%{id: id}, _), do: "tenant_#{id}"
   end

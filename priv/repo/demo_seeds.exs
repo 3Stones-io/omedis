@@ -67,6 +67,37 @@ end
 %{records: _records, status: :success} =
   bulk_create.(
     Accounts.AccessRight,
-    [%{group_id: group_3.id, read: true, resource_name: "Tenant", tenant_id: tenant_2.id}],
+    [
+      %{
+        group_id: group_1.id,
+        tenant_id: tenant_1.id,
+        resource_name: "Project",
+        read: true,
+        write: true
+      }
+    ],
     nil
+  )
+
+%{records: _records, status: :success} =
+  bulk_create.(
+    Accounts.Project,
+    [
+      %{
+        name: "Demo Project 1",
+        tenant_id: tenant_1.id,
+        position: "1"
+      },
+      %{
+        name: "Demo Project 2",
+        tenant_id: tenant_1.id,
+        position: "2"
+      },
+      %{
+        name: "Demo Project 3",
+        tenant_id: tenant_2.id,
+        position: "1"
+      }
+    ],
+    :unique_name
   )

@@ -6,8 +6,11 @@ defmodule Omedis.Accounts.Project do
   require Ash.Query
 
   use Ash.Resource,
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
+
+  alias Omedis.Accounts.AccessFilter
 
   postgres do
     table "projects"
@@ -134,6 +137,20 @@ defmodule Omedis.Accounts.Project do
     belongs_to :tenant, Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true
+    end
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Project.Relationships.ProjectAccessRights
+    end
+  end
+
+  policies do
+    policy action(:list_paginated) do
+      authorize_if AccessFilter
+    end
+
+    policy do
+      authorize_if always()
     end
   end
 end

@@ -150,34 +150,35 @@ defmodule OmedisWeb.ProjectLive.Index do
     |> list_paginated_projects(params)
   end
 
-  defp list_paginated_projects(socket, params) do
+  defp list_paginated_projects(%Phoenix.LiveView.Socket{} = socket, params) do
     page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
+    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
 
-    case list_paginated_projects(params) do
-      {:ok, %{count: total_count, results: tenants}} ->
+    case list_paginated_projects(params, opts) do
+      {:ok, %{count: total_count, results: projects}} ->
         total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
         current_page = min(page, total_pages)
 
         socket
         |> assign(:current_page, current_page)
         |> assign(:total_pages, total_pages)
-        |> stream(:projects, tenants, reset: true)
+        |> stream(:projects, projects, reset: true)
 
       {:error, _error} ->
         socket
     end
   end
 
-  defp list_paginated_projects(params) do
+  defp list_paginated_projects(params, opts) do
     case params do
       %{"page" => page} when not is_nil(page) ->
         page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
         offset_value = (page_value - 1) * 10
 
-        Project.list_paginated(page: [count: true, offset: offset_value])
+        Project.list_paginated(opts ++ [page: [count: true, offset: offset_value]])
 
       _ ->
-        Project.list_paginated(page: [count: true])
+        Project.list_paginated(opts ++ [page: [count: true]])
     end
   end
 
