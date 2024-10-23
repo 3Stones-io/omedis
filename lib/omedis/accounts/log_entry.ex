@@ -31,7 +31,6 @@ defmodule Omedis.Accounts.LogEntry do
     define :read
     define :create
     define :update
-    define :destroy
     define :by_log_category
     define :by_log_category_today
     define :by_tenant
@@ -113,9 +112,6 @@ defmodule Omedis.Accounts.LogEntry do
 
     read :read do
       primary? true
-    end
-
-    destroy :destroy do
     end
   end
 
