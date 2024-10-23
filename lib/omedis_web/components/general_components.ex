@@ -881,4 +881,53 @@ defmodule OmedisWeb.GeneralComponents do
 
   defp tenants_link_text(0), do: "Create first tenant"
   defp tenants_link_text(tenants_count), do: "Tenants (#{tenants_count})"
+
+  attr :class, :string, default: nil
+  attr :color, :string, required: true
+  attr :rest, :global, include: ~w(disabled form name value)
+  attr :type, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def custom_color_button(assigns) do
+    ~H"""
+    <button
+      type={@type}
+      class={[
+        "phx-submit-loading:opacity-75 rounded-lg py-2 px-3",
+        "text-sm font-semibold leading-6",
+        @class
+      ]}
+      style={[
+        "background: #{@color}; color: #{text_color_for_background(@color)};"
+      ]}
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </button>
+    """
+  end
+
+  defp text_color_for_background(color_code) do
+    if contrasting_color(color_code) == "#ffffff", do: "#ffffff", else: "#000000"
+  end
+
+  defp contrasting_color(hex_color) do
+    {r, g, b} = hex_to_rgb(hex_color)
+    luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+    if luminance > 0.5, do: "#000000", else: "#ffffff"
+  end
+
+  defp hex_to_rgb(hex) do
+    hex = String.replace(hex, "#", "")
+
+    {r, g, b} =
+      hex
+      |> String.to_charlist()
+      |> Enum.chunk_every(2)
+      |> Enum.map(&List.to_integer(&1, 16))
+      |> List.to_tuple()
+
+    {r, g, b}
+  end
 end
