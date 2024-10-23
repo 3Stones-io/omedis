@@ -13,27 +13,19 @@ defmodule Omedis.Accounts.CanUpdateTenant do
     "User can update tenant if they are the owner or have write access through a group."
   end
 
-  def match?(actor, context, _opts) do
-    tenant = context.subject.data
+  def match?(nil, _context, _opts), do: false
+  def match?(_actor, %{subject: %{data: nil}}, _opts), do: false
 
-    cond do
-      is_nil(actor) ->
-        false
+  def match?(actor, %{subject: %{data: tenant}}, _opts) when actor.id == tenant.owner_id,
+    do: true
 
-      is_nil(tenant) ->
-        false
-
-      tenant.owner_id == actor.id ->
-        true
-
-      true ->
-        Ash.exists?(
-          filter(
-            AccessRight,
-            tenant_id == ^tenant.id && (write || update) &&
-              exists(group.group_users, user_id == ^actor.id)
-          )
-        )
-    end
+  def match?(actor, %{subject: %{data: tenant}}, _opts) do
+    Ash.exists?(
+      filter(
+        AccessRight,
+        tenant_id == ^tenant.id && (write || update) &&
+          exists(group.group_users, user_id == ^actor.id)
+      )
+    )
   end
 end
