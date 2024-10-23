@@ -130,7 +130,7 @@ defmodule Omedis.Accounts.LogEntry do
     attribute :start_at, :time, allow_nil?: true, public?: true
     attribute :end_at, :time, allow_nil?: true, public?: true
 
-    create_timestamp :created_at
+    create_timestamp :created_at, writable?: true
     update_timestamp :updated_at
   end
 
