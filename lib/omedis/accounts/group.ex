@@ -40,7 +40,6 @@ defmodule Omedis.Accounts.Group do
     define :destroy
     define :by_tenant_id
     define :by_slug, get_by: [:slug], action: :read
-    define :group_slug_exists
   end
 
   actions do
@@ -90,18 +89,6 @@ defmodule Omedis.Accounts.Group do
       filter expr(tenant_id == ^arg(:tenant_id))
     end
 
-    read :group_slug_exists do
-      argument :slug, :string do
-        allow_nil? false
-      end
-
-      argument :tenant_id, :uuid do
-        allow_nil? false
-      end
-
-      filter expr(slug == ^arg(:slug) and tenant_id == ^arg(:tenant_id))
-    end
-
     destroy :destroy do
     end
   end
@@ -110,16 +97,14 @@ defmodule Omedis.Accounts.Group do
     validate present(:name)
   end
 
-  def slug_exists?(slug, opts) do
-    tenant = opts[:tenant]
-
-    group_with_slug =
-      __MODULE__.group_slug_exists!(
-        %{slug: slug, tenant_id: tenant.id},
-        opts
-      )
-
-    !Enum.empty?(group_with_slug)
+  def slug_exists?(slug, tenant_id) do
+    __MODULE__
+    |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
+    |> Ash.read_one!(authorize?: false)
+    |> case do
+      nil -> false
+      _ -> true
+    end
   end
 
   attributes do
@@ -152,21 +137,16 @@ defmodule Omedis.Accounts.Group do
   end
 
   policies do
-    bypass action(:group_slug_exists) do
-      description "Bypass read action permission check for action used when creating group"
-      authorize_if Omedis.Accounts.Permissions.CanCreateGroup
-    end
-
     policy action(:create) do
-      authorize_if Omedis.Accounts.Permissions.CanCreateGroup
+      authorize_if Omedis.Accounts.CanCreateGroup
     end
 
     policy action_type([:update, :destroy]) do
-      authorize_if Omedis.Accounts.Permissions.CanUpdateGroup
+      authorize_if Omedis.Accounts.CanUpdateGroup
     end
 
     policy action_type([:read]) do
-      authorize_if Omedis.Accounts.Permissions.GroupReadAccessFilter
+      authorize_if Omedis.Accounts.AccessFilter
     end
   end
 end

@@ -377,42 +377,4 @@ defmodule Omedis.Accounts.GroupTest do
       end
     end
   end
-
-  describe "group_slug_exists?/2" do
-    test "Filters groups with a given slug", %{user: user, tenant: tenant} do
-      slug = "existing-slug"
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id, slug: slug})
-
-      assert [result] =
-               Group.group_slug_exists!(%{slug: slug, tenant_id: tenant.id},
-                 actor: user,
-                 tenant: tenant
-               )
-
-      assert result.id == group.id
-    end
-
-    test "returns false if the slug doesn't exist", %{user: user, tenant: tenant} do
-      create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "slug"})
-
-      assert [] =
-               Group.group_slug_exists!(%{slug: "non-existent", tenant_id: tenant.id},
-                 actor: user,
-                 tenant: tenant
-               )
-    end
-
-    test "returns empty list if user is unauthorized", %{user: user} do
-      slug = "test-slug"
-      {:ok, tenant} = create_tenant()
-
-      create_group(%{tenant_id: tenant.id, user_id: user.id, slug: slug})
-
-      assert [] =
-               Group.group_slug_exists!(%{slug: slug, tenant_id: tenant.id},
-                 actor: user,
-                 tenant: tenant
-               )
-    end
-  end
 end

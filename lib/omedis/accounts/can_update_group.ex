@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Permissions.CanUpdateGroup do
+defmodule Omedis.Accounts.CanUpdateGroup do
   @moduledoc false
 
   use Ash.Policy.SimpleCheck

@@ -4,21 +4,21 @@ defmodule OmedisWeb.GroupLive.IndexTest do
   import Phoenix.LiveViewTest
   import Omedis.Fixtures
 
+  setup do
+    {:ok, owner} = create_user()
+    {:ok, another_user} = create_user()
+    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
+    {:ok, tenant_2} = create_tenant(%{owner_id: another_user.id})
+
+    %{
+      another_user: another_user,
+      owner: owner,
+      tenant_2: tenant_2,
+      tenant: tenant
+    }
+  end
+
   describe "/tenants/:slug/groups" do
-    setup do
-      {:ok, owner} = create_user()
-      {:ok, another_user} = create_user()
-      {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-      {:ok, tenant_2} = create_tenant(%{owner_id: another_user.id})
-
-      %{
-        owner: owner,
-        another_user: another_user,
-        tenant: tenant,
-        tenant_2: tenant_2
-      }
-    end
-
     test "list groups with pagination", %{
       another_user: another_user,
       conn: conn,
@@ -135,6 +135,70 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       refute view |> element("#delete-group-#{group.id}") |> has_element?()
 
       assert html =~ group.name
+    end
+  end
+
+  describe "/tenants/:slug/groups/:slug/edit" do
+    test "authorized user can edit a group", %{
+      conn: conn,
+      owner: owner,
+      tenant: tenant
+    } do
+      conn = log_in_user(conn, owner)
+
+      {:ok, group} =
+        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
+
+      create_group_user(%{user_id: owner.id, group_id: group.id})
+
+      create_access_right(%{
+        resource_name: "Group",
+        tenant_id: tenant.id,
+        group_id: group.id,
+        read: true,
+        write: true,
+        update: true
+      })
+
+      {:ok, view, html} = live(conn, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
+
+      assert html =~ "Edit Group"
+
+      html =
+        view
+        |> form("#group-form", group: %{name: "New Group Name", slug: "new-group-name"})
+        |> render_submit()
+
+      assert html =~ "Group updated successfully"
+      assert html =~ "New Group Name"
+    end
+
+    test "can't edit a group if not authorized", %{
+      conn: conn,
+      owner: owner,
+      tenant: tenant
+    } do
+      conn = log_in_user(conn, owner)
+
+      {:ok, group} =
+        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
+
+      create_group_user(%{user_id: owner.id, group_id: group.id})
+
+      create_access_right(%{
+        resource_name: "Group",
+        tenant_id: tenant.id,
+        group_id: group.id,
+        read: true,
+        write: false,
+        update: false
+      })
+
+      assert {:error, {:redirect, %{to: path, flash: flash}}} =
+               live(conn, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
+
+      assert path == ~p"/tenants/#{tenant.slug}/groups"
+      assert flash["error"] == "You are not authorized to edit this group"
     end
   end
 end

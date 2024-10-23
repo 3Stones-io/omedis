@@ -1,5 +1,6 @@
 defmodule OmedisWeb.GroupLive.Index do
   use OmedisWeb, :live_view
+
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Tenant
   alias Omedis.PaginationUtils
@@ -134,15 +135,32 @@ defmodule OmedisWeb.GroupLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"group_slug" => group_slug}) do
-    socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Edit Group") end))
-    |> assign(
-      :group,
+    group =
       Group.by_slug!(group_slug,
         actor: socket.assigns.current_user,
         tenant: socket.assigns.tenant
       )
-    )
+
+    if Ash.can?({group, :update}, socket.assigns.current_user,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       ) do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("Edit Group") end)
+      )
+      |> assign(:group, group)
+    else
+      socket
+      |> put_flash(
+        :error,
+        with_locale(socket.assigns.language, fn ->
+          gettext("You are not authorized to edit this group")
+        end)
+      )
+      |> redirect(to: ~p"/tenants/#{socket.assigns.tenant.slug}/groups")
+    end
   end
 
   defp apply_action(socket, :new, _params) do
