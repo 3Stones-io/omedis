@@ -196,10 +196,26 @@ defmodule OmedisWeb.TenantLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:tenant, Tenant.by_slug!(slug, actor: socket.assigns.current_user))}
+     |> assign(:tenant, tenant)
+     |> apply_action(socket.assigns.live_action)}
+  end
+
+  defp apply_action(socket, :show) do
+    assign(socket, :page_title, page_title(:show, socket.assigns.language))
+  end
+
+  defp apply_action(socket, :edit) do
+    if Ash.can?({socket.assigns.tenant, :update}, socket.assigns.current_user) do
+      assign(socket, :page_title, page_title(:edit, socket.assigns.language))
+    else
+      socket
+      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> push_navigate(to: ~p"/tenants/#{socket.assigns.tenant.slug}")
+    end
   end
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Show Tenant") end)

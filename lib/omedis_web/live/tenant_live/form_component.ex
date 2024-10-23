@@ -256,7 +256,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
             :info,
             with_locale(socket.assigns.language, fn -> gettext("Tenant saved.") end)
           )
-          |> push_patch(to: path_for(socket.assigns.action, tenant))
+          |> push_navigate(to: path_for(socket.assigns.action, tenant))
 
         {:noreply, socket}
 

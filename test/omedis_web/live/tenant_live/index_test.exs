@@ -141,31 +141,50 @@ defmodule OmedisWeb.TenantLive.IndexTest do
     test "shows create button when user does not have a tenant", %{conn: conn} do
       {:ok, user} = create_user()
 
-      {:ok, _index_live, html} =
+      {:ok, index_live, html} =
         conn
         |> log_in_user(user)
         |> live(~p"/tenants")
 
       assert html =~ "New Tenant"
-
-      {:ok, _tenant} = create_tenant(%{owner_id: user.id})
-
-      {:ok, _index_live, html} =
-        conn
-        |> log_in_user(user)
-        |> live(~p"/tenants")
-
-      assert html =~ "New Tenant"
-    end
-
-    test "can create a new tenant", %{conn: conn} do
-      {:ok, user} = create_user()
-      {:ok, index_live, _html} = conn |> log_in_user(user) |> live(~p"/tenants")
 
       assert index_live |> element("a", "New Tenant") |> render_click() =~
                "New Tenant"
 
       assert_patch(index_live, ~p"/tenants/new")
+    end
+
+    test "does not show create button when user does not have access", %{
+      conn: conn,
+      user_1: user_1
+    } do
+      {:ok, _tenant} = create_tenant(%{owner_id: user_1.id})
+
+      {:ok, index_live, _html} =
+        conn
+        |> log_in_user(user_1)
+        |> live(~p"/tenants")
+
+      refute index_live |> element("a", "New Tenant") |> has_element?()
+    end
+  end
+
+  describe "/tenants/new" do
+    setup [:register_and_log_in_user]
+
+    test "redirects when user can't create a tenant", %{conn: conn, user: user} do
+      # Create a tenant for the user to make them ineligible for creating another
+      {:ok, _tenant} = create_tenant(%{owner_id: user.id})
+
+      assert {:error, {:live_redirect, %{to: path, flash: flash}}} =
+               live(conn, ~p"/tenants/new")
+
+      assert path == ~p"/tenants"
+      assert flash["error"] =~ "You are not authorized access this page"
+    end
+
+    test "creates a new tenant when user has access", %{conn: conn} do
+      {:ok, index_live, _html} = live(conn, ~p"/tenants/new")
 
       assert index_live
              |> form("#tenant-form", tenant: %{name: "", slug: ""})
@@ -178,15 +197,70 @@ defmodule OmedisWeb.TenantLive.IndexTest do
         |> Enum.into(%{})
         |> Map.put(:name, "Test Tenant")
 
-      html =
-        index_live
-        |> form("#tenant-form", tenant: attrs)
-        |> render_submit()
-
-      assert_patch(index_live, ~p"/tenants")
+      assert {:ok, _index_live, html} =
+               index_live
+               |> form("#tenant-form", tenant: attrs)
+               |> render_submit()
+               |> follow_redirect(conn, ~p"/tenants")
 
       assert html =~ "Tenant saved."
       assert html =~ "Test Tenant"
+    end
+  end
+
+  describe "/tenants/:slug/edit" do
+    setup [:register_and_log_in_user]
+
+    setup %{user: user} do
+      {:ok, tenant} = create_tenant(%{name: "Test Tenant", slug: "test-tenant"})
+      {:ok, group} = create_group()
+      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+
+      {:ok, tenant: tenant, group: group}
+    end
+
+    test "redirects when user can't edit the tenant", %{conn: conn, group: group, tenant: tenant} do
+      {:ok, _access_right} =
+        create_access_right(%{
+          group_id: group.id,
+          read: true,
+          resource_name: "Tenant",
+          tenant_id: tenant.id,
+          update: false,
+          write: false
+        })
+
+      assert {:error, {:live_redirect, %{to: path, flash: flash}}} =
+               live(conn, ~p"/tenants/#{tenant.slug}/edit")
+
+      assert path == ~p"/tenants"
+      assert flash["error"] == "You are not authorized to access this page"
+    end
+
+    test "edits the tenant when user has access", %{conn: conn, user: user} do
+      {:ok, tenant} = create_tenant(%{owner_id: user.id})
+
+      {:ok, show_live, _html} = live(conn, ~p"/tenants/#{tenant.slug}/edit")
+
+      assert show_live
+             |> form("#tenant-form", tenant: %{street: ""})
+             |> render_change() =~ "is required"
+
+      attrs =
+        Tenant
+        |> attrs_for()
+        |> Enum.reject(fn {_k, v} -> is_function(v) end)
+        |> Enum.into(%{})
+        |> Map.put(:name, "Updated Tenant")
+
+      assert {:ok, _show_live, html} =
+               show_live
+               |> form("#tenant-form", tenant: attrs)
+               |> render_submit()
+               |> follow_redirect(conn, ~p"/tenants/#{attrs.slug}")
+
+      assert html =~ "Tenant saved"
+      assert html =~ "Updated Tenant"
     end
   end
 end
