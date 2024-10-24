@@ -105,7 +105,7 @@ defmodule OmedisWeb.ProjectLive.Index do
 
   @impl true
   def mount(%{"slug" => slug}, %{"language" => language} = _session, socket) do
-    tenant = Tenant.by_slug!(slug)
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     next_position = Project.get_max_position_by_tenant_id(tenant.id) + 1
 
     {:ok,
@@ -119,7 +119,7 @@ defmodule OmedisWeb.ProjectLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    tenant = Tenant.by_slug!(params["slug"])
+    tenant = Tenant.by_slug!(params["slug"], actor: socket.assigns.current_user)
     next_position = Project.get_max_position_by_tenant_id(tenant.id) + 1
 
     {:noreply,

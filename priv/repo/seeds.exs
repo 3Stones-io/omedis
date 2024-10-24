@@ -13,7 +13,7 @@
 alias Omedis.Accounts.Tenant
 alias Omedis.Accounts.User
 
-case Ash.read(Tenant) do
+case Ash.read(Tenant, authorize?: false) do
   {:ok, []} ->
     user =
       User.create!(%{
@@ -25,15 +25,18 @@ case Ash.read(Tenant) do
         birthdate: "1980-01-01"
       })
 
-    Tenant.create!(%{
-      city: "Dummy City",
-      country: "Dummy republic",
-      name: "Initial Tenant",
-      slug: "initial-tenant",
-      street: "Dummy Street",
-      owner_id: user.id,
-      zip_code: "12345"
-    })
+    Tenant.create!(
+      %{
+        city: "Dummy City",
+        country: "Dummy republic",
+        name: "Initial Tenant",
+        slug: "initial-tenant",
+        street: "Dummy Street",
+        owner_id: user.id,
+        zip_code: "12345"
+      },
+      authorize?: false
+    )
 
   {:ok, _tenants} ->
     IO.puts("Tenants already exist. Skipping initial tenant creation.")

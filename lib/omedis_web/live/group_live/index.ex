@@ -120,7 +120,7 @@ defmodule OmedisWeb.GroupLive.Index do
 
   @impl true
   def mount(%{"slug" => slug}, %{"language" => language} = _session, socket) do
-    tenant = Tenant.by_slug!(slug)
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
 
     {:ok,
      socket

@@ -16,7 +16,7 @@ defmodule OmedisWeb.Plugs.TenantsCount do
     tenants_count =
       case conn.assigns[:current_user] do
         %User{} = user ->
-          Ash.count!(Tenant, action: :count, actor: user)
+          Ash.count!(Tenant, actor: user)
 
         _ ->
           0

@@ -16,7 +16,7 @@ defmodule OmedisWeb.LiveTenant do
     current_tenant =
       with %User{current_tenant_id: current_tenant_id} when not is_nil(current_tenant_id) <-
              socket.assigns[:current_user],
-           {:ok, tenant} <- Tenant.by_id(current_tenant_id) do
+           {:ok, tenant} <- Tenant.by_id(current_tenant_id, actor: socket.assigns.current_user) do
         tenant
       else
         _ ->
@@ -30,7 +30,7 @@ defmodule OmedisWeb.LiveTenant do
     tenants_count =
       case socket.assigns[:current_user] do
         %User{} = user ->
-          Ash.count!(Tenant, action: :count, actor: user)
+          Ash.count!(Tenant, actor: user)
 
         _ ->
           0

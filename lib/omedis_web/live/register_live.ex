@@ -15,7 +15,7 @@ defmodule OmedisWeb.RegisterLive do
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
-    tenants = Ash.read!(Tenant)
+    tenants = Ash.read!(Tenant, authorize?: false)
 
     socket =
       socket
