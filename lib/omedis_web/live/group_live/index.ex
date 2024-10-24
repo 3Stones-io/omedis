@@ -156,7 +156,7 @@ defmodule OmedisWeb.GroupLive.Index do
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->
-          gettext("You are not authorized to edit this group")
+          gettext("You are not authorized to access this page")
         end)
       )
       |> redirect(to: ~p"/tenants/#{socket.assigns.tenant.slug}/groups")
@@ -164,9 +164,23 @@ defmodule OmedisWeb.GroupLive.Index do
   end
 
   defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("New Group") end))
-    |> assign(:group, nil)
+    if Ash.can?({Group, :create}, socket.assigns.current_user,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       ) do
+      socket
+      |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("New Group") end))
+      |> assign(:group, nil)
+    else
+      socket
+      |> put_flash(
+        :error,
+        with_locale(socket.assigns.language, fn ->
+          gettext("You are not authorized to access this page")
+        end)
+      )
+      |> redirect(to: ~p"/tenants/#{socket.assigns.tenant.slug}/groups")
+    end
   end
 
   defp apply_action(socket, :index, params) do
@@ -224,12 +238,28 @@ defmodule OmedisWeb.GroupLive.Index do
         tenant: socket.assigns.tenant
       )
 
-    Group.destroy(group, actor: socket.assigns.current_user, tenant: socket.assigns.tenant)
+    if Ash.can?({group, :destroy}, socket.assigns.current_user,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       ) do
+      Group.destroy(group, actor: socket.assigns.current_user, tenant: socket.assigns.tenant)
 
-    {:noreply,
-     socket
-     |> stream_delete(:groups, group)
-     |> put_flash(:info, with_locale(socket.assigns.language, fn -> gettext("Group deleted") end))}
+      {:noreply,
+       socket
+       |> stream_delete(:groups, group)
+       |> put_flash(
+         :info,
+         with_locale(socket.assigns.language, fn -> gettext("Group deleted") end)
+       )}
+    else
+      socket
+      |> put_flash(
+        :error,
+        with_locale(socket.assigns.language, fn ->
+          gettext("You are not authorized to delete this group")
+        end)
+      )
+    end
   end
 
   @impl true

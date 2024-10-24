@@ -4,7 +4,6 @@ defmodule Omedis.Accounts.GroupTest do
   import Omedis.Fixtures
 
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupUser
 
   setup do
     {:ok, user} = create_user()
@@ -119,8 +118,7 @@ defmodule Omedis.Accounts.GroupTest do
         update: true
       })
 
-      # Will leave a 'ghost' group_user record :: only checking that no forbidden error is raised
-      assert {:error, _} =
+      assert :ok =
                Group.destroy(group, actor: user, tenant: tenant)
     end
 
@@ -129,7 +127,7 @@ defmodule Omedis.Accounts.GroupTest do
       tenant: tenant
     } do
       {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group"})
-      {:ok, group_user} = create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_user(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -138,8 +136,6 @@ defmodule Omedis.Accounts.GroupTest do
         write: false,
         update: false
       })
-
-      GroupUser.destroy(group_user, actor: user, tenant: tenant)
 
       assert_raise Ash.Error.Forbidden, fn ->
         Group.destroy!(group, actor: user, tenant: tenant)

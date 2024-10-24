@@ -136,6 +136,44 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       assert html =~ group.name
     end
+
+    test "authorized user can delete a group", %{
+      conn: conn,
+      owner: owner,
+      tenant: tenant
+    } do
+      conn = log_in_user(conn, owner)
+
+      {:ok, group} =
+        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
+
+      create_group_user(%{user_id: owner.id, group_id: group.id})
+
+      create_access_right(%{
+        resource_name: "Group",
+        tenant_id: tenant.id,
+        group_id: group.id,
+        read: true,
+        write: true,
+        update: true
+      })
+
+      {:ok, view, _html} = live(conn, ~p"/tenants/#{tenant.slug}/groups")
+
+      assert view
+             |> element("#delete-group-#{group.id}")
+             |> has_element?()
+
+      assert {:ok, conn} =
+               view
+               |> element("#delete-group-#{group.id}")
+               |> render_click()
+               |> follow_redirect(conn)
+
+      html = html_response(conn, 200)
+
+      refute html =~ group.name
+    end
   end
 
   describe "/tenants/:slug/groups/:slug/edit" do
@@ -198,7 +236,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
                live(conn, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
 
       assert path == ~p"/tenants/#{tenant.slug}/groups"
-      assert flash["error"] == "You are not authorized to edit this group"
+      assert flash["error"] == "You are not authorized to access this page"
     end
   end
 end
