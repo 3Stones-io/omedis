@@ -80,8 +80,6 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       assert html =~ project.name
     end
 
-    # TODO: Fix this test
-    @tag :skip
     test "does not render project details if user is unauthorized", %{
       conn: conn,
       tenant: tenant,
@@ -90,15 +88,11 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       {:ok, project} =
         create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
 
-      {:ok, _, html} =
+      assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
         |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}")
-
-      refute html =~ "Project"
-      refute html =~ "Edit project"
-      refute html =~ project.name
-      assert html =~ "Listing Projects"
+      end
     end
   end
 
