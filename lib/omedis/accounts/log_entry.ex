@@ -159,5 +159,9 @@ defmodule Omedis.Accounts.LogEntry do
     policy action_type([:create, :update]) do
       authorize_if CanAccessResource
     end
+
+    policy do
+      authorize_if always()
+    end
   end
 end
