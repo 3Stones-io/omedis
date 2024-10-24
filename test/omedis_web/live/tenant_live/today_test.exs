@@ -139,7 +139,6 @@ defmodule OmedisWeb.TenantLive.TodayTest do
                  ~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
                )
 
-      File.write!("test.html", html)
       refute html =~ log_category.name
     end
   end
