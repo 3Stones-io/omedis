@@ -27,7 +27,7 @@ defmodule OmedisWeb.TenantLive.Index do
             <%= gettext("Listing Tenants") %>
           <% end) %>
           <:actions>
-            <.link patch={~p"/tenants/new"}>
+            <.link :if={Ash.can?({Tenant, :create}, @current_user)} patch={~p"/tenants/new"}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("New Tenant") %>
@@ -105,7 +105,6 @@ defmodule OmedisWeb.TenantLive.Index do
             tenant={@tenant}
             current_user={@current_user}
             language={@language}
-            patch={~p"/tenants"}
           />
         </.modal>
         <PaginationComponent.pagination
@@ -133,15 +132,35 @@ defmodule OmedisWeb.TenantLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"slug" => slug}) do
-    socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Edit Tenant") end))
-    |> assign(:tenant, Tenant.by_slug!(slug))
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+
+    if Ash.can?({tenant, :update}, socket.assigns.current_user) do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("Edit Tenant") end)
+      )
+      |> assign(:tenant, tenant)
+    else
+      socket
+      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> push_navigate(to: ~p"/tenants")
+    end
   end
 
   defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("New Tenant") end))
-    |> assign(:tenant, nil)
+    if Ash.can?({Tenant, :create}, socket.assigns.current_user) do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("New Tenant") end)
+      )
+      |> assign(:tenant, nil)
+    else
+      socket
+      |> put_flash(:error, gettext("You are not authorized access this page"))
+      |> push_navigate(to: ~p"/tenants")
+    end
   end
 
   defp apply_action(socket, :index, params) do

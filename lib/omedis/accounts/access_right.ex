@@ -30,7 +30,7 @@ defmodule Omedis.Accounts.AccessRight do
   end
 
   actions do
-    defaults [:read, :update, :destroy]
+    defaults [:read, :destroy]
 
     create :create do
       accept [
@@ -42,6 +42,12 @@ defmodule Omedis.Accounts.AccessRight do
         :tenant_id,
         :group_id
       ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [:read, :write, :update, :create]
 
       primary? true
     end
