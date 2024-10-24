@@ -62,7 +62,7 @@ defmodule Omedis.MixProject do
       {:picosat_elixir, "~> 0.2"},
       {:finch, "~> 0.18.0"},
       {:ash_authentication, "~> 4.0"},
-      {:ash_postgres, "~> 2.0.0"},
+      {:ash_postgres, "~> 2.4"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
