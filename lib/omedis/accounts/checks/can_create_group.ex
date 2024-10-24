@@ -9,18 +9,7 @@ defmodule Omedis.Accounts.CanCreateGroup do
     "User can create group if they are the tenant owner."
   end
 
-  def match?(actor, context, _opts) do
-    tenant = context.subject.tenant
-
-    cond do
-      is_nil(actor) ->
-        false
-
-      is_nil(tenant) ->
-        false
-
-      true ->
-        tenant.owner_id == actor.id
-    end
-  end
+  def match?(nil, _context, _opts), do: false
+  def match?(_actor, %{subject: %{tenant: nil}}, _opts), do: false
+  def match?(actor, %{subject: %{tenant: tenant}}, _opts), do: tenant.owner_id == actor.id
 end
