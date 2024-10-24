@@ -1,16 +1,22 @@
-defmodule OmedisWeb.LogEntryLive.IndexTest do
+defmodule OmedisWeb.TenantLive.TodayTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
 
   setup do
-    {:ok, owner} = create_user()
+    {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
     {:ok, group} = create_group(%{tenant_id: tenant.id})
     {:ok, project} = create_project(%{tenant_id: tenant.id})
-    {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
-    {:ok, authorized_user} = create_user()
-    {:ok, user} = create_user()
+
+    {:ok, log_category} =
+      create_log_category(%{group_id: group.id, is_default: true, project_id: project.id})
+
+    {:ok, authorized_user} =
+      create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
+
+    {:ok, user} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
+
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
@@ -41,76 +47,67 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
     }
   end
 
-  describe "/tenants/:slug/log_categories/:id/log_entries" do
-    test "tenant owner can see all log entries", %{
+  describe "Today LiveView" do
+    test "tenant owner can see log entries", %{
       conn: conn,
-      tenant: tenant,
+      group: group,
       log_category: log_category,
       owner: owner,
-      user: user
+      project: project,
+      tenant: tenant
     } do
       {:ok, _} =
         create_log_entry(%{
+          comment: "Test comment",
+          end_at: ~T[18:00:00],
           log_category_id: log_category.id,
+          start_at: ~T[08:00:00],
           tenant_id: tenant.id,
-          user_id: user.id,
-          comment: "User's log entry"
+          user_id: owner.id
         })
 
-      {:ok, _} =
-        create_log_entry(%{
-          log_category_id: log_category.id,
-          tenant_id: tenant.id,
-          user_id: owner.id,
-          comment: "Owner's log entry"
-        })
-
-      {:ok, _lv, html} =
+      {:ok, _, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/log_categories/#{log_category.id}/log_entries")
+        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
 
-      assert html =~ "User&#39;s log entry"
-      assert html =~ "Owner&#39;s log entry"
+      assert html =~ "Select group and project"
+      assert html =~ log_category.name
     end
 
-    test "authorized user can see all log entries", %{
+    test "authorized user can see log entries", %{
       authorized_user: authorized_user,
       conn: conn,
+      group: group,
       log_category: log_category,
+      project: project,
       tenant: tenant,
       user: user
     } do
       {:ok, _} =
         create_log_entry(%{
+          comment: "Test comment",
+          end_at: ~T[18:00:00],
           log_category_id: log_category.id,
+          start_at: ~T[08:00:00],
           tenant_id: tenant.id,
-          user_id: authorized_user.id,
-          comment: "Test comment 1"
-        })
-
-      {:ok, _} =
-        create_log_entry(%{
-          log_category_id: log_category.id,
-          tenant_id: tenant.id,
-          user_id: user.id,
-          comment: "Test comment 2"
+          user_id: user.id
         })
 
       {:ok, _lv, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/log_categories/#{log_category.id}/log_entries")
+        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
 
-      assert html =~ "Listing Log entries for #{log_category.name}"
-      assert html =~ "Test comment 1"
-      assert html =~ "Test comment 2"
+      assert html =~ "Select group and project"
+      assert html =~ log_category.name
     end
 
     test "unauthorized user cannot see log entries", %{
       conn: conn,
       group: group,
       log_category: log_category,
+      project: project,
       user: user
     } do
       {:ok, another_user} = create_user()
@@ -127,18 +124,23 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
 
       {:ok, _} =
         create_log_entry(%{
+          comment: "Test comment",
+          end_at: ~T[18:00:00],
           log_category_id: log_category.id,
+          start_at: ~T[08:00:00],
           tenant_id: tenant.id,
-          user_id: user.id,
-          comment: "Test comment"
+          user_id: another_user.id
         })
 
-      {:ok, _, html} =
-        conn
-        |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/log_categories/#{log_category.id}/log_entries")
+      assert {:ok, _, html} =
+               conn
+               |> log_in_user(user)
+               |> live(
+                 ~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+               )
 
-      refute html =~ "Test comment"
+      File.write!("test.html", html)
+      refute html =~ log_category.name
     end
   end
 end

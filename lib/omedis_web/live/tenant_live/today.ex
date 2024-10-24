@@ -57,13 +57,16 @@ defmodule OmedisWeb.TenantLive.Today do
 
   @impl true
   def handle_params(%{"group_id" => id, "project_id" => project_id, "slug" => slug}, _, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    actor = socket.assigns.current_user
+    tenant = Tenant.by_slug!(slug, actor: actor)
     group = Group.by_id!(id)
     current_user = socket.assigns.current_user
     project = Project.by_id!(project_id)
 
     {min_start_in_entries, max_end_in_entries} =
-      get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
+      get_time_range(
+        LogEntry.by_tenant_today!(%{tenant_id: tenant.id}, actor: actor, tenant: tenant)
+      )
 
     start_at =
       get_start_time_to_use(min_start_in_entries, current_user.daily_start_at)
@@ -85,7 +88,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {:noreply,
      socket
-     |> assign_active_log_category(categories, group.id, tenant.id)
+     |> assign(:current_time, current_time)
      |> assign(:page_title, "Today")
      |> assign(:tenant, tenant)
      |> assign(:start_at, start_at)
@@ -95,7 +98,7 @@ defmodule OmedisWeb.TenantLive.Today do
      |> assign(:group, group)
      |> assign(:project, project)
      |> assign(:log_entries, log_entries)
-     |> assign(:current_time, current_time)
+     |> assign_active_log_category(categories, group.id, tenant)
      |> assign(:categories, categories)}
   end
 
@@ -128,12 +131,13 @@ defmodule OmedisWeb.TenantLive.Today do
     Time.add(time, offset, :hour)
   end
 
-  defp assign_active_log_category(socket, log_categories, group_id, tenant_id) do
-    entries = get_active_entry(log_categories)
+  defp assign_active_log_category(socket, log_categories, group_id, tenant) do
+    current_user = socket.assigns.current_user
+    entries = get_active_entry(log_categories, actor: current_user, tenant: tenant)
 
     if Enum.empty?(entries) do
       default_log_category = LogCategory.get_default_log_category(group_id)
-      create_or_stop_log_entry(default_log_category.id, tenant_id, socket.assigns.current_user.id)
+      create_or_stop_log_entry(default_log_category.id, tenant, current_user)
       assign(socket, :active_log_category_id, default_log_category.id)
     else
       log_category_id = List.first(entries).log_category_id
@@ -141,10 +145,12 @@ defmodule OmedisWeb.TenantLive.Today do
     end
   end
 
-  defp get_active_entry(log_categories) do
+  defp get_active_entry(log_categories, opts) do
     log_categories
     |> Stream.map(fn log_category ->
-      {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category.id})
+      {:ok, log_entries} =
+        LogEntry.by_log_category_today(%{log_category_id: log_category.id}, opts)
+
       Enum.filter(log_entries, &is_nil(&1.end_at))
     end)
     |> Stream.filter(&(!Enum.empty?(&1)))
@@ -165,7 +171,9 @@ defmodule OmedisWeb.TenantLive.Today do
       format_entries(categories, tenant)
 
     {min_start_in_entries, max_end_in_entries} =
-      get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))
+      get_time_range(
+        LogEntry.by_tenant_today!(%{tenant_id: tenant.id}, actor: current_user, tenant: tenant)
+      )
 
     start_at =
       get_start_time_to_use(min_start_in_entries, current_user.daily_start_at)
@@ -249,7 +257,9 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp categories(group_id, project_id) do
-    case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
+    case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id},
+           authorize?: false
+         ) do
       {:ok, categories} ->
         categories
 
@@ -315,8 +325,8 @@ defmodule OmedisWeb.TenantLive.Today do
   def handle_event("select_log_category", %{"log_category_id" => log_category_id}, socket) do
     create_or_stop_log_entry(
       log_category_id,
-      socket.assigns.tenant.id,
-      socket.assigns.current_user.id
+      socket.assigns.tenant,
+      socket.assigns.current_user
     )
 
     {:noreply,
@@ -343,51 +353,59 @@ defmodule OmedisWeb.TenantLive.Today do
      )}
   end
 
-  defp create_or_stop_log_entry(log_category_id, tenant_id, user_id) do
-    {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category_id})
+  defp create_or_stop_log_entry(log_category_id, tenant, user) when is_binary(log_category_id) do
+    {:ok, log_entries} =
+      LogEntry.by_log_category_today(%{log_category_id: log_category_id},
+        actor: user,
+        tenant: tenant
+      )
 
     case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
       nil ->
-        stop_any_active_log_entry(tenant_id)
-        create_log_entry(log_category_id, tenant_id, user_id)
+        stop_any_active_log_entry(tenant, user)
+        create_log_entry(log_category_id, tenant, user)
 
       log_entry ->
-        create_or_stop_log_entry(log_entry, log_category_id)
+        create_or_stop_log_entry(log_entry, log_category_id, actor: user, tenant: tenant)
     end
   end
 
-  defp create_or_stop_log_entry(log_entry, log_category_id) do
+  defp create_or_stop_log_entry(log_entry, log_category_id, opts) do
     if log_entry.log_category_id == log_category_id do
-      stop_log_entry(log_entry)
+      stop_log_entry(log_entry, opts)
     else
-      stop_log_entry(log_entry)
-      create_log_entry(log_category_id, log_entry.tenant_id, log_entry.user_id)
+      stop_log_entry(log_entry, opts)
+      create_log_entry(log_category_id, log_entry.tenant, log_entry.user)
     end
   end
 
-  defp stop_any_active_log_entry(tenant_id) do
-    {:ok, log_entries} = LogEntry.by_tenant(%{tenant_id: tenant_id})
+  defp stop_any_active_log_entry(tenant, user) do
+    {:ok, log_entries} = LogEntry.by_tenant(%{tenant_id: tenant.id}, actor: user, tenant: tenant)
 
     case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
       nil ->
         :ok
 
       log_entry ->
-        stop_log_entry(log_entry)
+        stop_log_entry(log_entry, actor: user, tenant: tenant)
     end
   end
 
-  defp create_log_entry(log_category_id, tenant_id, user_id) do
-    LogEntry.create(%{
-      log_category_id: log_category_id,
-      tenant_id: tenant_id,
-      user_id: user_id,
-      start_at: Time.utc_now()
-    })
+  defp create_log_entry(log_category_id, tenant, user) do
+    LogEntry.create(
+      %{
+        log_category_id: log_category_id,
+        tenant_id: tenant.id,
+        user_id: user.id,
+        start_at: Time.utc_now()
+      },
+      actor: user,
+      tenant: tenant
+    )
   end
 
-  def stop_log_entry(log_entry) do
-    LogEntry.update(log_entry, %{end_at: Time.utc_now()})
+  def stop_log_entry(log_entry, opts) do
+    LogEntry.update(log_entry, %{end_at: Time.utc_now()}, opts)
   end
 
   defp latest_group_for_a_tenant(tenant_id) do
@@ -426,7 +444,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp projects_for_a_tenant(tenant_id) do
-    case Project.by_tenant_id(%{tenant_id: tenant_id}) do
+    case Project.by_tenant_id(%{tenant_id: tenant_id}, authorize?: false) do
       {:ok, projects} ->
         projects
         |> Enum.map(fn project -> {project.name, project.id} end)
