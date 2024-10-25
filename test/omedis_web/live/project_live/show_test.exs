@@ -102,13 +102,13 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       tenant: tenant,
       owner: owner
     } do
-      params = %{tenant_id: tenant.id, name: "Test Project", position: "1"}
+      params = %{tenant_id: tenant.id, name: "Test Project"}
       {:ok, project} = create_project(params)
 
       {:ok, index_live, _} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/show/edit")
 
       params = Map.put(params, :name, "Updated Project")
 
@@ -117,7 +117,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects/#{project.id}")
 
       assert html =~ "Project saved."
       assert html =~ "Updated Project"
@@ -128,13 +128,13 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       tenant: tenant,
       authorized_user: authorized_user
     } do
-      params = %{tenant_id: tenant.id, name: "Test Project", position: "1"}
+      params = %{tenant_id: tenant.id, name: "Test Project"}
       {:ok, project} = create_project(params)
 
       {:ok, index_live, _} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/show/edit")
 
       params = Map.put(params, :name, "Updated Project")
 
@@ -143,7 +143,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects/#{project.id}")
 
       assert html =~ "Project saved."
       assert html =~ "Updated Project"
@@ -155,14 +155,14 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       user: user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/show/edit")
 
-      assert redirect_path == ~p"/tenants/#{tenant.slug}/projects"
+      assert redirect_path == ~p"/tenants/#{tenant.slug}/projects/#{project.id}"
       assert flash["error"] == "You are not authorized to access this page"
     end
   end

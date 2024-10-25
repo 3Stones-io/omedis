@@ -43,7 +43,7 @@ defmodule Omedis.Accounts.ProjectTest do
         })
 
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       assert {:ok, %{results: projects}} =
                Project.list_paginated(
@@ -144,7 +144,7 @@ defmodule Omedis.Accounts.ProjectTest do
         })
 
       {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
-      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X", position: "1"})
+      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X"})
 
       assert {:ok, paginated_result} =
                Project.list_paginated(
@@ -230,7 +230,7 @@ defmodule Omedis.Accounts.ProjectTest do
         })
 
       {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
-      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X", position: "1"})
+      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X"})
 
       assert {:error, %Ash.Error.Forbidden{} = _error} =
                Project.list_paginated(
@@ -253,7 +253,7 @@ defmodule Omedis.Accounts.ProjectTest do
         })
 
       {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
-      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X", position: "1"})
+      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X"})
 
       assert {:error, %Ash.Error.Forbidden{} = _error} =
                Project.list_paginated(
@@ -275,7 +275,7 @@ defmodule Omedis.Accounts.ProjectTest do
           group_id: group.id
         })
 
-      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X", position: "1"})
+      {:ok, _} = create_project(%{tenant_id: tenant.id, name: "Project X"})
 
       assert {:ok, paginated_result} =
                Project.list_paginated(

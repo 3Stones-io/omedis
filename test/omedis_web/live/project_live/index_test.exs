@@ -3,7 +3,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
   import Phoenix.LiveViewTest
 
-  @create_attrs %{name: "Test Project", position: "1"}
+  @create_attrs %{name: "Test Project"}
 
   setup do
     {:ok, owner} = create_user()
@@ -52,7 +52,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       tenant: tenant
     } do
       {:ok, _} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -68,7 +68,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       authorized_user: authorized_user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -84,7 +84,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       user: unauthorized_user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -100,7 +100,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       user: unauthorized_user
     } do
       {:ok, _} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -116,7 +116,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       user: unauthorized_user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
@@ -200,7 +200,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       tenant: tenant
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
@@ -226,7 +226,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       authorized_user: authorized_user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
@@ -252,7 +252,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       user: unauthorized_user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn
