@@ -44,13 +44,13 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
   end
 
   describe "/tenants/:slug/projects/:id" do
-    test "renders project details if is the tenant owner", %{
+    test "renders project details if user is the tenant owner", %{
       conn: conn,
       tenant: tenant,
       owner: owner
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -68,7 +68,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       authorized_user: authorized_user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -86,7 +86,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       user: user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project", position: "1"})
+        create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
