@@ -103,7 +103,6 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       assert html =~ log_category.name
     end
 
-    @tag :skip
     test "unauthorized user cannot see log entries", %{
       conn: conn,
       group: group,

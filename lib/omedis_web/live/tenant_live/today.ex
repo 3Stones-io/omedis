@@ -257,9 +257,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp categories(group_id, project_id) do
-    case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id},
-           authorize?: false
-         ) do
+    case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
       {:ok, categories} ->
         categories
 
@@ -444,7 +442,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp projects_for_a_tenant(tenant_id) do
-    case Project.by_tenant_id(%{tenant_id: tenant_id}, authorize?: false) do
+    case Project.by_tenant_id(%{tenant_id: tenant_id}) do
       {:ok, projects} ->
         projects
         |> Enum.map(fn project -> {project.name, project.id} end)
