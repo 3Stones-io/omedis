@@ -18,9 +18,7 @@ defmodule OmedisWeb.GroupLive.Index do
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb items={[
-          {"Home", ~p"/", false},
-          {"Tenants", ~p"/tenants", false},
-          {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+          {"Home", ~p"/tenants/#{@tenant.slug}", false},
           {"Groups", ~p"/tenants/#{@tenant.slug}", true}
         ]} />
 
