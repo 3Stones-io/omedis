@@ -1,6 +1,6 @@
 defmodule OmedisWeb.LogEntryLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
   alias Omedis.PaginationUtils
@@ -22,16 +22,14 @@ defmodule OmedisWeb.LogEntryLive.Index do
           {"Home", ~p"/tenants/#{@tenant.slug}", false},
           {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
           {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-          {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories",
-           false},
-          {@log_category.name,
-           ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
-           false},
+          {"Activities", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities", false},
+          {@activity.name,
+           ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@activity.id}", false},
           {"Log Entries", "", true}
         ]} />
 
         <.header>
-          Listing Log entries for <%= @log_category.name %>
+          Listing Log entries for <%= @activity.name %>
         </.header>
 
         <.table id="log_entries" rows={@streams.log_entries}>
@@ -50,7 +48,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category.id}/log_entries"}
+          resource_path={~p"/tenants/#{@tenant.slug}/activities/#{@activity.id}/log_entries"}
           total_pages={@total_pages}
         />
       </div>
@@ -70,15 +68,15 @@ defmodule OmedisWeb.LogEntryLive.Index do
   def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
 
-    {:ok, log_category} =
+    {:ok, activity} =
       id
-      |> LogCategory.by_id!()
+      |> Activity.by_id!()
       |> Ash.load(:group)
 
     {:noreply,
      socket
-     |> assign(:group, log_category.group)
-     |> assign(:log_category, log_category)
+     |> assign(:group, activity.group)
+     |> assign(:activity, activity)
      |> assign(:tenant, tenant)
      |> apply_action(socket.assigns.live_action, params)}
   end
@@ -114,12 +112,12 @@ defmodule OmedisWeb.LogEntryLive.Index do
         page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
         offset_value = (page_value - 1) * 10
 
-        LogEntry.by_log_category(%{log_category_id: params["id"]},
+        LogEntry.by_activity(%{activity_id: params["id"]},
           page: [count: true, offset: offset_value]
         )
 
       _ ->
-        LogEntry.by_log_category(%{log_category_id: params["id"]}, page: [count: true])
+        LogEntry.by_activity(%{activity_id: params["id"]}, page: [count: true])
     end
   end
 end
