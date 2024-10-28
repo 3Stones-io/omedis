@@ -86,8 +86,7 @@ defmodule Omedis.Accounts.ProjectTest do
         {:ok, _} =
           create_project(%{
             tenant_id: tenant.id,
-            name: "Accessible Project #{i}",
-            position: "#{i}"
+            name: "Accessible Project #{i}"
           })
       end
 
@@ -95,8 +94,7 @@ defmodule Omedis.Accounts.ProjectTest do
         {:ok, _} =
           create_project(%{
             tenant_id: other_tenant.id,
-            name: "Inaccessible Project #{i}",
-            position: "#{i}"
+            name: "Inaccessible Project #{i}"
           })
       end
 
@@ -185,12 +183,12 @@ defmodule Omedis.Accounts.ProjectTest do
 
       for i <- 1..5 do
         {:ok, _} =
-          create_project(%{tenant_id: tenant_1.id, name: "T1 Project #{i}", position: "#{i}"})
+          create_project(%{tenant_id: tenant_1.id, name: "T1 Project #{i}"})
       end
 
       for i <- 1..3 do
         {:ok, _} =
-          create_project(%{tenant_id: tenant_2.id, name: "T2 Project #{i}", position: "#{i}"})
+          create_project(%{tenant_id: tenant_2.id, name: "T2 Project #{i}"})
       end
 
       assert {:ok, paginated_result} =
@@ -291,7 +289,11 @@ defmodule Omedis.Accounts.ProjectTest do
 
   describe "create/1" do
     test "tenant owner can create a project", %{owner: owner, tenant: tenant} do
-      attrs = %{name: "New Project", tenant_id: tenant.id, position: "1"}
+      attrs =
+        Project
+        |> attrs_for()
+        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:name, "New Project")
 
       assert {:ok, project} = Project.create(attrs, actor: owner, tenant: tenant)
       assert project.name == "New Project"
@@ -301,14 +303,22 @@ defmodule Omedis.Accounts.ProjectTest do
       authorized_user: authorized_user,
       tenant: tenant
     } do
-      attrs = %{name: "New Project", tenant_id: tenant.id, position: "1"}
+      attrs =
+        Project
+        |> attrs_for()
+        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:name, "New Project")
 
       assert {:ok, project} = Project.create(attrs, actor: authorized_user, tenant: tenant)
       assert project.name == "New Project"
     end
 
     test "unauthorized user cannot create a project", %{user: user, tenant: tenant} do
-      attrs = %{name: "New Project", tenant_id: tenant.id, position: "1"}
+      attrs =
+        Project
+        |> attrs_for()
+        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:name, "New Project")
 
       assert {:error, %Ash.Error.Forbidden{}} = Project.create(attrs, actor: user, tenant: tenant)
     end
@@ -316,8 +326,14 @@ defmodule Omedis.Accounts.ProjectTest do
 
   describe "update/1" do
     test "tenant owner can update a project", %{owner: owner, tenant: tenant} do
+      attrs =
+        Project
+        |> attrs_for()
+        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:name, "Test Project")
+
       {:ok, project} =
-        Project.create(%{tenant_id: tenant.id, name: "Test Project", position: "1"},
+        Project.create(attrs,
           actor: owner,
           tenant: tenant
         )
@@ -332,8 +348,14 @@ defmodule Omedis.Accounts.ProjectTest do
       authorized_user: authorized_user,
       tenant: tenant
     } do
+      attrs =
+        Project
+        |> attrs_for()
+        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:name, "Test Project")
+
       {:ok, project} =
-        Project.create(%{tenant_id: tenant.id, name: "Test Project", position: "1"},
+        Project.create(attrs,
           actor: authorized_user,
           tenant: tenant
         )
@@ -352,8 +374,14 @@ defmodule Omedis.Accounts.ProjectTest do
       user: user,
       tenant: tenant
     } do
+      attrs =
+        Project
+        |> attrs_for()
+        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:name, "Test Project")
+
       {:ok, project} =
-        Project.create(%{tenant_id: tenant.id, name: "Test Project", position: "1"},
+        Project.create(attrs,
           actor: authorized_user,
           tenant: tenant
         )
