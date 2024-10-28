@@ -58,8 +58,6 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
         |> log_in_user(owner)
         |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}")
 
-      File.write!("test.html", html)
-
       assert html =~ "Project"
       assert html =~ project.name
       assert html =~ "Edit project"
