@@ -2,6 +2,7 @@
 
 To start your Phoenix server:
 
+- Use [`mise`](https://mise.jdx.dev) or [`asdf`](https://asdf-vm.com) to install the correct versions of Erlang, Elixir and Node.js (check [`.tool-versions`](.tool-versions) file)
 - Run `mix setup` to install and setup dependencies
 - Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
