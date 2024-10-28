@@ -68,7 +68,7 @@ defmodule OmedisWeb.ProjectLive.Index do
             </div>
 
             <.link
-              :if={Ash.can?({Project, :update}, @current_user, tenant: @tenant)}
+              :if={Ash.can?({project, :update}, @current_user, tenant: @tenant)}
               patch={~p"/tenants/#{@tenant.slug}/projects/#{project}/edit"}
             >
               <%= with_locale(@language, fn -> %>
@@ -79,7 +79,7 @@ defmodule OmedisWeb.ProjectLive.Index do
         </.table>
 
         <.modal
-          :if={@user_has_access_rights and @live_action in [:new, :edit]}
+          :if={@live_action in [:new, :edit]}
           id="project-modal"
           show
           on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/projects")}
@@ -137,56 +137,43 @@ defmodule OmedisWeb.ProjectLive.Index do
 
     {:noreply,
      socket
-     |> assign_access_rights_and_maybe_apply_action(socket.assigns.live_action, params)
-     |> assign(:next_position, next_position)}
+     |> assign(:next_position, next_position)
+     |> maybe_enforce_access_rights_and_apply_action(socket.assigns.live_action, params)}
   end
 
-  defp assign_access_rights_and_maybe_apply_action(socket, :edit, %{"id" => id}) do
+  defp maybe_enforce_access_rights_and_apply_action(socket, :edit, %{"id" => id}) do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
 
-    user_has_access_rights =
-      Ash.can?({Project, :update}, actor, tenant: tenant)
+    project = Project.by_id(id, actor: actor, tenant: tenant)
 
-    if user_has_access_rights do
-      socket
-      |> assign(
-        :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("Edit Project") end)
-      )
-      |> assign(:project, Project.by_id!(id, actor: actor, tenant: tenant))
-      |> assign(:user_has_access_rights, user_has_access_rights)
-    else
-      socket
-      |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
-      |> assign(:user_has_access_rights, false)
-      |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects")
-      |> put_flash(
-        :error,
-        with_locale(socket.assigns.language, fn ->
-          gettext("You are not authorized to access this page")
-        end)
-      )
+    case project do
+      {:ok, project} ->
+        enforce_access_rights(socket, project, actor: actor, tenant: tenant)
+
+      _ ->
+        handle_unauthorized_access(socket)
     end
   end
 
-  defp assign_access_rights_and_maybe_apply_action(socket, :index, params) do
+  defp maybe_enforce_access_rights_and_apply_action(socket, :index, params) do
     socket
     |> assign(
       :page_title,
       with_locale(socket.assigns.language, fn -> gettext("Projects") end)
     )
     |> assign(:project, nil)
-    |> assign(:user_has_access_rights, false)
     |> list_paginated_projects(params)
   end
 
-  defp assign_access_rights_and_maybe_apply_action(socket, :new, _) do
+  defp maybe_enforce_access_rights_and_apply_action(socket, :new, _) do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
+    enforce_access_rights(socket, nil, actor: actor, tenant: tenant)
+  end
 
-    user_has_access_rights =
-      Ash.can?({Project, :create}, actor, tenant: tenant)
+  defp enforce_access_rights(socket, nil, opts) do
+    user_has_access_rights = Ash.can?({Project, :create}, opts[:actor], tenant: opts[:tenant])
 
     if user_has_access_rights do
       socket
@@ -196,17 +183,39 @@ defmodule OmedisWeb.ProjectLive.Index do
       )
       |> assign(:user_has_access_rights, true)
     else
-      socket
-      |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
-      |> assign(:user_has_access_rights, false)
-      |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects")
-      |> put_flash(
-        :error,
-        with_locale(socket.assigns.language, fn ->
-          gettext("You are not authorized to access this page")
-        end)
-      )
+      handle_unauthorized_access(socket)
     end
+  end
+
+  defp enforce_access_rights(socket, project, opts) do
+    user_has_access_rights = Ash.can?({project, :update}, opts[:actor], tenant: opts[:tenant])
+
+    if user_has_access_rights do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("Edit Project") end)
+      )
+      |> assign(:project, project)
+      |> assign(:user_has_access_rights, true)
+    else
+      handle_unauthorized_access(socket)
+    end
+  end
+
+  defp handle_unauthorized_access(socket) do
+    tenant = socket.assigns.tenant
+
+    socket
+    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
+    |> assign(:user_has_access_rights, false)
+    |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects")
+    |> put_flash(
+      :error,
+      with_locale(socket.assigns.language, fn ->
+        gettext("You are not authorized to access this page")
+      end)
+    )
   end
 
   defp list_paginated_projects(%Phoenix.LiveView.Socket{} = socket, params) do

@@ -36,7 +36,7 @@ defmodule OmedisWeb.ProjectLive.Show do
               patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}/show/edit"}
               phx-click={JS.push_focus()}
             >
-              <.button :if={@user_has_access_rights}>
+              <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @tenant)}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Edit project") %>
                 <% end) %>
@@ -58,7 +58,9 @@ defmodule OmedisWeb.ProjectLive.Show do
         <.back navigate={~p"/tenants/#{@tenant.slug}/projects"}>Back to projects</.back>
 
         <.modal
-          :if={@live_action == :edit and @user_has_access_rights}
+          :if={
+            @live_action == :edit and Ash.can?({@project, :update}, @current_user, tenant: @tenant)
+          }
           id="project-modal"
           show
           on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/projects/#{@project}")}
@@ -102,21 +104,21 @@ defmodule OmedisWeb.ProjectLive.Show do
      |> assign(:next_position, project.position)
      |> assign(:tenants, Ash.read!(Tenant, actor: actor))
      |> assign(:tenant, tenant)
-     |> assign_access_rights()}
+     |> maybe_check_and_enforce_edit_access(socket.assigns.live_action)}
   end
 
-  defp assign_access_rights(socket) do
+  defp maybe_check_and_enforce_edit_access(socket, :edit) do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
+    project = socket.assigns.project
 
-    user_has_access_rights = Ash.can?({Project, :update}, actor, tenant: tenant)
+    user_has_access_rights = Ash.can?({project, :update}, actor, tenant: tenant)
 
     if user_has_access_rights do
-      assign(socket, :user_has_access_rights, true)
+      socket
     else
       socket
-      |> assign(:user_has_access_rights, false)
-      |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects")
+      |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects/#{socket.assigns.project.id}")
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->
@@ -125,6 +127,8 @@ defmodule OmedisWeb.ProjectLive.Show do
       )
     end
   end
+
+  defp maybe_check_and_enforce_edit_access(socket, _), do: socket
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Project") end)
   defp page_title(:edit, language), do: with_locale(language, fn -> gettext("Edit Project") end)
