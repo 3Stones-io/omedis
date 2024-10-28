@@ -16,15 +16,6 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Project",
-        tenant_id: tenant.id,
-        write: true
-      })
-
-    {:ok, _} =
-      create_access_right(%{
-        group_id: group.id,
-        read: true,
         resource_name: "Tenant",
         tenant_id: tenant.id
       })
@@ -46,9 +37,19 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
   describe "/tenants/:slug/projects/:id" do
     test "renders project details if user is the tenant owner", %{
       conn: conn,
+      group: group,
       tenant: tenant,
       owner: owner
     } do
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group.id,
+          read: true,
+          resource_name: "Project",
+          tenant_id: tenant.id,
+          write: true
+        })
+
       {:ok, project} =
         create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
@@ -57,16 +58,28 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
         |> log_in_user(owner)
         |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}")
 
+      File.write!("test.html", html)
+
       assert html =~ "Project"
-      assert html =~ "Edit project"
       assert html =~ project.name
+      assert html =~ "Edit project"
     end
 
     test "renders project details if user is authorized", %{
       conn: conn,
+      group: group,
       tenant: tenant,
       authorized_user: authorized_user
     } do
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group.id,
+          read: true,
+          resource_name: "Project",
+          tenant_id: tenant.id,
+          write: true
+        })
+
       {:ok, project} =
         create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
@@ -99,9 +112,19 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
   describe "/tenants/:slug/projects/:id/show/edit" do
     test "allows updating a project if user is the tenant owner", %{
       conn: conn,
+      group: group,
       tenant: tenant,
       owner: owner
     } do
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group.id,
+          read: true,
+          resource_name: "Project",
+          tenant_id: tenant.id,
+          write: true
+        })
+
       params = %{tenant_id: tenant.id, name: "Test Project"}
       {:ok, project} = create_project(params)
 
@@ -125,9 +148,19 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
 
     test "allows updating a project if user is authorized", %{
       conn: conn,
+      group: group,
       tenant: tenant,
       authorized_user: authorized_user
     } do
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group.id,
+          read: true,
+          resource_name: "Project",
+          tenant_id: tenant.id,
+          write: true
+        })
+
       params = %{tenant_id: tenant.id, name: "Test Project"}
       {:ok, project} = create_project(params)
 
@@ -151,9 +184,22 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
 
     test "doesn't allow updating a project if user is unauthorized", %{
       conn: conn,
+      group: group,
       tenant: tenant,
       user: user
     } do
+      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group.id,
+          read: true,
+          resource_name: "Project",
+          tenant_id: tenant.id,
+          update: false,
+          write: false
+        })
+
       {:ok, project} =
         create_project(%{tenant_id: tenant.id, name: "Test Project"})
 
