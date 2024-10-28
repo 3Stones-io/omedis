@@ -55,10 +55,10 @@ defmodule OmedisWeb.TenantLive.Today do
 
   @impl true
   def handle_params(%{"group_id" => id, "project_id" => project_id, "slug" => slug}, _, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     current_user = socket.assigns.current_user
-    project = Project.by_id!(project_id)
+    tenant = Tenant.by_slug!(slug, actor: current_user)
     group = Group.by_id!(id, tenant: tenant, actor: current_user)
+    project = Project.by_id!(project_id, tenant: tenant, actor: current_user)
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(LogEntry.by_tenant_today!(%{tenant_id: tenant.id}))

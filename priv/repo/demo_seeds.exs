@@ -81,7 +81,8 @@ end
         resource_name: "Group",
         read: true,
         write: true
-      }
+      },
+      %{group_id: group_3.id, read: true, resource_name: "Tenant", tenant_id: tenant_2.id}
     ],
     nil
   )

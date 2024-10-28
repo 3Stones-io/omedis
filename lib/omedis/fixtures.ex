@@ -44,7 +44,7 @@ defmodule Omedis.Fixtures do
   def attrs_for(Accounts.Group) do
     %{
       name: Faker.Company.name(),
-      slug: Faker.Lorem.word()
+      slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}"
     }
   end
 
@@ -59,7 +59,7 @@ defmodule Omedis.Fixtures do
     %{
       name: Faker.Lorem.sentence(),
       tenant_id: fn -> create_tenant().id end,
-      position: Faker.random_between(1, 100)
+      position: Faker.random_between(1, 100) |> to_string()
     }
   end
 
