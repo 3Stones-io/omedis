@@ -59,9 +59,9 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, _} =
         create_log_entry(%{
           comment: "Test comment",
-          end_at: ~T[18:00:00],
+          end_at: ~T[06:00:00],
           log_category_id: log_category.id,
-          start_at: ~T[08:00:00],
+          start_at: ~T[05:00:00],
           tenant_id: tenant.id,
           user_id: owner.id
         })
@@ -72,7 +72,8 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       assert html =~ "Select group and project"
-      assert html =~ log_category.name
+      assert html =~ "05:00"
+      assert html =~ "06:00"
     end
 
     test "authorized user can see log entries", %{
@@ -87,9 +88,9 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, _} =
         create_log_entry(%{
           comment: "Test comment",
-          end_at: ~T[18:00:00],
+          end_at: ~T[06:00:00],
           log_category_id: log_category.id,
-          start_at: ~T[08:00:00],
+          start_at: ~T[05:00:00],
           tenant_id: tenant.id,
           user_id: user.id
         })
@@ -100,7 +101,8 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       assert html =~ "Select group and project"
-      assert html =~ log_category.name
+      assert html =~ "05:00"
+      assert html =~ "06:00"
     end
 
     test "unauthorized user cannot see log entries", %{
@@ -125,9 +127,9 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, _} =
         create_log_entry(%{
           comment: "Test comment",
-          end_at: ~T[18:00:00],
+          end_at: ~T[06:00:00],
           log_category_id: log_category.id,
-          start_at: ~T[08:00:00],
+          start_at: ~T[05:00:00],
           tenant_id: tenant.id,
           user_id: another_user.id
         })
@@ -139,7 +141,8 @@ defmodule OmedisWeb.TenantLive.TodayTest do
                  ~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
                )
 
-      refute html =~ log_category.name
+      refute html =~ "05:00"
+      refute html =~ "06:00"
     end
   end
 end

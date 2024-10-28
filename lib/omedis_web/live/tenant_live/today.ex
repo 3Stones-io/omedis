@@ -61,7 +61,7 @@ defmodule OmedisWeb.TenantLive.Today do
     tenant = Tenant.by_slug!(slug, actor: actor)
     group = Group.by_id!(id)
     current_user = socket.assigns.current_user
-    project = Project.by_id!(project_id)
+    project = Project.by_id!(project_id, actor: actor, tenant: tenant)
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(
@@ -80,7 +80,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     update_categories_and_current_time_every_minute()
 
-    categories = categories(group.id, project.id)
+    categories = categories(group.id, project.id, actor: current_user, tenant: tenant)
 
     log_entries = format_entries(categories, tenant)
 
@@ -94,7 +94,7 @@ defmodule OmedisWeb.TenantLive.Today do
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
      |> assign(:groups, groups_for_a_tenant(tenant.id))
-     |> assign(:projects, projects_for_a_tenant(tenant.id))
+     |> assign(:projects, projects_for_a_tenant(tenant, current_user))
      |> assign(:group, group)
      |> assign(:project, project)
      |> assign(:log_entries, log_entries)
@@ -106,7 +106,7 @@ defmodule OmedisWeb.TenantLive.Today do
   def handle_params(%{"slug" => slug}, _, socket) do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     group = latest_group_for_a_tenant(tenant.id)
-    project = latest_project_for_a_tenant(tenant.id)
+    project = latest_project_for_a_tenant(tenant, socket.assigns.current_user)
 
     {:noreply,
      socket
@@ -165,7 +165,7 @@ defmodule OmedisWeb.TenantLive.Today do
     current_user = socket.assigns.current_user
     project = socket.assigns.project
 
-    categories = categories(group.id, project.id)
+    categories = categories(group.id, project.id, actor: current_user, tenant: tenant)
 
     log_entries =
       format_entries(categories, tenant)
@@ -256,8 +256,11 @@ defmodule OmedisWeb.TenantLive.Today do
     end_time
   end
 
-  defp categories(group_id, project_id) do
-    case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
+  defp categories(group_id, project_id, opts) do
+    case LogCategory.by_group_id_and_project_id(
+           %{group_id: group_id, project_id: project_id},
+           opts
+         ) do
       {:ok, categories} ->
         categories
 
@@ -321,16 +324,27 @@ defmodule OmedisWeb.TenantLive.Today do
   @impl true
 
   def handle_event("select_log_category", %{"log_category_id" => log_category_id}, socket) do
+    current_user = socket.assigns.current_user
+    tenant = socket.assigns.tenant
+    %{id: group_id} = _group = socket.assigns.group
+    %{id: project_id} = _project = socket.assigns.project
+
     create_or_stop_log_entry(
       log_category_id,
-      socket.assigns.tenant,
-      socket.assigns.current_user
+      tenant,
+      current_user
     )
 
     {:noreply,
      socket
      |> assign(:active_log_category_id, log_category_id)
-     |> assign(:categories, categories(socket.assigns.group.id, socket.assigns.project.id))}
+     |> assign(
+       :categories,
+       categories(group_id, project_id,
+         actor: current_user,
+         tenant: tenant
+       )
+     )}
   end
 
   def handle_event("select_group", %{"group_id" => id}, socket) do
@@ -418,8 +432,8 @@ defmodule OmedisWeb.TenantLive.Today do
     end
   end
 
-  defp latest_project_for_a_tenant(tenant_id) do
-    case Project.by_tenant_id(%{tenant_id: tenant_id}) do
+  defp latest_project_for_a_tenant(tenant, current_user) do
+    case Project.by_tenant_id(%{tenant_id: tenant.id}, actor: current_user, tenant: tenant) do
       {:ok, projects} ->
         Enum.min_by(projects, & &1.created_at)
 
@@ -441,8 +455,8 @@ defmodule OmedisWeb.TenantLive.Today do
     end
   end
 
-  defp projects_for_a_tenant(tenant_id) do
-    case Project.by_tenant_id(%{tenant_id: tenant_id}) do
+  defp projects_for_a_tenant(tenant, current_user) do
+    case Project.by_tenant_id(%{tenant_id: tenant.id}, actor: current_user, tenant: tenant) do
       {:ok, projects} ->
         projects
         |> Enum.map(fn project -> {project.name, project.id} end)
