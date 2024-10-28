@@ -29,7 +29,7 @@ defmodule OmedisWeb.ActivityLive.Show do
 
           <:subtitle>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("This is a activity record from your database.") %>
+              <%= gettext("This is an activity record from your database.") %>
             <% end) %>
           </:subtitle>
 
