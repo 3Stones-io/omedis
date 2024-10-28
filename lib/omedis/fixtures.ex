@@ -59,7 +59,7 @@ defmodule Omedis.Fixtures do
     %{
       name: Faker.Lorem.sentence(),
       tenant_id: fn -> create_tenant().id end,
-      position: Faker.random_between(1, 999) |> to_string()
+      position: Faker.random_between(1, 999_999_999_999) |> to_string()
     }
   end
 
