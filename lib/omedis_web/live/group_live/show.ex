@@ -77,7 +77,7 @@ defmodule OmedisWeb.GroupLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug, "group_slug" => group_slug}, _, socket) do
-    tenant = Tenant.by_slug!(slug)
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
 
     {:noreply,
      socket

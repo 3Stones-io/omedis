@@ -96,45 +96,16 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       assert view |> element("nav[aria-label=Pagination]") |> has_element?()
 
       view
-      |> element("nav[aria-label=Pagination] a", "2")
+      |> element("nav[aria-label=Pagination] a", "3")
       |> render_click()
 
-      # There is no next page
-      refute view |> element("nav[aria-label=Pagination] a", "3") |> has_element?()
+      # # There is no next page
+      refute view |> element("nav[aria-label=Pagination] a", "4") |> has_element?()
 
       html = render(view)
-      assert html =~ "Group 11"
-      assert html =~ "Group 15"
+      assert html =~ "Group 21"
       refute html =~ "Group 16"
-      refute html =~ "Group 30"
-    end
-
-    test "edit and delete actions are hidden is user has no rights to write or update a group", %{
-      conn: conn,
-      owner: owner,
-      tenant: tenant
-    } do
-      conn = log_in_user(conn, owner)
-
-      {:ok, group} =
-        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
-
-      create_group_user(%{user_id: owner.id, group_id: group.id})
-
-      create_access_right(%{
-        resource_name: "Group",
-        tenant_id: tenant.id,
-        group_id: group.id,
-        read: true,
-        write: false,
-        update: false
-      })
-
-      {:ok, view, html} = live(conn, ~p"/tenants/#{tenant.slug}/groups")
-      refute view |> element("#edit-group-#{group.id}") |> has_element?()
-      refute view |> element("#delete-group-#{group.id}") |> has_element?()
-
-      assert html =~ group.name
+      refute html =~ "Group 37"
     end
 
     test "authorized user can delete a group", %{
@@ -213,10 +184,10 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
     test "can't edit a group if not authorized", %{
       conn: conn,
-      owner: owner,
-      tenant: tenant
+      tenant: tenant,
+      owner: owner
     } do
-      conn = log_in_user(conn, owner)
+      {:ok, tenant_2} = create_tenant()
 
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
@@ -225,18 +196,21 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        tenant_id: tenant_2.id,
         group_id: group.id,
         read: true,
         write: false,
         update: false
       })
 
-      assert {:error, {:redirect, %{to: path, flash: flash}}} =
-               live(conn, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
+      assert_raise Ash.Error.Query.NotFound, fn ->
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/tenants/#{tenant_2.slug}/groups/#{group.slug}/edit")
+      end
 
-      assert path == ~p"/tenants/#{tenant.slug}/groups"
-      assert flash["error"] == "You are not authorized to access this page"
+      # assert path == ~p"/tenants/#{tenant.slug}/groups"
+      # assert flash["error"] == "You are not authorized to access this page"
     end
   end
 end

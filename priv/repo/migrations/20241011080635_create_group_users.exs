@@ -14,8 +14,7 @@ defmodule Omedis.Repo.Migrations.CreateGroupUsers do
             column: :id,
             name: "group_users_group_id_fkey",
             type: :uuid,
-            prefix: "public",
-            on_delete: :delete_all
+            prefix: "public"
           ),
           primary_key: true,
           null: false
@@ -25,8 +24,7 @@ defmodule Omedis.Repo.Migrations.CreateGroupUsers do
             column: :id,
             name: "group_users_user_id_fkey",
             type: :uuid,
-            prefix: "public",
-            on_delete: :delete_all
+            prefix: "public"
           ),
           primary_key: true,
           null: false

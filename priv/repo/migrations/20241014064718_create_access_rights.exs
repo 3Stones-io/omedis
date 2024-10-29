@@ -29,8 +29,7 @@ defmodule Omedis.Repo.Migrations.CreateAccessRights do
             column: :id,
             name: "access_rights_tenant_id_fkey",
             type: :uuid,
-            prefix: "public",
-            on_delete: :delete_all
+            prefix: "public"
           )
 
       add :group_id,
@@ -38,8 +37,7 @@ defmodule Omedis.Repo.Migrations.CreateAccessRights do
             column: :id,
             name: "access_rights_group_id_fkey",
             type: :uuid,
-            prefix: "public",
-            on_delete: :delete_all
+            prefix: "public"
           )
     end
   end

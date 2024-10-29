@@ -137,12 +137,8 @@ defmodule Omedis.Accounts.Group do
   end
 
   policies do
-    policy action(:create) do
-      authorize_if Omedis.Accounts.CanCreateGroup
-    end
-
-    policy action_type([:update, :destroy]) do
-      authorize_if Omedis.Accounts.CanUpdateGroup
+    policy action_type([:create, :update, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
     end
 
     policy action_type([:read]) do
