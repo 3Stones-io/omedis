@@ -2,8 +2,8 @@ defmodule OmedisWeb.GroupLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Tenant
-  alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
+  alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
@@ -140,38 +140,12 @@ defmodule OmedisWeb.GroupLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Listing Groups") end)
     )
     |> assign(:group, nil)
-    |> list_paginated_groups(params)
-  end
-
-  defp list_paginated_groups(socket, params) do
-    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
-
-    case list_paginated_groups_by_tenant_id(socket.assigns.tenant.id, params) do
-      {:ok, %{count: total_count, results: groups}} ->
-        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
-        current_page = min(page, total_pages)
-
-        socket
-        |> assign(:current_page, current_page)
-        |> assign(:total_pages, total_pages)
-        |> stream(:groups, groups, reset: true)
-
-      {:error, _error} ->
-        socket
-    end
-  end
-
-  defp list_paginated_groups_by_tenant_id(tenant_id, params) do
-    case params do
-      %{"page" => page} when not is_nil(page) ->
-        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
-        offset_value = (page_value - 1) * 10
-
-        Group.by_tenant_id(%{tenant_id: tenant_id}, page: [count: true, offset: offset_value])
-
-      _ ->
-        Group.by_tenant_id(%{tenant_id: tenant_id}, page: [count: true])
-    end
+    |> PaginationUtils.list_paginated(params, :groups, fn offset ->
+      Group.by_tenant_id(
+        %{tenant_id: socket.assigns.tenant.id},
+        page: [count: true, offset: offset]
+      )
+    end)
   end
 
   @impl true
