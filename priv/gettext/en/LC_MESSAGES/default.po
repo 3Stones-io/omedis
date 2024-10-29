@@ -772,3 +772,16 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Select a Tenant"
 msgstr ""
+
+#: lib/omedis_web/live/tenant_live/index.ex:156
+#, elixir-autogen, elixir-format
+msgid "You are not authorized access this page"
+msgstr ""
+
+#: lib/omedis_web/live/tenant_live/index.ex:141
+#: lib/omedis_web/live/tenant_live/show.ex:210
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to access this page"
+msgstr ""
+
+
