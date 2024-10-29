@@ -17,6 +17,14 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.GroupUser, attrs)
   end
 
+  def create_invitation(attrs \\ %{}) do
+    fixture(Accounts.Invitation, attrs)
+  end
+
+  def create_invitation_group(attrs \\ %{}) do
+    fixture(Accounts.InvitationGroup, attrs)
+  end
+
   def create_project(attrs \\ %{}) do
     fixture(Accounts.Project, attrs)
   end
@@ -52,6 +60,22 @@ defmodule Omedis.Fixtures do
     %{
       group_id: fn -> create_group().id end,
       user_id: fn -> create_user().id end
+    }
+  end
+
+  def attrs_for(Accounts.Invitation) do
+    %{
+      creator_id: fn -> create_user().id end,
+      email: Faker.Internet.email(),
+      language: "en",
+      tenant_id: fn -> create_tenant().id end
+    }
+  end
+
+  def attrs_for(Accounts.InvitationGroup) do
+    %{
+      group_id: fn -> create_group().id end,
+      invitation_id: fn -> create_invitation().id end
     }
   end
 
