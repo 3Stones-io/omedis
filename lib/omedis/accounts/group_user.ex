@@ -18,6 +18,10 @@ defmodule Omedis.Accounts.GroupUser do
     repo Omedis.Repo
   end
 
+  identities do
+    identity :unique_group_user, [:group_id, :user_id]
+  end
+
   relationships do
     belongs_to :group, Group, primary_key?: true, allow_nil?: false
     belongs_to :user, User, primary_key?: true, allow_nil?: false

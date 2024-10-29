@@ -61,7 +61,7 @@ end
       %{group_id: group_2.id, user_id: user_2.id},
       %{group_id: group_3.id, user_id: user_3.id}
     ],
-    nil
+    :unique_group_user
   )
 
 %{records: _records, status: :success} =
