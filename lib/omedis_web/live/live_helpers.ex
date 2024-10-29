@@ -12,4 +12,10 @@ defmodule OmedisWeb.LiveHelpers do
      |> assign(:number_of_records_per_page, number_of_records_per_page)
      |> assign(:total_pages, 1)}
   end
+
+  def on_mount(:assign_locale, _params, %{"language" => language}, socket) do
+    Gettext.put_locale(OmedisWeb.Gettext, language)
+
+    {:cont, assign(socket, :language, language)}
+  end
 end
