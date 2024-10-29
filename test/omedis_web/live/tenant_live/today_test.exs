@@ -47,7 +47,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
     }
   end
 
-  describe "Today LiveView" do
+  describe "/tenants/:slug/today" do
     test "tenant owner can see log entries", %{
       conn: conn,
       group: group,
