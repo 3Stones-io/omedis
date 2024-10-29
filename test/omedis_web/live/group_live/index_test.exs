@@ -26,8 +26,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       tenant: tenant,
       tenant_2: tenant_2
     } do
-      conn = log_in_user(conn, owner)
-
       Enum.each(1..15, fn i ->
         {:ok, group} =
           create_group(%{
@@ -85,7 +83,10 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         })
       end)
 
-      {:ok, view, html} = live(conn, ~p"/tenants/#{tenant.slug}/groups")
+      {:ok, view, html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/tenants/#{tenant.slug}/groups")
 
       assert html =~ "Listing Groups"
       assert html =~ "New Group"
@@ -193,8 +194,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       owner: owner,
       tenant: tenant
     } do
-      conn = log_in_user(conn, owner)
-
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
 
@@ -209,7 +208,10 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         update: true
       })
 
-      {:ok, view, html} = live(conn, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
+      {:ok, view, html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
 
       assert html =~ "Edit Group"
 
