@@ -244,6 +244,7 @@ defmodule OmedisWeb.TimeTracking do
 
         <button
           class="w-[100%] h-[100%] h-[40px] rounded-md"
+          id={"log-category-#{@category.id}"}
           phx-click="select_log_category"
           phx-value-log_category_id={@category.id}
           style={"background-color: #{@category.color_code};"}

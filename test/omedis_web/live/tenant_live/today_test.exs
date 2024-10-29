@@ -48,6 +48,8 @@ defmodule OmedisWeb.TenantLive.TodayTest do
   end
 
   describe "/tenants/:slug/today" do
+    alias Omedis.Accounts.LogEntry
+
     test "tenant owner can see log entries", %{
       conn: conn,
       group: group,
@@ -143,6 +145,125 @@ defmodule OmedisWeb.TenantLive.TodayTest do
 
       refute html =~ "05:00"
       refute html =~ "06:00"
+    end
+
+    test "can create a new log entry when selecting a log category", %{
+      conn: conn,
+      group: group,
+      log_category: log_category,
+      owner: owner,
+      project: project,
+      tenant: tenant
+    } do
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+
+      lv
+      |> element("#log-category-#{log_category.id}")
+      |> render_click()
+
+      # Verify a new log entry was created
+      {:ok, log_entries} =
+        LogEntry.by_log_category_today(
+          %{log_category_id: log_category.id},
+          actor: owner,
+          tenant: tenant
+        )
+
+      assert length(log_entries) == 1
+      log_entry = hd(log_entries)
+      assert log_entry.log_category_id == log_category.id
+      assert log_entry.user_id == owner.id
+      assert log_entry.tenant_id == tenant.id
+    end
+
+    test "can stop active log entry when selecting same category again", %{
+      conn: conn,
+      group: group,
+      log_category: log_category,
+      owner: owner,
+      project: project,
+      tenant: tenant
+    } do
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+
+      # Create initial log entry
+      lv
+      |> element("#log-category-#{log_category.id}")
+      |> render_click()
+
+      # Click same category again to stop it
+      lv
+      |> element("#log-category-#{log_category.id}")
+      |> render_click()
+
+      # Verify log entry was stopped (end_at was set)
+      {:ok, log_entries} =
+        LogEntry.by_log_category_today(
+          %{log_category_id: log_category.id},
+          actor: owner,
+          tenant: tenant
+        )
+
+      log_entry = hd(log_entries)
+      assert log_entry.log_category_id == log_category.id
+      assert not is_nil(log_entry.end_at)
+    end
+
+    test "switches active log entry when selecting different category", %{
+      conn: conn,
+      group: group,
+      owner: owner,
+      project: project,
+      tenant: tenant
+    } do
+      # Create second log category
+      {:ok, log_category_1} =
+        create_log_category(%{group_id: group.id, project_id: project.id, name: "Category 1"})
+
+      {:ok, log_category_2} =
+        create_log_category(%{group_id: group.id, project_id: project.id, name: "Category 2"})
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+
+      # Start log entry for first category
+      lv
+      |> element("#log-category-#{log_category_1.id}")
+      |> render_click()
+
+      # Switch to second category
+      lv
+      |> element("#log-category-#{log_category_2.id}")
+      |> render_click()
+
+      # Verify first log entry was stopped
+      {:ok, [entry_1]} =
+        LogEntry.by_log_category_today(
+          %{log_category_id: log_category_1.id},
+          actor: owner,
+          tenant: tenant
+        )
+
+      assert not is_nil(entry_1.end_at)
+
+      # Verify second log entry is active
+      {:ok, entries_2} =
+        LogEntry.by_log_category_today(
+          %{log_category_id: log_category_2.id},
+          actor: owner,
+          tenant: tenant
+        )
+
+      entry_2 = List.last(entries_2)
+      assert is_nil(entry_2.end_at)
     end
   end
 end
