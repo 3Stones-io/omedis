@@ -108,6 +108,46 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       refute html =~ "Group 37"
     end
 
+    test "edit and delete actions are hidden is user has no rights to write or update a group", %{
+      conn: conn,
+      owner: owner
+    } do
+      {:ok, tenant} = create_tenant()
+
+      {:ok, group} =
+        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
+
+      create_group_user(%{user_id: owner.id, group_id: group.id})
+
+      create_access_right(%{
+        resource_name: "Tenant",
+        tenant_id: tenant.id,
+        group_id: group.id,
+        read: true,
+        write: false,
+        update: false
+      })
+
+      create_access_right(%{
+        resource_name: "Group",
+        tenant_id: tenant.id,
+        group_id: group.id,
+        read: true,
+        write: false,
+        update: false
+      })
+
+      {:ok, view, html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/tenants/#{tenant.slug}/groups")
+
+      refute view |> element("#edit-group-#{group.id}") |> has_element?()
+      refute view |> element("#delete-group-#{group.id}") |> has_element?()
+
+      assert html =~ group.name
+    end
+
     test "authorized user can delete a group", %{
       conn: conn,
       owner: owner,
@@ -184,10 +224,9 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
     test "can't edit a group if not authorized", %{
       conn: conn,
-      tenant: tenant,
       owner: owner
     } do
-      {:ok, tenant_2} = create_tenant()
+      {:ok, tenant} = create_tenant()
 
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
@@ -195,22 +234,30 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       create_group_user(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
-        resource_name: "Group",
-        tenant_id: tenant_2.id,
+        resource_name: "Tenant",
+        tenant_id: tenant.id,
         group_id: group.id,
         read: true,
         write: false,
         update: false
       })
 
-      assert_raise Ash.Error.Query.NotFound, fn ->
+      create_access_right(%{
+        resource_name: "Group",
+        tenant_id: tenant.id,
+        group_id: group.id,
+        read: true,
+        write: false,
+        update: false
+      })
+
+      {:error, {:redirect, %{to: path, flash: flash}}} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant_2.slug}/groups/#{group.slug}/edit")
-      end
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
 
-      # assert path == ~p"/tenants/#{tenant.slug}/groups"
-      # assert flash["error"] == "You are not authorized to access this page"
+      assert path == ~p"/tenants/#{tenant.slug}/groups"
+      assert flash["error"] == "You are not authorized to access this page"
     end
   end
 end
