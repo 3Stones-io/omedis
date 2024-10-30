@@ -284,7 +284,7 @@ defmodule OmedisWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file month number password
-               range search select tel text textarea time url week hidden)
+               range search select tel text textarea time url week hidden radio)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -294,10 +294,14 @@ defmodule OmedisWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :label_type, :string, default: "default", values: ~w(default custom_label)
+  attr :input_class, :string, default: nil, doc: "the class for the input"
 
   attr :rest, :global,
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
+
+  slot :custom_label, doc: "the slot for custom label"
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     errors = if Phoenix.Component.used_input?(field), do: field.errors, else: []
@@ -370,6 +374,18 @@ defmodule OmedisWeb.CoreComponents do
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
       <.error :for={msg <- @errors}><%= msg %></.error>
+    </div>
+    """
+  end
+
+  def input(%{label_type: "custom_label"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <label for={@id} class="h-full w-full">
+        <input type={@type} name={@name} id={@id} value={@value} class={@input_class} {@rest} />
+
+        <%= render_slot(@custom_label) %>
+      </label>
     </div>
     """
   end
@@ -661,6 +677,8 @@ defmodule OmedisWeb.CoreComponents do
   Translates an error message using gettext.
   """
   def translate_error({msg, opts}) do
+    locale = opts[:locale] || Gettext.get_locale(OmedisWeb.Gettext)
+
     # When using gettext, we typically pass the strings we want
     # to translate as a static argument:
     #
@@ -671,11 +689,13 @@ defmodule OmedisWeb.CoreComponents do
     # dynamically, so we need to translate them by calling Gettext
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
-    if count = opts[:count] do
-      Gettext.dngettext(OmedisWeb.Gettext, "errors", msg, msg, count, opts)
-    else
-      Gettext.dgettext(OmedisWeb.Gettext, "errors", msg, opts)
-    end
+    Gettext.with_locale(OmedisWeb.Gettext, locale, fn ->
+      if count = opts[:count] do
+        Gettext.dngettext(OmedisWeb.Gettext, "errors", msg, msg, count, opts)
+      else
+        Gettext.dgettext(OmedisWeb.Gettext, "errors", msg, opts)
+      end
+    end)
   end
 
   @doc """

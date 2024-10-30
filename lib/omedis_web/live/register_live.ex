@@ -16,17 +16,21 @@ defmodule OmedisWeb.RegisterLive do
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     tenants = Ash.read!(Tenant, authorize?: false)
+    Gettext.put_locale(OmedisWeb.Gettext, language)
+
+    select_language_fields = %{"lang" => ""}
 
     socket =
       socket
       |> assign(current_user: nil)
+      |> assign(:select_language_form, to_form(select_language_fields))
       |> assign(:language, language)
-      |> assign(:default_language, language)
       |> assign(:selected_tenant_id, nil)
       |> assign(:supported_languages, @supported_languages)
       |> assign(:tenants, tenants)
       |> assign(:tenants_count, 0)
       |> assign(trigger_action: false)
+      |> assign(:change_language_trigger, false)
       |> assign(:errors, [])
 
     {:ok, socket}
@@ -51,18 +55,6 @@ defmodule OmedisWeb.RegisterLive do
   end
 
   @impl true
-  def handle_event("change_language", %{"language" => language}, socket) do
-    {
-      :noreply,
-      socket
-      |> assign(:language, language)
-      |> put_flash(
-        :info,
-        with_locale(language, fn -> gettext("Language changed") end)
-      )
-    }
-  end
-
   def handle_event(
         "validate",
         %{"user" => %{"current_tenant_id" => tenant_id} = user_params},
@@ -79,11 +71,8 @@ defmodule OmedisWeb.RegisterLive do
 
         form = Form.validate(socket.assigns.form, updated_user_params, errors: true)
 
-        default_language = user_params["lang"] || socket.assigns.default_language
-
         {:noreply,
          socket
-         |> assign(default_language: default_language)
          |> assign(:selected_tenant_id, tenant_id)
          |> assign(:form, form)}
     end
@@ -98,6 +87,10 @@ defmodule OmedisWeb.RegisterLive do
      |> assign(:form, form)
      |> assign(:errors, Form.errors(form))
      |> assign(:trigger_action, form.valid?)}
+  end
+
+  def handle_event("change_language", _params, socket) do
+    {:noreply, assign(socket, change_language_trigger: true)}
   end
 
   defp update_user_params(user_params, tenant) do
@@ -133,7 +126,6 @@ defmodule OmedisWeb.RegisterLive do
   end
 
   @impl true
-
   def render(assigns) do
     ~H"""
     <.side_and_topbar
@@ -143,6 +135,58 @@ defmodule OmedisWeb.RegisterLive do
       tenants_count={@tenants_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <div class="flex justify-stretch w-full">
+          <div class="w-full">
+            <div class="lg:col-span-3 flex flex-col">
+              <h2 class="text-base font-semibold leading-7 text-gray-900">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Register") %>
+                <% end) %>
+              </h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Use a permanent address where you can receive mail.") %>
+                <% end) %>
+              </p>
+            </div>
+          </div>
+          <div class="w-full px-1">
+            <p class="text-base font-semibold leading-7 text-gray-900">
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Change language") %>
+              <% end) %>
+            </p>
+            <div class="flex items-center space-x-2">
+              <.form
+                :let={f}
+                id="language_form"
+                for={@select_language_form}
+                class="flex items-center space-x-2 cursor-pointer"
+                action={~p"/change_language"}
+                phx-trigger-action={@change_language_trigger}
+              >
+                <%= for {language, lang_code} <- @supported_languages do %>
+                  <.input
+                    field={f[:lang]}
+                    id={language}
+                    type="radio"
+                    value={lang_code}
+                    checked={input_value(f, :lang) == language}
+                    label_type="custom_label"
+                    input_class="hidden"
+                    phx-change="change_language"
+                  >
+                    <:custom_label>
+                      <span class="text-2xl cursor-pointer">
+                        <%= language_to_flag(lang_code) %>
+                      </span>
+                    </:custom_label>
+                  </.input>
+                <% end %>
+              </.form>
+            </div>
+          </div>
+        </div>
         <.form
           :let={f}
           id="basic_user_sign_up_form"
@@ -156,39 +200,6 @@ defmodule OmedisWeb.RegisterLive do
         >
           <div class="space-y-6">
             <div class="border-b border-gray-900/10 pb-12">
-              <div class="grid grid-cols-2 lg:grid-cols-6 gap-x-2 lg:gap-x-6">
-                <div class="lg:col-span-3 flex flex-col">
-                  <h2 class="text-base font-semibold leading-7 text-gray-900">
-                    <%= with_locale(@language, fn -> %>
-                      <%= gettext("Register") %>
-                    <% end) %>
-                  </h2>
-                  <p class="mt-1 text-sm leading-6 text-gray-600">
-                    <%= with_locale(@language, fn -> %>
-                      <%= gettext("Use a permanent address where you can receive mail.") %>
-                    <% end) %>
-                  </p>
-                </div>
-                <div class="lg:col-span-3 flex flex-col space-x-2 items-end md:items-start">
-                  <p class="text-base font-semibold leading-7 text-gray-900">
-                    <%= with_locale(@language, fn -> %>
-                      <%= gettext("Change language") %>
-                    <% end) %>
-                  </p>
-                  <div class="flex items-center space-x-2">
-                    <%= for {_language, lang_code} <- @supported_languages do %>
-                      <button
-                        class={"text-2xl #{if @language == lang_code, do: "opacity-100", else: "opacity-50 hover:opacity-75"}"}
-                        phx-click="change_language"
-                        phx-value-language={lang_code}
-                        type="button"
-                      >
-                        <%= language_to_flag(lang_code) %>
-                      </button>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
               <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div class="sm:col-span-3">
                   <div>
@@ -282,30 +293,6 @@ defmodule OmedisWeb.RegisterLive do
                 <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn -> %>
-                      <%= gettext("Language") %>
-                    <% end) %>
-                  </label>
-
-                  <div phx-feedback-for={f[:lang].name} class="mt-2">
-                    <%= select(f, :lang, @supported_languages,
-                      prompt: with_locale(@language, fn -> gettext("Select Your Language") end),
-                      value: @default_language,
-                      disabled: @selected_tenant_id == nil,
-                      class:
-                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      "phx-debounce": "blur"
-                    ) %>
-                    <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
-                      <%= with_locale(@language, fn -> %>
-                        <%= gettext("Language") <> " " <> msg %>
-                      <% end) %>
-                    </.error>
-                  </div>
-                </div>
-
-                <div class={["sm:col-span-3", @selected_tenant_id == nil && "opacity-50"]}>
-                  <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= with_locale(@language, fn -> %>
                       <%= gettext("Daily Start Time") %>
                     <% end) %>
                   </label>
@@ -370,6 +357,8 @@ defmodule OmedisWeb.RegisterLive do
               ) %>
             </div>
           </div>
+
+          <.input type="hidden" field={f[:lang]} value={@language} />
         </.form>
       </div>
     </.side_and_topbar>

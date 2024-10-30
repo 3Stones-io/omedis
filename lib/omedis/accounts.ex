@@ -6,6 +6,7 @@ defmodule Omedis.Accounts do
 
   resources do
     resource Omedis.Accounts.AccessRight
+    resource Omedis.Accounts.Activity
     resource Omedis.Accounts.User
     resource Omedis.Accounts.Token
     resource Omedis.Accounts.Tenant

@@ -46,7 +46,6 @@ defmodule OmedisWeb.RegisterTest do
       assert view |> element("#user_password") |> render() =~ "disabled"
       assert view |> element("#user_gender") |> render() =~ "disabled"
       assert view |> element("#user_birthdate") |> render() =~ "disabled"
-      assert view |> element("#user_lang") |> render() =~ "disabled"
       assert view |> element("#user_daily_start_at") |> render() =~ "disabled"
       assert view |> element("#user_daily_end_at") |> render() =~ "disabled"
 
@@ -60,7 +59,6 @@ defmodule OmedisWeb.RegisterTest do
       refute view |> element("#user_password") |> render() =~ "disabled"
       refute view |> element("#user_gender") |> render() =~ "disabled"
       refute view |> element("#user_birthdate") |> render() =~ "disabled"
-      refute view |> element("#user_lang") |> render() =~ "disabled"
       refute view |> element("#user_daily_start_at") |> render() =~ "disabled"
       refute view |> element("#user_daily_end_at") |> render() =~ "disabled"
     end
