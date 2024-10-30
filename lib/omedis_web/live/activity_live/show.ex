@@ -19,36 +19,36 @@ defmodule OmedisWeb.ActivityLive.Show do
           {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
           {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
           {"Activities", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities", false},
-          {@log_category.name, "", true}
+          {@activity.name, "", true}
         ]} />
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Log category") %>
+            <%= gettext("Log activities") %>
           <% end) %>
 
           <:subtitle>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("This is a log_category record from your database.") %>
+              <%= gettext("This is a activity record from your database.") %>
             <% end) %>
           </:subtitle>
 
           <:actions>
             <.link
               patch={
-                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@log_category}/show/edit"
+                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@activity}/show/edit"
               }
               phx-click={JS.push_focus()}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Edit log_category") %>
+                  <%= gettext("Edit activity") %>
                 <% end) %>
               </.button>
             </.link>
 
             <.link
-              navigate={~p"/tenants/#{@tenant.slug}/activities/#{@log_category}/log_entries"}
+              navigate={~p"/tenants/#{@tenant.slug}/activities/#{@activity}/log_entries"}
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -62,34 +62,34 @@ defmodule OmedisWeb.ActivityLive.Show do
 
         <.list>
           <:item title={with_locale(@language, fn -> gettext("Name") end)}>
-            <%= @log_category.name %>
+            <%= @activity.name %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Color code") end)}>
-            <%= @log_category.color_code %>
+            <%= @activity.color_code %>
           </:item>
           <:item title={with_locale(@language, fn -> gettext("Position") end)}>
-            <%= @log_category.position %>
+            <%= @activity.position %>
           </:item>
         </.list>
 
         <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities"}>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Back to log categories") %>
+            <%= gettext("Back to log activities") %>
           <% end) %>
         </.back>
 
         <.modal
           :if={@live_action == :edit}
-          id="log_category-modal"
+          id="activity-modal"
           show
           on_cancel={
-            JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@log_category}")
+            JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@activity}")
           }
         >
           <.live_component
             module={OmedisWeb.ActivityLive.FormComponent}
-            id={@log_category.id}
+            id={@activity.id}
             title={@page_title}
             action={@live_action}
             tenant={@tenant}
@@ -100,8 +100,8 @@ defmodule OmedisWeb.ActivityLive.Show do
             group={@group}
             next_position={@next_position}
             language={@language}
-            log_category={@log_category}
-            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@log_category}"}
+            activity={@activity}
+            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@activity}"}
           />
         </.modal>
       </div>
@@ -121,25 +121,25 @@ defmodule OmedisWeb.ActivityLive.Show do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     group = Group.by_slug!(group_slug)
     groups = Ash.read!(Group)
-    log_category = Activity.by_id!(id)
-    next_position = log_category.position
+    activity = Activity.by_id!(id)
+    next_position = activity.position
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:log_category, log_category)
+     |> assign(:activity, activity)
      |> assign(:tenants, Ash.read!(Tenant))
      |> assign(:group, group)
      |> assign(:groups, groups)
      |> assign(:tenant, tenant)
      |> assign(:is_custom_color, true)
-     |> assign(:color_code, log_category.color_code)
+     |> assign(:color_code, activity.color_code)
      |> assign(:next_position, next_position)}
   end
 
   defp page_title(:show, language),
-    do: with_locale(language, fn -> gettext("Show Log category") end)
+    do: with_locale(language, fn -> gettext("Show Log activities") end)
 
   defp page_title(:edit, language),
-    do: with_locale(language, fn -> gettext("Edit Log category") end)
+    do: with_locale(language, fn -> gettext("Edit Log activities") end)
 end

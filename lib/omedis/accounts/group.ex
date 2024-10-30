@@ -1,6 +1,6 @@
 defmodule Omedis.Accounts.Group do
   @moduledoc """
-  This is the log category module
+  This is the group module
   """
 
   require Ash.Query

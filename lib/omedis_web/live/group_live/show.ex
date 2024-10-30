@@ -27,7 +27,7 @@ defmodule OmedisWeb.GroupLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Log categories") %>
+                  <%= gettext("Log activities") %>
                 <% end) %>
               </.button>
             </.link>
