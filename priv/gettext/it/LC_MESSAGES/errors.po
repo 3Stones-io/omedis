@@ -100,3 +100,15 @@ msgstr "deve essere maggiore o uguale a %{number}"
 
 msgid "must be equal to %{number}"
 msgstr "deve essere uguale a %{number}"
+
+msgid "is required"
+msgstr "è obbligatorio"
+
+msgid "length must be greater than or equal to %{min}"
+msgstr "deve essere maggiore o uguale a %{min}"
+
+msgid "Password is required"
+msgstr "La password è richiesta"
+
+msgid "E-Mail is required"
+msgstr "L'e-mail è obbligatoria"
