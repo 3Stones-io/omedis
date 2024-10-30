@@ -154,8 +154,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       owner: owner,
       tenant: tenant
     } do
-      conn = log_in_user(conn, owner)
-
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
 
@@ -170,7 +168,10 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         update: true
       })
 
-      {:ok, view, _html} = live(conn, ~p"/tenants/#{tenant.slug}/groups")
+      {:ok, view, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/tenants/#{tenant.slug}/groups")
 
       assert view
              |> element("#delete-group-#{group.id}")
@@ -208,18 +209,26 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         update: true
       })
 
-      {:ok, view, html} =
+      {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
+        |> live(~p"/tenants/#{tenant.slug}/groups")
 
-      assert html =~ "Edit Group"
+      assert view
+             |> element("#edit-group-#{group.id}")
+             |> has_element?()
 
-      html =
-        view
-        |> form("#group-form", group: %{name: "New Group Name", slug: "new-group-name"})
-        |> render_submit()
+      assert view
+             |> element("#edit-group-#{group.id}")
+             |> render_click() =~ "Edit Group"
 
+      assert view
+             |> form("#group-form", group: %{name: "New Group Name", slug: "new-group-name"})
+             |> render_submit()
+
+      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups")
+
+      html = render(view)
       assert html =~ "Group updated successfully"
       assert html =~ "New Group Name"
     end

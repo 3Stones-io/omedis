@@ -1,4 +1,4 @@
-defmodule Omedis.Repo.Migrations.AddReferencesToAccessRightsTable do
+defmodule Omedis.Repo.Migrations.AddReferencesToAccessRights do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

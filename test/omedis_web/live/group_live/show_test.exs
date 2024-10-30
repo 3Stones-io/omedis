@@ -80,10 +80,19 @@ defmodule OmedisWeb.GroupLive.ShowTest do
 
     test "does not render a group details if user is unauthorized", %{
       conn: conn,
-      group: group,
       user: user
     } do
       {:ok, tenant} = create_tenant()
+      {:ok, group} = create_group(%{tenant_id: tenant.id})
+      create_group_user(%{group_id: group.id, user_id: user.id})
+
+      create_access_right(%{
+        group_id: group.id,
+        resource_name: "Group",
+        tenant_id: tenant.id,
+        read: false,
+        write: false
+      })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn

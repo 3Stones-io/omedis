@@ -12,12 +12,6 @@ defmodule Omedis.Repo.Migrations.AddReferencesToGroupUser do
 
     drop constraint(:group_users, "group_users_group_id_fkey")
 
-    drop constraint("group_users", "group_users_pkey")
-
-    alter table(:log_categories) do
-      modify :position, :bigint
-    end
-
     alter table(:group_users) do
       modify :group_id,
              references(:groups,
@@ -40,8 +34,6 @@ defmodule Omedis.Repo.Migrations.AddReferencesToGroupUser do
   end
 
   def down do
-    drop constraint("group_users", "group_users_pkey")
-
     drop constraint(:group_users, "group_users_group_id_fkey")
 
     drop constraint(:group_users, "group_users_user_id_fkey")
@@ -62,10 +54,6 @@ defmodule Omedis.Repo.Migrations.AddReferencesToGroupUser do
                type: :uuid,
                prefix: "public"
              )
-    end
-
-    alter table(:log_categories) do
-      modify :position, :text
     end
   end
 end
