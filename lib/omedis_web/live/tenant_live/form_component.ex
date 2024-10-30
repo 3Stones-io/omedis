@@ -23,7 +23,11 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           <.input
             field={@form[:name]}
             type="text"
-            label={Phoenix.HTML.raw("Name <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(
+                "#{with_locale(@language, fn -> gettext("Name") end)} <span class='text-red-600'>*</span>"
+              )
+            }
           />
         </div>
 
@@ -31,36 +35,60 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           <.input
             field={@form[:slug]}
             type="text"
-            label={Phoenix.HTML.raw("Slug <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(
+                "#{with_locale(@language, fn -> gettext("Slug") end)} <span class='text-red-600'>*</span>"
+              )
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:street]}
             type="text"
-            label={Phoenix.HTML.raw("Street <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(
+                "#{with_locale(@language, fn -> gettext("Street") end)} <span class='text-red-600'>*</span>"
+              )
+            }
           />
         </div>
 
         <div class="space-y-3">
-          <.input field={@form[:street2]} type="text" label="Street2" />
+          <.input
+            field={@form[:street2]}
+            type="text"
+            label={with_locale(@language, fn -> gettext("Street2") end)}
+          />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:zip_code]}
             type="text"
-            label={Phoenix.HTML.raw("Zip Code <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(
+                "#{with_locale(@language, fn -> gettext("Zip code") end)} <span class='text-red-600'>*</span>"
+              )
+            }
           /><.input
             field={@form[:city]}
             type="text"
-            label={Phoenix.HTML.raw("City <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(
+                "#{with_locale(@language, fn -> gettext("City") end)} <span class='text-red-600'>*</span>"
+              )
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:country]}
             type="text"
-            label={Phoenix.HTML.raw("Country <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(
+                "#{with_locale(@language, fn -> gettext("Country") end)} <span class='text-red-600'>*</span>"
+              )
+            }
           />
         </div>
 

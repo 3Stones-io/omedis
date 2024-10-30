@@ -30,7 +30,11 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
         <.input
           field={@form[:tenant_id]}
           type="select"
-          label={Phoenix.HTML.raw("Tenant  <span class='text-red-600'>*</span>")}
+          label={
+            Phoenix.HTML.raw(
+              "#{with_locale(@language, fn -> gettext("Tenant") end)}  <span class='text-red-600'>*</span>"
+            )
+          }
           disabled={true}
           options={Enum.map(@tenants, &{&1.name, &1.id})}
         />
@@ -38,7 +42,11 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
           <.input
             field={@form[:position]}
             value={@next_position}
-            label={Phoenix.HTML.raw("Position  <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(
+                "#{with_locale(@language, fn -> gettext("Position") end)}  <span class='text-red-600'>*</span>"
+              )
+            }
           />
         </div>
 
