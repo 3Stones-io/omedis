@@ -1,6 +1,6 @@
 defmodule OmedisWeb.LogEntryLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
   alias Omedis.PaginationUtils
@@ -22,11 +22,9 @@ defmodule OmedisWeb.LogEntryLive.Index do
           {"Home", ~p"/tenants/#{@tenant.slug}", false},
           {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
           {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-          {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories",
-           false},
+          {"Activities", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities", false},
           {@log_category.name,
-           ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
-           false},
+           ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@log_category.id}", false},
           {"Log Entries", "", true}
         ]} />
 
@@ -50,7 +48,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category.id}/log_entries"}
+          resource_path={~p"/tenants/#{@tenant.slug}/activities/#{@log_category.id}/log_entries"}
           total_pages={@total_pages}
         />
       </div>
@@ -72,7 +70,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
     {:ok, log_category} =
       id
-      |> LogCategory.by_id!()
+      |> Activity.by_id!()
       |> Ash.load(:group)
 
     {:noreply,
@@ -114,12 +112,12 @@ defmodule OmedisWeb.LogEntryLive.Index do
         page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
         offset_value = (page_value - 1) * 10
 
-        LogEntry.by_log_category(%{log_category_id: params["id"]},
+        LogEntry.by_activity(%{log_category_id: params["id"]},
           page: [count: true, offset: offset_value]
         )
 
       _ ->
-        LogEntry.by_log_category(%{log_category_id: params["id"]}, page: [count: true])
+        LogEntry.by_activity(%{log_category_id: params["id"]}, page: [count: true])
     end
   end
 end

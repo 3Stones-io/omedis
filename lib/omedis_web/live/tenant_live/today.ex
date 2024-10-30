@@ -1,7 +1,7 @@
 defmodule OmedisWeb.TenantLive.Today do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
@@ -130,7 +130,7 @@ defmodule OmedisWeb.TenantLive.Today do
     entries = get_active_entry(log_categories)
 
     if Enum.empty?(entries) do
-      default_log_category = LogCategory.get_default_log_category(group_id)
+      default_log_category = Activity.get_default_activity(group_id)
       create_or_stop_log_entry(default_log_category.id, tenant_id, socket.assigns.current_user.id)
       assign(socket, :active_log_category_id, default_log_category.id)
     else
@@ -142,7 +142,7 @@ defmodule OmedisWeb.TenantLive.Today do
   defp get_active_entry(log_categories) do
     log_categories
     |> Stream.map(fn log_category ->
-      {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category.id})
+      {:ok, log_entries} = LogEntry.by_activity_today(%{log_category_id: log_category.id})
       Enum.filter(log_entries, &is_nil(&1.end_at))
     end)
     |> Stream.filter(&(!Enum.empty?(&1)))
@@ -247,7 +247,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp categories(group_id, project_id) do
-    case LogCategory.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
+    case Activity.by_group_id_and_project_id(%{group_id: group_id, project_id: project_id}) do
       {:ok, categories} ->
         categories
 
@@ -342,7 +342,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp create_or_stop_log_entry(log_category_id, tenant_id, user_id) do
-    {:ok, log_entries} = LogEntry.by_log_category_today(%{log_category_id: log_category_id})
+    {:ok, log_entries} = LogEntry.by_activity_today(%{log_category_id: log_category_id})
 
     case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
       nil ->
