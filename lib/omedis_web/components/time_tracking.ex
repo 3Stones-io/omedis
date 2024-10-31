@@ -240,6 +240,7 @@ defmodule OmedisWeb.TimeTracking do
         <p
           :if={@active_log_category_id == @category.id}
           class="h-[10px] w-[10px] bg-green-500 rounded-full"
+          id={"active-log-category-#{@category.id}"}
         />
 
         <button

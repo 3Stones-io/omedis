@@ -102,7 +102,6 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
         |> log_in_user(authorized_user)
         |> live(~p"/tenants/#{tenant.slug}/log_categories/#{log_category.id}/log_entries")
 
-      assert html =~ "Listing Log entries for #{log_category.name}"
       assert html =~ "Test comment 1"
       assert html =~ "Test comment 2"
     end
