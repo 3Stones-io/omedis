@@ -108,9 +108,9 @@ defmodule OmedisWeb.ProjectLive.Index do
 
     {:ok,
      socket
-     |> assign(:tenants, Ash.read!(Tenant))
+     |> assign(:tenants, Ash.read!(Tenant, actor: socket.assigns.current_user))
      |> assign(:language, language)
-     |> assign(:tenant, Tenant.by_id!(tenant.id))
+     |> assign(:tenant, Tenant.by_id!(tenant.id, actor: socket.assigns.current_user))
      |> assign(:next_position, next_position)
      |> stream(:projects, [])}
   end

@@ -16,7 +16,7 @@ defmodule Omedis.Accounts.Changes.NewLogCategoryPosition do
         max_position =
           LogCategory
           |> Ash.Query.filter(group_id == ^group_id)
-          |> Ash.count!()
+          |> Ash.count!(authorize?: false)
 
         Ash.Changeset.change_attribute(changeset, :position, max_position + 1)
 

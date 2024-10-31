@@ -214,12 +214,19 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
   defp assign_form(%{assigns: %{log_category: log_category}} = socket) do
     form =
       if log_category do
-        AshPhoenix.Form.for_update(log_category, :update, as: "log_category")
+        AshPhoenix.Form.for_update(
+          log_category,
+          :update,
+          as: "log_category",
+          actor: socket.assigns.current_user,
+          tenant: socket.assigns.tenant
+        )
       else
         AshPhoenix.Form.for_create(
           LogCategory,
           :create,
           as: "log_category",
+          actor: socket.assigns.current_user,
           tenant: socket.assigns.tenant
         )
       end

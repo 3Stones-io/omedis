@@ -32,7 +32,16 @@ defmodule OmedisWeb.LogCategoryLive.Index do
           <% end) %>
 
           <:actions>
-            <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/new"}>
+            <.link
+              :if={
+                Ash.can?({LogCategory, :create}, @current_user,
+                  actor: @current_user,
+                  tenant: @tenant
+                )
+              }
+              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/new"}
+              class="new-log-category-button"
+            >
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("New Log category") %>
@@ -61,6 +70,12 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
           <:col
             :let={{_id, log_category}}
+            :if={
+              Ash.can?({LogCategory, :update}, @current_user,
+                actor: @current_user,
+                tenant: @tenant
+              )
+            }
             label={with_locale(@language, fn -> gettext("Position") end)}
           >
             <p class="position flex items-center">
@@ -68,6 +83,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
                 <button
                   type="button"
                   class="position-up"
+                  id={"move-up-#{log_category.id}"}
                   phx-click={
                     JS.push(
                       "move-up",
@@ -82,6 +98,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
                 <button
                   type="button"
                   class="position-down"
+                  id={"move-down-#{log_category.id}"}
                   phx-click={
                     JS.push(
                       "move-down",
@@ -116,9 +133,18 @@ defmodule OmedisWeb.LogCategoryLive.Index do
               </.link>
             </div>
 
-            <.link patch={
-              ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}/edit"
-            }>
+            <.link
+              :if={
+                Ash.can?({log_category, :update}, @current_user,
+                  actor: @current_user,
+                  tenant: @tenant
+                )
+              }
+              patch={
+                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}/edit"
+              }
+              id={"edit-#{log_category.id}"}
+            >
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
               <% end) %>
@@ -135,6 +161,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
           <.live_component
             module={OmedisWeb.LogCategoryLive.FormComponent}
             id={(@log_category && @log_category.id) || :new}
+            current_user={@current_user}
             title={@page_title}
             groups={@groups}
             tenant={@tenant}
@@ -166,16 +193,16 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     if connected?(socket),
       do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
 
-    group = Group.by_slug!(group_slug)
-
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    actor = socket.assigns.current_user
+    tenant = Tenant.by_slug!(slug, actor: actor)
+    group = Group.by_slug!(group_slug, actor: actor, tenant: tenant)
 
     {:ok,
      socket
      |> assign(:language, language)
      |> assign(:tenant, tenant)
-     |> assign(:groups, Ash.read!(Group))
-     |> assign(:projects, Project.by_tenant_id!(%{tenant_id: tenant.id}))
+     |> assign(:groups, Ash.read!(Group, actor: actor))
+     |> assign(:projects, Project.by_tenant_id!(%{tenant_id: tenant.id}, actor: actor))
      |> assign(:group, group)
      |> assign(:is_custom_color, false)
      |> stream(:log_categories, [])}
@@ -198,27 +225,55 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply,
-     socket
-     |> apply_action(socket.assigns.live_action, params)}
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(
-      :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Edit Log category") end)
-    )
-    |> assign(:log_category, LogCategory.by_id!(id))
+    current_user = socket.assigns.current_user
+    tenant = socket.assigns.tenant
+    log_category = LogCategory.by_id!(id, actor: current_user, tenant: tenant)
+
+    if Ash.can?({LogCategory, :update}, current_user,
+         actor: current_user,
+         tenant: tenant
+       ) do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("Edit Log category") end)
+      )
+      |> assign(:log_category, log_category)
+    else
+      socket
+      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> push_navigate(
+        to:
+          ~p"/tenants/#{socket.assigns.tenant.slug}/groups/#{socket.assigns.group.slug}/log_categories"
+      )
+    end
   end
 
   defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(
-      :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("New Log category") end)
-    )
-    |> assign(:log_category, nil)
+    current_user = socket.assigns.current_user
+    tenant = socket.assigns.tenant
+
+    if Ash.can?({LogCategory, :create}, current_user,
+         actor: current_user,
+         tenant: tenant
+       ) do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("New Log category") end)
+      )
+      |> assign(:log_category, nil)
+    else
+      socket
+      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> push_navigate(
+        to: ~p"/tenants/#{tenant.slug}/groups/#{socket.assigns.group.slug}/log_categories"
+      )
+    end
   end
 
   defp apply_action(socket, :index, params) do
@@ -234,8 +289,10 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
   defp list_paginated_log_categories(socket, params) do
     page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
+    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
+    group_id = socket.assigns.group.id
 
-    case list_paginated_log_categories(params) do
+    case list_paginated(params, group_id, opts) do
       {:ok, %{count: total_count, results: tenants}} ->
         total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
         current_page = min(page, total_pages)
@@ -250,16 +307,22 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     end
   end
 
-  defp list_paginated_log_categories(params) do
+  defp list_paginated(params, group_id, opts) do
     case params do
       %{"page" => page} when not is_nil(page) ->
         page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
         offset_value = (page_value - 1) * 10
 
-        LogCategory.list_paginated(page: [count: true, offset: offset_value])
+        LogCategory.list_paginated(
+          %{group_id: group_id},
+          opts ++ [page: [count: true, offset: offset_value]]
+        )
 
       _ ->
-        LogCategory.list_paginated(page: [count: true])
+        LogCategory.list_paginated(
+          %{group_id: group_id},
+          opts ++ [page: [count: true]]
+        )
     end
   end
 
@@ -277,9 +340,15 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   def handle_event("move-up", params, socket) do
     %{"log_category_id" => log_category_id} = params
 
-    case Ash.get(LogCategory, log_category_id) do
+    case Ash.get(LogCategory, log_category_id,
+           actor: socket.assigns.current_user,
+           tenant: socket.assigns.tenant
+         ) do
       {:ok, log_category} ->
-        LogCategory.move_up(log_category)
+        LogCategory.move_up(log_category,
+          actor: socket.assigns.current_user,
+          tenant: socket.assigns.tenant
+        )
 
         {:noreply, socket}
 
@@ -291,9 +360,15 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   def handle_event("move-down", params, socket) do
     %{"log_category_id" => log_category_id} = params
 
-    case Ash.get(LogCategory, log_category_id) do
+    case Ash.get(LogCategory, log_category_id,
+           actor: socket.assigns.current_user,
+           tenant: socket.assigns.tenant
+         ) do
       {:ok, log_category} ->
-        LogCategory.move_down(log_category)
+        LogCategory.move_down(log_category,
+          actor: socket.assigns.current_user,
+          tenant: socket.assigns.tenant
+        )
 
         {:noreply, socket}
 

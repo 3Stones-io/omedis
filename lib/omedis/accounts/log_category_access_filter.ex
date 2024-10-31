@@ -1,11 +1,11 @@
-defmodule Omedis.Accounts.AccessFilter do
+defmodule Omedis.Accounts.LogCategoryAccessFilter do
   @moduledoc """
-  This policy filter is used to filter resources based on user access rights.
+  This policy filter is used to filter log categories based on user access rights.
   """
   use Ash.Policy.FilterCheck
 
   def describe(_) do
-    "Filtering resources based on user access rights"
+    "Filtering log categories based on user access rights"
   end
 
   def filter(nil, _context, _options), do: expr(false)
@@ -22,7 +22,7 @@ defmodule Omedis.Accounts.AccessFilter do
         tenant_id == ^tenant.id and
           read == true and
           exists(group.group_users, user_id == ^actor.id)
-      ) and exists(tenant, id == ^tenant.id)
+      ) and exists(group, tenant_id == ^tenant.id)
     )
   end
 end

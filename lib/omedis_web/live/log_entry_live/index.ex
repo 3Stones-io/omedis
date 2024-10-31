@@ -68,11 +68,12 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
   @impl true
   def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    current_user = socket.assigns.current_user
+    tenant = Tenant.by_slug!(slug, actor: current_user)
 
     {:ok, log_category} =
       id
-      |> LogCategory.by_id!()
+      |> LogCategory.by_id!(actor: current_user, tenant: tenant)
       |> Ash.load(:group)
 
     {:noreply,

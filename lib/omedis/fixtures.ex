@@ -37,6 +37,10 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.User, attrs)
   end
 
+  def create_log_category(attrs \\ %{}) do
+    fixture(Accounts.LogCategory, attrs)
+  end
+
   def attrs_for(Accounts.AccessRight) do
     %{
       create: Enum.random([true, false]),
@@ -83,7 +87,7 @@ defmodule Omedis.Fixtures do
     %{
       name: Faker.Lorem.sentence(),
       tenant_id: fn -> create_tenant().id end,
-      position: Faker.random_between(1, 100)
+      position: (System.os_time(:second) + :rand.uniform(1000)) |> to_string()
     }
   end
 
@@ -110,6 +114,23 @@ defmodule Omedis.Fixtures do
       gender: Enum.random(["Male", "Female"]),
       hashed_password: Bcrypt.hash_pwd_salt("password"),
       last_name: Faker.Person.last_name()
+    }
+  end
+
+  def attrs_for(Accounts.LogCategory) do
+    %{
+      name: Faker.Lorem.word(),
+      group_id: fn ->
+        {:ok, group} = create_group()
+        group.id
+      end,
+      project_id: fn ->
+        {:ok, project} = create_project(%{position: "1"})
+        project.id
+      end,
+      is_default: false,
+      color_code: "##{Faker.Color.rgb_hex()}",
+      slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}"
     }
   end
 

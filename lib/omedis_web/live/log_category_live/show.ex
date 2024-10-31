@@ -1,7 +1,9 @@
 defmodule OmedisWeb.LogCategoryLive.Show do
   use OmedisWeb, :live_view
+
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
 
   @impl true
@@ -93,6 +95,8 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           <.live_component
             module={OmedisWeb.LogCategoryLive.FormComponent}
             id={@log_category.id}
+            current_user={@current_user}
+            projects={@projects}
             title={@page_title}
             action={@live_action}
             tenant={@tenant}
@@ -121,17 +125,20 @@ defmodule OmedisWeb.LogCategoryLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug}, _, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    current_user = socket.assigns.current_user
+    tenant = Tenant.by_slug!(slug, actor: current_user)
     group = Group.by_slug!(group_slug)
     groups = Ash.read!(Group)
-    log_category = LogCategory.by_id!(id)
+    log_category = LogCategory.by_id!(id, actor: current_user, tenant: tenant)
     next_position = log_category.position
+    projects = Project.by_tenant_id!(%{tenant_id: tenant.id}, actor: current_user)
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:log_category, log_category)
-     |> assign(:tenants, Ash.read!(Tenant))
+     |> assign(:tenants, Ash.read!(Tenant, actor: current_user))
+     |> assign(:projects, projects)
      |> assign(:group, group)
      |> assign(:groups, groups)
      |> assign(:tenant, tenant)
