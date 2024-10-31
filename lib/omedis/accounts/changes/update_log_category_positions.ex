@@ -1,10 +1,10 @@
-defmodule Omedis.Accounts.Changes.UpdateActivityPositions do
+defmodule Omedis.Accounts.Changes.UpdateLogCategoryPositions do
   @moduledoc false
   use Ash.Resource.Change
 
   require Ash.Query
 
-  alias Omedis.Accounts.Activity
+  alias Omedis.Accounts.LogCategory
 
   @impl true
   def change(changeset, _opts, _context) do
@@ -13,7 +13,7 @@ defmodule Omedis.Accounts.Changes.UpdateActivityPositions do
       old_position = changeset.data.position
 
       max_position =
-        Activity
+        LogCategory
         |> Ash.Query.filter(group_id == ^Ash.Changeset.get_attribute(changeset, :group_id))
         |> Ash.count!()
 
@@ -31,13 +31,13 @@ defmodule Omedis.Accounts.Changes.UpdateActivityPositions do
   end
 
   defp shift_down(old_position, new_position) do
-    Activity
+    LogCategory
     |> Ash.Query.filter(position > ^old_position and position <= ^new_position)
     |> Ash.bulk_update!(:decrement_position, %{}, strategy: :stream)
   end
 
   defp shift_up(old_position, new_position) do
-    Activity
+    LogCategory
     |> Ash.Query.filter(position < ^old_position and position >= ^new_position)
     |> Ash.bulk_update!(:increment_position, %{}, strategy: :stream)
   end

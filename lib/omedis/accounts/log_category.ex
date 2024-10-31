@@ -287,5 +287,9 @@ defmodule Omedis.Accounts.LogCategory do
       allow_nil? false
       attribute_writable? true
     end
+
+    has_many :log_entries, Omedis.Accounts.LogEntry do
+      domain Omedis.Accounts
+    end
   end
 end
