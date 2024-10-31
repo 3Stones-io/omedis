@@ -18,10 +18,15 @@ defmodule OmedisWeb.ProjectLive.Index do
       tenants_count={@tenants_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
-        <.breadcrumb items={[
-          {"Home", ~p"/tenants/#{@tenant.slug}", false},
-          {"Projects", ~p"/tenants/#{@tenant.slug}", true}
-        ]} />
+        <.breadcrumb
+          items={[
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", false},
+            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Projects"), ~p"/tenants/#{@tenant.slug}", true}
+          ]}
+          language={@language}
+        />
 
         <.header>
           <%= with_locale(@language, fn -> %>

@@ -16,14 +16,19 @@ defmodule OmedisWeb.LogCategoryLive.Show do
       tenants_count={@tenants_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
-        <.breadcrumb items={[
-          {"Home", ~p"/tenants/#{@tenant.slug}", false},
-          {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
-          {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-          {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories",
-           false},
-          {@log_category.name, "", true}
-        ]} />
+        <.breadcrumb
+          items={[
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", false},
+            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
+            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+            {gettext("Log Categories"),
+             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
+            {@log_category.name, "", true}
+          ]}
+          language={@language}
+        />
 
         <.header>
           <%= with_locale(@language, fn -> %>
