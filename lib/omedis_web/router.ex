@@ -25,6 +25,8 @@ defmodule OmedisWeb.Router do
 
     get "/", PageController, :home
 
+    post "/change_language", LanguageController, :update
+
     live "/login", LoginLive, :index
     live "/register", RegisterLive, :index
 
@@ -37,7 +39,8 @@ defmodule OmedisWeb.Router do
       on_mount: [
         {OmedisWeb.LiveUserAuth, :live_user_required},
         {OmedisWeb.LiveTenant, :assign_current_tenant},
-        {OmedisWeb.LiveTenant, :assign_tenants_count}
+        {OmedisWeb.LiveTenant, :assign_tenants_count},
+        {OmedisWeb.LiveHelpers, :assign_locale}
       ] do
       live "/edit_profile", EditProfileLive, :index
       live "/tenants", TenantLive.Index, :index

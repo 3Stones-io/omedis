@@ -18,20 +18,30 @@ defmodule OmedisWeb.LogEntryLive.Index do
       tenants_count={@tenants_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
-        <.breadcrumb items={[
-          {"Home", ~p"/tenants/#{@tenant.slug}", false},
-          {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
-          {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-          {"Log Categories", ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories",
-           false},
-          {@log_category.name,
-           ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
-           false},
-          {"Log Entries", "", true}
-        ]} />
+        <.breadcrumb
+          items={[
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", false},
+            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
+            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+            {gettext("Log Categories"),
+             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
+            {@log_category.name,
+             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
+             false},
+            {"Log Entries", "", true}
+          ]}
+          language={@language}
+        />
 
         <.header>
-          Listing Log entries for <%= @log_category.name %>
+          <span>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Listing Log entries for") %>
+            <% end) %>
+          </span>
+          <%= @log_category.name %>
         </.header>
 
         <.table id="log_entries" rows={@streams.log_entries}>

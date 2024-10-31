@@ -21,7 +21,7 @@ defmodule OmedisWeb.AuthController do
     |> assign(:errors, reason)
     |> put_flash(
       :error,
-      "Username or password is incorrect"
+      gettext("Username or password is incorrect")
     )
     |> redirect(to: "/login")
   end
@@ -35,11 +35,7 @@ defmodule OmedisWeb.AuthController do
     |> assign(:errors, reason)
     |> put_flash(
       :error,
-      "Something went wrong. Try again." <>
-        " " <>
-        Enum.map_join(reason.errors, "\n", fn x ->
-          (to_string(x.field) |> String.capitalize()) <> " " <> x.message
-        end)
+      gettext("Something went wrong. Try again.")
     )
     |> redirect(to: "/register")
   end

@@ -61,7 +61,7 @@ end
       %{group_id: group_2.id, user_id: user_2.id},
       %{group_id: group_3.id, user_id: user_3.id}
     ],
-    nil
+    :unique_group_user
   )
 
 %{records: _records, status: :success} =
@@ -100,4 +100,23 @@ end
       }
     ],
     :unique_name
+  )
+
+%{records: [invitation_1 | _rest], status: :success} =
+  bulk_create.(
+    Accounts.Invitation,
+    [
+      %{creator_id: user_1.id, tenant_id: tenant_1.id},
+      %{creator_id: user_2.id, tenant_id: tenant_1.id}
+    ],
+    nil
+  )
+
+%{records: _records, status: :success} =
+  bulk_create.(
+    Accounts.InvitationGroup,
+    [
+      %{invitation_id: invitation_1.id, group_id: group_1.id}
+    ],
+    nil
   )
