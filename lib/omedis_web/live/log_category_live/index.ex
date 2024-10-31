@@ -38,12 +38,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
           <:actions>
             <.link
-              :if={
-                Ash.can?({LogCategory, :create}, @current_user,
-                  actor: @current_user,
-                  tenant: @tenant
-                )
-              }
+              :if={Ash.can?({LogCategory, :create}, @current_user, tenant: @tenant)}
               patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/new"}
               class="new-log-category-button"
             >
@@ -75,12 +70,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
           <:col
             :let={{_id, log_category}}
-            :if={
-              Ash.can?({LogCategory, :update}, @current_user,
-                actor: @current_user,
-                tenant: @tenant
-              )
-            }
+            :if={Ash.can?({LogCategory, :update}, @current_user, tenant: @tenant)}
             label={with_locale(@language, fn -> gettext("Position") end)}
           >
             <p class="position flex items-center">
@@ -139,12 +129,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             </div>
 
             <.link
-              :if={
-                Ash.can?({log_category, :update}, @current_user,
-                  actor: @current_user,
-                  tenant: @tenant
-                )
-              }
+              :if={Ash.can?({log_category, :update}, @current_user, tenant: @tenant)}
               patch={
                 ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}/edit"
               }
@@ -238,10 +223,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     tenant = socket.assigns.tenant
     log_category = LogCategory.by_id!(id, actor: current_user, tenant: tenant)
 
-    if Ash.can?({LogCategory, :update}, current_user,
-         actor: current_user,
-         tenant: tenant
-       ) do
+    if Ash.can?({log_category, :update}, current_user, tenant: tenant) do
       socket
       |> assign(
         :page_title,
@@ -262,10 +244,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     current_user = socket.assigns.current_user
     tenant = socket.assigns.tenant
 
-    if Ash.can?({LogCategory, :create}, current_user,
-         actor: current_user,
-         tenant: tenant
-       ) do
+    if Ash.can?({LogCategory, :create}, current_user, tenant: tenant) do
       socket
       |> assign(
         :page_title,

@@ -129,7 +129,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug}, _, socket) do
+  def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug} = params, _, socket) do
     current_user = socket.assigns.current_user
     tenant = Tenant.by_slug!(slug, actor: current_user)
     group = Group.by_slug!(group_slug)
@@ -149,7 +149,8 @@ defmodule OmedisWeb.LogCategoryLive.Show do
      |> assign(:tenant, tenant)
      |> assign(:is_custom_color, true)
      |> assign(:color_code, log_category.color_code)
-     |> assign(:next_position, next_position)}
+     |> assign(:next_position, next_position)
+     |> apply_action(socket.assigns.live_action, params)}
   end
 
   defp page_title(:show, language),
@@ -157,4 +158,21 @@ defmodule OmedisWeb.LogCategoryLive.Show do
 
   defp page_title(:edit, language),
     do: with_locale(language, fn -> gettext("Edit Log category") end)
+
+  defp apply_action(socket, :edit, _params) do
+    if Ash.can?({socket.assigns.log_category, :update}, socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       ) do
+      assign(socket, :log_category, socket.assigns.log_category)
+    else
+      socket
+      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> push_navigate(
+        to:
+          ~p"/tenants/#{socket.assigns.tenant.slug}/groups/#{socket.assigns.group.slug}/log_categories/#{socket.assigns.log_category}"
+      )
+    end
+  end
+
+  defp apply_action(socket, _, _params), do: socket
 end
