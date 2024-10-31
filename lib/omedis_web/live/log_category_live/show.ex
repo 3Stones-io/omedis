@@ -1,7 +1,7 @@
-defmodule OmedisWeb.ActivityLive.Show do
+defmodule OmedisWeb.LogCategoryLive.Show do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
+  alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Tenant
 
   @impl true
@@ -16,11 +16,13 @@ defmodule OmedisWeb.ActivityLive.Show do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", false},
+            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
             {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
             {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-            {gettext("Activities"), ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities",
-             false},
+            {gettext("Log Categories"),
+             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
             {@log_category.name, "", true}
           ]}
           language={@language}
@@ -40,7 +42,7 @@ defmodule OmedisWeb.ActivityLive.Show do
           <:actions>
             <.link
               patch={
-                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@log_category}/show/edit"
+                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}/show/edit"
               }
               phx-click={JS.push_focus()}
             >
@@ -52,7 +54,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             </.link>
 
             <.link
-              navigate={~p"/tenants/#{@tenant.slug}/activities/#{@log_category}/log_entries"}
+              navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/log_entries"}
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -77,7 +79,7 @@ defmodule OmedisWeb.ActivityLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities"}>
+        <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Back to log categories") %>
           <% end) %>
@@ -88,11 +90,13 @@ defmodule OmedisWeb.ActivityLive.Show do
           id="log_category-modal"
           show
           on_cancel={
-            JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@log_category}")
+            JS.patch(
+              ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"
+            )
           }
         >
           <.live_component
-            module={OmedisWeb.ActivityLive.FormComponent}
+            module={OmedisWeb.LogCategoryLive.FormComponent}
             id={@log_category.id}
             title={@page_title}
             action={@live_action}
@@ -105,7 +109,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             next_position={@next_position}
             language={@language}
             log_category={@log_category}
-            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@log_category}"}
+            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"}
           />
         </.modal>
       </div>
@@ -125,7 +129,7 @@ defmodule OmedisWeb.ActivityLive.Show do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     group = Group.by_slug!(group_slug)
     groups = Ash.read!(Group)
-    log_category = Activity.by_id!(id)
+    log_category = LogCategory.by_id!(id)
     next_position = log_category.position
 
     {:noreply,
