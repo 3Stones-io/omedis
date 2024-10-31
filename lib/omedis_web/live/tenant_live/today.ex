@@ -330,32 +330,17 @@ defmodule OmedisWeb.TenantLive.Today do
     %{id: group_id} = _group = socket.assigns.group
     %{id: project_id} = _project = socket.assigns.project
 
-    if Ash.can?({LogEntry, :create}, current_user) do
-      active_log_category_id =
-        case create_or_stop_log_entry(
-               log_category_id,
-               tenant,
-               current_user
-             ) do
-          {:ok, %LogEntry{end_at: nil}} ->
-            log_category_id
-
-          _ ->
-            nil
-        end
-
-      {:noreply,
-       socket
-       |> assign(:active_log_category_id, active_log_category_id)
-       |> assign(
-         :categories,
-         categories(group_id, project_id, actor: current_user, tenant: tenant)
-       )}
-    else
-      {:noreply,
-       socket
-       |> put_flash(:error, "You are not authorized to perform this action")}
-    end
+    {:noreply,
+     socket
+     |> assign(
+       :categories,
+       categories(group_id, project_id, actor: current_user, tenant: tenant)
+     )
+     |> create_or_stop_log_entry(
+       log_category_id,
+       tenant,
+       current_user
+     )}
   end
 
   def handle_event("select_group", %{"group_id" => id}, socket) do
@@ -376,62 +361,75 @@ defmodule OmedisWeb.TenantLive.Today do
      )}
   end
 
-  defp create_or_stop_log_entry(log_category_id, tenant, user) when is_binary(log_category_id) do
+  defp create_or_stop_log_entry(socket, log_category_id, tenant, user)
+       when is_binary(log_category_id) do
     {:ok, log_entries} =
       LogEntry.by_log_category_today(%{log_category_id: log_category_id},
         actor: user,
         tenant: tenant
       )
 
-    case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end)
-         |> IO.inspect(label: "[ANNNY]", limit: :infinity, pretty: true) do
+    case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
       nil ->
-        stop_any_active_log_entry(tenant, user)
-        create_log_entry(log_category_id, tenant, user)
+        stop_any_active_log_entry(socket, tenant, user)
+        create_log_entry(socket, log_category_id)
 
       log_entry ->
-        create_or_stop_log_entry(log_entry, log_category_id, actor: user, tenant: tenant)
+        create_or_stop_log_entry(socket, log_entry, log_category_id, actor: user, tenant: tenant)
     end
   end
 
-  defp create_or_stop_log_entry(log_entry, log_category_id, opts) do
+  defp create_or_stop_log_entry(socket, log_entry, log_category_id, opts) do
     if log_entry.log_category_id == log_category_id do
-      stop_log_entry(log_entry, opts)
+      stop_log_entry(socket, log_entry, opts)
     else
-      stop_log_entry(log_entry, opts)
-      create_log_entry(log_category_id, log_entry.tenant, log_entry.user)
+      stop_log_entry(socket, log_entry, opts)
+      create_log_entry(socket, log_category_id)
     end
   end
 
-  defp stop_any_active_log_entry(tenant, user) do
+  defp stop_any_active_log_entry(socket, tenant, user) do
     {:ok, log_entries} = LogEntry.by_tenant(%{tenant_id: tenant.id}, actor: user, tenant: tenant)
-    IO.inspect(log_entries, label: "[ANNYYDW]", limit: :infinity, pretty: true)
 
-    case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end)
-         |> IO.inspect(label: "[ANNYYDIID]", limit: :infinity, pretty: true) do
+    case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
       nil ->
-        :ok
+        socket
 
       log_entry ->
-        stop_log_entry(log_entry, actor: user, tenant: tenant)
+        stop_log_entry(socket, log_entry, actor: user, tenant: tenant)
     end
   end
 
-  defp create_log_entry(log_category_id, tenant, user) do
-    LogEntry.create(
-      %{
-        log_category_id: log_category_id,
-        tenant_id: tenant.id,
-        user_id: user.id,
-        start_at: Time.utc_now()
-      },
-      actor: user,
-      tenant: tenant
-    )
+  defp create_log_entry(socket, log_category_id) do
+    tenant = socket.assigns.tenant
+    user = socket.assigns.current_user
+
+    if Ash.can?({LogEntry, :create}, user, tenant: tenant) do
+      LogEntry.create(
+        %{
+          log_category_id: log_category_id,
+          tenant_id: tenant.id,
+          user_id: user.id,
+          start_at: Time.utc_now()
+        },
+        actor: user,
+        tenant: tenant
+      )
+
+      assign(socket, :active_log_category_id, log_category_id)
+    else
+      put_flash(socket, :error, gettext("You are not authorized to perform this action"))
+    end
   end
 
-  def stop_log_entry(log_entry, opts) do
-    LogEntry.update(log_entry, %{end_at: Time.utc_now()}, opts)
+  def stop_log_entry(socket, log_entry, opts) do
+    if Ash.can?({log_entry, :update}, socket.assigns.current_user, tenant: socket.assigns.tenant) do
+      LogEntry.update(log_entry, %{end_at: Time.utc_now()}, opts)
+
+      assign(socket, :active_log_category_id, nil)
+    else
+      put_flash(socket, :error, gettext("You are not authorized to perform this action"))
+    end
   end
 
   defp latest_group_for_a_tenant(tenant_id) do
