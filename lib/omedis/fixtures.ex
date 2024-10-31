@@ -17,6 +17,10 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.GroupUser, attrs)
   end
 
+  def create_log_category(attrs \\ %{}) do
+    fixture(Accounts.LogCategory, attrs)
+  end
+
   def create_log_entry(attrs \\ %{}) do
     fixture(Accounts.LogEntry, attrs)
   end
@@ -27,10 +31,6 @@ defmodule Omedis.Fixtures do
 
   def create_invitation_group(attrs \\ %{}) do
     fixture(Accounts.InvitationGroup, attrs)
-  end
-
-  def create_log_category(attrs \\ %{}) do
-    fixture(Accounts.LogCategory, attrs)
   end
 
   def create_project(attrs \\ %{}) do
