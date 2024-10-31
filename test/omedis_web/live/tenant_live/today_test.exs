@@ -357,6 +357,5 @@ defmodule OmedisWeb.TenantLive.TodayTest do
                  tenant: tenant
                )
     end
-
   end
 end
