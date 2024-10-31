@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.GroupUser do
+defmodule Omedis.Accounts.GroupMembership do
   @moduledoc """
   Represents a user in a group.
   """
@@ -14,12 +14,12 @@ defmodule Omedis.Accounts.GroupUser do
   alias Omedis.Accounts.User
 
   postgres do
-    table "group_users"
+    table "group_memberships"
     repo Omedis.Repo
   end
 
   identities do
-    identity :unique_group_user, [:group_id, :user_id]
+    identity :unique_group_member, [:group_id, :user_id]
   end
 
   relationships do
