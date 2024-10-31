@@ -958,3 +958,9 @@ msgstr "Auflistung von Protokollkategorien"
 #, elixir-autogen, elixir-format
 msgid "Log Categories"
 msgstr "Protokollkategorien"
+
+#: lib/omedis_web/live/tenant_live/today.ex:421
+#: lib/omedis_web/live/tenant_live/today.ex:431
+#, elixir-autogen, elixir-format, fuzzy
+msgid "You are not authorized to perform this action"
+msgstr "Sie sind nicht berechtigt, diese Aktion auszuführen"

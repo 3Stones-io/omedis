@@ -969,3 +969,9 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Log Categories"
 msgstr ""
+
+#: lib/omedis_web/live/tenant_live/today.ex:421
+#: lib/omedis_web/live/tenant_live/today.ex:431
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to perform this action"
+msgstr ""

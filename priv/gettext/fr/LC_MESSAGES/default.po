@@ -957,3 +957,9 @@ msgstr "Liste des catégories de logs"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Log Categories"
 msgstr "Catégories de logs"
+
+#: lib/omedis_web/live/tenant_live/today.ex:421
+#: lib/omedis_web/live/tenant_live/today.ex:431
+#, elixir-autogen, elixir-format, fuzzy
+msgid "You are not authorized to perform this action"
+msgstr "Vous n'êtes pas autorisé à effectuer cette action"
