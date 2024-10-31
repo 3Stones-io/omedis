@@ -79,8 +79,8 @@ defmodule Omedis.Accounts.Activity do
         :slug
       ]
 
-      change Omedis.Accounts.Changes.NewLogCategoryPosition
-      change Omedis.Accounts.Changes.SetDefaultLogCategory
+      change Omedis.Accounts.Changes.NewActivityPosition
+      change Omedis.Accounts.Changes.SetDefaultActivity
 
       primary? true
     end
@@ -96,7 +96,7 @@ defmodule Omedis.Accounts.Activity do
         :slug
       ]
 
-      change Omedis.Accounts.Changes.SetDefaultLogCategory
+      change Omedis.Accounts.Changes.SetDefaultActivity
 
       primary? true
       require_atomic? false
@@ -105,7 +105,7 @@ defmodule Omedis.Accounts.Activity do
     update :update_position do
       accept [:position]
 
-      change Omedis.Accounts.Changes.UpdateLogCategoryPositions
+      change Omedis.Accounts.Changes.UpdateActivityPositions
 
       require_atomic? false
     end
@@ -207,25 +207,25 @@ defmodule Omedis.Accounts.Activity do
     update_timestamp :updated_at
   end
 
-  def move_up(log_category) do
-    case log_category.position do
+  def move_up(activity) do
+    case activity.position do
       1 ->
-        {:ok, log_category}
+        {:ok, activity}
 
       _ ->
-        __MODULE__.update_position(log_category, %{position: log_category.position - 1})
+        __MODULE__.update_position(activity, %{position: activity.position - 1})
     end
   end
 
-  def move_down(log_category) do
-    last_position = get_max_position_by_group_id(log_category.group_id)
+  def move_down(activity) do
+    last_position = get_max_position_by_group_id(activity.group_id)
 
-    case log_category.position do
+    case activity.position do
       ^last_position ->
-        {:ok, log_category}
+        {:ok, activity}
 
       _ ->
-        __MODULE__.update_position(log_category, %{position: log_category.position + 1})
+        __MODULE__.update_position(activity, %{position: activity.position + 1})
     end
   end
 
@@ -271,7 +271,7 @@ defmodule Omedis.Accounts.Activity do
     end
   end
 
-  def get_default_log_category(group_id) do
+  def get_default_activity(group_id) do
     __MODULE__
     |> Ash.Query.filter(group_id: group_id, is_default: true)
     |> Ash.read_one!()

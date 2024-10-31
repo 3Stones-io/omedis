@@ -1,6 +1,6 @@
-defmodule OmedisWeb.LogCategoryLive.FormComponent do
+defmodule OmedisWeb.ActivityLive.FormComponent do
   use OmedisWeb, :live_component
-  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Activity
 
   @impl true
   def render(assigns) do
@@ -217,7 +217,7 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
         AshPhoenix.Form.for_update(log_category, :update, as: "log_category")
       else
         AshPhoenix.Form.for_create(
-          LogCategory,
+          Activity,
           :create,
           as: "log_category",
           tenant: socket.assigns.tenant
@@ -225,7 +225,7 @@ defmodule OmedisWeb.LogCategoryLive.FormComponent do
       end
 
     color_code =
-      LogCategory.select_unused_color_code(socket.assigns.tenant.id)
+      Activity.select_unused_color_code(socket.assigns.tenant.id)
 
     assign(socket,
       form: to_form(form),
