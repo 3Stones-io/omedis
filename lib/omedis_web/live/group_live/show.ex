@@ -27,7 +27,7 @@ defmodule OmedisWeb.GroupLive.Show do
         <.header>
           <:actions>
             <.link
-              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities"}
+              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
               phx-click={JS.push_focus()}
             >
               <.button>

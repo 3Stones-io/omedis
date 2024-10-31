@@ -1,7 +1,7 @@
-defmodule OmedisWeb.ActivityLive.Index do
+defmodule OmedisWeb.LogCategoryLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
+  alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
   alias Omedis.PaginationUtils
@@ -21,10 +21,12 @@ defmodule OmedisWeb.ActivityLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", false},
+            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
             {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
             {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-            {gettext("Activities"), "", true}
+            {gettext("Log Categories"), "", true}
           ]}
           language={@language}
         />
@@ -35,7 +37,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           <% end) %>
 
           <:actions>
-            <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/new"}>
+            <.link patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/new"}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("New Log category") %>
@@ -51,7 +53,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           row_click={
             fn {_id, log_category} ->
               JS.navigate(
-                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{log_category}"
+                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}"
               )
             end
           }
@@ -111,7 +113,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           <:action :let={{_id, log_category}}>
             <div class="sr-only">
               <.link navigate={
-                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{log_category}"
+                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}"
               }>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Show") %>
@@ -120,7 +122,7 @@ defmodule OmedisWeb.ActivityLive.Index do
             </div>
 
             <.link patch={
-              ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{log_category}/edit"
+              ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{log_category}/edit"
             }>
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
@@ -133,10 +135,10 @@ defmodule OmedisWeb.ActivityLive.Index do
           :if={@live_action in [:new, :edit]}
           id="log_category-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities")}
+          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories")}
         >
           <.live_component
-            module={OmedisWeb.ActivityLive.FormComponent}
+            module={OmedisWeb.LogCategoryLive.FormComponent}
             id={(@log_category && @log_category.id) || :new}
             title={@page_title}
             groups={@groups}
@@ -147,13 +149,13 @@ defmodule OmedisWeb.ActivityLive.Index do
             language={@language}
             action={@live_action}
             log_category={@log_category}
-            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities"}
+            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities"}
+          resource_path={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
           total_pages={@total_pages}
         />
       </div>
@@ -167,7 +169,7 @@ defmodule OmedisWeb.ActivityLive.Index do
         socket
       ) do
     if connected?(socket),
-      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "activity_positions_updated")
+      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
 
     group = Group.by_slug!(group_slug)
 
@@ -187,7 +189,7 @@ defmodule OmedisWeb.ActivityLive.Index do
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     if connected?(socket),
-      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "activity_positions_updated")
+      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
 
     {:ok,
      socket
@@ -212,7 +214,7 @@ defmodule OmedisWeb.ActivityLive.Index do
       :page_title,
       with_locale(socket.assigns.language, fn -> gettext("Edit Log category") end)
     )
-    |> assign(:log_category, Activity.by_id!(id))
+    |> assign(:log_category, LogCategory.by_id!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -259,15 +261,15 @@ defmodule OmedisWeb.ActivityLive.Index do
         page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
         offset_value = (page_value - 1) * 10
 
-        Activity.list_paginated(page: [count: true, offset: offset_value])
+        LogCategory.list_paginated(page: [count: true, offset: offset_value])
 
       _ ->
-        Activity.list_paginated(page: [count: true])
+        LogCategory.list_paginated(page: [count: true])
     end
   end
 
   @impl true
-  def handle_info({OmedisWeb.ActivityLive.FormComponent, {:saved, log_category}}, socket) do
+  def handle_info({OmedisWeb.LogCategoryLive.FormComponent, {:saved, log_category}}, socket) do
     {:noreply, stream_insert(socket, :log_categories, log_category)}
   end
 
@@ -280,9 +282,9 @@ defmodule OmedisWeb.ActivityLive.Index do
   def handle_event("move-up", params, socket) do
     %{"log_category_id" => log_category_id} = params
 
-    case Ash.get(Activity, log_category_id) do
+    case Ash.get(LogCategory, log_category_id) do
       {:ok, log_category} ->
-        Activity.move_up(log_category)
+        LogCategory.move_up(log_category)
 
         {:noreply, socket}
 
@@ -294,9 +296,9 @@ defmodule OmedisWeb.ActivityLive.Index do
   def handle_event("move-down", params, socket) do
     %{"log_category_id" => log_category_id} = params
 
-    case Ash.get(Activity, log_category_id) do
+    case Ash.get(LogCategory, log_category_id) do
       {:ok, log_category} ->
-        Activity.move_down(log_category)
+        LogCategory.move_down(log_category)
 
         {:noreply, socket}
 
