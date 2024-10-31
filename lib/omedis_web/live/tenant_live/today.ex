@@ -314,15 +314,22 @@ defmodule OmedisWeb.TenantLive.Today do
   @impl true
 
   def handle_event("select_log_category", %{"log_category_id" => log_category_id}, socket) do
-    create_or_stop_log_entry(
-      log_category_id,
-      socket.assigns.tenant.id,
-      socket.assigns.current_user.id
-    )
+    active_log_category_id =
+      case create_or_stop_log_entry(
+             log_category_id,
+             socket.assigns.tenant.id,
+             socket.assigns.current_user.id
+           ) do
+        {:ok, %LogEntry{end_at: nil}} ->
+          log_category_id
+
+        _ ->
+          nil
+      end
 
     {:noreply,
      socket
-     |> assign(:active_log_category_id, log_category_id)
+     |> assign(:active_log_category_id, active_log_category_id)
      |> assign(:categories, categories(socket.assigns.group.id, socket.assigns.project.id))}
   end
 
