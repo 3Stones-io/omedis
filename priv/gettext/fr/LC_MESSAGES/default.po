@@ -811,11 +811,6 @@ msgstr "Précédent"
 msgid "Showing page"
 msgstr "Affichage de la page"
 
-#: lib/omedis_web/live/tenant_live/index.ex:163
-#, elixir-autogen, elixir-format
-msgid "You are not authorized access this page"
-msgstr "Vous n'êtes pas autorisé à accéder à cette page"
-
 #: lib/omedis_web/live/tenant_live/index.ex:148
 #: lib/omedis_web/live/tenant_live/show.ex:218
 #, elixir-autogen, elixir-format

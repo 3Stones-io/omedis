@@ -787,18 +787,13 @@ msgstr ""
 #: lib/omedis_web/live/register_live.ex:229
 #, elixir-autogen, elixir-format
 msgid "Select a Tenant"
-
-#: lib/omedis_web/live/tenant_live/index.ex:156
-#, elixir-autogen, elixir-format
-msgid "You are not authorized access this page"
 msgstr ""
+
 
 #: lib/omedis_web/live/tenant_live/index.ex:141
 #: lib/omedis_web/live/tenant_live/show.ex:210
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
-msgstr ""
-
 msgstr ""
 
 #: lib/omedis_web/live/log_category_live/index.ex:107
@@ -821,11 +816,6 @@ msgstr ""
 #: lib/omedis_web/components/pagination_component.ex:43
 #, elixir-autogen, elixir-format
 msgid "Showing page"
-msgstr ""
-
-#: lib/omedis_web/live/tenant_live/index.ex:163
-#, elixir-autogen, elixir-format
-msgid "You are not authorized access this page"
 msgstr ""
 
 #: lib/omedis_web/live/tenant_live/index.ex:148
