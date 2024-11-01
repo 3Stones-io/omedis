@@ -16,12 +16,17 @@ defmodule OmedisWeb.TenantLive.Today do
       tenants_count={@tenants_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
-        <.breadcrumb items={[
-          {"Home", ~p"/tenants/#{@tenant.slug}", false},
-          {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
-          {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-          {"Today", "", true}
-        ]} />
+        <.breadcrumb
+          items={[
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", false},
+            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
+            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+            {gettext("Today"), "", true}
+          ]}
+          language={@language}
+        />
 
         <.select_for_groups_and_project
           groups={@groups}
@@ -83,7 +88,7 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {:noreply,
      socket
-     |> assign_active_log_category(categories, group.id, tenant.id)
+     |> assign_active_log_category(categories)
      |> assign(:page_title, "Today")
      |> assign(:tenant, tenant)
      |> assign(:start_at, start_at)
@@ -126,13 +131,11 @@ defmodule OmedisWeb.TenantLive.Today do
     Time.add(time, offset, :hour)
   end
 
-  defp assign_active_log_category(socket, log_categories, group_id, tenant_id) do
+  defp assign_active_log_category(socket, log_categories) do
     entries = get_active_entry(log_categories)
 
     if Enum.empty?(entries) do
-      default_log_category = LogCategory.get_default_log_category(group_id)
-      create_or_stop_log_entry(default_log_category.id, tenant_id, socket.assigns.current_user.id)
-      assign(socket, :active_log_category_id, default_log_category.id)
+      assign(socket, :active_log_category_id, nil)
     else
       log_category_id = List.first(entries).log_category_id
       assign(socket, :active_log_category_id, log_category_id)
@@ -311,15 +314,22 @@ defmodule OmedisWeb.TenantLive.Today do
   @impl true
 
   def handle_event("select_log_category", %{"log_category_id" => log_category_id}, socket) do
-    create_or_stop_log_entry(
-      log_category_id,
-      socket.assigns.tenant.id,
-      socket.assigns.current_user.id
-    )
+    active_log_category_id =
+      case create_or_stop_log_entry(
+             log_category_id,
+             socket.assigns.tenant.id,
+             socket.assigns.current_user.id
+           ) do
+        {:ok, %LogEntry{end_at: nil}} ->
+          log_category_id
+
+        _ ->
+          nil
+      end
 
     {:noreply,
      socket
-     |> assign(:active_log_category_id, log_category_id)
+     |> assign(:active_log_category_id, active_log_category_id)
      |> assign(:categories, categories(socket.assigns.group.id, socket.assigns.project.id))}
   end
 

@@ -110,3 +110,15 @@ msgstr ""
 
 msgid "must be equal to %{number}"
 msgstr ""
+
+msgid "is required"
+msgstr ""
+
+msgid "length must be greater than or equal to %{min}"
+msgstr ""
+
+msgid "Password is required"
+msgstr ""
+
+msgid "E-Mail is required"
+msgstr ""

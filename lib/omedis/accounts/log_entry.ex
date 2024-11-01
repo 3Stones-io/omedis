@@ -130,6 +130,11 @@ defmodule Omedis.Accounts.LogEntry do
   end
 
   relationships do
+    belongs_to :activity, Omedis.Accounts.Activity do
+      allow_nil? true
+      attribute_writable? true
+    end
+
     belongs_to :tenant, Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true

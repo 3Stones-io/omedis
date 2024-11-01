@@ -17,6 +17,14 @@ defmodule OmedisWeb.TenantLive.Index do
       tenants_count={@tenants_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.breadcrumb
+          items={[
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", true}
+          ]}
+          language={@language}
+        />
+
         <.header>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Listing Tenants") %>

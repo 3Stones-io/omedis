@@ -12,10 +12,10 @@ defmodule OmedisWeb.GeneralComponents do
   def breadcrumb(assigns) do
     ~H"""
     <div class="lg:hidden -mt-10 mb-3 -mx-6 lg:-mx-8">
-      <.mobile_breadcrumb items={assigns.items} />
+      <.mobile_breadcrumb items={assigns.items} language={@language} />
     </div>
     <div class="hidden lg:block -mt-10 mb-3 -mx-6 lg:-mx-8">
-      <.desktop_breadcrumb items={assigns.items} />
+      <.desktop_breadcrumb items={assigns.items} language={@language} />
     </div>
     """
   end
@@ -24,7 +24,7 @@ defmodule OmedisWeb.GeneralComponents do
     ~H"""
     <nav
       class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
-      aria-label="Navigation Breadcrumb"
+      aria-label={with_locale(@language, fn -> gettext("Navigation Breadcrumb") end)}
     >
       <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
         <%= for {label, path, is_current} <- @items do %>
@@ -130,15 +130,16 @@ defmodule OmedisWeb.GeneralComponents do
     ~H"""
     <div>
       <.topbar
-        language={@language}
         current_tenant={@current_tenant}
         current_user={@current_user}
+        language={@language}
         tenants_count={@tenants_count}
       />
       <.desktop_sidebar
         current_tenant={@current_tenant}
         current_user={@current_user}
         tenants_count={@tenants_count}
+        language={@language}
       />
       <%= render_slot(@inner_block) %>
     </div>
@@ -180,11 +181,11 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
                       />
                     </svg>
-                    Dashboard
+                    <%= with_locale(@language, fn -> gettext("Dashboard") end) %>
                   </a>
                 </li>
                 <li>
-                  <.tenants_link tenants_count={@tenants_count} />
+                  <.tenants_link tenants_count={@tenants_count} language={@language} />
                 </li>
 
                 <li>
@@ -207,7 +208,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
                       />
                     </svg>
-                    Today's Time Tracker
+                    <%= with_locale(@language, fn -> gettext("Today's Time Tracker") end) %>
                   </.link>
                 </li>
 
@@ -230,7 +231,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
                       />
                     </svg>
-                    Team
+                    <%= with_locale(@language, fn -> gettext("Team") end) %>
                   </a>
                 </li>
                 <li>
@@ -252,7 +253,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
                       />
                     </svg>
-                    Projects
+                    <%= with_locale(@language, fn -> gettext("Projects") end) %>
                   </a>
                 </li>
                 <li>
@@ -274,7 +275,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
                       />
                     </svg>
-                    Calendar
+                    <%= with_locale(@language, fn -> gettext("Calendar") end) %>
                   </a>
                 </li>
                 <li>
@@ -296,7 +297,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
                       />
                     </svg>
-                    Documents
+                    <%= with_locale(@language, fn -> gettext("Documents") end) %>
                   </a>
                 </li>
                 <li>
@@ -323,7 +324,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"
                       />
                     </svg>
-                    Reports
+                    <%= with_locale(@language, fn -> gettext("Reports") end) %>
                   </a>
                 </li>
               </ul>
@@ -341,7 +342,9 @@ defmodule OmedisWeb.GeneralComponents do
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
                       G
                     </span>
-                    <span class="truncate">Groups</span>
+                    <span class="truncate">
+                      <%= with_locale(@language, fn -> gettext("Groups") end) %>
+                    </span>
                   </.link>
                 </li>
                 <li>
@@ -352,7 +355,9 @@ defmodule OmedisWeb.GeneralComponents do
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
                       P
                     </span>
-                    <span class="truncate">Projects</span>
+                    <span class="truncate">
+                      <%= with_locale(@language, fn -> gettext("Projects") end) %>
+                    </span>
                   </.link>
                 </li>
               </ul>
@@ -381,7 +386,7 @@ defmodule OmedisWeb.GeneralComponents do
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                Settings
+                <%= with_locale(@language, fn -> gettext("Settings") end) %>
               </a>
             </li>
           </ul>
@@ -431,6 +436,7 @@ defmodule OmedisWeb.GeneralComponents do
                 current_tenant={@current_tenant}
                 current_user={@current_user}
                 tenants_count={@tenants_count}
+                language={@language}
               />
             </div>
 
@@ -446,7 +452,7 @@ defmodule OmedisWeb.GeneralComponents do
             <input
               id="search-field"
               class="block h-full w-[100%] border-0  text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-              placeholder="Search..."
+              placeholder={with_locale(@language, fn -> gettext("Search...") end)}
               type="search"
               name="search"
             />
@@ -518,7 +524,7 @@ defmodule OmedisWeb.GeneralComponents do
                   </span>
                 </button>
 
-                <.dropdown_items current_user={@current_user} />
+                <.dropdown_items current_user={@current_user} language={@language} />
               </div>
             </div>
           </div>
@@ -528,17 +534,17 @@ defmodule OmedisWeb.GeneralComponents do
     """
   end
 
-  defp desktop_sidebar(assigns) do
+  def desktop_sidebar(assigns) do
     ~H"""
     <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
-        <.link navigate="/" class="flex h-16 shrink-0 items-center">
+        <div class="flex h-16 shrink-0 items-center">
           <img
             class="h-8 w-auto"
             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
             alt="Your Company"
           />
-        </.link>
+        </div>
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
@@ -562,13 +568,12 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
                       />
                     </svg>
-                    Dashboard
+                    <%= with_locale(@language, fn -> gettext("Dashboard") end) %>
                   </a>
                 </li>
                 <li>
-                  <.tenants_link tenants_count={@tenants_count} />
+                  <.tenants_link tenants_count={@tenants_count} language={@language} />
                 </li>
-
                 <li>
                   <.link
                     :if={@current_tenant}
@@ -589,10 +594,9 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
                       />
                     </svg>
-                    Today's Time Tracker
+                    <%= with_locale(@language, fn -> gettext("Today's Time Tracker") end) %>
                   </.link>
                 </li>
-
                 <li>
                   <a
                     href="#"
@@ -612,7 +616,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
                       />
                     </svg>
-                    Team
+                    <%= with_locale(@language, fn -> gettext("Team") end) %>
                   </a>
                 </li>
                 <li>
@@ -634,7 +638,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
                       />
                     </svg>
-                    Projects
+                    <%= with_locale(@language, fn -> gettext("Projects") end) %>
                   </a>
                 </li>
                 <li>
@@ -656,7 +660,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
                       />
                     </svg>
-                    Calendar
+                    <%= with_locale(@language, fn -> gettext("Calendar") end) %>
                   </a>
                 </li>
                 <li>
@@ -678,7 +682,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
                       />
                     </svg>
-                    Documents
+                    <%= with_locale(@language, fn -> gettext("Documents") end) %>
                   </a>
                 </li>
                 <li>
@@ -705,7 +709,7 @@ defmodule OmedisWeb.GeneralComponents do
                         d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"
                       />
                     </svg>
-                    Reports
+                    <%= with_locale(@language, fn -> gettext("Reports") end) %>
                   </a>
                 </li>
               </ul>
@@ -723,7 +727,9 @@ defmodule OmedisWeb.GeneralComponents do
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
                       G
                     </span>
-                    <span class="truncate">Groups</span>
+                    <span class="truncate">
+                      <%= with_locale(@language, fn -> gettext("Groups") end) %>
+                    </span>
                   </.link>
                 </li>
                 <li>
@@ -734,7 +740,9 @@ defmodule OmedisWeb.GeneralComponents do
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
                       P
                     </span>
-                    <span class="truncate">Projects</span>
+                    <span class="truncate">
+                      <%= with_locale(@language, fn -> gettext("Projects") end) %>
+                    </span>
                   </.link>
                 </li>
               </ul>
@@ -763,7 +771,7 @@ defmodule OmedisWeb.GeneralComponents do
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                Settings
+                <%= with_locale(@language, fn -> gettext("Settings") end) %>
               </a>
             </li>
           </ul>
@@ -789,10 +797,10 @@ defmodule OmedisWeb.GeneralComponents do
     >
       <div :if={@current_user} class="flex  p-2 flex-col gap-2">
         <.link navigate="/edit_profile">
-          Edit Profile
+          <%= with_locale(@language, fn -> gettext("Edit Profile") end) %>
         </.link>
         <.link navigate="/auth/user/sign-out">
-          Sign out
+          <%= with_locale(@language, fn -> gettext("Sign out") end) %>
         </.link>
       </div>
 
@@ -846,7 +854,7 @@ defmodule OmedisWeb.GeneralComponents do
           d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
         />
       </svg>
-      <%= tenants_link_text(@tenants_count) %>
+      <%= tenants_link_text(@tenants_count, @language) %>
     </.link>
     """
   end
@@ -854,8 +862,12 @@ defmodule OmedisWeb.GeneralComponents do
   defp tenants_link_path(0), do: ~p"/tenants/new"
   defp tenants_link_path(_tenants_count), do: ~p"/tenants"
 
-  defp tenants_link_text(0), do: "Create first tenant"
-  defp tenants_link_text(tenants_count), do: "Tenants (#{tenants_count})"
+  defp tenants_link_text(0, language),
+    do: with_locale(language, fn -> gettext("Create first tenant") end)
+
+  defp tenants_link_text(tenants_count, language) do
+    "#{with_locale(language, fn -> gettext("Tenants") end)} (#{tenants_count})"
+  end
 
   attr :class, :string, default: nil
   attr :color, :string, required: true
