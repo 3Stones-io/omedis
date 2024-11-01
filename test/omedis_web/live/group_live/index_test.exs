@@ -187,9 +187,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       refute html =~ group.name
     end
-  end
 
-  describe "/tenants/:slug/groups/:slug/edit" do
     test "authorized user can edit a group", %{
       conn: conn,
       owner: owner,
@@ -232,7 +230,9 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       assert html =~ "Group updated successfully"
       assert html =~ "New Group Name"
     end
+  end
 
+  describe "/tenants/:slug/groups/:slug/edit" do
     test "can't edit a group if not authorized", %{
       conn: conn,
       owner: owner
