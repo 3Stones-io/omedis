@@ -43,12 +43,18 @@ defmodule Omedis.Accounts.Invitation do
         allow_nil? false
       end
 
+      argument :sort_order, :atom do
+        allow_nil? true
+        default :asc
+        constraints one_of: [:asc, :desc]
+      end
+
       pagination offset?: true,
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit),
                  countable: :by_default
 
       filter expr(creator_id == ^arg(:creator_id))
-      prepare build(sort: :inserted_at)
+      prepare build(sort: [inserted_at: arg(:sort_order)])
     end
 
     create :create do

@@ -478,6 +478,7 @@ defmodule OmedisWeb.CoreComponents do
   attr :id, :string, required: true
   attr :rows, :list, required: true
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
+  attr :col_click, :any, doc: "the function for handling phx-click on each column"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
 
   attr :row_item, :any,
@@ -488,6 +489,8 @@ defmodule OmedisWeb.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
+    attr :sort_by, :string
+    attr :col_click, :any
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -503,7 +506,19 @@ defmodule OmedisWeb.CoreComponents do
       <table class="w-[40rem] mt-11 sm:w-full min-w-full whitespace-nowrap">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th
+              :for={col <- @col}
+              phx-click={col[:col_click]}
+              class={[
+                "p-0 pb-4 pr-6 font-normal",
+                col[:col_click] && "hover:cursor-pointer"
+              ]}
+            >
+              <div class="flex items-center gap-1">
+                <%= col[:label] %>
+                <span :if={col[:sort_by]}><%= col[:sort_by] %></span>
+              </div>
+            </th>
             <th :if={@action != []} class="relative p-0 pb-4">
               <span class="sr-only"><%= gettext("Actions") %></span>
             </th>

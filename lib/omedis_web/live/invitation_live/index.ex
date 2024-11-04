@@ -54,9 +54,15 @@ defmodule OmedisWeb.InvitationLive.Index do
 
             <:col
               :let={{_id, invitation}}
-              label={gettext("Invited At")}
-              sort_by=" ↑"
-              col_click={fn -> JS.push("sort_invitations") end}
+              label={with_locale(@language, fn -> gettext("Invited At") end)}
+              sort_by={(@sort_order == "asc" && "↓") || "↑"}
+              col_click={
+                JS.push("sort_invitations",
+                  value: %{
+                    current_sort_order: @sort_order
+                  }
+                )
+              }
             >
               <%= Calendar.strftime(invitation.inserted_at, "%Y-%m-%d %H:%M:%S") %>
             </:col>
@@ -108,7 +114,7 @@ defmodule OmedisWeb.InvitationLive.Index do
     {:ok,
      socket
      |> assign(:tenant, tenant)
-     |> assign(:options, %{})
+     |> assign(:sort_order, :desc)
      |> stream(:invitations, [])}
   end
 
@@ -135,6 +141,19 @@ defmodule OmedisWeb.InvitationLive.Index do
      |> stream_delete(:invitations, invitation)}
   end
 
+  @impl true
+  def handle_event("sort_invitations", %{"current_sort_order" => current_sort_order}, socket) do
+    new_sort_order = if current_sort_order == "asc", do: "desc", else: "asc"
+    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
+
+    params = %{"sort_order" => new_sort_order, "creator_id" => opts[:actor].id}
+    maybe_updated_socket = list_paginated_invitations(socket, params)
+
+    {:noreply,
+     maybe_updated_socket
+     |> assign(:sort_order, new_sort_order)}
+  end
+
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(
@@ -145,12 +164,19 @@ defmodule OmedisWeb.InvitationLive.Index do
 
   defp list_paginated_invitations(socket, params) do
     page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
-    sort_by = (params["sort_by"] || "inserted_at") |> String.to_existing_atom()
-    sort_order = (params["sort_order"] || "desc") |> String.to_existing_atom()
-
     opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
 
-    case list_invitations(params, opts) do
+    sort_order =
+      params
+      |> Map.get("sort_order", "asc")
+      |> String.to_existing_atom()
+
+    updated_params =
+      params
+      |> Map.put("creator_id", socket.assigns.current_user.id)
+      |> Map.put("sort_order", sort_order)
+
+    case list_invitations(updated_params, opts) do
       {:ok, %{count: total_count, results: invitations}} ->
         total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
         current_page = min(page, total_pages)
@@ -158,7 +184,6 @@ defmodule OmedisWeb.InvitationLive.Index do
         socket
         |> assign(:current_page, current_page)
         |> assign(:total_pages, total_pages)
-        |> assign(:options, %{sort_by: sort_by, sort_order: sort_order})
         |> stream(:invitations, invitations, reset: true)
 
       {:error, _error} ->
@@ -167,19 +192,21 @@ defmodule OmedisWeb.InvitationLive.Index do
   end
 
   defp list_invitations(params, opts) do
+    updated_params = Map.drop(params, ["page", "slug"])
+
     case params do
       %{"page" => page} when not is_nil(page) ->
         page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
         offset_value = (page_value - 1) * 10
 
         Invitation.list_paginated(
-          %{creator_id: opts[:actor].id},
+          updated_params,
           opts ++ [page: [offset: offset_value, limit: 10, count: true]]
         )
 
       _ ->
         Invitation.list_paginated(
-          %{creator_id: opts[:actor].id},
+          updated_params,
           opts ++ [page: [offset: 0, limit: 10, count: true]]
         )
     end
