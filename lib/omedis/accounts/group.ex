@@ -10,7 +10,6 @@ defmodule Omedis.Accounts.Group do
     domain: Omedis.Accounts,
     authorizers: [Ash.Policy.Authorizer]
 
-  alias Omedis.Accounts.AccessRight
   alias Omedis.Accounts.GroupUser
   alias Omedis.Accounts.User
 
@@ -132,8 +131,11 @@ defmodule Omedis.Accounts.Group do
       through GroupUser
     end
 
-    has_many :access_rights, AccessRight
     has_many :group_users, GroupUser
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Group.Relationships.GroupAccessRights
+    end
   end
 
   policies do

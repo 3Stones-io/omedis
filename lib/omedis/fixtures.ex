@@ -75,7 +75,7 @@ defmodule Omedis.Fixtures do
     %{
       color_code: "#" <> Faker.Color.rgb_hex(),
       group_id: fn -> create_group().id end,
-      is_default: Enum.random([true, false]),
+      is_default: false,
       name: Faker.Lorem.word(),
       project_id: fn -> create_project().id end,
       slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}"

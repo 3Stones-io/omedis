@@ -2,6 +2,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
 
   @impl true
@@ -98,6 +99,8 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           <.live_component
             module={OmedisWeb.LogCategoryLive.FormComponent}
             id={@log_category.id}
+            current_user={@current_user}
+            projects={@projects}
             title={@page_title}
             action={@live_action}
             tenant={@tenant}
@@ -128,21 +131,29 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug}, _, socket) do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
-    groups = Ash.read!(Group)
-    log_category = LogCategory.by_id!(id)
+    groups = Ash.read!(Group, actor: socket.assigns.current_user, tenant: tenant)
+    log_category = LogCategory.by_id!(id, actor: socket.assigns.current_user, tenant: tenant)
     next_position = log_category.position
+
+    projects =
+      Project.by_tenant_id!(%{tenant_id: tenant.id},
+        actor: socket.assigns.current_user,
+        tenant: tenant
+      )
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:log_category, log_category)
-     |> assign(:tenants, Ash.read!(Tenant))
+     |> assign(:tenants, Ash.read!(Tenant, actor: socket.assigns.current_user))
+     |> assign(:projects, projects)
      |> assign(:group, group)
      |> assign(:groups, groups)
      |> assign(:tenant, tenant)
      |> assign(:is_custom_color, true)
      |> assign(:color_code, log_category.color_code)
-     |> assign(:next_position, next_position)}
+     |> assign(:next_position, next_position)
+     |> apply_action(socket.assigns.live_action)}
   end
 
   defp page_title(:show, language),
@@ -150,4 +161,23 @@ defmodule OmedisWeb.LogCategoryLive.Show do
 
   defp page_title(:edit, language),
     do: with_locale(language, fn -> gettext("Edit Log category") end)
+
+  defp apply_action(socket, :edit) do
+    actor = socket.assigns.current_user
+    tenant = socket.assigns.tenant
+    log_category = socket.assigns.log_category
+
+    if Ash.can?({log_category, :update}, actor, tenant: tenant) do
+      assign(socket, :page_title, page_title(:edit, socket.assigns.language))
+    else
+      socket
+      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> push_navigate(
+        to:
+          ~p"/tenants/#{tenant.slug}/groups/#{socket.assigns.group.slug}/log_categories/#{log_category.id}"
+      )
+    end
+  end
+
+  defp apply_action(socket, _), do: socket
 end

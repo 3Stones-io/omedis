@@ -35,6 +35,22 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         tenant_id: tenant.id
       })
 
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
+        tenant_id: tenant.id
+      })
+
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "LogCategory",
+        tenant_id: tenant.id
+      })
+
     %{
       authorized_user: authorized_user,
       group: group,
@@ -339,13 +355,38 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       tenant: tenant,
       user: unauthorized_user
     } do
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: unauthorized_user.id})
+      {:ok, group2} = create_group(%{tenant_id: tenant.id})
+      {:ok, _} = create_group_user(%{group_id: group2.id, user_id: unauthorized_user.id})
 
       {:ok, _} =
         create_access_right(%{
-          group_id: group.id,
+          group_id: group2.id,
           read: true,
           resource_name: "Tenant",
+          tenant_id: tenant.id
+        })
+
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group2.id,
+          read: true,
+          resource_name: "Project",
+          tenant_id: tenant.id
+        })
+
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group2.id,
+          read: true,
+          resource_name: "Group",
+          tenant_id: tenant.id
+        })
+
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group2.id,
+          read: true,
+          resource_name: "LogCategory",
           tenant_id: tenant.id
         })
 

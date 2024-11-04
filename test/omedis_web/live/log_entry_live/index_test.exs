@@ -25,6 +25,14 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       create_access_right(%{
         group_id: group.id,
         read: true,
+        resource_name: "LogCategory",
+        tenant_id: tenant.id
+      })
+
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
         resource_name: "LogEntry",
         tenant_id: tenant.id,
         write: true
@@ -114,21 +122,27 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       assert html =~ "Test comment 2"
     end
 
-    test "unauthorized user cannot see log entries", %{
-      conn: conn,
-      group: group,
-      log_category: log_category,
-      user: user
-    } do
-      {:ok, another_user} = create_user()
-      {:ok, tenant} = create_tenant(%{owner_id: another_user.id})
+    test "unauthorized user cannot see log entries", %{conn: conn, user: user} do
+      {:ok, tenant} = create_tenant()
+      {:ok, group} = create_group(%{tenant_id: tenant.id})
       {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+      {:ok, project} = create_project(%{tenant_id: tenant.id})
+
+      {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
 
       {:ok, _} =
         create_access_right(%{
           group_id: group.id,
           read: true,
           resource_name: "Tenant",
+          tenant_id: tenant.id
+        })
+
+      {:ok, _} =
+        create_access_right(%{
+          group_id: group.id,
+          read: true,
+          resource_name: "LogCategory",
           tenant_id: tenant.id
         })
 
