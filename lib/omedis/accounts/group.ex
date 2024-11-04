@@ -7,7 +7,8 @@ defmodule Omedis.Accounts.Group do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Accounts,
+    authorizers: [Ash.Policy.Authorizer]
 
   alias Omedis.Accounts.AccessRight
   alias Omedis.Accounts.GroupUser
@@ -33,7 +34,6 @@ defmodule Omedis.Accounts.Group do
 
   code_interface do
     domain Omedis.Accounts
-    define :read
     define :create
     define :update
     define :by_id, get_by: [:id], action: :read
@@ -100,7 +100,7 @@ defmodule Omedis.Accounts.Group do
   def slug_exists?(slug, tenant_id) do
     __MODULE__
     |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
-    |> Ash.read_one!()
+    |> Ash.read_one!(authorize?: false)
     |> case do
       nil -> false
       _ -> true
@@ -134,5 +134,15 @@ defmodule Omedis.Accounts.Group do
 
     has_many :access_rights, AccessRight
     has_many :group_users, GroupUser
+  end
+
+  policies do
+    policy action_type([:create, :update, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action_type([:read]) do
+      authorize_if Omedis.Accounts.AccessFilter
+    end
   end
 end

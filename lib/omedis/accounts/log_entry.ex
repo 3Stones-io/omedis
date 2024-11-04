@@ -4,8 +4,12 @@ defmodule Omedis.Accounts.LogEntry do
   """
 
   use Ash.Resource,
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
+
+  alias Omedis.Accounts.AccessFilter
+  alias Omedis.Accounts.CanAccessResource
 
   postgres do
     table "log_entries"
@@ -27,7 +31,6 @@ defmodule Omedis.Accounts.LogEntry do
     define :read
     define :create
     define :update
-    define :destroy
     define :by_log_category
     define :by_log_category_today
     define :by_tenant
@@ -81,6 +84,7 @@ defmodule Omedis.Accounts.LogEntry do
 
     create :create do
       accept [
+        :created_at,
         :comment,
         :start_at,
         :end_at,
@@ -109,9 +113,6 @@ defmodule Omedis.Accounts.LogEntry do
     read :read do
       primary? true
     end
-
-    destroy :destroy do
-    end
   end
 
   attributes do
@@ -125,11 +126,16 @@ defmodule Omedis.Accounts.LogEntry do
     attribute :start_at, :time, allow_nil?: true, public?: true
     attribute :end_at, :time, allow_nil?: true, public?: true
 
-    create_timestamp :created_at
+    create_timestamp :created_at, writable?: true
     update_timestamp :updated_at
   end
 
   relationships do
+    belongs_to :activity, Omedis.Accounts.Activity do
+      allow_nil? true
+      attribute_writable? true
+    end
+
     belongs_to :tenant, Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true
@@ -143,6 +149,20 @@ defmodule Omedis.Accounts.LogEntry do
     belongs_to :user, Omedis.Accounts.User do
       allow_nil? true
       attribute_writable? true
+    end
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.LogEntry.Relationships.LogEntryAccessRights
+    end
+  end
+
+  policies do
+    policy action_type(:read) do
+      authorize_if AccessFilter
+    end
+
+    policy action_type([:create, :update]) do
+      authorize_if CanAccessResource
     end
   end
 end

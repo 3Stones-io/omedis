@@ -5,6 +5,8 @@ defmodule OmedisWeb.LoginLive do
 
   use OmedisWeb, :live_view
 
+  on_mount {OmedisWeb.LiveHelpers, :assign_locale}
+
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     socket =

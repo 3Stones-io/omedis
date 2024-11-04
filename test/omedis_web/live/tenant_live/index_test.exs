@@ -180,7 +180,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
                live(conn, ~p"/tenants/new")
 
       assert path == ~p"/tenants"
-      assert flash["error"] =~ "You are not authorized access this page"
+      assert flash["error"] =~ "You are not authorized to access this page"
     end
 
     test "creates a new tenant when user has access", %{conn: conn} do

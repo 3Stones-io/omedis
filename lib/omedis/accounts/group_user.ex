@@ -16,6 +16,15 @@ defmodule Omedis.Accounts.GroupUser do
   postgres do
     table "group_users"
     repo Omedis.Repo
+
+    references do
+      reference :group, on_delete: :delete
+      reference :user, on_delete: :delete
+    end
+  end
+
+  identities do
+    identity :unique_group_user, [:group_id, :user_id]
   end
 
   relationships do

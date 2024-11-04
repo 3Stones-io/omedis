@@ -1,5 +1,6 @@
 defmodule OmedisWeb.GroupLive.Index do
   use OmedisWeb, :live_view
+
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Tenant
   alias OmedisWeb.PaginationComponent
@@ -17,20 +18,30 @@ defmodule OmedisWeb.GroupLive.Index do
       tenants_count={@tenants_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
-        <.breadcrumb items={[
-          {"Home", ~p"/tenants/#{@tenant.slug}", false},
-          {"Groups", ~p"/tenants/#{@tenant.slug}", true}
-        ]} />
+        <.breadcrumb
+          items={[
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", false},
+            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}", true}
+          ]}
+          language={@language}
+        />
 
         <div>
-          <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button">Back</.link>
+          <.link navigate={~p"/tenants/#{@tenant.slug}"} class="button">
+            <%= gettext("Back") %>
+          </.link>
         </div>
         <.header>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Listing Groups") %>
           <% end) %>
           <:actions>
-            <.link patch={~p"/tenants/#{@tenant.slug}/groups/new"}>
+            <.link
+              :if={Ash.can?({Group, :create}, @current_user, actor: @current_user, tenant: @tenant)}
+              patch={~p"/tenants/#{@tenant.slug}/groups/new"}
+            >
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("New Group") %>
@@ -58,6 +69,8 @@ defmodule OmedisWeb.GroupLive.Index do
           <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Actions") end)}>
             <div class="flex gap-4">
               <.link
+                :if={Ash.can?({group, :update}, @current_user, actor: @current_user, tenant: @tenant)}
+                id={"edit-group-#{group.id}"}
                 patch={~p"/tenants/#{@tenant.slug}/groups/#{group.slug}/edit"}
                 class="font-semibold"
               >
@@ -65,7 +78,12 @@ defmodule OmedisWeb.GroupLive.Index do
                   <%= gettext("Edit") %>
                 <% end) %>
               </.link>
-              <.link>
+              <.link
+                :if={
+                  Ash.can?({group, :destroy}, @current_user, actor: @current_user, tenant: @tenant)
+                }
+                id={"delete-group-#{group.id}"}
+              >
                 <p class="font-semibold" phx-click="delete" phx-value-id={group.id}>
                   <%= with_locale(@language, fn -> %>
                     <%= gettext("Delete") %>
@@ -106,12 +124,11 @@ defmodule OmedisWeb.GroupLive.Index do
   end
 
   @impl true
-  def mount(%{"slug" => slug}, %{"language" => language} = _session, socket) do
+  def mount(%{"slug" => slug}, _session, socket) do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
 
     {:ok,
      socket
-     |> assign(:language, language)
      |> assign(:tenant, tenant)
      |> stream(:groups, [])}
   end
@@ -122,15 +139,52 @@ defmodule OmedisWeb.GroupLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"group_slug" => group_slug}) do
-    socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Edit Group") end))
-    |> assign(:group, Group.by_slug!(group_slug))
+    group =
+      Group.by_slug!(group_slug,
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.tenant
+      )
+
+    if Ash.can?({group, :update}, socket.assigns.current_user,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       ) do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("Edit Group") end)
+      )
+      |> assign(:group, group)
+    else
+      socket
+      |> put_flash(
+        :error,
+        with_locale(socket.assigns.language, fn ->
+          gettext("You are not authorized to access this page")
+        end)
+      )
+      |> redirect(to: ~p"/tenants/#{socket.assigns.tenant.slug}/groups")
+    end
   end
 
   defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("New Group") end))
-    |> assign(:group, nil)
+    if Ash.can?({Group, :create}, socket.assigns.current_user,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       ) do
+      socket
+      |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("New Group") end))
+      |> assign(:group, nil)
+    else
+      socket
+      |> put_flash(
+        :error,
+        with_locale(socket.assigns.language, fn ->
+          gettext("You are not authorized to access this page")
+        end)
+      )
+      |> redirect(to: ~p"/tenants/#{socket.assigns.tenant.slug}/groups")
+    end
   end
 
   defp apply_action(socket, :index, params) do
@@ -143,21 +197,43 @@ defmodule OmedisWeb.GroupLive.Index do
     |> PaginationUtils.list_paginated(params, :groups, fn offset ->
       Group.by_tenant_id(
         %{tenant_id: socket.assigns.tenant.id},
-        page: [count: true, offset: offset]
+        actor: socket.assigns.current_user,
+        page: [count: true, offset: offset],
+        tenant: socket.assigns.tenant
       )
     end)
   end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    group = Ash.get!(Omedis.Accounts.Group, id)
+    group =
+      Ash.get!(Omedis.Accounts.Group, id,
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.tenant
+      )
 
-    Group.destroy(group)
+    if Ash.can?({group, :destroy}, socket.assigns.current_user,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       ) do
+      Group.destroy(group, actor: socket.assigns.current_user, tenant: socket.assigns.tenant)
 
-    {:noreply,
-     socket
-     |> stream_delete(:groups, group)
-     |> put_flash(:info, with_locale(socket.assigns.language, fn -> gettext("Group deleted") end))}
+      {:noreply,
+       socket
+       |> stream_delete(:groups, group)
+       |> put_flash(
+         :info,
+         with_locale(socket.assigns.language, fn -> gettext("Group deleted") end)
+       )}
+    else
+      socket
+      |> put_flash(
+        :error,
+        with_locale(socket.assigns.language, fn ->
+          gettext("You are not authorized to delete this group")
+        end)
+      )
+    end
   end
 
   @impl true

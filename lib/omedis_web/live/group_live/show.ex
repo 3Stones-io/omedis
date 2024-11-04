@@ -13,11 +13,16 @@ defmodule OmedisWeb.GroupLive.Show do
       tenants_count={@tenants_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
-        <.breadcrumb items={[
-          {"Home", ~p"/tenants/#{@tenant.slug}", false},
-          {"Groups", ~p"/tenants/#{@tenant.slug}/groups", false},
-          {@group.name, "", true}
-        ]} />
+        <.breadcrumb
+          items={[
+            {gettext("Home"), ~p"/", false},
+            {gettext("Tenants"), ~p"/tenants", false},
+            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
+            {@group.name, "", true}
+          ]}
+          language={@language}
+        />
 
         <.header>
           <:actions>
@@ -77,11 +82,16 @@ defmodule OmedisWeb.GroupLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug, "group_slug" => group_slug}, _, socket) do
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:tenant, Tenant.by_slug!(slug, actor: socket.assigns.current_user))
-     |> assign(:group, Group.by_slug!(group_slug))}
+     |> assign(:tenant, tenant)
+     |> assign(
+       :group,
+       Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
+     )}
   end
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Show Tenant") end)
