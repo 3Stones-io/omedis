@@ -811,11 +811,6 @@ msgstr "Precedente"
 msgid "Showing page"
 msgstr "Mostrando pagina"
 
-#: lib/omedis_web/live/tenant_live/index.ex:163
-#, elixir-autogen, elixir-format
-msgid "You are not authorized access this page"
-msgstr "Non sei autorizzato ad accedere a questa pagina"
-
 #: lib/omedis_web/live/tenant_live/index.ex:148
 #: lib/omedis_web/live/tenant_live/show.ex:218
 #, elixir-autogen, elixir-format
@@ -957,3 +952,9 @@ msgstr "Elenco delle categorie di log"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Log Categories"
 msgstr "Categorie di log"
+
+#: lib/omedis_web/live/tenant_live/today.ex:421
+#: lib/omedis_web/live/tenant_live/today.ex:431
+#, elixir-autogen, elixir-format, fuzzy
+msgid "You are not authorized to perform this action"
+msgstr "Non sei autorizzato a eseguire questa azione"
