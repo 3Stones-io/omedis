@@ -299,7 +299,10 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group-slug"})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      {:ok, group2} =
+        create_group(%{tenant_id: tenant.id, user_id: user.id})
+
+      create_group_user(%{user_id: user.id, group_id: group2.id})
 
       create_access_right(%{
         resource_name: "Group",

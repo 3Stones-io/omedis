@@ -28,7 +28,8 @@ defmodule Omedis.Accounts.Changes.UpdateLogCategoryPositions do
              shift_up(old_position, new_position, tenant, actor) do
         changeset
       else
-        %Ash.BulkResult{errors: errors} -> Ash.Changeset.add_error(changeset, errors)
+        %Ash.BulkResult{errors: errors} ->
+          Ash.Changeset.add_error(changeset, errors)
       end
 
       changeset
