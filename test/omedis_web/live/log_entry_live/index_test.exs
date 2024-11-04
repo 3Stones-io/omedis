@@ -17,6 +17,14 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       create_access_right(%{
         group_id: group.id,
         read: true,
+        resource_name: "Group",
+        tenant_id: tenant.id
+      })
+
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
         resource_name: "LogEntry",
         tenant_id: tenant.id,
         write: true

@@ -9,6 +9,11 @@ defmodule Omedis.Accounts.AccessRight do
   postgres do
     table "access_rights"
     repo Omedis.Repo
+
+    references do
+      reference :tenant, on_delete: :delete
+      reference :group, on_delete: :delete
+    end
   end
 
   attributes do

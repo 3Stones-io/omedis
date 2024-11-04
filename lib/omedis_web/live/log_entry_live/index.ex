@@ -82,8 +82,8 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
     {:ok, log_category} =
       id
-      |> LogCategory.by_id!()
-      |> Ash.load(:group)
+      |> LogCategory.by_id!(actor: socket.assigns.current_user, tenant: tenant)
+      |> Ash.load(:group, authorize?: false)
 
     {:noreply,
      socket

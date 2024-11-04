@@ -136,9 +136,21 @@ defmodule OmedisWeb.GroupLive.FormComponent do
   defp assign_form(%{assigns: %{group: group}} = socket) do
     form =
       if group do
-        AshPhoenix.Form.for_update(group, :update, as: "group")
+        AshPhoenix.Form.for_update(
+          group,
+          :update,
+          as: "group",
+          tenant: socket.assigns.tenant,
+          actor: socket.assigns.current_user
+        )
       else
-        AshPhoenix.Form.for_create(Omedis.Accounts.Group, :create, as: "group")
+        AshPhoenix.Form.for_create(
+          Omedis.Accounts.Group,
+          :create,
+          as: "group",
+          tenant: socket.assigns.tenant,
+          actor: socket.assigns.current_user
+        )
       end
 
     assign(socket, form: to_form(form))
