@@ -13,6 +13,14 @@ defmodule Omedis.Accounts.Invitation do
     repo Omedis.Repo
   end
 
+  code_interface do
+    domain Omedis.Accounts
+    define :by_id, get_by: [:id], action: :read
+    define :create
+    define :destroy
+    define :list_paginated
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -28,7 +36,20 @@ defmodule Omedis.Accounts.Invitation do
   end
 
   actions do
-    defaults [:read]
+    defaults [:destroy, :read]
+
+    read :list_paginated do
+      argument :creator_id, :uuid do
+        allow_nil? false
+      end
+
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 countable: :by_default
+
+      filter expr(creator_id == ^arg(:creator_id))
+      prepare build(sort: :inserted_at)
+    end
 
     create :create do
       accept [:email, :language, :creator_id, :tenant_id]
@@ -53,14 +74,22 @@ defmodule Omedis.Accounts.Invitation do
       attribute_writable? true
     end
 
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Invitation.Relationships.InvitationAccessRights
+    end
+
     many_to_many :groups, Omedis.Accounts.Group do
       through Omedis.Accounts.InvitationGroup
     end
   end
 
   policies do
-    policy do
-      authorize_if always()
+    policy action_type([:create, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action_type(:read) do
+      authorize_if Omedis.Accounts.AccessFilter
     end
   end
 end
