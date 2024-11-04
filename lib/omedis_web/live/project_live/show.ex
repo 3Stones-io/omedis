@@ -39,7 +39,7 @@ defmodule OmedisWeb.ProjectLive.Show do
               patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}/show/edit"}
               phx-click={JS.push_focus()}
             >
-              <.button>
+              <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @tenant)}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Edit project") %>
                 <% end) %>
@@ -63,7 +63,9 @@ defmodule OmedisWeb.ProjectLive.Show do
         </.back>
 
         <.modal
-          :if={@live_action == :edit}
+          :if={
+            @live_action == :edit and Ash.can?({@project, :update}, @current_user, tenant: @tenant)
+          }
           id="project-modal"
           show
           on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/projects/#{@project}")}
@@ -71,6 +73,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
             id={@project.id}
+            current_user={@current_user}
             title={@page_title}
             tenant={@tenant}
             tenants={@tenants}
@@ -95,17 +98,42 @@ defmodule OmedisWeb.ProjectLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug, "id" => id}, _, socket) do
-    project = Project.by_id!(id)
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    actor = socket.assigns.current_user
+    tenant = Tenant.by_slug!(slug, actor: actor)
+    project = Project.by_id!(id, actor: actor, tenant: tenant)
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:project, project)
      |> assign(:next_position, project.position)
-     |> assign(:tenants, Ash.read!(Tenant))
-     |> assign(:tenant, tenant)}
+     |> assign(:tenants, Ash.read!(Tenant, actor: actor))
+     |> assign(:tenant, tenant)
+     |> maybe_check_and_enforce_edit_access(socket.assigns.live_action)}
   end
+
+  defp maybe_check_and_enforce_edit_access(socket, :edit) do
+    actor = socket.assigns.current_user
+    tenant = socket.assigns.tenant
+    project = socket.assigns.project
+
+    user_has_access_rights = Ash.can?({project, :update}, actor, tenant: tenant)
+
+    if user_has_access_rights do
+      socket
+    else
+      socket
+      |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects/#{socket.assigns.project.id}")
+      |> put_flash(
+        :error,
+        with_locale(socket.assigns.language, fn ->
+          gettext("You are not authorized to access this page")
+        end)
+      )
+    end
+  end
+
+  defp maybe_check_and_enforce_edit_access(socket, _), do: socket
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Project") end)
   defp page_title(:edit, language), do: with_locale(language, fn -> gettext("Edit Project") end)

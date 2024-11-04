@@ -52,7 +52,7 @@ defmodule Omedis.Fixtures do
   def attrs_for(Accounts.Group) do
     %{
       name: Faker.Company.name(),
-      slug: Faker.Lorem.word()
+      slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}"
     }
   end
 
@@ -83,7 +83,7 @@ defmodule Omedis.Fixtures do
     %{
       name: Faker.Lorem.sentence(),
       tenant_id: fn -> create_tenant().id end,
-      position: Faker.random_between(1, 100)
+      position: (System.os_time(:second) + :rand.uniform(1000)) |> to_string()
     }
   end
 
@@ -96,7 +96,7 @@ defmodule Omedis.Fixtures do
         {:ok, user} = create_user()
         user.id
       end,
-      slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}",
+      slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}",
       street: Faker.Address.street_address(),
       zip_code: Faker.Address.zip_code()
     }
