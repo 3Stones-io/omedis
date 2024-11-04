@@ -13,6 +13,10 @@ defmodule Omedis.Accounts.Invitation do
     repo Omedis.Repo
   end
 
+  code_interface do
+    define :create
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -28,10 +32,19 @@ defmodule Omedis.Accounts.Invitation do
   end
 
   actions do
-    defaults [:read]
+    defaults [:read, :destroy]
 
     create :create do
       accept [:email, :language, :creator_id, :tenant_id]
+
+      argument :groups, {:array, :uuid}, allow_nil?: false
+
+      change manage_relationship(:groups,
+               on_lookup: :relate,
+               on_no_match: :error,
+               on_match: :ignore,
+               on_missing: :unrelate
+             )
 
       primary? true
     end
@@ -56,9 +69,17 @@ defmodule Omedis.Accounts.Invitation do
     many_to_many :groups, Omedis.Accounts.Group do
       through Omedis.Accounts.InvitationGroup
     end
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Project.Relationships.InvitationAccessRights
+    end
   end
 
   policies do
+    policy action_type(:create) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
     policy do
       authorize_if always()
     end

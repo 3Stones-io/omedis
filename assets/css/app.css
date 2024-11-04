@@ -8,3 +8,7 @@ table:has(#log-categories) #log-categories > tr:first-child > td:has(.position) 
 table:has(#log-categories) #log-categories > tr:last-child > td:has(.position) .position-down {
   @apply pointer-events-none cursor-none opacity-10;
 }
+
+.invitation-language-input:checked ~ .lang-flag {
+  @apply outline outline-2 outline-offset-2 outline-red-500 rounded-full;
+}
