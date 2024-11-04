@@ -113,7 +113,7 @@ defmodule OmedisWeb.ProjectLive.Index do
   end
 
   @impl true
-  def mount(%{"slug" => slug}, %{"language" => language} = _session, socket) do
+  def mount(%{"slug" => slug}, _session, socket) do
     actor = socket.assigns.current_user
     tenant = Tenant.by_slug!(slug, actor: actor)
 
@@ -123,7 +123,6 @@ defmodule OmedisWeb.ProjectLive.Index do
     {:ok,
      socket
      |> assign(:tenants, Ash.read!(Tenant, actor: actor))
-     |> assign(:language, language)
      |> assign(:tenant, tenant)
      |> assign(:next_position, next_position)
      |> assign(:project, nil)

@@ -16,7 +16,7 @@ defmodule Omedis.Accounts.CanAccessResource do
   def match?(nil, _context, _options), do: false
   def match?(_actor, %{subject: %{tenant: nil}}, _options), do: false
 
-  def match?(actor, %{subject: %{tenant: tenant}}, _opts) when actor.id == tenant.owner_id do
+  def match?(actor, %{subject: %{tenant: tenant}}, _options) when actor.id == tenant.owner_id do
     true
   end
 

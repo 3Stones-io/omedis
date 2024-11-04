@@ -161,7 +161,7 @@ defmodule OmedisWeb.TenantLive.Index do
       |> assign(:tenant, nil)
     else
       socket
-      |> put_flash(:error, gettext("You are not authorized access this page"))
+      |> put_flash(:error, gettext("You are not authorized to access this page"))
       |> push_navigate(to: ~p"/tenants")
     end
   end
