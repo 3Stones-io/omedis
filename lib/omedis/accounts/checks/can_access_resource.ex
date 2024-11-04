@@ -20,9 +20,7 @@ defmodule Omedis.Accounts.CanAccessResource do
     true
   end
 
-  def match?(actor, context, _options) do
-    resource = context.resource
-    tenant = context.subject.tenant
+  def match?(actor, %{subject: %{tenant: tenant, resource: resource}} = context, _options) do
     resource_name = get_resource_name(resource)
     action = get_action(context)
 

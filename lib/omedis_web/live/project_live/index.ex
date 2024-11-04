@@ -32,9 +32,11 @@ defmodule OmedisWeb.ProjectLive.Index do
           <%= with_locale(@language, fn -> %>
             <%= gettext("Listing Projects") %>
           <% end) %>
-
           <:actions>
-            <.link patch={~p"/tenants/#{@tenant.slug}/projects/new"}>
+            <.link
+              :if={Ash.can?({Project, :create}, @current_user, tenant: @tenant)}
+              patch={~p"/tenants/#{@tenant.slug}/projects/new"}
+            >
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("New Project") %>
@@ -68,7 +70,10 @@ defmodule OmedisWeb.ProjectLive.Index do
               </.link>
             </div>
 
-            <.link patch={~p"/tenants/#{@tenant.slug}/projects/#{project}/edit"}>
+            <.link
+              :if={Ash.can?({project, :update}, @current_user, tenant: @tenant)}
+              patch={~p"/tenants/#{@tenant.slug}/projects/#{project}/edit"}
+            >
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
               <% end) %>
@@ -85,6 +90,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
             id={(@project && @project.id) || :new}
+            current_user={@current_user}
             title={@page_title}
             tenants={@tenants}
             tenant={@tenant}
@@ -108,48 +114,110 @@ defmodule OmedisWeb.ProjectLive.Index do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
-    next_position = Project.get_max_position_by_tenant_id(tenant.id) + 1
+    actor = socket.assigns.current_user
+    tenant = Tenant.by_slug!(slug, actor: actor)
+
+    next_position =
+      Project.get_max_position_by_tenant_id(tenant.id, actor: actor, tenant: tenant) + 1
 
     {:ok,
      socket
-     |> assign(:tenants, Ash.read!(Tenant))
-     |> assign(:tenant, Tenant.by_id!(tenant.id))
+     |> assign(:tenants, Ash.read!(Tenant, actor: actor))
+     |> assign(:tenant, tenant)
      |> assign(:next_position, next_position)
+     |> assign(:project, nil)
      |> stream(:projects, [])}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    tenant = Tenant.by_slug!(params["slug"], actor: socket.assigns.current_user)
-    next_position = Project.get_max_position_by_tenant_id(tenant.id) + 1
+    actor = socket.assigns.current_user
+    tenant = Tenant.by_slug!(params["slug"], actor: actor)
+
+    next_position =
+      Project.get_max_position_by_tenant_id(tenant.id, actor: actor, tenant: tenant) + 1
 
     {:noreply,
      socket
-     |> apply_action(socket.assigns.live_action, params)
-     |> assign(:next_position, next_position)}
+     |> assign(:next_position, next_position)
+     |> maybe_enforce_access_rights_and_apply_action(socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp maybe_enforce_access_rights_and_apply_action(socket, :edit, %{"id" => id}) do
+    actor = socket.assigns.current_user
+    tenant = socket.assigns.tenant
+
+    project = Project.by_id(id, actor: actor, tenant: tenant)
+
+    case project do
+      {:ok, project} ->
+        enforce_access_rights(socket, project, actor: actor, tenant: tenant)
+
+      _ ->
+        handle_unauthorized_access(socket)
+    end
+  end
+
+  defp maybe_enforce_access_rights_and_apply_action(socket, :index, params) do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Edit Project") end)
+      with_locale(socket.assigns.language, fn -> gettext("Projects") end)
     )
-    |> assign(:project, Project.by_id!(id))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("New Project") end))
-    |> assign(:project, nil)
-  end
-
-  defp apply_action(socket, :index, params) do
-    socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
     |> assign(:project, nil)
     |> list_paginated_projects(params)
+  end
+
+  defp maybe_enforce_access_rights_and_apply_action(socket, :new, _) do
+    actor = socket.assigns.current_user
+    tenant = socket.assigns.tenant
+    enforce_access_rights(socket, nil, actor: actor, tenant: tenant)
+  end
+
+  defp enforce_access_rights(socket, nil, opts) do
+    user_has_access_rights = Ash.can?({Project, :create}, opts[:actor], tenant: opts[:tenant])
+
+    if user_has_access_rights do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("New Project") end)
+      )
+      |> assign(:user_has_access_rights, true)
+    else
+      handle_unauthorized_access(socket)
+    end
+  end
+
+  defp enforce_access_rights(socket, project, opts) do
+    user_has_access_rights = Ash.can?({project, :update}, opts[:actor], tenant: opts[:tenant])
+
+    if user_has_access_rights do
+      socket
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn -> gettext("Edit Project") end)
+      )
+      |> assign(:project, project)
+      |> assign(:user_has_access_rights, true)
+    else
+      handle_unauthorized_access(socket)
+    end
+  end
+
+  defp handle_unauthorized_access(socket) do
+    tenant = socket.assigns.tenant
+
+    socket
+    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
+    |> assign(:user_has_access_rights, false)
+    |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects")
+    |> put_flash(
+      :error,
+      with_locale(socket.assigns.language, fn ->
+        gettext("You are not authorized to access this page")
+      end)
+    )
   end
 
   defp list_paginated_projects(%Phoenix.LiveView.Socket{} = socket, params) do
