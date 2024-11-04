@@ -35,6 +35,14 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         tenant_id: tenant.id
       })
 
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "LogCategory",
+        tenant_id: tenant.id
+      })
+
     %{
       authorized_user: authorized_user,
       group: group,
