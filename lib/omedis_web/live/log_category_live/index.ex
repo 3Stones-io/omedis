@@ -191,7 +191,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      socket
      |> assign(:language, language)
      |> assign(:tenant, tenant)
-     |> assign(:groups, Ash.read!(Group, actor: actor))
+     |> assign(:groups, Ash.read!(Group, actor: actor, tenant: tenant))
      |> assign(:projects, Project.by_tenant_id!(%{tenant_id: tenant.id}, actor: actor))
      |> assign(:group, group)
      |> assign(:is_custom_color, false)

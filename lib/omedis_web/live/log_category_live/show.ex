@@ -132,8 +132,8 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug} = params, _, socket) do
     current_user = socket.assigns.current_user
     tenant = Tenant.by_slug!(slug, actor: current_user)
-    group = Group.by_slug!(group_slug)
-    groups = Ash.read!(Group)
+    group = Group.by_slug!(group_slug, actor: current_user, tenant: tenant)
+    groups = Ash.read!(Group, actor: current_user, tenant: tenant)
     log_category = LogCategory.by_id!(id, actor: current_user, tenant: tenant)
     next_position = log_category.position
     projects = Project.by_tenant_id!(%{tenant_id: tenant.id}, actor: current_user)

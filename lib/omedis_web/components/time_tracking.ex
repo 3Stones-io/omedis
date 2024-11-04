@@ -240,10 +240,12 @@ defmodule OmedisWeb.TimeTracking do
         <p
           :if={@active_log_category_id == @category.id}
           class="h-[10px] w-[10px] bg-green-500 rounded-full"
+          id={"active-log-category-#{@category.id}"}
         />
 
         <button
           class="w-[100%] h-[100%] h-[40px] rounded-md"
+          id={"log-category-#{@category.id}"}
           phx-click="select_log_category"
           phx-value-log_category_id={@category.id}
           style={"background-color: #{@category.color_code};"}

@@ -17,6 +17,14 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.GroupUser, attrs)
   end
 
+  def create_log_category(attrs \\ %{}) do
+    fixture(Accounts.LogCategory, attrs)
+  end
+
+  def create_log_entry(attrs \\ %{}) do
+    fixture(Accounts.LogEntry, attrs)
+  end
+
   def create_invitation(attrs \\ %{}) do
     fixture(Accounts.Invitation, attrs)
   end
@@ -37,10 +45,6 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.User, attrs)
   end
 
-  def create_log_category(attrs \\ %{}) do
-    fixture(Accounts.LogCategory, attrs)
-  end
-
   def attrs_for(Accounts.AccessRight) do
     %{
       create: Enum.random([true, false]),
@@ -56,13 +60,39 @@ defmodule Omedis.Fixtures do
   def attrs_for(Accounts.Group) do
     %{
       name: Faker.Company.name(),
-      slug: Faker.Lorem.word()
+      slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}"
     }
   end
 
   def attrs_for(Accounts.GroupUser) do
     %{
       group_id: fn -> create_group().id end,
+      user_id: fn -> create_user().id end
+    }
+  end
+
+  def attrs_for(Accounts.LogCategory) do
+    %{
+      color_code: "##{Faker.Color.rgb_hex()}",
+      group_id: fn ->
+        {:ok, group} = create_group()
+        group.id
+      end,
+      name: Faker.Lorem.word(),
+      project_id: fn ->
+        {:ok, project} = create_project(%{position: "1"})
+        project.id
+      end,
+      slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}"
+    }
+  end
+
+  def attrs_for(Accounts.LogEntry) do
+    %{
+      end_at: ~T[18:00:00],
+      log_category_id: fn -> create_log_category().id end,
+      start_at: ~T[08:00:00],
+      tenant_id: fn -> create_tenant().id end,
       user_id: fn -> create_user().id end
     }
   end
@@ -100,7 +130,7 @@ defmodule Omedis.Fixtures do
         {:ok, user} = create_user()
         user.id
       end,
-      slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}",
+      slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}",
       street: Faker.Address.street_address(),
       zip_code: Faker.Address.zip_code()
     }
@@ -114,23 +144,6 @@ defmodule Omedis.Fixtures do
       gender: Enum.random(["Male", "Female"]),
       hashed_password: Bcrypt.hash_pwd_salt("password"),
       last_name: Faker.Person.last_name()
-    }
-  end
-
-  def attrs_for(Accounts.LogCategory) do
-    %{
-      name: Faker.Lorem.word(),
-      group_id: fn ->
-        {:ok, group} = create_group()
-        group.id
-      end,
-      project_id: fn ->
-        {:ok, project} = create_project(%{position: "1"})
-        project.id
-      end,
-      is_default: false,
-      color_code: "##{Faker.Color.rgb_hex()}",
-      slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}"
     }
   end
 

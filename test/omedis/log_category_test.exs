@@ -61,7 +61,6 @@ defmodule Omedis.LogCategoryTest do
           group_id: group.id,
           slug: "log_categorya",
           color_code: "#d62728",
-          is_default: false,
           project_id: project.id
         }
 
@@ -86,7 +85,6 @@ defmodule Omedis.LogCategoryTest do
           group_id: group.id,
           slug: "log_categorya",
           color_code: "#d62728",
-          is_default: false,
           project_id: project.id
         }
 
@@ -125,7 +123,6 @@ defmodule Omedis.LogCategoryTest do
       attrs = %{
         color_code: "#d62728",
         group_id: group.id,
-        is_default: false,
         name: "LogCategoryA",
         project_id: project.id,
         slug: "log_categorya"

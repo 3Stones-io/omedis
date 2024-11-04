@@ -789,6 +789,14 @@ msgstr ""
 msgid "Select a Tenant"
 msgstr ""
 
+#: lib/omedis_web/live/tenant_live/index.ex:141
+#: lib/omedis_web/live/tenant_live/show.ex:210
+#: lib/omedis_web/live/tenant_live/index.ex:148
+#: lib/omedis_web/live/tenant_live/show.ex:218
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to access this page"
+msgstr ""
+
 #: lib/omedis_web/live/log_category_live/index.ex:107
 #, elixir-autogen, elixir-format
 msgid "Default"
@@ -809,17 +817,6 @@ msgstr ""
 #: lib/omedis_web/components/pagination_component.ex:43
 #, elixir-autogen, elixir-format
 msgid "Showing page"
-msgstr ""
-
-#: lib/omedis_web/live/tenant_live/index.ex:163
-#, elixir-autogen, elixir-format
-msgid "You are not authorized access this page"
-msgstr ""
-
-#: lib/omedis_web/live/tenant_live/index.ex:148
-#: lib/omedis_web/live/tenant_live/show.ex:218
-#, elixir-autogen, elixir-format
-msgid "You are not authorized to access this page"
 msgstr ""
 
 #: lib/omedis_web/components/pagination_component.ex:47
@@ -956,4 +953,10 @@ msgstr ""
 #: lib/omedis_web/live/log_entry_live/index.ex:27
 #, elixir-autogen, elixir-format
 msgid "Log Categories"
+msgstr ""
+
+#: lib/omedis_web/live/tenant_live/today.ex:421
+#: lib/omedis_web/live/tenant_live/today.ex:431
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to perform this action"
 msgstr ""

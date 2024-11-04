@@ -121,16 +121,24 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "hides edit option for unauthorized users", %{
       conn: conn,
       user: user,
-      group: group,
       project: project
     } do
       {:ok, tenant} = create_tenant()
+      {:ok, group} = create_group(%{tenant_id: tenant.id})
+      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
 
       create_access_right(%{
         create: false,
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
+        tenant_id: tenant.id
+      })
+
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
         tenant_id: tenant.id
       })
 
@@ -235,6 +243,13 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
+        tenant_id: tenant.id
+      })
+
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
         tenant_id: tenant.id
       })
 
@@ -394,6 +409,13 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         tenant_id: tenant.id
       })
 
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
+        tenant_id: tenant.id
+      })
+
       create_log_category(%{group_id: group.id, project_id: project.id})
 
       create_access_right(%{
@@ -439,7 +461,6 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
                  slug: "aut-5604",
                  group_id: group.id,
                  color_code: "#1f77b4",
-                 is_default: true,
                  project_id: project.id
                }
              )
@@ -478,7 +499,6 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
                  slug: "aut-5604",
                  group_id: group.id,
                  color_code: "#1f77b4",
-                 is_default: true,
                  project_id: project.id
                }
              )
@@ -510,6 +530,13 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
+        tenant_id: tenant.id
+      })
+
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
         tenant_id: tenant.id
       })
 
@@ -550,6 +577,14 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
+        tenant_id: tenant.id
+      })
+
+      create_access_right(%{
+        create: false,
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
         tenant_id: tenant.id
       })
 
