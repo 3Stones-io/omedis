@@ -3,8 +3,8 @@ defmodule OmedisWeb.LogEntryLive.Index do
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
-  alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
+  alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
@@ -97,41 +97,12 @@ defmodule OmedisWeb.LogEntryLive.Index do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
     |> assign(:log_entry, nil)
-    |> list_paginated_log_entries(params)
-  end
-
-  defp list_paginated_log_entries(%Phoenix.LiveView.Socket{} = socket, params) do
-    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
-
-    case list_paginated_log_entries(params, opts) do
-      {:ok, %{count: total_count, results: log_entries}} ->
-        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
-        current_page = min(page, total_pages)
-
-        socket
-        |> assign(:current_page, current_page)
-        |> assign(:total_pages, total_pages)
-        |> stream(:log_entries, log_entries, reset: true)
-
-      {:error, _error} ->
-        socket
-    end
-  end
-
-  defp list_paginated_log_entries(params, opts) do
-    case params do
-      %{"page" => page} when not is_nil(page) ->
-        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
-        offset_value = (page_value - 1) * 10
-
-        LogEntry.by_log_category(
-          %{log_category_id: params["id"]},
-          opts ++ [page: [count: true, offset: offset_value]]
-        )
-
-      _ ->
-        LogEntry.by_log_category(%{log_category_id: params["id"]}, opts ++ [page: [count: true]])
-    end
+    |> PaginationUtils.list_paginated(params, :log_entries, fn offset ->
+      LogEntry.by_log_category(%{log_category_id: params["id"]},
+        actor: socket.assigns.current_user,
+        page: [count: true, offset: offset],
+        tenant: socket.assigns.tenant
+      )
+    end)
   end
 end

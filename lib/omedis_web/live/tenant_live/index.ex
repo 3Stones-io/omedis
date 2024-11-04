@@ -1,9 +1,8 @@
 defmodule OmedisWeb.TenantLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Tenant
-  alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
-  alias Phoenix.LiveView.Socket
+  alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
@@ -173,41 +172,12 @@ defmodule OmedisWeb.TenantLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Listing Tenants") end)
     )
     |> assign(:tenant, nil)
-    |> list_paginated_tenants(params)
-  end
-
-  defp list_paginated_tenants(%Socket{} = socket, params) do
-    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
-
-    case list_paginated_tenants(params, socket.assigns.current_user) do
-      {:ok, %{count: total_count, results: tenants}} ->
-        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
-        current_page = min(page, total_pages)
-
-        socket
-        |> assign(:current_page, current_page)
-        |> assign(:total_pages, total_pages)
-        |> stream(:tenants, tenants, reset: true)
-
-      {:error, _error} ->
-        socket
-    end
-  end
-
-  defp list_paginated_tenants(params, current_user) do
-    case params do
-      %{"page" => page} when not is_nil(page) ->
-        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
-        offset_value = (page_value - 1) * 10
-
-        Tenant.list_paginated(
-          page: [count: true, offset: offset_value],
-          actor: current_user
-        )
-
-      _ ->
-        Tenant.list_paginated(page: [count: true], actor: current_user)
-    end
+    |> PaginationUtils.list_paginated(params, :tenants, fn offset ->
+      Tenant.list_paginated(
+        page: [count: true, offset: offset],
+        actor: socket.assigns.current_user
+      )
+    end)
   end
 
   @impl true

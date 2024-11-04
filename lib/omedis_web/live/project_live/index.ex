@@ -3,8 +3,8 @@ defmodule OmedisWeb.ProjectLive.Index do
 
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
-  alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
+  alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
@@ -165,7 +165,13 @@ defmodule OmedisWeb.ProjectLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Projects") end)
     )
     |> assign(:project, nil)
-    |> list_paginated_projects(params)
+    |> PaginationUtils.list_paginated(params, :projects, fn offset ->
+      Project.list_paginated(
+        actor: socket.assigns.current_user,
+        page: [count: true, offset: offset],
+        tenant: socket.assigns.tenant
+      )
+    end)
   end
 
   defp maybe_enforce_access_rights_and_apply_action(socket, :new, _) do
@@ -218,38 +224,6 @@ defmodule OmedisWeb.ProjectLive.Index do
         gettext("You are not authorized to access this page")
       end)
     )
-  end
-
-  defp list_paginated_projects(%Phoenix.LiveView.Socket{} = socket, params) do
-    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
-
-    case list_paginated_projects(params, opts) do
-      {:ok, %{count: total_count, results: projects}} ->
-        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
-        current_page = min(page, total_pages)
-
-        socket
-        |> assign(:current_page, current_page)
-        |> assign(:total_pages, total_pages)
-        |> stream(:projects, projects, reset: true)
-
-      {:error, _error} ->
-        socket
-    end
-  end
-
-  defp list_paginated_projects(params, opts) do
-    case params do
-      %{"page" => page} when not is_nil(page) ->
-        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
-        offset_value = (page_value - 1) * 10
-
-        Project.list_paginated(opts ++ [page: [count: true, offset: offset_value]])
-
-      _ ->
-        Project.list_paginated(opts ++ [page: [count: true]])
-    end
   end
 
   @impl true
