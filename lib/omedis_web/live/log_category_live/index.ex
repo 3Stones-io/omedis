@@ -1,7 +1,7 @@
-defmodule OmedisWeb.LogCategoryLive.Index do
+defmodule OmedisWeb.ActivityLive.Index do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
   alias OmedisWeb.PaginationComponent
@@ -38,7 +38,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
           <:actions>
             <.link
-              :if={Ash.can?({LogCategory, :create}, @current_user, tenant: @tenant)}
+              :if={Ash.can?({Activity, :create}, @current_user, tenant: @tenant)}
               patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/new"}
             >
               <.button>
@@ -137,7 +137,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
           on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories")}
         >
           <.live_component
-            module={OmedisWeb.LogCategoryLive.FormComponent}
+            module={OmedisWeb.ActivityLive.FormComponent}
             id={(@log_category && @log_category.id) || :new}
             current_user={@current_user}
             title={@page_title}
@@ -216,7 +216,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
-    log_category = LogCategory.by_id!(id, actor: actor, tenant: tenant)
+    activity = Activity.by_id!(id, actor: actor, tenant: tenant)
 
     if Ash.can?({log_category, :update}, actor, tenant: tenant) do
       socket
@@ -238,7 +238,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
 
-    if Ash.can?({LogCategory, :create}, actor, tenant: tenant) do
+    if Ash.can?({Activity, :create}, actor, tenant: tenant) do
       socket
       |> assign(
         :page_title,
@@ -262,12 +262,12 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     )
     |> assign(:log_category, nil)
     |> assign(:params, params)
-    |> list_paginated_log_categories(params)
+    |> list_paginated_activities(params)
   end
 
-  defp list_paginated_log_categories(socket, params) do
+  defp list_paginated_activities(socket, params) do
     PaginationUtils.list_paginated(socket, params, :log_categories, fn offset ->
-      LogCategory.list_paginated(
+      Activity.list_paginated(
         %{group_id: socket.assigns.group.id},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
@@ -277,23 +277,23 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   end
 
   @impl true
-  def handle_info({OmedisWeb.LogCategoryLive.FormComponent, {:saved, log_category}}, socket) do
+  def handle_info({OmedisWeb.ActivityLive.FormComponent, {:saved, activity}}, socket) do
     {:noreply, stream_insert(socket, :log_categories, log_category)}
   end
 
   @impl true
   def handle_info("updated_positions", socket) do
-    {:noreply, list_paginated_log_categories(socket, Map.get(socket.assigns, :params, %{}))}
+    {:noreply, list_paginated_activities(socket, Map.get(socket.assigns, :params, %{}))}
   end
 
   @impl true
-  def handle_event("move-up", %{"log-category-id" => log_category_id}, socket) do
-    case Ash.get(LogCategory, log_category_id,
+  def handle_event("move-up", %{"activity-id" => activity_id}, socket) do
+    case Ash.get(Activity, activity_id,
            actor: socket.assigns.current_user,
            tenant: socket.assigns.tenant
          ) do
-      {:ok, log_category} ->
-        LogCategory.move_up(log_category,
+      {:ok, activity} ->
+        Activity.move_up(activity,
           actor: socket.assigns.current_user,
           tenant: socket.assigns.tenant
         )
@@ -305,13 +305,13 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     end
   end
 
-  def handle_event("move-down", %{"log-category-id" => log_category_id}, socket) do
-    case Ash.get(LogCategory, log_category_id,
+  def handle_event("move-down", %{"activity-id" => activity_id}, socket) do
+    case Ash.get(Activity, activity_id,
            actor: socket.assigns.current_user,
            tenant: socket.assigns.tenant
          ) do
-      {:ok, log_category} ->
-        LogCategory.move_down(log_category,
+      {:ok, activity} ->
+        Activity.move_down(activity,
           actor: socket.assigns.current_user,
           tenant: socket.assigns.tenant
         )

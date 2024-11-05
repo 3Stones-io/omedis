@@ -1,4 +1,4 @@
-defmodule OmedisWeb.LogCategoryLive.ShowTest do
+defmodule OmedisWeb.ActivityLive.ShowTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
@@ -46,7 +46,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       })
 
     {:ok, log_category} =
-      create_log_category(%{
+      create_activity(%{
         group_id: group.id,
         project_id: project.id,
         name: "Test Category"

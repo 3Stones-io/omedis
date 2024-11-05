@@ -1,6 +1,6 @@
 defmodule OmedisWeb.LogEntryLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
   alias OmedisWeb.PaginationComponent
@@ -82,7 +82,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
     {:ok, log_category} =
       id
-      |> LogCategory.by_id!(actor: socket.assigns.current_user, tenant: tenant)
+      |> Activity.by_id!(actor: socket.assigns.current_user, tenant: tenant)
       |> Ash.load(:group, authorize?: false)
 
     {:noreply,
@@ -98,7 +98,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
     |> assign(:log_entry, nil)
     |> PaginationUtils.list_paginated(params, :log_entries, fn offset ->
-      LogEntry.by_log_category(%{log_category_id: params["id"]},
+      LogEntry.by_activity(%{activity_id: params["id"]},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
         tenant: socket.assigns.tenant

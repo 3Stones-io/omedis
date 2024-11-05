@@ -79,7 +79,7 @@ defmodule Omedis.LogEntryTest do
       {:ok, unauthorized_user} = create_user()
 
       assert {:ok, %{results: []}} =
-               LogEntry.by_log_category(
+               LogEntry.by_activity(
                  %{log_category_id: log_category.id},
                  actor: unauthorized_user,
                  tenant: tenant
@@ -91,7 +91,7 @@ defmodule Omedis.LogEntryTest do
       tenant: tenant
     } do
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogEntry.by_log_category(%{log_category_id: log_category.id}, tenant: tenant)
+               LogEntry.by_activity(%{activity_id: activity.id}, tenant: tenant)
     end
 
     test "returns an error if tenant is not provided", %{
@@ -99,7 +99,7 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogEntry.by_log_category(%{log_category_id: log_category.id}, actor: user)
+               LogEntry.by_activity(%{activity_id: activity.id}, actor: user)
     end
   end
 
@@ -125,7 +125,7 @@ defmodule Omedis.LogEntryTest do
         })
 
       {:ok, result} =
-        LogEntry.by_log_category_today(
+        LogEntry.by_activity_today(
           %{log_category_id: log_category.id},
           actor: user,
           tenant: tenant
@@ -150,7 +150,7 @@ defmodule Omedis.LogEntryTest do
       {:ok, unauthorized_user} = create_user()
 
       assert {:ok, []} =
-               LogEntry.by_log_category_today(
+               LogEntry.by_activity_today(
                  %{log_category_id: log_category.id},
                  actor: unauthorized_user,
                  tenant: tenant

@@ -1,9 +1,9 @@
-defmodule OmedisWeb.LogCategoryLive.IndexTest do
+defmodule OmedisWeb.ActivityLive.IndexTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
 
-  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Activity
 
   setup do
     {:ok, owner} = create_user()
@@ -95,7 +95,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       owner: owner
     } do
       {:ok, _log_category} =
-        create_log_category(%{
+        create_activity(%{
           group_id: group.id,
           project_id: project.id,
           name: "Test Category"
@@ -117,7 +117,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       authorized_user: authorized_user
     } do
       {:ok, _log_category} =
-        create_log_category(%{
+        create_activity(%{
           group_id: group.id,
           project_id: project.id,
           name: "Test Category"
@@ -139,7 +139,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       user: user
     } do
       {:ok, _log_category} =
-        create_log_category(%{
+        create_activity(%{
           group_id: group.id,
           project_id: project.id,
           name: "Test Category"
@@ -265,7 +265,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       categories =
         Enum.map(1..3, fn i ->
           {:ok, log_category} =
-            create_log_category(%{
+            create_activity(%{
               group_id: group.id,
               project_id: project.id,
               name: "Log Category #{i}"
@@ -293,9 +293,9 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       :timer.sleep(1000)
 
       # Verify positions after moving up
-      assert Ash.get!(LogCategory, second.id, authorize?: false).position == 1
-      assert Ash.get!(LogCategory, first.id, authorize?: false).position == 2
-      assert Ash.get!(LogCategory, third.id, authorize?: false).position == 3
+      assert Ash.get!(Activity, second.id, authorize?: false).position == 1
+      assert Ash.get!(Activity, first.id, authorize?: false).position == 2
+      assert Ash.get!(Activity, third.id, authorize?: false).position == 3
     end
 
     test "unauthorized user cannot see position controls", %{
@@ -306,7 +306,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       user: unauthorized_user
     } do
       {:ok, log_category} =
-        create_log_category(%{
+        create_activity(%{
           group_id: group.id,
           project_id: project.id,
           name: "Test Category"
@@ -333,7 +333,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       categories =
         Enum.map(1..3, fn i ->
           {:ok, log_category} =
-            create_log_category(%{
+            create_activity(%{
               group_id: group.id,
               project_id: project.id,
               name: "Log Category #{i}"
@@ -357,9 +357,9 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       :timer.sleep(1000)
 
       # Verify positions after moving up
-      assert Ash.get!(LogCategory, second.id, authorize?: false).position == 1
-      assert Ash.get!(LogCategory, first.id, authorize?: false).position == 2
-      assert Ash.get!(LogCategory, third.id, authorize?: false).position == 3
+      assert Ash.get!(Activity, second.id, authorize?: false).position == 1
+      assert Ash.get!(Activity, first.id, authorize?: false).position == 2
+      assert Ash.get!(Activity, third.id, authorize?: false).position == 3
 
       # Test moving down
       view
@@ -367,9 +367,9 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       |> render_click()
 
       # Verify positions after moving down
-      assert Ash.get!(LogCategory, second.id, authorize?: false).position == 1
-      assert Ash.get!(LogCategory, third.id, authorize?: false).position == 2
-      assert Ash.get!(LogCategory, first.id, authorize?: false).position == 3
+      assert Ash.get!(Activity, second.id, authorize?: false).position == 1
+      assert Ash.get!(Activity, third.id, authorize?: false).position == 2
+      assert Ash.get!(Activity, first.id, authorize?: false).position == 3
     end
   end
 end

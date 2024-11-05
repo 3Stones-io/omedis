@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.LogCategory.Relationships.LogCategoryAccessRights do
+defmodule Omedis.Accounts.Activity.Relationships.ActivityAccessRights do
   @moduledoc """
   A relationship that allows us to access the LogCategory access rights for a LogCategory.
   """

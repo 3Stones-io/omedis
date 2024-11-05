@@ -8,7 +8,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
     {:ok, group} = create_group(%{tenant_id: tenant.id})
     {:ok, project} = create_project(%{tenant_id: tenant.id})
-    {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
+    {:ok, activity} = create_activity(%{group_id: group.id, project_id: project.id})
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
@@ -128,7 +128,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
       {:ok, project} = create_project(%{tenant_id: tenant.id})
 
-      {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
+      {:ok, activity} = create_activity(%{group_id: group.id, project_id: project.id})
 
       {:ok, _} =
         create_access_right(%{

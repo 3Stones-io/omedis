@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.LogCategory do
+defmodule Omedis.Accounts.Activity do
   @moduledoc """
   This is the log category module
   """
@@ -43,7 +43,7 @@ defmodule Omedis.Accounts.LogCategory do
     end
 
     policy action_type(:read) do
-      authorize_if Omedis.Accounts.LogCategoryAccessFilter
+      authorize_if Omedis.Accounts.ActivityAccessFilter
     end
   end
 
@@ -76,8 +76,8 @@ defmodule Omedis.Accounts.LogCategory do
         :slug
       ]
 
-      change Omedis.Accounts.Changes.NewLogCategoryPosition
-      change Omedis.Accounts.Changes.SetDefaultLogCategory
+      change Omedis.Accounts.Changes.NewActivityPosition
+      change Omedis.Accounts.Changes.SetDefaultActivity
 
       primary? true
     end
@@ -93,7 +93,7 @@ defmodule Omedis.Accounts.LogCategory do
         :slug
       ]
 
-      change Omedis.Accounts.Changes.SetDefaultLogCategory
+      change Omedis.Accounts.Changes.SetDefaultActivity
 
       primary? true
       require_atomic? false
@@ -102,7 +102,7 @@ defmodule Omedis.Accounts.LogCategory do
     update :update_position do
       accept [:position]
 
-      change Omedis.Accounts.Changes.UpdateLogCategoryPositions
+      change Omedis.Accounts.Changes.UpdateActivityPositions
 
       require_atomic? false
     end
@@ -263,7 +263,7 @@ defmodule Omedis.Accounts.LogCategory do
     end
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.LogCategory.Relationships.LogCategoryAccessRights
+      manual Omedis.Accounts.Activity.Relationships.ActivityAccessRights
     end
   end
 end

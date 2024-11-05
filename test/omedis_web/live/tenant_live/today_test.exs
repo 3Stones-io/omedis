@@ -10,7 +10,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
     {:ok, project} = create_project(%{tenant_id: tenant.id})
 
     {:ok, log_category} =
-      create_log_category(%{group_id: group.id, is_default: true, project_id: project.id})
+      create_activity(%{group_id: group.id, is_default: true, project_id: project.id})
 
     {:ok, authorized_user} =
       create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
@@ -92,7 +92,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
              |> render_click() =~ "active-log-category-#{log_category.id}"
 
       {:ok, [log_entry]} =
-        LogEntry.by_log_category_today(
+        LogEntry.by_activity_today(
           %{log_category_id: log_category.id},
           actor: owner,
           tenant: tenant
@@ -137,7 +137,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
 
       # Verify log entry was stopped (end_at was set)
       {:ok, [log_entry]} =
-        LogEntry.by_log_category_today(
+        LogEntry.by_activity_today(
           %{log_category_id: log_category.id},
           actor: owner,
           tenant: tenant
@@ -164,10 +164,10 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         })
 
       {:ok, log_category_1} =
-        create_log_category(%{group_id: group.id, project_id: project.id, name: "Category 1"})
+        create_activity(%{group_id: group.id, project_id: project.id, name: "Activity 1"})
 
       {:ok, log_category_2} =
-        create_log_category(%{group_id: group.id, project_id: project.id, name: "Category 2"})
+        create_activity(%{group_id: group.id, project_id: project.id, name: "Activity 2"})
 
       {:ok, lv, _html} =
         conn
@@ -186,7 +186,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
 
       # Verify first log entry was stopped
       {:ok, [entry_1]} =
-        LogEntry.by_log_category_today(
+        LogEntry.by_activity_today(
           %{log_category_id: log_category_1.id},
           actor: owner,
           tenant: tenant
@@ -233,7 +233,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
              |> render_click() =~ "active-log-category-#{log_category.id}"
 
       {:ok, [log_entry]} =
-        LogEntry.by_log_category_today(
+        LogEntry.by_activity_today(
           %{log_category_id: log_category.id},
           actor: authorized_user,
           tenant: tenant
@@ -278,7 +278,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
 
       # Verify log entry was stopped (end_at was set)
       {:ok, [log_entry]} =
-        LogEntry.by_log_category_today(
+        LogEntry.by_activity_today(
           %{log_category_id: log_category.id},
           actor: authorized_user,
           tenant: tenant
@@ -305,10 +305,10 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         })
 
       {:ok, log_category_1} =
-        create_log_category(%{group_id: group.id, project_id: project.id, name: "Category 1"})
+        create_activity(%{group_id: group.id, project_id: project.id, name: "Activity 1"})
 
       {:ok, log_category_2} =
-        create_log_category(%{group_id: group.id, project_id: project.id, name: "Category 2"})
+        create_activity(%{group_id: group.id, project_id: project.id, name: "Activity 2"})
 
       {:ok, lv, _html} =
         conn
@@ -327,7 +327,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
 
       # Verify first log entry was stopped
       {:ok, [entry_1]} =
-        LogEntry.by_log_category_today(
+        LogEntry.by_activity_today(
           %{log_category_id: log_category_1.id},
           actor: authorized_user,
           tenant: tenant
@@ -337,7 +337,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
 
       # Verify second log entry is active
       {:ok, entries_2} =
-        LogEntry.by_log_category_today(
+        LogEntry.by_activity_today(
           %{log_category_id: log_category_2.id},
           actor: authorized_user,
           tenant: tenant
@@ -400,7 +400,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
              |> render_click() =~ "active-log-category-#{log_category.id}"
 
       assert {:ok, []} =
-               LogEntry.by_log_category_today(
+               LogEntry.by_activity_today(
                  %{log_category_id: log_category.id},
                  actor: unauthorized_user,
                  tenant: tenant

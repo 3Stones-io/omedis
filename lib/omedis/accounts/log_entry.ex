@@ -136,7 +136,7 @@ defmodule Omedis.Accounts.LogEntry do
       attribute_writable? true
     end
 
-    belongs_to :activity, Omedis.Accounts.LogCategory do
+    belongs_to :activity, Omedis.Accounts.Activity do
       allow_nil? true
       attribute_writable? true
     end

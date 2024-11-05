@@ -1,7 +1,7 @@
-defmodule OmedisWeb.LogCategoryLive.Show do
+defmodule OmedisWeb.ActivityLive.Show do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
 
@@ -97,7 +97,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           }
         >
           <.live_component
-            module={OmedisWeb.LogCategoryLive.FormComponent}
+            module={OmedisWeb.ActivityLive.FormComponent}
             id={@log_category.id}
             current_user={@current_user}
             projects={@projects}
@@ -132,8 +132,8 @@ defmodule OmedisWeb.LogCategoryLive.Show do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
     groups = Ash.read!(Group, actor: socket.assigns.current_user, tenant: tenant)
-    log_category = LogCategory.by_id!(id, actor: socket.assigns.current_user, tenant: tenant)
-    next_position = log_category.position
+    activity = Activity.by_id!(id, actor: socket.assigns.current_user, tenant: tenant)
+    next_position = activity.position
 
     projects =
       Project.by_tenant_id!(%{tenant_id: tenant.id},

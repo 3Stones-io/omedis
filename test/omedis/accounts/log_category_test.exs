@@ -1,9 +1,9 @@
-defmodule Omedis.Accounts.LogCategoryTest do
+defmodule Omedis.Accounts.ActivityTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
 
-  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Activity
 
   setup do
     {:ok, owner} = create_user()
@@ -70,7 +70,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         slug: "test-category"
       }
 
-      assert {:ok, category} = LogCategory.create(attrs, actor: owner, tenant: tenant)
+      assert {:ok, activity} = Activity.create(attrs, actor: owner, tenant: tenant)
       assert category.name == "Test Category"
       assert category.color_code == "#FF0000"
       assert category.position == 1
@@ -90,7 +90,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         slug: "test-category"
       }
 
-      assert {:ok, category} = LogCategory.create(attrs, actor: authorized_user, tenant: tenant)
+      assert {:ok, activity} = Activity.create(attrs, actor: authorized_user, tenant: tenant)
       assert category.name == "Test Category"
     end
 
@@ -109,7 +109,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       }
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogCategory.create(attrs, actor: user, tenant: tenant)
+               Activity.create(attrs, actor: user, tenant: tenant)
     end
 
     test "returns error with invalid attributes", %{
@@ -124,7 +124,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       }
 
       assert {:error, %Ash.Error.Invalid{}} =
-               LogCategory.create(attrs, actor: owner, tenant: tenant)
+               Activity.create(attrs, actor: owner, tenant: tenant)
     end
   end
 
@@ -136,7 +136,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       project: project
     } do
       {:ok, category} =
-        create_log_category(%{
+        create_activity(%{
           name: "Test Category",
           group_id: group.id,
           project_id: project.id,
@@ -145,7 +145,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         })
 
       assert {:ok, updated_category} =
-               LogCategory.update(category, %{name: "Updated Category"},
+               Activity.update(activity, %{name: "Updated Activity"},
                  actor: owner,
                  tenant: tenant
                )
@@ -160,7 +160,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       project: project
     } do
       {:ok, category} =
-        create_log_category(%{
+        create_activity(%{
           name: "Test Category",
           group_id: group.id,
           project_id: project.id,
@@ -169,7 +169,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         })
 
       assert {:ok, updated_category} =
-               LogCategory.update(category, %{name: "Updated Category"},
+               Activity.update(activity, %{name: "Updated Activity"},
                  actor: authorized_user,
                  tenant: tenant
                )
@@ -184,7 +184,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       project: project
     } do
       {:ok, category} =
-        create_log_category(%{
+        create_activity(%{
           name: "Test Category",
           group_id: group.id,
           project_id: project.id,
@@ -193,7 +193,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         })
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogCategory.update(category, %{name: "Updated Category"},
+               Activity.update(activity, %{name: "Updated Activity"},
                  actor: user,
                  tenant: tenant
                )
@@ -206,7 +206,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       project: project
     } do
       {:ok, category} =
-        create_log_category(%{
+        create_activity(%{
           name: "Test Category",
           group_id: group.id,
           project_id: project.id,
@@ -220,7 +220,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       }
 
       assert {:error, %Ash.Error.Invalid{}} =
-               LogCategory.update(category, invalid_attrs, actor: owner, tenant: tenant)
+               Activity.update(activity, invalid_attrs, actor: owner, tenant: tenant)
     end
   end
 
@@ -232,7 +232,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       project: project
     } do
       {:ok, category} =
-        create_log_category(%{
+        create_activity(%{
           name: "Test Category",
           group_id: group.id,
           project_id: project.id,
@@ -240,7 +240,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
           slug: "test-category"
         })
 
-      assert {:ok, found_category} = LogCategory.by_id(category.id, actor: owner, tenant: tenant)
+      assert {:ok, found_activity} = Activity.by_id(activity.id, actor: owner, tenant: tenant)
       assert found_category.id == category.id
     end
 
@@ -251,7 +251,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       project: project
     } do
       {:ok, category} =
-        create_log_category(%{
+        create_activity(%{
           name: "Test Category",
           group_id: group.id,
           project_id: project.id,
@@ -260,7 +260,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         })
 
       assert {:ok, found_category} =
-               LogCategory.by_id(category.id, actor: authorized_user, tenant: tenant)
+               Activity.by_id(activity.id, actor: authorized_user, tenant: tenant)
 
       assert found_category.id == category.id
     end
@@ -272,7 +272,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       project: project
     } do
       {:ok, category} =
-        create_log_category(%{
+        create_activity(%{
           name: "Test Category",
           group_id: group.id,
           project_id: project.id,
@@ -281,7 +281,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         })
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
-               LogCategory.by_id(category.id, actor: user, tenant: tenant)
+               Activity.by_id(activity.id, actor: user, tenant: tenant)
     end
   end
 
@@ -289,7 +289,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
     setup %{group: group, project: project} do
       Enum.each(1..15, fn _ ->
         {:ok, _} =
-          create_log_category(%{
+          create_activity(%{
             group_id: group.id,
             project_id: project.id
           })
@@ -304,7 +304,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, paginated_result} =
-               LogCategory.list_paginated(
+               Activity.list_paginated(
                  %{group_id: group.id},
                  page: [offset: 0, limit: 10],
                  actor: owner,
@@ -320,7 +320,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, paginated_result} =
-               LogCategory.list_paginated(
+               Activity.list_paginated(
                  %{group_id: group.id},
                  page: [offset: 0, limit: 10],
                  actor: authorized_user,
@@ -336,7 +336,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       user: user
     } do
       assert {:ok, paginated_result} =
-               LogCategory.list_paginated(
+               Activity.list_paginated(
                  %{group_id: group.id},
                  page: [offset: 0, limit: 10],
                  actor: user,
@@ -350,7 +350,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
   describe "by_group_id_and_project_id/2" do
     setup %{group: group, project: project} do
       {:ok, category} =
-        create_log_category(%{
+        create_activity(%{
           name: "Test Category",
           group_id: group.id,
           project_id: project.id
@@ -367,7 +367,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, categories} =
-               LogCategory.by_group_id_and_project_id(
+               Activity.by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: owner,
                  tenant: tenant
@@ -385,7 +385,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, categories} =
-               LogCategory.by_group_id_and_project_id(
+               Activity.by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: authorized_user,
                  tenant: tenant
@@ -403,7 +403,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
            user: user
          } do
       assert {:ok, categories} =
-               LogCategory.by_group_id_and_project_id(
+               Activity.by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: user,
                  tenant: tenant
@@ -416,7 +416,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
   describe "move_up/2" do
     setup %{group: group, project: project} do
       {:ok, category1} =
-        create_log_category(%{
+        create_activity(%{
           name: "Category 1",
           group_id: group.id,
           project_id: project.id,
@@ -425,7 +425,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         })
 
       {:ok, category2} =
-        create_log_category(%{
+        create_activity(%{
           name: "Category 2",
           group_id: group.id,
           project_id: project.id,
@@ -443,11 +443,11 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, moved_category} =
-               LogCategory.move_up(category2, actor: owner, tenant: tenant)
+               Activity.move_up(activity2, actor: owner, tenant: tenant)
 
       assert moved_category.position == 1
 
-      {:ok, updated_category1} = LogCategory.by_id(category1.id, actor: owner, tenant: tenant)
+      {:ok, updated_activity1} = Activity.by_id(activity1.id, actor: owner, tenant: tenant)
       assert updated_category1.position == 2
     end
 
@@ -458,12 +458,12 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, moved_category} =
-               LogCategory.move_up(category2, actor: authorized_user, tenant: tenant)
+               Activity.move_up(activity2, actor: authorized_user, tenant: tenant)
 
       assert moved_category.position == 1
 
       {:ok, updated_category1} =
-        LogCategory.by_id(category1.id, actor: authorized_user, tenant: tenant)
+        Activity.by_id(activity1.id, actor: authorized_user, tenant: tenant)
 
       assert updated_category1.position == 2
     end
@@ -474,7 +474,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       user: user
     } do
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogCategory.move_up(category2, actor: user, tenant: tenant)
+               Activity.move_up(activity2, actor: user, tenant: tenant)
     end
 
     test "does nothing when category is at top position", %{
@@ -483,7 +483,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, unchanged_category} =
-               LogCategory.move_up(category1, actor: owner, tenant: tenant)
+               Activity.move_up(activity1, actor: owner, tenant: tenant)
 
       assert unchanged_category.position == 1
     end
@@ -492,7 +492,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
   describe "move_down/2" do
     setup %{group: group, project: project} do
       {:ok, category2} =
-        create_log_category(%{
+        create_activity(%{
           name: "Category 1",
           group_id: group.id,
           project_id: project.id,
@@ -501,7 +501,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         })
 
       {:ok, category1} =
-        create_log_category(%{
+        create_activity(%{
           name: "Category 2",
           group_id: group.id,
           project_id: project.id,
@@ -519,11 +519,11 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, moved_category} =
-               LogCategory.move_down(category2, actor: owner, tenant: tenant)
+               Activity.move_down(activity2, actor: owner, tenant: tenant)
 
       assert moved_category.position == 2
 
-      {:ok, updated_category1} = LogCategory.by_id(category1.id, actor: owner, tenant: tenant)
+      {:ok, updated_activity1} = Activity.by_id(activity1.id, actor: owner, tenant: tenant)
       assert updated_category1.position == 1
     end
 
@@ -534,12 +534,12 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, moved_category} =
-               LogCategory.move_down(category2, actor: authorized_user, tenant: tenant)
+               Activity.move_down(activity2, actor: authorized_user, tenant: tenant)
 
       assert moved_category.position == 2
 
       {:ok, updated_category1} =
-        LogCategory.by_id(category1.id, actor: authorized_user, tenant: tenant)
+        Activity.by_id(activity1.id, actor: authorized_user, tenant: tenant)
 
       assert updated_category1.position == 1
     end
@@ -550,7 +550,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       user: user
     } do
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogCategory.move_down(category2, actor: user, tenant: tenant)
+               Activity.move_down(activity2, actor: user, tenant: tenant)
     end
 
     test "does nothing when category is at bottom position", %{
@@ -559,7 +559,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       tenant: tenant
     } do
       assert {:ok, unchanged_category} =
-               LogCategory.move_down(category1, actor: owner, tenant: tenant)
+               Activity.move_down(activity1, actor: owner, tenant: tenant)
 
       assert unchanged_category.position == 2
     end
