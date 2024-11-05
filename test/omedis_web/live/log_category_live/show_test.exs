@@ -5,9 +5,9 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: tenant.id})
-    {:ok, project} = create_project(%{organisation_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, project} = create_project(%{organisation_id: organisation.id})
     {:ok, authorized_user} = create_user()
 
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
@@ -17,7 +17,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         group_id: group.id,
         read: true,
         resource_name: "LogCategory",
-        organisation_id: tenant.id,
+        organisation_id: organisation.id,
         write: true
       })
 
@@ -26,7 +26,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -34,15 +34,15 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     {:ok, log_category} =
@@ -53,7 +53,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       })
 
     {:ok, user} = create_user()
-    {:ok, group2} = create_group(%{organisation_id: tenant.id})
+    {:ok, group2} = create_group(%{organisation_id: organisation.id})
     {:ok, _} = create_group_user(%{group_id: group2.id, user_id: user.id})
 
     {:ok, _} =
@@ -61,7 +61,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         group_id: group2.id,
         read: true,
         resource_name: "Group",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -69,15 +69,15 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         group_id: group2.id,
         read: true,
         resource_name: "Project",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
       create_access_right(%{
         group_id: group2.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     %{
@@ -87,24 +87,24 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     }
   end
 
-  describe "/tenants/:slug/groups/:group_slug/log_categories/:id" do
-    test "shows log category details if user is tenant owner", %{
+  describe "/organisations/:slug/groups/:group_slug/log_categories/:id" do
+    test "shows log category details if user is organisation owner", %{
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: tenant,
+      tenant: organisation,
       owner: owner
     } do
       {:ok, _show_live, html} =
         conn
         |> log_in_user(owner)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+          ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
         )
 
       assert html =~ log_category.name
@@ -115,14 +115,14 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, _show_live, html} =
         conn
         |> log_in_user(authorized_user)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+          ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
         )
 
       assert html =~ log_category.name
@@ -133,32 +133,32 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     } do
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+          ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
         )
       end
     end
   end
 
-  describe "/tenants/:slug/groups/:group_slug/log_categories/:id/show/edit" do
-    test "tenant owner can edit log category", %{
+  describe "/organisations/:slug/groups/:group_slug/log_categories/:id/show/edit" do
+    test "organisation owner can edit log category", %{
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: tenant,
+      tenant: organisation,
       owner: owner
     } do
       {:ok, show_live, html} =
         conn
         |> log_in_user(owner)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
+          ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
         )
 
       assert html =~ "Edit log_category"
@@ -175,7 +175,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
 
       assert_patch(
         show_live,
-        ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+        ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
       )
 
       assert html =~ "Log category saved successfully"
@@ -186,14 +186,14 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, show_live, html} =
         conn
         |> log_in_user(authorized_user)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
+          ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
         )
 
       assert html =~ "Edit log_category"
@@ -205,7 +205,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
 
       assert_patch(
         show_live,
-        ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+        ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
       )
 
       assert html =~ "Log category saved successfully"
@@ -217,7 +217,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       group: group,
       group2: group2,
       log_category: log_category,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     } do
       {:ok, _} =
@@ -225,7 +225,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
           group_id: group2.id,
           read: true,
           resource_name: "LogCategory",
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           update: false,
           write: false
         })
@@ -234,11 +234,11 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         conn
         |> log_in_user(user)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
+          ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
         )
 
       assert to ==
-               ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+               ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
 
       assert flash["error"] == "You are not authorized to access this page"
     end
@@ -247,14 +247,14 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, form_live, _html} =
         conn
         |> log_in_user(authorized_user)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
+          ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
         )
 
       assert html =

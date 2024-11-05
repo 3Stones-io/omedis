@@ -32,7 +32,7 @@ defmodule Omedis.Accounts.Project do
     define :create
     define :update
     define :by_id, get_by: [:id], action: :read
-    define :by_tenant_id
+    define :by_organisation_id
     define :list_paginated
   end
 
@@ -67,13 +67,13 @@ defmodule Omedis.Accounts.Project do
       primary? true
     end
 
-    read :by_tenant_id do
-      argument :tenant_id, :uuid do
+    read :by_organisation_id do
+      argument :organisation_id, :uuid do
         allow_nil? false
       end
 
       prepare build(load: [:organisation])
-      filter expr(organisation_id == ^arg(:tenant_id))
+      filter expr(organisation_id == ^arg(:organisation_id))
     end
 
     read :list_paginated do
@@ -103,9 +103,9 @@ defmodule Omedis.Accounts.Project do
     update_timestamp :updated_at
   end
 
-  def get_max_position_by_tenant_id(tenant_id, opts \\ []) do
+  def get_max_position_by_organisation_id(organisation_id, opts \\ []) do
     __MODULE__
-    |> Ash.Query.filter(organisation_id: tenant_id)
+    |> Ash.Query.filter(organisation_id: organisation_id)
     |> Ash.Query.sort(position: :desc)
     |> Ash.Query.limit(1)
     |> Ash.Query.select([:position])
@@ -118,7 +118,7 @@ defmodule Omedis.Accounts.Project do
   end
 
   relationships do
-    belongs_to :organisation, Omedis.Accounts.Tenant do
+    belongs_to :organisation, Omedis.Accounts.Organisation do
       allow_nil? true
       attribute_writable? true
     end

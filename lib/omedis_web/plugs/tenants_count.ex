@@ -1,27 +1,27 @@
-defmodule OmedisWeb.Plugs.TenantsCount do
+defmodule OmedisWeb.Plugs.OrganisationsCount do
   @moduledoc """
-  This plug is used to fetch the tenants count from the database.
+  This plug is used to fetch the organisations count from the database.
   """
 
   import Plug.Conn
 
   require Ash.Query
 
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
 
   def init(_opts), do: nil
 
   def call(conn, _opts) do
-    tenants_count =
+    organisations_count =
       case conn.assigns[:current_user] do
         %User{} = user ->
-          Ash.count!(Tenant, actor: user)
+          Ash.count!(Organisation, actor: user)
 
         _ ->
           0
       end
 
-    assign(conn, :tenants_count, tenants_count)
+    assign(conn, :organisations_count, organisations_count)
   end
 end

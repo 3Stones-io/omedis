@@ -33,12 +33,12 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.InvitationGroup, attrs)
   end
 
-  def create_project(attrs \\ %{}) do
-    fixture(Accounts.Project, attrs)
+  def create_organisation(attrs \\ %{}) do
+    fixture(Accounts.Organisation, attrs)
   end
 
-  def create_tenant(attrs \\ %{}) do
-    fixture(Accounts.Tenant, attrs)
+  def create_project(attrs \\ %{}) do
+    fixture(Accounts.Project, attrs)
   end
 
   def create_user(attrs \\ %{}) do
@@ -50,8 +50,8 @@ defmodule Omedis.Fixtures do
       create: Enum.random([true, false]),
       group_id: fn -> create_group().id end,
       read: Enum.random([true, false]),
-      resource_name: Enum.random(["tenant"]),
-      organisation_id: fn -> create_tenant().id end,
+      resource_name: Enum.random(["organisation"]),
+      organisation_id: fn -> create_organisation().id end,
       update: Enum.random([true, false]),
       write: Enum.random([true, false])
     }
@@ -87,7 +87,7 @@ defmodule Omedis.Fixtures do
       end_at: ~T[18:00:00],
       log_category_id: fn -> create_log_category().id end,
       start_at: ~T[08:00:00],
-      organisation_id: fn -> create_tenant().id end,
+      organisation_id: fn -> create_organisation().id end,
       user_id: fn -> create_user().id end
     }
   end
@@ -97,7 +97,7 @@ defmodule Omedis.Fixtures do
       creator_id: fn -> create_user().id end,
       email: Faker.Internet.email(),
       language: "en",
-      organisation_id: fn -> create_tenant().id end
+      organisation_id: fn -> create_organisation().id end
     }
   end
 
@@ -108,15 +108,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.Project) do
-    %{
-      name: Faker.Lorem.sentence(),
-      organisation_id: fn -> create_tenant().id end,
-      position: (System.os_time(:second) + :rand.uniform(1000)) |> to_string()
-    }
-  end
-
-  def attrs_for(Accounts.Tenant) do
+  def attrs_for(Accounts.Organisation) do
     %{
       city: Faker.Address.city(),
       country: Faker.Address.country(),
@@ -128,6 +120,14 @@ defmodule Omedis.Fixtures do
       slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}",
       street: Faker.Address.street_address(),
       zip_code: Faker.Address.zip_code()
+    }
+  end
+
+  def attrs_for(Accounts.Project) do
+    %{
+      name: Faker.Lorem.sentence(),
+      organisation_id: fn -> create_organisation().id end,
+      position: (System.os_time(:second) + :rand.uniform(1000)) |> to_string()
     }
   end
 

@@ -1,6 +1,6 @@
 defmodule Omedis.Accounts.Invitation do
   @moduledoc """
-  Represents an invitation to join a tenant.
+  Represents an invitation to join a organisation.
   """
 
   use Ash.Resource,
@@ -43,7 +43,7 @@ defmodule Omedis.Accounts.Invitation do
       attribute_writable? true
     end
 
-    belongs_to :organisation, Omedis.Accounts.Tenant do
+    belongs_to :organisation, Omedis.Accounts.Organisation do
       allow_nil? false
       attribute_writable? true
     end

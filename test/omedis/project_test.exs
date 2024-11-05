@@ -5,8 +5,8 @@ defmodule Omedis.Accounts.ProjectTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
 
@@ -17,19 +17,25 @@ defmodule Omedis.Accounts.ProjectTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        organisation_id: tenant.id,
+        organisation_id: organisation.id,
         write: true
       })
 
-    %{authorized_user: authorized_user, group: group, owner: owner, tenant: tenant, user: user}
+    %{
+      authorized_user: authorized_user,
+      group: group,
+      owner: owner,
+      tenant: organisation,
+      user: user
+    }
   end
 
   describe "list_paginated/1" do
-    test "returns projects if user is the tenant owner" do
+    test "returns projects if user is the organisation owner" do
       {:ok, owner} = create_user()
       {:ok, another_user} = create_user()
-      {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-      {:ok, group} = create_group(%{organisation_id: tenant.id})
+      {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+      {:ok, group} = create_group(%{organisation_id: organisation.id})
 
       {:ok, _} = create_group_user(%{group_id: group.id, user_id: another_user.id})
 
@@ -38,18 +44,18 @@ defmodule Omedis.Accounts.ProjectTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           write: true
         })
 
       {:ok, project} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       assert {:ok, %{results: projects}} =
                Project.list_paginated(
                  page: [offset: 0, limit: 10, count: true],
                  actor: owner,
-                 tenant: tenant
+                 tenant: organisation
                )
 
       assert length(projects) == 1
@@ -58,10 +64,10 @@ defmodule Omedis.Accounts.ProjectTest do
 
     test "returns paginated list of projects the user has access to" do
       {:ok, user} = create_user()
-      {:ok, tenant} = create_tenant()
-      {:ok, other_tenant} = create_tenant()
-      {:ok, group} = create_group(%{organisation_id: tenant.id})
-      {:ok, other_group} = create_group(%{organisation_id: other_tenant.id})
+      {:ok, organisation} = create_organisation()
+      {:ok, other_organisation} = create_organisation()
+      {:ok, group} = create_group(%{organisation_id: organisation.id})
+      {:ok, other_group} = create_group(%{organisation_id: other_organisation.id})
       {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
       {:ok, _} = create_group_user(%{user_id: user.id, group_id: other_group.id})
 
@@ -69,7 +75,7 @@ defmodule Omedis.Accounts.ProjectTest do
         create_access_right(%{
           resource_name: "Project",
           read: true,
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           group_id: group.id
         })
 
@@ -78,14 +84,14 @@ defmodule Omedis.Accounts.ProjectTest do
         create_access_right(%{
           resource_name: "Project",
           read: false,
-          organisation_id: other_tenant.id,
+          organisation_id: other_organisation.id,
           group_id: other_group.id
         })
 
       for i <- 1..10 do
         {:ok, _} =
           create_project(%{
-            organisation_id: tenant.id,
+            organisation_id: organisation.id,
             name: "Accessible Project #{i}"
           })
       end
@@ -93,7 +99,7 @@ defmodule Omedis.Accounts.ProjectTest do
       for i <- 1..10 do
         {:ok, _} =
           create_project(%{
-            organisation_id: other_tenant.id,
+            organisation_id: other_organisation.id,
             name: "Inaccessible Project #{i}"
           })
       end
@@ -103,12 +109,12 @@ defmodule Omedis.Accounts.ProjectTest do
                Project.list_paginated(
                  page: [offset: 0, limit: 20, count: true],
                  actor: user,
-                 tenant: tenant
+                 tenant: organisation
                )
 
       assert length(paginated_result.results) == 10
       assert paginated_result.count == 10
-      assert Enum.all?(paginated_result.results, &(&1.tenant_id == tenant.id))
+      assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation.id))
 
       assert Enum.all?(
                paginated_result.results,
@@ -120,7 +126,7 @@ defmodule Omedis.Accounts.ProjectTest do
                Project.list_paginated(
                  page: [offset: 0, limit: 20, count: true],
                  actor: user,
-                 tenant: other_tenant
+                 tenant: other_organisation
                )
 
       assert Enum.empty?(paginated_result.results)
@@ -129,44 +135,44 @@ defmodule Omedis.Accounts.ProjectTest do
 
     test "returns an empty list for a user without access" do
       {:ok, user} = create_user()
-      {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{organisation_id: tenant.id})
+      {:ok, organisation} = create_organisation()
+      {:ok, group} = create_group(%{organisation_id: organisation.id})
 
       # Create access right with read set to false
       {:ok, _} =
         create_access_right(%{
           resource_name: "Project",
           read: false,
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           group_id: group.id
         })
 
       {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
-      {:ok, _} = create_project(%{organisation_id: tenant.id, name: "Project X"})
+      {:ok, _} = create_project(%{organisation_id: organisation.id, name: "Project X"})
 
       assert {:ok, paginated_result} =
                Project.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user,
-                 tenant: tenant
+                 tenant: organisation
                )
 
       assert Enum.empty?(paginated_result.results)
       assert paginated_result.count == 0
     end
 
-    test "returns projects only for the specified tenant" do
+    test "returns projects only for the specified organisation" do
       {:ok, user} = create_user()
-      {:ok, tenant_1} = create_tenant()
-      {:ok, tenant_2} = create_tenant()
-      {:ok, group_1} = create_group(%{organisation_id: tenant_1.id})
-      {:ok, group_2} = create_group(%{organisation_id: tenant_2.id})
+      {:ok, organisation_1} = create_organisation()
+      {:ok, organisation_2} = create_organisation()
+      {:ok, group_1} = create_group(%{organisation_id: organisation_1.id})
+      {:ok, group_2} = create_group(%{organisation_id: organisation_2.id})
 
       {:ok, _} =
         create_access_right(%{
           resource_name: "Project",
           read: true,
-          organisation_id: tenant_1.id,
+          organisation_id: organisation_1.id,
           group_id: group_1.id
         })
 
@@ -174,7 +180,7 @@ defmodule Omedis.Accounts.ProjectTest do
         create_access_right(%{
           resource_name: "Project",
           read: true,
-          organisation_id: tenant_2.id,
+          organisation_id: organisation_2.id,
           group_id: group_2.id
         })
 
@@ -183,75 +189,75 @@ defmodule Omedis.Accounts.ProjectTest do
 
       for i <- 1..5 do
         {:ok, _} =
-          create_project(%{organisation_id: tenant_1.id, name: "T1 Project #{i}"})
+          create_project(%{organisation_id: organisation_1.id, name: "T1 Project #{i}"})
       end
 
       for i <- 1..3 do
         {:ok, _} =
-          create_project(%{organisation_id: tenant_2.id, name: "T2 Project #{i}"})
+          create_project(%{organisation_id: organisation_2.id, name: "T2 Project #{i}"})
       end
 
       assert {:ok, paginated_result} =
                Project.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user,
-                 tenant: tenant_1
+                 tenant: organisation_1
                )
 
       assert length(paginated_result.results) == 5
       assert paginated_result.count == 5
-      assert Enum.all?(paginated_result.results, &(&1.tenant_id == tenant_1.id))
+      assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation_1.id))
 
       assert {:ok, paginated_result} =
                Project.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user,
-                 tenant: tenant_2
+                 tenant: organisation_2
                )
 
       assert length(paginated_result.results) == 3
       assert paginated_result.count == 3
-      assert Enum.all?(paginated_result.results, &(&1.tenant_id == tenant_2.id))
+      assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation_2.id))
     end
 
     test "returns an error if the actor is not provided" do
       {:ok, user} = create_user()
-      {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{organisation_id: tenant.id})
+      {:ok, organisation} = create_organisation()
+      {:ok, group} = create_group(%{organisation_id: organisation.id})
 
       {:ok, _} =
         create_access_right(%{
           resource_name: "Project",
           read: true,
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           group_id: group.id
         })
 
       {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
-      {:ok, _} = create_project(%{organisation_id: tenant.id, name: "Project X"})
+      {:ok, _} = create_project(%{organisation_id: organisation.id, name: "Project X"})
 
       assert {:error, %Ash.Error.Forbidden{} = _error} =
                Project.list_paginated(
                  page: [offset: 0, count: true],
-                 tenant: tenant
+                 tenant: organisation
                )
     end
 
-    test "returns an error if the tenant is not provided" do
+    test "returns an error if the organisation is not provided" do
       {:ok, user} = create_user()
-      {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{organisation_id: tenant.id})
+      {:ok, organisation} = create_organisation()
+      {:ok, group} = create_group(%{organisation_id: organisation.id})
 
       {:ok, _} =
         create_access_right(%{
           resource_name: "Project",
           read: true,
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           group_id: group.id
         })
 
       {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
-      {:ok, _} = create_project(%{organisation_id: tenant.id, name: "Project X"})
+      {:ok, _} = create_project(%{organisation_id: organisation.id, name: "Project X"})
 
       assert {:error, %Ash.Error.Forbidden{} = _error} =
                Project.list_paginated(
@@ -262,24 +268,24 @@ defmodule Omedis.Accounts.ProjectTest do
 
     test "returns empty list for user without group membership" do
       {:ok, user} = create_user()
-      {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{organisation_id: tenant.id})
+      {:ok, organisation} = create_organisation()
+      {:ok, group} = create_group(%{organisation_id: organisation.id})
 
       {:ok, _} =
         create_access_right(%{
           resource_name: "Project",
           read: true,
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           group_id: group.id
         })
 
-      {:ok, _} = create_project(%{organisation_id: tenant.id, name: "Project X"})
+      {:ok, _} = create_project(%{organisation_id: organisation.id, name: "Project X"})
 
       assert {:ok, paginated_result} =
                Project.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user,
-                 tenant: tenant
+                 tenant: organisation
                )
 
       assert Enum.empty?(paginated_result.results)
@@ -288,82 +294,86 @@ defmodule Omedis.Accounts.ProjectTest do
   end
 
   describe "create/1" do
-    test "tenant owner can create a project", %{owner: owner, tenant: tenant} do
+    test "organisation owner can create a project", %{owner: owner, tenant: organisation} do
       attrs =
         Project
         |> attrs_for()
-        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:organisation_id, organisation.id)
         |> Map.put(:name, "New Project")
 
-      assert {:ok, project} = Project.create(attrs, actor: owner, tenant: tenant)
+      assert {:ok, project} = Project.create(attrs, actor: owner, tenant: organisation)
       assert project.name == "New Project"
     end
 
     test "authorized user can create a project", %{
       authorized_user: authorized_user,
-      tenant: tenant
+      tenant: organisation
     } do
       attrs =
         Project
         |> attrs_for()
-        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:organisation_id, organisation.id)
         |> Map.put(:name, "New Project")
 
-      assert {:ok, project} = Project.create(attrs, actor: authorized_user, tenant: tenant)
+      assert {:ok, project} = Project.create(attrs, actor: authorized_user, tenant: organisation)
       assert project.name == "New Project"
     end
 
-    test "unauthorized user cannot create a project", %{user: user, tenant: tenant} do
+    test "unauthorized user cannot create a project", %{user: user, tenant: organisation} do
       attrs =
         Project
         |> attrs_for()
-        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:organisation_id, organisation.id)
         |> Map.put(:name, "New Project")
 
-      assert {:error, %Ash.Error.Forbidden{}} = Project.create(attrs, actor: user, tenant: tenant)
+      assert {:error, %Ash.Error.Forbidden{}} =
+               Project.create(attrs, actor: user, tenant: organisation)
     end
   end
 
   describe "update/1" do
-    test "tenant owner can update a project", %{owner: owner, tenant: tenant} do
+    test "organisation owner can update a project", %{owner: owner, tenant: organisation} do
       attrs =
         Project
         |> attrs_for()
-        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:organisation_id, organisation.id)
         |> Map.put(:name, "Test Project")
 
       {:ok, project} =
         Project.create(attrs,
           actor: owner,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert {:ok, updated_project} =
-               Project.update(project, %{name: "Updated Project"}, actor: owner, tenant: tenant)
+               Project.update(project, %{name: "Updated Project"},
+                 actor: owner,
+                 tenant: organisation
+               )
 
       assert updated_project.name == "Updated Project"
     end
 
     test "authorized user can update a project", %{
       authorized_user: authorized_user,
-      tenant: tenant
+      tenant: organisation
     } do
       attrs =
         Project
         |> attrs_for()
-        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:organisation_id, organisation.id)
         |> Map.put(:name, "Test Project")
 
       {:ok, project} =
         Project.create(attrs,
           actor: authorized_user,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert {:ok, updated_project} =
                Project.update(project, %{name: "Updated Project"},
                  actor: authorized_user,
-                 tenant: tenant
+                 tenant: organisation
                )
 
       assert updated_project.name == "Updated Project"
@@ -372,22 +382,25 @@ defmodule Omedis.Accounts.ProjectTest do
     test "unauthorized user cannot update a project", %{
       authorized_user: authorized_user,
       user: user,
-      tenant: tenant
+      tenant: organisation
     } do
       attrs =
         Project
         |> attrs_for()
-        |> Map.put(:tenant_id, tenant.id)
+        |> Map.put(:organisation_id, organisation.id)
         |> Map.put(:name, "Test Project")
 
       {:ok, project} =
         Project.create(attrs,
           actor: authorized_user,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               Project.update(project, %{name: "Updated Project"}, actor: user, tenant: tenant)
+               Project.update(project, %{name: "Updated Project"},
+                 actor: user,
+                 tenant: organisation
+               )
     end
   end
 end

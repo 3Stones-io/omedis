@@ -30,7 +30,7 @@ defmodule Omedis.Accounts.AccessRight do
   end
 
   relationships do
-    belongs_to :organisation, Omedis.Accounts.Tenant
+    belongs_to :organisation, Omedis.Accounts.Organisation
     belongs_to :group, Omedis.Accounts.Group
   end
 

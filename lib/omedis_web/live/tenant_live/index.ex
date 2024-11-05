@@ -1,6 +1,6 @@
-defmodule OmedisWeb.TenantLive.Index do
+defmodule OmedisWeb.OrganisationLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -11,28 +11,31 @@ defmodule OmedisWeb.TenantLive.Index do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@current_tenant}
+      current_organisation={@current_organisation}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {gettext("Home"), ~p"/", false},
-            {gettext("Tenants"), ~p"/tenants", true}
+            {gettext("Organisations"), ~p"/organisations", true}
           ]}
           language={@language}
         />
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Listing Tenants") %>
+            <%= gettext("Listing Organisations") %>
           <% end) %>
           <:actions>
-            <.link :if={Ash.can?({Tenant, :create}, @current_user)} patch={~p"/tenants/new"}>
+            <.link
+              :if={Ash.can?({Organisation, :create}, @current_user)}
+              patch={~p"/organisations/new"}
+            >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("New Tenant") %>
+                  <%= gettext("New Organisation") %>
                 <% end) %>
               </.button>
             </.link>
@@ -41,50 +44,64 @@ defmodule OmedisWeb.TenantLive.Index do
 
         <div class="overflow-x-auto">
           <.table
-            id="tenants"
-            rows={@streams.tenants}
-            row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant.slug}") end}
+            id="organisations"
+            rows={@streams.organisations}
+            row_click={
+              fn {_id, organisation} -> JS.navigate(~p"/organisations/#{organisation.slug}") end
+            }
           >
-            <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Name") end)}>
-              <%= tenant.name %>
-              <%= if not is_nil(tenant.additional_info) and tenant.additional_info != "" do %>
+            <:col :let={{_id, organisation}} label={with_locale(@language, fn -> gettext("Name") end)}>
+              <%= organisation.name %>
+              <%= if not is_nil(organisation.additional_info) and organisation.additional_info != "" do %>
                 <br />
-                <%= tenant.additional_info %>
+                <%= organisation.additional_info %>
               <% end %>
             </:col>
-            <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Street") end)}>
-              <%= tenant.street %>
-              <%= if not is_nil(tenant.street2) do %>
+            <:col
+              :let={{_id, organisation}}
+              label={with_locale(@language, fn -> gettext("Street") end)}
+            >
+              <%= organisation.street %>
+              <%= if not is_nil(organisation.street2) do %>
                 <br />
-                <%= tenant.street2 %>
+                <%= organisation.street2 %>
               <% end %>
 
-              <%= if not is_nil(tenant.po_box) do %>
+              <%= if not is_nil(organisation.po_box) do %>
                 <br />
-                <%= tenant.po_box %>
+                <%= organisation.po_box %>
               <% end %>
             </:col>
-            <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Zip code") end)}>
-              <%= tenant.zip_code %>
+            <:col
+              :let={{_id, organisation}}
+              label={with_locale(@language, fn -> gettext("Zip code") end)}
+            >
+              <%= organisation.zip_code %>
             </:col>
-            <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("City") end)}>
-              <%= tenant.city %>
+            <:col :let={{_id, organisation}} label={with_locale(@language, fn -> gettext("City") end)}>
+              <%= organisation.city %>
             </:col>
-            <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Canton") end)}>
-              <%= tenant.canton %>
+            <:col
+              :let={{_id, organisation}}
+              label={with_locale(@language, fn -> gettext("Canton") end)}
+            >
+              <%= organisation.canton %>
             </:col>
-            <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Country") end)}>
-              <%= tenant.country %>
+            <:col
+              :let={{_id, organisation}}
+              label={with_locale(@language, fn -> gettext("Country") end)}
+            >
+              <%= organisation.country %>
             </:col>
-            <:action :let={{_id, tenant}}>
+            <:action :let={{_id, organisation}}>
               <div class="sr-only">
-                <.link navigate={~p"/tenants/#{tenant.slug}"}>
+                <.link navigate={~p"/organisations/#{organisation.slug}"}>
                   <%= with_locale(@language, fn -> %>
                     <%= gettext("Show") %>
                   <% end) %>
                 </.link>
               </div>
-              <.link patch={~p"/tenants/#{tenant.slug}/edit"}>
+              <.link patch={~p"/organisations/#{organisation.slug}/edit"}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Edit") %>
                 <% end) %>
@@ -95,16 +112,16 @@ defmodule OmedisWeb.TenantLive.Index do
 
         <.modal
           :if={@live_action in [:new, :edit]}
-          id="tenant-modal"
+          id="organisation-modal"
           show
-          on_cancel={JS.patch(~p"/tenants")}
+          on_cancel={JS.patch(~p"/organisations")}
         >
           <.live_component
-            module={OmedisWeb.TenantLive.FormComponent}
-            id={(@tenant && @tenant.slug) || :new}
+            module={OmedisWeb.OrganisationLive.FormComponent}
+            id={(@organisation && @organisation.slug) || :new}
             title={@page_title}
             action={@live_action}
-            tenant={@tenant}
+            organisation={@organisation}
             current_user={@current_user}
             language={@language}
           />
@@ -112,7 +129,7 @@ defmodule OmedisWeb.TenantLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants"}
+          resource_path={~p"/organisations"}
           total_pages={@total_pages}
         />
       </div>
@@ -125,7 +142,7 @@ defmodule OmedisWeb.TenantLive.Index do
     {:ok,
      socket
      |> assign(:language, language)
-     |> stream(:tenants, [])}
+     |> stream(:organisations, [])}
   end
 
   @impl true
@@ -134,34 +151,34 @@ defmodule OmedisWeb.TenantLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"slug" => slug}) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
 
-    if Ash.can?({tenant, :update}, socket.assigns.current_user) do
+    if Ash.can?({organisation, :update}, socket.assigns.current_user) do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("Edit Tenant") end)
+        with_locale(socket.assigns.language, fn -> gettext("Edit Organisation") end)
       )
-      |> assign(:tenant, tenant)
+      |> assign(:organisation, organisation)
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/tenants")
+      |> push_navigate(to: ~p"/organisations")
     end
   end
 
   defp apply_action(socket, :new, _params) do
-    if Ash.can?({Tenant, :create}, socket.assigns.current_user) do
+    if Ash.can?({Organisation, :create}, socket.assigns.current_user) do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("New Tenant") end)
+        with_locale(socket.assigns.language, fn -> gettext("New Organisation") end)
       )
-      |> assign(:tenant, nil)
+      |> assign(:organisation, nil)
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/tenants")
+      |> push_navigate(to: ~p"/organisations")
     end
   end
 
@@ -169,11 +186,11 @@ defmodule OmedisWeb.TenantLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Listing Tenants") end)
+      with_locale(socket.assigns.language, fn -> gettext("Listing Organisations") end)
     )
-    |> assign(:tenant, nil)
-    |> PaginationUtils.list_paginated(params, :tenants, fn offset ->
-      Tenant.list_paginated(
+    |> assign(:organisation, nil)
+    |> PaginationUtils.list_paginated(params, :organisations, fn offset ->
+      Organisation.list_paginated(
         page: [count: true, offset: offset],
         actor: socket.assigns.current_user
       )
@@ -181,10 +198,10 @@ defmodule OmedisWeb.TenantLive.Index do
   end
 
   @impl true
-  def handle_info({OmedisWeb.TenantLive.FormComponent, {:saved, tenant}}, socket) do
+  def handle_info({OmedisWeb.OrganisationLive.FormComponent, {:saved, organisation}}, socket) do
     {:noreply,
      socket
-     |> assign(:tenants_count, socket.assigns.tenants_count + 1)
-     |> stream_insert(:tenants, tenant)}
+     |> assign(:organisations_count, socket.assigns.organisations_count + 1)
+     |> stream_insert(:organisations, organisation)}
   end
 end

@@ -1,8 +1,8 @@
 defmodule OmedisWeb.ProjectLive.Index do
   use OmedisWeb, :live_view
 
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
-  alias Omedis.Accounts.Tenant
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -13,17 +13,17 @@ defmodule OmedisWeb.ProjectLive.Index do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@current_tenant}
+      current_organisation={@current_organisation}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {gettext("Home"), ~p"/", false},
-            {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Projects"), ~p"/tenants/#{@tenant.slug}", true}
+            {gettext("Organisations"), ~p"/organisations", false},
+            {@organisation.name, ~p"/organisations/#{@organisation.slug}", false},
+            {gettext("Projects"), ~p"/organisations/#{@organisation.slug}", true}
           ]}
           language={@language}
         />
@@ -34,8 +34,8 @@ defmodule OmedisWeb.ProjectLive.Index do
           <% end) %>
           <:actions>
             <.link
-              :if={Ash.can?({Project, :create}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant.slug}/projects/new"}
+              :if={Ash.can?({Project, :create}, @current_user, tenant: @organisation)}
+              patch={~p"/organisations/#{@organisation.slug}/projects/new"}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
@@ -50,7 +50,9 @@ defmodule OmedisWeb.ProjectLive.Index do
           id="projects"
           rows={@streams.projects}
           row_click={
-            fn {_id, project} -> JS.navigate(~p"/tenants/#{@tenant.slug}/projects/#{project}") end
+            fn {_id, project} ->
+              JS.navigate(~p"/organisations/#{@organisation.slug}/projects/#{project}")
+            end
           }
         >
           <:col :let={{_id, project}} label={with_locale(@language, fn -> gettext("Name") end)}>
@@ -63,7 +65,7 @@ defmodule OmedisWeb.ProjectLive.Index do
 
           <:action :let={{_id, project}}>
             <div class="sr-only">
-              <.link navigate={~p"/tenants/#{@tenant.slug}/projects/#{project}"}>
+              <.link navigate={~p"/organisations/#{@organisation.slug}/projects/#{project}"}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Show") %>
                 <% end) %>
@@ -71,8 +73,8 @@ defmodule OmedisWeb.ProjectLive.Index do
             </div>
 
             <.link
-              :if={Ash.can?({project, :update}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant.slug}/projects/#{project}/edit"}
+              :if={Ash.can?({project, :update}, @current_user, tenant: @organisation)}
+              patch={~p"/organisations/#{@organisation.slug}/projects/#{project}/edit"}
             >
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
@@ -85,26 +87,26 @@ defmodule OmedisWeb.ProjectLive.Index do
           :if={@live_action in [:new, :edit]}
           id="project-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/projects")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation.slug}/projects")}
         >
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
             id={(@project && @project.id) || :new}
             current_user={@current_user}
             title={@page_title}
-            tenants={@tenants}
-            tenant={@tenant}
+            organisations={@organisations}
+            organisation={@organisation}
             next_position={@next_position}
             language={@language}
             action={@live_action}
             project={@project}
-            patch={~p"/tenants/#{@tenant.slug}/projects"}
+            patch={~p"/organisations/#{@organisation.slug}/projects"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/projects"}
+          resource_path={~p"/organisations/#{@organisation.slug}/projects"}
           total_pages={@total_pages}
         />
       </div>
@@ -115,15 +117,18 @@ defmodule OmedisWeb.ProjectLive.Index do
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
     actor = socket.assigns.current_user
-    tenant = Tenant.by_slug!(slug, actor: actor)
+    organisation = Organisation.by_slug!(slug, actor: actor)
 
     next_position =
-      Project.get_max_position_by_tenant_id(tenant.id, actor: actor, tenant: tenant) + 1
+      Project.get_max_position_by_organisation_id(organisation.id,
+        actor: actor,
+        tenant: organisation
+      ) + 1
 
     {:ok,
      socket
-     |> assign(:tenants, Ash.read!(Tenant, actor: actor))
-     |> assign(:tenant, tenant)
+     |> assign(:organisations, Ash.read!(Organisation, actor: actor))
+     |> assign(:organisation, organisation)
      |> assign(:next_position, next_position)
      |> assign(:project, nil)
      |> stream(:projects, [])}
@@ -132,10 +137,13 @@ defmodule OmedisWeb.ProjectLive.Index do
   @impl true
   def handle_params(params, _url, socket) do
     actor = socket.assigns.current_user
-    tenant = Tenant.by_slug!(params["slug"], actor: actor)
+    organisation = Organisation.by_slug!(params["slug"], actor: actor)
 
     next_position =
-      Project.get_max_position_by_tenant_id(tenant.id, actor: actor, tenant: tenant) + 1
+      Project.get_max_position_by_organisation_id(organisation.id,
+        actor: actor,
+        tenant: organisation
+      ) + 1
 
     {:noreply,
      socket
@@ -145,13 +153,13 @@ defmodule OmedisWeb.ProjectLive.Index do
 
   defp maybe_enforce_access_rights_and_apply_action(socket, :edit, %{"id" => id}) do
     actor = socket.assigns.current_user
-    tenant = socket.assigns.tenant
+    organisation = socket.assigns.organisation
 
-    project = Project.by_id(id, actor: actor, tenant: tenant)
+    project = Project.by_id(id, actor: actor, tenant: organisation)
 
     case project do
       {:ok, project} ->
-        enforce_access_rights(socket, project, actor: actor, tenant: tenant)
+        enforce_access_rights(socket, project, actor: actor, tenant: organisation)
 
       _ ->
         handle_unauthorized_access(socket)
@@ -169,19 +177,20 @@ defmodule OmedisWeb.ProjectLive.Index do
       Project.list_paginated(
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
-        tenant: socket.assigns.tenant
+        tenant: socket.assigns.organisation
       )
     end)
   end
 
   defp maybe_enforce_access_rights_and_apply_action(socket, :new, _) do
     actor = socket.assigns.current_user
-    tenant = socket.assigns.tenant
-    enforce_access_rights(socket, nil, actor: actor, tenant: tenant)
+    organisation = socket.assigns.organisation
+    enforce_access_rights(socket, nil, actor: actor, tenant: organisation)
   end
 
   defp enforce_access_rights(socket, nil, opts) do
-    user_has_access_rights = Ash.can?({Project, :create}, opts[:actor], tenant: opts[:tenant])
+    user_has_access_rights =
+      Ash.can?({Project, :create}, opts[:actor], tenant: opts[:tenant])
 
     if user_has_access_rights do
       socket
@@ -196,7 +205,8 @@ defmodule OmedisWeb.ProjectLive.Index do
   end
 
   defp enforce_access_rights(socket, project, opts) do
-    user_has_access_rights = Ash.can?({project, :update}, opts[:actor], tenant: opts[:tenant])
+    user_has_access_rights =
+      Ash.can?({project, :update}, opts[:actor], tenant: opts[:tenant])
 
     if user_has_access_rights do
       socket
@@ -212,12 +222,12 @@ defmodule OmedisWeb.ProjectLive.Index do
   end
 
   defp handle_unauthorized_access(socket) do
-    tenant = socket.assigns.tenant
+    organisation = socket.assigns.organisation
 
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
     |> assign(:user_has_access_rights, false)
-    |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects")
+    |> push_patch(to: ~p"/organisations/#{organisation.slug}/projects")
     |> put_flash(
       :error,
       with_locale(socket.assigns.language, fn ->

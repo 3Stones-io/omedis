@@ -7,9 +7,9 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: tenant.id})
-    {:ok, project} = create_project(%{organisation_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, project} = create_project(%{organisation_id: organisation.id})
     {:ok, authorized_user} = create_user()
 
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
@@ -19,7 +19,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "LogCategory",
-        organisation_id: tenant.id,
+        organisation_id: organisation.id,
         write: true
       })
 
@@ -28,7 +28,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -36,19 +36,19 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     {:ok, user} = create_user()
-    {:ok, group2} = create_group(%{organisation_id: tenant.id})
+    {:ok, group2} = create_group(%{organisation_id: organisation.id})
     {:ok, _} = create_group_user(%{group_id: group2.id, user_id: user.id})
 
     {:ok, _} =
@@ -56,7 +56,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         group_id: group2.id,
         read: true,
         resource_name: "Group",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -64,15 +64,15 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
         group_id: group2.id,
         read: true,
         resource_name: "Project",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
       create_access_right(%{
         group_id: group2.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     %{
@@ -81,17 +81,17 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       group2: group2,
       owner: owner,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     }
   end
 
-  describe "/tenants/:slug/groups/:group_slug/log_categories" do
-    test "lists all log categories if user is tenant owner", %{
+  describe "/organisations/:slug/groups/:group_slug/log_categories" do
+    test "lists all log categories if user is organisation owner", %{
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       owner: owner
     } do
       {:ok, _log_category} =
@@ -104,7 +104,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories")
 
       assert html =~ "Test Category"
     end
@@ -113,7 +113,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, _log_category} =
@@ -126,7 +126,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories")
 
       assert html =~ "Test Category"
     end
@@ -135,7 +135,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     } do
       {:ok, _log_category} =
@@ -148,25 +148,25 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories")
 
       refute html =~ "Test Category"
       refute html =~ "New Log Category"
     end
   end
 
-  describe "/tenants/:slug/groups/:group_slug/log_categories/new" do
-    test "tenant owner can create new log category", %{
+  describe "/organisations/:slug/groups/:group_slug/log_categories/new" do
+    test "organisation owner can create new log category", %{
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       owner: owner
     } do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/new")
 
       assert html =~ "New Log Category"
 
@@ -181,7 +181,10 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
                )
                |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+      assert_patch(
+        view,
+        ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories"
+      )
 
       assert html =~ "Log category saved successfully"
       assert html =~ "New Category"
@@ -191,13 +194,13 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, view, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/new")
 
       assert html =~ "New Log Category"
 
@@ -212,7 +215,10 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
                )
                |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+      assert_patch(
+        view,
+        ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories"
+      )
 
       assert html =~ "Log category saved successfully"
       assert html =~ "New Category"
@@ -221,28 +227,28 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "unauthorized user cannot create new log category", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     } do
       {:error, {:live_redirect, %{flash: flash, to: to}}} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/new")
 
-      assert to == ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories"
+      assert to == ~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories"
       assert flash["error"] == "You are not authorized to access this page"
     end
 
     test "shows validation errors", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, view, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories/new")
 
       html =
         view
@@ -257,7 +263,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "authorized user can move log categories up and down", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      tenant: organisation,
       project: project,
       authorized_user: authorized_user
     } do
@@ -279,7 +285,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories")
 
       # Verify position controls are rendered
       assert html =~ "move-up-#{second.id}"
@@ -301,7 +307,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "unauthorized user cannot see position controls", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      tenant: organisation,
       project: project,
       user: unauthorized_user
     } do
@@ -315,7 +321,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories")
 
       refute html =~ "move-up-#{log_category.id}"
       refute html =~ "move-down-#{log_category.id}"
@@ -323,10 +329,10 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       refute view |> element(".position-down") |> has_element?()
     end
 
-    test "tenant owner can move log categories up and down", %{
+    test "organisation owner can move log categories up and down", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      tenant: organisation,
       project: project,
       owner: owner
     } do
@@ -347,7 +353,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}/log_categories")
 
       # Test moving up
       view

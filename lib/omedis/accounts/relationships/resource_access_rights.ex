@@ -11,7 +11,7 @@ defmodule Omedis.Accounts.Relationships.ResourceAccessRights do
      query
      |> Ash.Query.filter(resource_name == ^resource_name)
      |> Ash.read!(actor: actor, authorize?: authorize?)
-     |> Enum.group_by(& &1.tenant_id)}
+     |> Enum.group_by(& &1.organisation_id)}
   end
 
   def ash_postgres_join(

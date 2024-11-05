@@ -1,117 +1,130 @@
-defmodule OmedisWeb.TenantLive.ShowTest do
+defmodule OmedisWeb.OrganisationLive.ShowTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
 
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
 
   setup [:register_and_log_in_user]
 
   setup %{user: user} do
-    {:ok, tenant} = create_tenant(%{name: "Test Tenant", slug: "test-tenant"})
+    {:ok, organisation} =
+      create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
+
     {:ok, group} = create_group()
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
 
-    {:ok, tenant: tenant, group: group}
+    {:ok, tenant: organisation, group: group}
   end
 
-  describe "/tenants/:slug" do
-    test "shows tenant page when user has read access or is owner", %{
+  describe "/organisations/:slug" do
+    test "shows organisation page when user has read access or is owner", %{
       conn: conn,
       group: group,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, _access_right} =
         create_access_right(%{
           group_id: group.id,
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           read: true,
-          resource_name: "Tenant"
+          resource_name: "Organisation"
         })
 
-      {:ok, _show_live, html} = live(conn, ~p"/tenants/#{tenant.slug}")
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation.slug}")
 
-      assert html =~ tenant.name
+      assert html =~ organisation.name
     end
 
-    test "doesn't show tenant page when user has no read access", %{conn: conn} do
-      {:ok, tenant} = create_tenant()
+    test "doesn't show organisation page when user has no read access", %{conn: conn} do
+      {:ok, organisation} = create_organisation()
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        live(conn, ~p"/tenants/#{tenant.slug}")
+        live(conn, ~p"/organisations/#{organisation.slug}")
       end
     end
 
-    test "shows tenant page for owner without access rights", %{conn: conn, user: user} do
-      {:ok, owned_tenant} =
-        create_tenant(%{name: "Owned Tenant", slug: "owned-tenant", owner_id: user.id})
+    test "shows organisation page for owner without access rights", %{conn: conn, user: user} do
+      {:ok, owned_organisation} =
+        create_organisation(%{
+          name: "Owned Organisation",
+          slug: "owned-organisation",
+          owner_id: user.id
+        })
 
-      {:ok, _show_live, html} = live(conn, ~p"/tenants/#{owned_tenant.slug}")
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{owned_organisation.slug}")
 
-      assert html =~ owned_tenant.name
+      assert html =~ owned_organisation.name
     end
 
     test "shows edit button when user has write or update access", %{
       conn: conn,
       group: group,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, access_right} =
         create_access_right(%{
           group_id: group.id,
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           read: true,
-          resource_name: "Tenant",
+          resource_name: "Organisation",
           update: false,
           write: false
         })
 
-      {:ok, _show_live, html} = live(conn, ~p"/tenants/#{tenant.slug}")
-      refute html =~ "Edit tenant"
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation.slug}")
+      refute html =~ "Edit organisation"
 
       Ash.update!(access_right, %{write: true, update: false})
 
-      {:ok, _show_live, html} = live(conn, ~p"/tenants/#{tenant.slug}")
-      assert html =~ "Edit tenant"
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation.slug}")
+      assert html =~ "Edit organisation"
 
       Ash.update!(access_right, %{write: false, update: true})
 
-      {:ok, _show_live, html} = live(conn, ~p"/tenants/#{tenant.slug}")
-      assert html =~ "Edit tenant"
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation.slug}")
+      assert html =~ "Edit organisation"
     end
 
-    test "shows edit button for tenant owner without access rights", %{conn: conn, user: user} do
-      {:ok, owned_tenant} =
-        create_tenant(%{name: "Owned Tenant", slug: "owned-tenant", owner_id: user.id})
+    test "shows edit button for organisation owner without access rights", %{
+      conn: conn,
+      user: user
+    } do
+      {:ok, owned_organisation} =
+        create_organisation(%{
+          name: "Owned Organisation",
+          slug: "owned-organisation",
+          owner_id: user.id
+        })
 
-      {:ok, show_live, html} = live(conn, ~p"/tenants/#{owned_tenant.slug}")
+      {:ok, show_live, html} = live(conn, ~p"/organisations/#{owned_organisation.slug}")
 
-      assert html =~ "Edit tenant"
+      assert html =~ "Edit organisation"
 
-      assert show_live |> element("a", "Edit tenant") |> render_click() =~
-               "Edit Tenant"
+      assert show_live |> element("a", "Edit organisation") |> render_click() =~
+               "Edit Organisation"
 
-      assert_patch(show_live, ~p"/tenants/#{owned_tenant.slug}/show/edit")
+      assert_patch(show_live, ~p"/organisations/#{owned_organisation.slug}/show/edit")
 
       assert show_live
-             |> form("#tenant-form", tenant: %{street: ""})
+             |> form("#organisation-form", tenant: %{street: ""})
              |> render_change() =~ "is required"
 
       attrs =
-        Tenant
+        Organisation
         |> attrs_for()
         |> Enum.reject(fn {_k, v} -> is_function(v) end)
         |> Enum.into(%{})
-        |> Map.put(:name, "Updated Tenant")
+        |> Map.put(:name, "Updated Organisation")
 
       assert {:ok, _show_live, html} =
                show_live
-               |> form("#tenant-form", tenant: attrs)
+               |> form("#organisation-form", tenant: attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/tenants/#{attrs.slug}")
+               |> follow_redirect(conn, ~p"/organisations/#{attrs.slug}")
 
-      assert html =~ "Tenant saved"
-      assert html =~ "Updated Tenant"
+      assert html =~ "Organisation saved"
+      assert html =~ "Updated Organisation"
     end
   end
 end

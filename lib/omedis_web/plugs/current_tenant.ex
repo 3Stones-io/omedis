@@ -1,25 +1,27 @@
-defmodule OmedisWeb.Plugs.CurrentTenant do
+defmodule OmedisWeb.Plugs.CurrentOrganisation do
   @moduledoc """
-  This plug is used to assign the current tenant to the conn.
+  This plug is used to assign the current organisation to the conn.
   """
   import Plug.Conn
 
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
 
   def init(_opts), do: nil
 
   def call(conn, _opts) do
-    current_tenant =
-      with %User{current_organisation_id: current_tenant_id} when not is_nil(current_tenant_id) <-
+    current_organisation =
+      with %User{current_organisation_id: current_organisation_id}
+           when not is_nil(current_organisation_id) <-
              conn.assigns[:current_user],
-           {:ok, tenant} <- Tenant.by_id(current_tenant_id, actor: conn.assigns.current_user) do
-        tenant
+           {:ok, organisation} <-
+             Organisation.by_id(current_organisation_id, actor: conn.assigns.current_user) do
+        organisation
       else
         _ ->
           nil
       end
 
-    assign(conn, :current_tenant, current_tenant)
+    assign(conn, :current_organisation, current_organisation)
   end
 end

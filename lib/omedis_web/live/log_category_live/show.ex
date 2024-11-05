@@ -2,28 +2,28 @@ defmodule OmedisWeb.LogCategoryLive.Show do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
-  alias Omedis.Accounts.Tenant
 
   @impl true
   def render(assigns) do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@current_tenant}
+      current_organisation={@current_organisation}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {gettext("Home"), ~p"/", false},
-            {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
-            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+            {gettext("Organisations"), ~p"/organisations", false},
+            {@organisation.name, ~p"/organisations/#{@organisation.slug}", false},
+            {gettext("Groups"), ~p"/organisations/#{@organisation.slug}/groups", false},
+            {@group.name, ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}", false},
             {gettext("Log Categories"),
-             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
+             ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}/log_categories", false},
             {@log_category.name, "", true}
           ]}
           language={@language}
@@ -43,7 +43,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           <:actions>
             <.link
               patch={
-                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}/show/edit"
+                ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}/log_categories/#{@log_category}/show/edit"
               }
               phx-click={JS.push_focus()}
             >
@@ -55,7 +55,9 @@ defmodule OmedisWeb.LogCategoryLive.Show do
             </.link>
 
             <.link
-              navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/log_entries"}
+              navigate={
+                ~p"/organisations/#{@organisation.slug}/log_categories/#{@log_category}/log_entries"
+              }
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -80,7 +82,9 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}>
+        <.back navigate={
+          ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}/log_categories"
+        }>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Back to log categories") %>
           <% end) %>
@@ -92,7 +96,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           show
           on_cancel={
             JS.patch(
-              ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"
+              ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"
             )
           }
         >
@@ -103,16 +107,18 @@ defmodule OmedisWeb.LogCategoryLive.Show do
             projects={@projects}
             title={@page_title}
             action={@live_action}
-            tenant={@tenant}
+            organisation={@organisation}
             groups={@groups}
             color_code={@color_code}
             is_custom_color={@is_custom_color}
-            tenants={@tenants}
+            organisations={@organisations}
             group={@group}
             next_position={@next_position}
             language={@language}
             log_category={@log_category}
-            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"}
+            patch={
+              ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"
+            }
           />
         </.modal>
       </div>
@@ -129,27 +135,30 @@ defmodule OmedisWeb.LogCategoryLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug}, _, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
-    group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
-    groups = Ash.read!(Group, actor: socket.assigns.current_user, tenant: tenant)
-    log_category = LogCategory.by_id!(id, actor: socket.assigns.current_user, tenant: tenant)
+    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+    group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: organisation)
+    groups = Ash.read!(Group, actor: socket.assigns.current_user, tenant: organisation)
+
+    log_category =
+      LogCategory.by_id!(id, actor: socket.assigns.current_user, tenant: organisation)
+
     next_position = log_category.position
 
     projects =
-      Project.by_tenant_id!(%{organisation_id: tenant.id},
+      Project.by_organisation_id!(%{organisation_id: organisation.id},
         actor: socket.assigns.current_user,
-        tenant: tenant
+        tenant: organisation
       )
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:log_category, log_category)
-     |> assign(:tenants, Ash.read!(Tenant, actor: socket.assigns.current_user))
+     |> assign(:organisations, Ash.read!(Organisation, actor: socket.assigns.current_user))
      |> assign(:projects, projects)
      |> assign(:group, group)
      |> assign(:groups, groups)
-     |> assign(:tenant, tenant)
+     |> assign(:organisation, organisation)
      |> assign(:is_custom_color, true)
      |> assign(:color_code, log_category.color_code)
      |> assign(:next_position, next_position)
@@ -164,17 +173,17 @@ defmodule OmedisWeb.LogCategoryLive.Show do
 
   defp apply_action(socket, :edit) do
     actor = socket.assigns.current_user
-    tenant = socket.assigns.tenant
+    organisation = socket.assigns.organisation
     log_category = socket.assigns.log_category
 
-    if Ash.can?({log_category, :update}, actor, tenant: tenant) do
+    if Ash.can?({log_category, :update}, actor, tenant: organisation) do
       assign(socket, :page_title, page_title(:edit, socket.assigns.language))
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
       |> push_navigate(
         to:
-          ~p"/tenants/#{tenant.slug}/groups/#{socket.assigns.group.slug}/log_categories/#{log_category.id}"
+          ~p"/organisations/#{organisation.slug}/groups/#{socket.assigns.group.slug}/log_categories/#{log_category.id}"
       )
     end
   end

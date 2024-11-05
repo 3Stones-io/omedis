@@ -7,8 +7,8 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
 
@@ -19,7 +19,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        organisation_id: tenant.id,
+        organisation_id: organisation.id,
         write: true
       })
 
@@ -27,116 +27,122 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
-    {:ok, another_group} = create_group(%{organisation_id: tenant.id})
+    {:ok, another_group} = create_group(%{organisation_id: organisation.id})
     {:ok, _} = create_group_user(%{group_id: another_group.id, user_id: user.id})
 
     {:ok, _} =
       create_access_right(%{
         group_id: another_group.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
-    %{authorized_user: authorized_user, group: group, owner: owner, tenant: tenant, user: user}
+    %{
+      authorized_user: authorized_user,
+      group: group,
+      owner: owner,
+      tenant: organisation,
+      user: user
+    }
   end
 
-  describe "/tenants/:slug/projects" do
-    test "lists all projects if user is the tenant owner", %{
+  describe "/organisations/:slug/projects" do
+    test "lists all projects if user is the organisation owner", %{
       conn: conn,
       owner: owner,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, _} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/organisations/#{organisation.slug}/projects")
 
       assert html =~ "Test Project"
     end
 
     test "lists all projects if user is authorized", %{
       conn: conn,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/organisations/#{organisation.slug}/projects")
 
       assert html =~ project.name
     end
 
     test "does not list projects if user is not authorized", %{
       conn: conn,
-      tenant: tenant,
+      tenant: organisation,
       user: unauthorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/organisations/#{organisation.slug}/projects")
 
       refute html =~ project.name
     end
 
     test "does not show new project link if user is not authorized", %{
       conn: conn,
-      tenant: tenant,
+      tenant: organisation,
       user: unauthorized_user
     } do
       {:ok, _} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/organisations/#{organisation.slug}/projects")
 
       refute html =~ "New Project"
     end
 
     test "does not show edit project link if user is not authorized", %{
       conn: conn,
-      tenant: tenant,
+      tenant: organisation,
       user: unauthorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/organisations/#{organisation.slug}/projects")
 
       refute has_element?(index_live, "#edit-project-#{project.id}")
     end
   end
 
-  describe "/tenants/:slug/projects/new" do
-    test "tenant owner can create new project", %{
+  describe "/organisations/:slug/projects/new" do
+    test "organisation owner can create new project", %{
       conn: conn,
       owner: owner,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, index_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/projects/new")
+        |> live(~p"/organisations/#{organisation.slug}/projects/new")
 
       assert html =~ "New Project"
 
@@ -147,7 +153,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/organisations/#{organisation.slug}/projects")
 
       assert html =~ "Project saved."
       assert html =~ "Dummy Project"
@@ -155,13 +161,13 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "authorized user can create new project", %{
       conn: conn,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, index_live, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/new")
+        |> live(~p"/organisations/#{organisation.slug}/projects/new")
 
       assert html =~ "New Project"
 
@@ -172,7 +178,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/organisations/#{organisation.slug}/projects")
 
       assert html =~ "Project saved."
       assert html =~ "Dummy Project"
@@ -180,32 +186,32 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "unauthorized user cannot create new project", %{
       conn: conn,
-      tenant: tenant,
+      tenant: organisation,
       user: unauthorized_user
     } do
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/new")
+        |> live(~p"/organisations/#{organisation.slug}/projects/new")
 
-      assert redirect_path == ~p"/tenants/#{tenant.slug}/projects"
+      assert redirect_path == ~p"/organisations/#{organisation.slug}/projects"
       assert flash["error"] == "You are not authorized to access this page"
     end
   end
 
-  describe "/tenants/:slug/projects/:id/edit" do
-    test "tenant owner can edit project", %{
+  describe "/organisations/:slug/projects/:id/edit" do
+    test "organisation owner can edit project", %{
       conn: conn,
       owner: owner,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, project} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/organisations/#{organisation.slug}/projects/#{project.id}/edit")
 
       params = %{name: "Updated Project"}
 
@@ -214,7 +220,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/organisations/#{organisation.slug}/projects")
 
       assert html =~ "Project saved."
       assert html =~ "Updated Project"
@@ -222,16 +228,16 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "authorized user can edit project", %{
       conn: conn,
-      tenant: tenant,
+      tenant: organisation,
       authorized_user: authorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/organisations/#{organisation.slug}/projects/#{project.id}/edit")
 
       params = %{name: "Updated Project"}
 
@@ -240,7 +246,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/organisations/#{organisation.slug}/projects")
 
       assert html =~ "Project saved."
       assert html =~ "Updated Project"
@@ -248,18 +254,18 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "unauthorized user cannot edit project", %{
       conn: conn,
-      tenant: tenant,
+      tenant: organisation,
       user: unauthorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: organisation.id, name: "Test Project"})
 
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/organisations/#{organisation.slug}/projects/#{project.id}/edit")
 
-      assert redirect_path == ~p"/tenants/#{tenant.slug}/projects"
+      assert redirect_path == ~p"/organisations/#{organisation.slug}/projects"
       assert flash["error"] == "You are not authorized to access this page"
     end
   end

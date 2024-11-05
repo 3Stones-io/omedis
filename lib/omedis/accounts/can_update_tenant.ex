@@ -1,7 +1,7 @@
-defmodule Omedis.Accounts.CanUpdateTenant do
+defmodule Omedis.Accounts.CanUpdateOrganisation do
   @moduledoc """
-  Determines whether a user can update a tenant.
-  User either needs to be the owner of the tenant or have write access to the tenant through a group.
+  Determines whether a user can update a organisation.
+  User either needs to be the owner of the organisation or have write access to the organisation through a group.
   """
   use Ash.Policy.SimpleCheck
 
@@ -10,20 +10,21 @@ defmodule Omedis.Accounts.CanUpdateTenant do
   alias Omedis.Accounts.AccessRight
 
   def describe(_options) do
-    "User can update tenant if they are the owner or have write access through a group."
+    "User can update organisation if they are the owner or have write access through a group."
   end
 
   def match?(nil, _context, _opts), do: false
   def match?(_actor, %{subject: %{data: nil}}, _opts), do: false
 
-  def match?(actor, %{subject: %{data: tenant}}, _opts) when actor.id == tenant.owner_id,
-    do: true
+  def match?(actor, %{subject: %{data: organisation}}, _opts)
+      when actor.id == organisation.owner_id,
+      do: true
 
-  def match?(actor, %{subject: %{data: tenant}}, _opts) do
+  def match?(actor, %{subject: %{data: organisation}}, _opts) do
     Ash.exists?(
       filter(
         AccessRight,
-        tenant_id == ^tenant.id && (write || update) &&
+        organisation_id == ^organisation.id && (write || update) &&
           exists(group.group_users, user_id == ^actor.id)
       )
     )

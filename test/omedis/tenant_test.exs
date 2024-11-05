@@ -1,244 +1,262 @@
-defmodule Omedis.TenantTest do
+defmodule Omedis.OrganisationTest do
   use Omedis.DataCase, async: true
 
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
 
   setup do
     {:ok, user} = create_user()
-    {:ok, tenant} = create_tenant()
+    {:ok, organisation} = create_organisation()
     {:ok, group} = create_group()
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
 
-    {:ok, user: user, tenant: tenant, group: group}
+    {:ok, user: user, tenant: organisation, group: group}
   end
 
   describe "read/0" do
-    test "returns tenants the user has read access to or is owner", %{
+    test "returns organisations the user has read access to or is owner", %{
       user: user,
-      tenant: tenant,
+      tenant: organisation,
       group: group
     } do
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
-      {:ok, owned_tenant} = create_tenant(%{owner_id: user.id})
+      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
 
-      {:ok, tenants} = Tenant.read(actor: user)
-      assert length(tenants) == 2
-      assert Enum.any?(tenants, fn t -> t.id == tenant.id end)
-      assert Enum.any?(tenants, fn t -> t.id == owned_tenant.id end)
+      {:ok, organisations} = Organisation.read(actor: user)
+      assert length(organisations) == 2
+      assert Enum.any?(organisations, fn t -> t.id == organisation.id end)
+      assert Enum.any?(organisations, fn t -> t.id == owned_organisation.id end)
     end
 
-    test "returns only owned tenants when user has no read access", %{user: user} do
-      {:ok, owned_tenant} = create_tenant(%{owner_id: user.id})
+    test "returns only owned organisations when user has no read access", %{user: user} do
+      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
 
-      {:ok, tenants} = Tenant.read(actor: user)
-      assert length(tenants) == 1
-      assert hd(tenants).id == owned_tenant.id
+      {:ok, organisations} = Organisation.read(actor: user)
+      assert length(organisations) == 1
+      assert hd(organisations).id == owned_organisation.id
     end
   end
 
   describe "create/1" do
-    test "is only allowed for users without a tenant", %{user: user} do
-      assert {:error, _} = Tenant.create(%{name: "New Tenant", slug: "new-tenant"}, actor: user)
+    test "is only allowed for users without a organisation", %{user: user} do
+      assert {:error, _} =
+               Organisation.create(%{name: "New Organisation", slug: "new-organisation"},
+                 actor: user
+               )
 
-      {:ok, user_without_tenant} = create_user()
+      {:ok, user_without_organisation} = create_user()
 
       assert {:ok, _} =
-               Tenant
+               Organisation
                |> attrs_for()
                |> Map.merge(%{
-                 name: "New Tenant",
-                 owner_id: user_without_tenant.id,
-                 slug: "new-tenant"
+                 name: "New Organisation",
+                 owner_id: user_without_organisation.id,
+                 slug: "new-organisation"
                })
-               |> Tenant.create(actor: user_without_tenant)
+               |> Organisation.create(actor: user_without_organisation)
     end
 
     test "returns an error when attributes are invalid", %{user: user} do
-      assert {:error, _} = Tenant.create(%{name: "Invalid Tenant"}, actor: user)
+      assert {:error, _} = Organisation.create(%{name: "Invalid Organisation"}, actor: user)
     end
   end
 
   describe "update/2" do
     test "requires write or update access", %{user: user, group: group} do
-      {:ok, owned_tenant} = create_tenant(%{owner_id: user.id})
+      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
 
-      assert {:ok, updated_tenant} = Tenant.update(owned_tenant, %{name: "Updated"}, actor: user)
-      assert updated_tenant.name == "Updated"
+      assert {:ok, updated_organisation} =
+               Organisation.update(owned_organisation, %{name: "Updated"}, actor: user)
 
-      {:ok, tenant} = create_tenant()
+      assert updated_organisation.name == "Updated"
+
+      {:ok, organisation} = create_organisation()
 
       create_access_right(%{
         create: true,
         group_id: group.id,
-        resource_name: "Tenant",
-        organisation_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         read: true,
         update: false,
         write: false
       })
 
-      assert {:error, _} = Tenant.update(tenant, %{name: "Updated"}, actor: user)
+      assert {:error, _} = Organisation.update(organisation, %{name: "Updated"}, actor: user)
 
       create_access_right(%{
         group_id: group.id,
-        resource_name: "Tenant",
-        organisation_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         update: false,
         write: true
       })
 
-      assert {:ok, updated_tenant} = Tenant.update(tenant, %{name: "Updated"}, actor: user)
-      assert updated_tenant.name == "Updated"
+      assert {:ok, updated_organisation} =
+               Organisation.update(organisation, %{name: "Updated"}, actor: user)
 
-      {:ok, tenant} = create_tenant()
+      assert updated_organisation.name == "Updated"
+
+      {:ok, organisation} = create_organisation()
 
       create_access_right(%{
         group_id: group.id,
-        resource_name: "Tenant",
-        organisation_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         update: true,
         write: false
       })
 
-      assert {:ok, updated_tenant} = Tenant.update(tenant, %{name: "Updated"}, actor: user)
-      assert updated_tenant.name == "Updated"
+      assert {:ok, updated_organisation} =
+               Organisation.update(organisation, %{name: "Updated"}, actor: user)
+
+      assert updated_organisation.name == "Updated"
     end
   end
 
   describe "destroy/1" do
     test "requires ownership or write/update access", %{user: user, group: group} do
-      {:ok, owned_tenant} = create_tenant(%{owner_id: user.id})
+      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
 
-      assert :ok = Tenant.destroy(owned_tenant, actor: user)
+      assert :ok = Organisation.destroy(owned_organisation, actor: user)
 
-      {:ok, tenant} = create_tenant()
+      {:ok, organisation} = create_organisation()
 
       create_access_right(%{
         create: true,
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         update: false,
         write: false
       })
 
-      assert {:error, _} = Tenant.destroy(tenant, actor: user)
+      assert {:error, _} = Organisation.destroy(organisation, actor: user)
 
       create_access_right(%{
         group_id: group.id,
-        resource_name: "Tenant",
-        organisation_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         update: false,
         write: true
       })
 
-      assert :ok = Tenant.destroy(tenant, actor: user)
+      assert :ok = Organisation.destroy(organisation, actor: user)
 
-      {:ok, tenant} = create_tenant()
+      {:ok, organisation} = create_organisation()
 
       create_access_right(%{
         group_id: group.id,
-        resource_name: "Tenant",
-        organisation_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         update: true,
         write: false
       })
 
-      assert :ok = Tenant.destroy(tenant, actor: user)
+      assert :ok = Organisation.destroy(organisation, actor: user)
     end
   end
 
   describe "by_id/1" do
-    test "returns a tenant given a valid id", %{user: user, tenant: tenant, group: group} do
+    test "returns a organisation given a valid id", %{
+      user: user,
+      tenant: organisation,
+      group: group
+    } do
       create_access_right(%{
         group_id: group.id,
-        organisation_id: tenant.id,
+        organisation_id: organisation.id,
         read: true,
-        resource_name: "Tenant"
+        resource_name: "Organisation"
       })
 
-      assert {:ok, fetched_tenant} = Tenant.by_id(tenant.id, actor: user)
-      assert tenant.id == fetched_tenant.id
+      assert {:ok, fetched_organisation} = Organisation.by_id(organisation.id, actor: user)
+      assert organisation.id == fetched_organisation.id
     end
 
-    test "returns an error when user has no access", %{user: user, tenant: tenant} do
-      assert {:error, _} = Tenant.by_id(tenant.id, actor: user)
+    test "returns an error when user has no access", %{user: user, tenant: organisation} do
+      assert {:error, _} = Organisation.by_id(organisation.id, actor: user)
     end
 
-    test "returns a tenant for the owner without access rights", %{user: user} do
-      {:ok, owned_tenant} = create_tenant(%{owner_id: user.id})
+    test "returns a organisation for the owner without access rights", %{user: user} do
+      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
 
-      assert {:ok, fetched_tenant} = Tenant.by_id(owned_tenant.id, actor: user)
-      assert owned_tenant.id == fetched_tenant.id
+      assert {:ok, fetched_organisation} = Organisation.by_id(owned_organisation.id, actor: user)
+      assert owned_organisation.id == fetched_organisation.id
     end
   end
 
   describe "by_slug/1" do
-    test "returns a tenant given a slug", %{user: user, tenant: tenant, group: group} do
+    test "returns a organisation given a slug", %{user: user, tenant: organisation, group: group} do
       create_access_right(%{
         group_id: group.id,
-        organisation_id: tenant.id,
+        organisation_id: organisation.id,
         read: true,
-        resource_name: "Tenant"
+        resource_name: "Organisation"
       })
 
-      assert {:ok, fetched_tenant} = Tenant.by_slug(tenant.slug, actor: user)
-      assert tenant.slug == fetched_tenant.slug
+      assert {:ok, fetched_organisation} = Organisation.by_slug(organisation.slug, actor: user)
+      assert organisation.slug == fetched_organisation.slug
     end
 
-    test "returns an error when user has no access", %{user: user, tenant: tenant} do
-      assert {:error, _} = Tenant.by_slug(tenant.slug, actor: user)
+    test "returns an error when user has no access", %{user: user, tenant: organisation} do
+      assert {:error, _} = Organisation.by_slug(organisation.slug, actor: user)
     end
 
-    test "returns a tenant for the owner without access rights", %{user: user} do
-      {:ok, owned_tenant} = create_tenant(%{owner_id: user.id})
+    test "returns a organisation for the owner without access rights", %{user: user} do
+      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
 
-      assert {:ok, fetched_tenant} = Tenant.by_slug(owned_tenant.slug, actor: user)
-      assert owned_tenant.slug == fetched_tenant.slug
+      assert {:ok, fetched_organisation} =
+               Organisation.by_slug(owned_organisation.slug, actor: user)
+
+      assert owned_organisation.slug == fetched_organisation.slug
     end
   end
 
   describe "by_owner_id/1" do
-    test "returns a tenant for a specific user", %{user: user} do
-      {:ok, tenant} = create_tenant(%{slug: "tenant-one", owner_id: user.id})
+    test "returns a organisation for a specific user", %{user: user} do
+      {:ok, organisation} = create_organisation(%{slug: "organisation-one", owner_id: user.id})
 
-      assert {:ok, [fetched_tenant]} = Tenant.by_owner_id(%{owner_id: user.id}, actor: user)
-      assert tenant.id == fetched_tenant.id
+      assert {:ok, [fetched_organisation]} =
+               Organisation.by_owner_id(%{owner_id: user.id}, actor: user)
+
+      assert organisation.id == fetched_organisation.id
     end
 
-    test "returns an empty list when user owns no tenants", %{user: user} do
-      assert {:ok, []} = Tenant.by_owner_id(%{owner_id: user.id}, actor: user)
+    test "returns an empty list when user owns no organisations", %{user: user} do
+      assert {:ok, []} = Organisation.by_owner_id(%{owner_id: user.id}, actor: user)
     end
   end
 
   describe "list_paginated/1" do
-    test "returns paginated tenants the user has access to", %{user: user, group: group} do
+    test "returns paginated organisations the user has access to", %{user: user, group: group} do
       Enum.each(1..15, fn i ->
-        {:ok, tenant} = create_tenant(%{name: "Tenant #{i}", slug: "tenant-#{i}"})
+        {:ok, organisation} =
+          create_organisation(%{name: "Organisation #{i}", slug: "organisation-#{i}"})
 
         create_access_right(%{
           group_id: group.id,
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           read: true,
-          resource_name: "Tenant"
+          resource_name: "Organisation"
         })
       end)
 
-      assert {:ok, %{results: tenants, count: total_count}} =
-               Tenant.list_paginated(actor: user, page: [limit: 10, offset: 0])
+      assert {:ok, %{results: organisations, count: total_count}} =
+               Organisation.list_paginated(actor: user, page: [limit: 10, offset: 0])
 
-      assert length(tenants) == 10
+      assert length(organisations) == 10
       assert total_count == 15
 
       assert {:ok, %{results: next_page}} =
-               Tenant.list_paginated(actor: user, page: [limit: 10, offset: 10])
+               Organisation.list_paginated(actor: user, page: [limit: 10, offset: 10])
 
       assert length(next_page) == 5
     end

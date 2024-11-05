@@ -11,18 +11,19 @@ defmodule Omedis.Accounts.LogCategoryAccessFilter do
   def filter(nil, _context, _options), do: expr(false)
   def filter(_actor, %{subject: %{tenant: nil}}, _options), do: expr(false)
 
-  def filter(actor, %{subject: %{tenant: tenant}}, _options) when actor.id == tenant.owner_id do
+  def filter(actor, %{subject: %{tenant: organisation}}, _options)
+      when actor.id == organisation.owner_id do
     expr(true)
   end
 
-  def filter(actor, %{subject: %{tenant: tenant}}, _options) do
+  def filter(actor, %{subject: %{tenant: organisation}}, _options) do
     expr(
       exists(
         access_rights,
-        tenant_id == ^tenant.id and
+        organisation_id == ^organisation.id and
           read == true and
           exists(group.group_users, user_id == ^actor.id)
-      ) and exists(group, tenant_id == ^tenant.id)
+      ) and exists(group, organisation_id == ^organisation.id)
     )
   end
 end

@@ -1,24 +1,24 @@
 defmodule OmedisWeb.ProjectLive.Show do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
-  alias Omedis.Accounts.Tenant
 
   @impl true
   def render(assigns) do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@current_tenant}
+      current_organisation={@current_organisation}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {gettext("Home"), ~p"/", false},
-            {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Projects"), ~p"/tenants/#{@tenant.slug}/projects", false},
+            {gettext("Organisations"), ~p"/organisations", false},
+            {@organisation.name, ~p"/organisations/#{@organisation.slug}", false},
+            {gettext("Projects"), ~p"/organisations/#{@organisation.slug}/projects", false},
             {@project.name, "", true}
           ]}
           language={@language}
@@ -36,10 +36,10 @@ defmodule OmedisWeb.ProjectLive.Show do
 
           <:actions>
             <.link
-              patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}/show/edit"}
+              patch={~p"/organisations/#{@organisation.slug}/projects/#{@project}/show/edit"}
               phx-click={JS.push_focus()}
             >
-              <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @tenant)}>
+              <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Edit project") %>
                 <% end) %>
@@ -58,30 +58,31 @@ defmodule OmedisWeb.ProjectLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/tenants/#{@tenant.slug}/projects"}>
+        <.back navigate={~p"/organisations/#{@organisation.slug}/projects"}>
           <%= with_locale(@language, fn -> gettext("Back to projects") end) %>
         </.back>
 
         <.modal
           :if={
-            @live_action == :edit and Ash.can?({@project, :update}, @current_user, tenant: @tenant)
+            @live_action == :edit and
+              Ash.can?({@project, :update}, @current_user, tenant: @organisation)
           }
           id="project-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/projects/#{@project}")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation.slug}/projects/#{@project}")}
         >
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
             id={@project.id}
             current_user={@current_user}
             title={@page_title}
-            tenant={@tenant}
-            tenants={@tenants}
+            organisation={@organisation}
+            organisations={@organisations}
             next_position={@next_position}
             action={@live_action}
             language={@language}
             project={@project}
-            patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}"}
+            patch={~p"/organisations/#{@organisation.slug}/projects/#{@project}"}
           />
         </.modal>
       </div>
@@ -99,31 +100,33 @@ defmodule OmedisWeb.ProjectLive.Show do
   @impl true
   def handle_params(%{"slug" => slug, "id" => id}, _, socket) do
     actor = socket.assigns.current_user
-    tenant = Tenant.by_slug!(slug, actor: actor)
-    project = Project.by_id!(id, actor: actor, tenant: tenant)
+    organisation = Organisation.by_slug!(slug, actor: actor)
+    project = Project.by_id!(id, actor: actor, tenant: organisation)
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
      |> assign(:project, project)
      |> assign(:next_position, project.position)
-     |> assign(:tenants, Ash.read!(Tenant, actor: actor))
-     |> assign(:tenant, tenant)
+     |> assign(:organisations, Ash.read!(Organisation, actor: actor))
+     |> assign(:organisation, organisation)
      |> maybe_check_and_enforce_edit_access(socket.assigns.live_action)}
   end
 
   defp maybe_check_and_enforce_edit_access(socket, :edit) do
     actor = socket.assigns.current_user
-    tenant = socket.assigns.tenant
+    organisation = socket.assigns.organisation
     project = socket.assigns.project
 
-    user_has_access_rights = Ash.can?({project, :update}, actor, tenant: tenant)
+    user_has_access_rights = Ash.can?({project, :update}, actor, tenant: organisation)
 
     if user_has_access_rights do
       socket
     else
       socket
-      |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects/#{socket.assigns.project.id}")
+      |> push_patch(
+        to: ~p"/organisations/#{organisation.slug}/projects/#{socket.assigns.project.id}"
+      )
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->

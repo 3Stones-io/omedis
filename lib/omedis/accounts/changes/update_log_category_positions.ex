@@ -9,7 +9,7 @@ defmodule Omedis.Accounts.Changes.UpdateLogCategoryPositions do
   @impl true
   def change(changeset, _opts, context) do
     actor = context.actor
-    tenant = context.tenant
+    organisation = context.tenant
 
     Ash.Changeset.before_action(changeset, fn changeset ->
       requested_position = Ash.Changeset.get_attribute(changeset, :position)
@@ -18,14 +18,14 @@ defmodule Omedis.Accounts.Changes.UpdateLogCategoryPositions do
       max_position =
         LogCategory
         |> Ash.Query.filter(group_id == ^Ash.Changeset.get_attribute(changeset, :group_id))
-        |> Ash.count!(actor: actor, tenant: tenant)
+        |> Ash.count!(actor: actor, tenant: organisation)
 
       new_position = min(requested_position, max_position)
 
       with %Ash.BulkResult{status: :success} <-
-             shift_down(old_position, new_position, tenant, actor),
+             shift_down(old_position, new_position, organisation, actor),
            %Ash.BulkResult{status: :success} <-
-             shift_up(old_position, new_position, tenant, actor) do
+             shift_up(old_position, new_position, organisation, actor) do
         changeset
       else
         %Ash.BulkResult{errors: errors} ->
@@ -36,15 +36,23 @@ defmodule Omedis.Accounts.Changes.UpdateLogCategoryPositions do
     end)
   end
 
-  defp shift_down(old_position, new_position, tenant, actor) do
+  defp shift_down(old_position, new_position, organisation, actor) do
     LogCategory
     |> Ash.Query.filter(position > ^old_position and position <= ^new_position)
-    |> Ash.bulk_update!(:decrement_position, %{}, strategy: :stream, actor: actor, tenant: tenant)
+    |> Ash.bulk_update!(:decrement_position, %{},
+      strategy: :stream,
+      actor: actor,
+      tenant: organisation
+    )
   end
 
-  defp shift_up(old_position, new_position, tenant, actor) do
+  defp shift_up(old_position, new_position, organisation, actor) do
     LogCategory
     |> Ash.Query.filter(position < ^old_position and position >= ^new_position)
-    |> Ash.bulk_update!(:increment_position, %{}, strategy: :stream, actor: actor, tenant: tenant)
+    |> Ash.bulk_update!(:increment_position, %{},
+      strategy: :stream,
+      actor: actor,
+      tenant: organisation
+    )
   end
 end

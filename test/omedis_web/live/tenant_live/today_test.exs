@@ -1,13 +1,13 @@
-defmodule OmedisWeb.TenantLive.TodayTest do
+defmodule OmedisWeb.OrganisationLive.TodayTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
 
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: tenant.id})
-    {:ok, project} = create_project(%{organisation_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, project} = create_project(%{organisation_id: organisation.id})
 
     {:ok, log_category} =
       create_log_category(%{group_id: group.id, is_default: true, project_id: project.id})
@@ -23,8 +23,8 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        organisation_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -32,7 +32,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -40,7 +40,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -48,7 +48,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         group_id: group.id,
         read: true,
         resource_name: "LogCategory",
-        organisation_id: tenant.id
+        organisation_id: organisation.id
       })
 
     %{
@@ -57,35 +57,37 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     }
   end
 
-  describe "/tenants/:slug/today" do
+  describe "/organisations/:slug/today" do
     alias Omedis.Accounts.LogEntry
 
-    test "tenant owner can create a new log entry", %{
+    test "organisation owner can create a new log entry", %{
       conn: conn,
       group: group,
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, _} =
         create_access_right(%{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           write: true
         })
 
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(
+          ~p"/organisations/#{organisation.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
 
       assert lv
              |> element("#log-category-#{log_category.id}")
@@ -95,35 +97,37 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         LogEntry.by_log_category_today(
           %{log_category_id: log_category.id},
           actor: owner,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert log_entry.log_category_id == log_category.id
       assert log_entry.user_id == owner.id
-      assert log_entry.tenant_id == tenant.id
+      assert log_entry.organisation_id == organisation.id
     end
 
-    test "tenant owner can stop active log entry when selecting same category again", %{
+    test "organisation owner can stop active log entry when selecting same category again", %{
       conn: conn,
       group: group,
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, _} =
         create_access_right(%{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           write: true
         })
 
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(
+          ~p"/organisations/#{organisation.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
 
       # Create a log entry
       assert lv
@@ -140,26 +144,26 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         LogEntry.by_log_category_today(
           %{log_category_id: log_category.id},
           actor: owner,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert log_entry.log_category_id == log_category.id
       assert not is_nil(log_entry.end_at)
     end
 
-    test "tenant owner can switch active log entry by selecting different category", %{
+    test "organisation owner can switch active log entry by selecting different category", %{
       conn: conn,
       group: group,
       owner: owner,
       project: project,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, _} =
         create_access_right(%{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           write: true
         })
 
@@ -172,7 +176,9 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(
+          ~p"/organisations/#{organisation.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
 
       # Start log entry for the first category
       assert lv
@@ -189,7 +195,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         LogEntry.by_log_category_today(
           %{log_category_id: log_category_1.id},
           actor: owner,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert not is_nil(entry_1.end_at)
@@ -199,7 +205,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         LogEntry.by_log_category_today(
           %{log_category_id: log_category_2.id},
           actor: owner,
-          tenant: tenant
+          tenant: organisation
         )
 
       entry_2 = List.last(entries_2)
@@ -212,21 +218,23 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       group: group,
       log_category: log_category,
       project: project,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, _} =
         create_access_right(%{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           write: true
         })
 
       {:ok, lv, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(
+          ~p"/organisations/#{organisation.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
 
       assert lv
              |> element("#log-category-#{log_category.id}")
@@ -236,12 +244,12 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         LogEntry.by_log_category_today(
           %{log_category_id: log_category.id},
           actor: authorized_user,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert log_entry.log_category_id == log_category.id
       assert log_entry.user_id == authorized_user.id
-      assert log_entry.tenant_id == tenant.id
+      assert log_entry.organisation_id == organisation.id
     end
 
     test "authorized user can stop active log entry when selecting same category again", %{
@@ -250,21 +258,23 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       group: group,
       log_category: log_category,
       project: project,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, _} =
         create_access_right(%{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           write: true
         })
 
       {:ok, lv, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(
+          ~p"/organisations/#{organisation.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
 
       # Create a log entry
       assert lv
@@ -281,7 +291,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         LogEntry.by_log_category_today(
           %{log_category_id: log_category.id},
           actor: authorized_user,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert log_entry.log_category_id == log_category.id
@@ -293,14 +303,14 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, _} =
         create_access_right(%{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: tenant.id,
+          organisation_id: organisation.id,
           write: true
         })
 
@@ -313,7 +323,9 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(
+          ~p"/organisations/#{organisation.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
 
       # Start log entry for the first category
       assert lv
@@ -330,7 +342,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         LogEntry.by_log_category_today(
           %{log_category_id: log_category_1.id},
           actor: authorized_user,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert not is_nil(entry_1.end_at)
@@ -340,7 +352,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         LogEntry.by_log_category_today(
           %{log_category_id: log_category_2.id},
           actor: authorized_user,
-          tenant: tenant
+          tenant: organisation
         )
 
       entry_2 = List.last(entries_2)
@@ -352,18 +364,18 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       group: group,
       log_category: log_category,
       project: project,
-      tenant: tenant,
+      tenant: organisation,
       user: unauthorized_user
     } do
-      {:ok, group2} = create_group(%{organisation_id: tenant.id})
+      {:ok, group2} = create_group(%{organisation_id: organisation.id})
       {:ok, _} = create_group_user(%{group_id: group2.id, user_id: unauthorized_user.id})
 
       {:ok, _} =
         create_access_right(%{
           group_id: group2.id,
           read: true,
-          resource_name: "Tenant",
-          organisation_id: tenant.id
+          resource_name: "Organisation",
+          organisation_id: organisation.id
         })
 
       {:ok, _} =
@@ -371,7 +383,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group2.id,
           read: true,
           resource_name: "Project",
-          organisation_id: tenant.id
+          organisation_id: organisation.id
         })
 
       {:ok, _} =
@@ -379,7 +391,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group2.id,
           read: true,
           resource_name: "Group",
-          organisation_id: tenant.id
+          organisation_id: organisation.id
         })
 
       {:ok, _} =
@@ -387,13 +399,15 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group2.id,
           read: true,
           resource_name: "LogCategory",
-          organisation_id: tenant.id
+          organisation_id: organisation.id
         })
 
       {:ok, lv, _html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(
+          ~p"/organisations/#{organisation.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
 
       refute lv
              |> element("#log-category-#{log_category.id}")
@@ -403,7 +417,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
                LogEntry.by_log_category_today(
                  %{log_category_id: log_category.id},
                  actor: unauthorized_user,
-                 tenant: tenant
+                 tenant: organisation
                )
     end
   end

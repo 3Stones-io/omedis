@@ -1,7 +1,7 @@
-defmodule OmedisWeb.TenantLive.FormComponent do
+defmodule OmedisWeb.OrganisationLive.FormComponent do
   use OmedisWeb, :live_component
   alias AshPhoenix.Form
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
 
   @impl true
   def render(assigns) do
@@ -14,7 +14,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
       <.simple_form
         :let={f}
         for={@form}
-        id="tenant-form"
+        id="organisation-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
@@ -92,14 +92,15 @@ defmodule OmedisWeb.TenantLive.FormComponent do
           />
         </div>
 
-        <input type="hidden" value={@current_user.id} name="tenant[owner_id]" />
+        <input type="hidden" value={@current_user.id} name="organisation[owner_id]" />
         <div class="space-y-3">
           <.input
             field={@form[:default_daily_start_at]}
             type="time"
             label={with_locale(@language, fn -> gettext("Daily Start At") end)}
             value={
-              (@tenant && input_value(@form, :default_daily_start_at)) || @current_user.daily_start_at
+              (@organisation && input_value(@form, :default_daily_start_at)) ||
+                @current_user.daily_start_at
             }
           />
         </div>
@@ -109,7 +110,8 @@ defmodule OmedisWeb.TenantLive.FormComponent do
             type="time"
             label={with_locale(@language, fn -> gettext("Daily End At") end)}
             value={
-              (@tenant && input_value(@form, :default_daily_end_at)) || @current_user.daily_end_at
+              (@organisation && input_value(@form, :default_daily_end_at)) ||
+                @current_user.daily_end_at
             }
           />
         </div>
@@ -234,7 +236,7 @@ defmodule OmedisWeb.TenantLive.FormComponent do
         <:actions>
           <.button phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Save Tenant") %>
+              <%= gettext("Save Organisation") %>
             <% end) %>
           </.button>
         </:actions>
@@ -254,37 +256,37 @@ defmodule OmedisWeb.TenantLive.FormComponent do
 
   @impl true
 
-  def handle_event("validate", %{"tenant" => tenant_params}, socket) do
+  def handle_event("validate", %{"organisation" => organisation_params}, socket) do
     current_name = socket.assigns.form.source.params["name"]
-    new_name = tenant_params["name"]
+    new_name = organisation_params["name"]
 
-    new_tenant_params =
+    new_organisation_params =
       if current_name != new_name do
         if new_name == "" || new_name == nil do
-          tenant_params
+          organisation_params
         else
-          Map.put(tenant_params, "slug", update_slug(Slug.slugify(new_name)))
+          Map.put(organisation_params, "slug", update_slug(Slug.slugify(new_name)))
         end
       else
-        tenant_params
+        organisation_params
       end
 
-    form = Form.validate(socket.assigns.form, new_tenant_params, errors: true)
+    form = Form.validate(socket.assigns.form, new_organisation_params, errors: true)
     {:noreply, socket |> assign(form: form)}
   end
 
-  def handle_event("save", %{"tenant" => tenant_params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: tenant_params) do
-      {:ok, tenant} ->
-        notify_parent({:saved, tenant})
+  def handle_event("save", %{"organisation" => organisation_params}, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: organisation_params) do
+      {:ok, organisation} ->
+        notify_parent({:saved, organisation})
 
         socket =
           socket
           |> put_flash(
             :info,
-            with_locale(socket.assigns.language, fn -> gettext("Tenant saved.") end)
+            with_locale(socket.assigns.language, fn -> gettext("Organisation saved.") end)
           )
-          |> push_navigate(to: path_for(socket.assigns.action, tenant))
+          |> push_navigate(to: path_for(socket.assigns.action, organisation))
 
         {:noreply, socket}
 
@@ -299,14 +301,14 @@ defmodule OmedisWeb.TenantLive.FormComponent do
   defp generate_unique_slug(base_slug) do
     new_slug = "#{base_slug}#{:rand.uniform(99)}"
 
-    case Tenant.slug_exists?(new_slug) do
+    case Organisation.slug_exists?(new_slug) do
       true -> generate_unique_slug(base_slug)
       false -> Slug.slugify(new_slug)
     end
   end
 
   defp update_slug(slug) do
-    case Tenant.slug_exists?(slug) do
+    case Organisation.slug_exists?(slug) do
       true -> generate_unique_slug(slug)
       false -> Slug.slugify(slug)
     end
@@ -314,16 +316,16 @@ defmodule OmedisWeb.TenantLive.FormComponent do
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 
-  defp assign_form(%{assigns: %{tenant: tenant}} = socket) do
+  defp assign_form(%{assigns: %{tenant: organisation}} = socket) do
     form =
-      if tenant do
-        AshPhoenix.Form.for_update(tenant, :update,
-          as: "tenant",
+      if organisation do
+        AshPhoenix.Form.for_update(organisation, :update,
+          as: "organisation",
           actor: socket.assigns.current_user
         )
       else
-        AshPhoenix.Form.for_create(Omedis.Accounts.Tenant, :create,
-          as: "tenant",
+        AshPhoenix.Form.for_create(Omedis.Accounts.Organisation, :create,
+          as: "organisation",
           actor: socket.assigns.current_user
         )
       end
@@ -335,6 +337,6 @@ defmodule OmedisWeb.TenantLive.FormComponent do
     Enum.map(field.errors, &translate_error(&1))
   end
 
-  defp path_for(:edit, tenant), do: ~p"/tenants/#{tenant.slug}"
-  defp path_for(:new, _tenant), do: ~p"/tenants"
+  defp path_for(:edit, organisation), do: ~p"/organisations/#{organisation.slug}"
+  defp path_for(:new, _organisation), do: ~p"/organisations"
 end

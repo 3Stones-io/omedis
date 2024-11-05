@@ -6,37 +6,37 @@ defmodule OmedisWeb.GroupLive.ShowTest do
   setup do
     {:ok, user} = create_user()
 
-    {:ok, tenant} = create_tenant(%{owner_id: user.id})
-    {:ok, group} = create_group(%{organisation_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
 
     create_group_user(%{group_id: group.id, user_id: user.id})
 
     create_access_right(%{
       group_id: group.id,
       resource_name: "Group",
-      organisation_id: tenant.id,
+      organisation_id: organisation.id,
       read: true,
       write: true
     })
 
     %{
       group: group,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     }
   end
 
-  describe "/tenants/:slug/groups/:group_slug" do
-    test "renders group details if user is the tenant owner", %{
+  describe "/organisations/:slug/groups/:group_slug" do
+    test "renders group details if user is the organisation owner", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      tenant: organisation,
       user: user
     } do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}")
 
       assert html =~ "Slug"
       assert html =~ group.name
@@ -44,10 +44,10 @@ defmodule OmedisWeb.GroupLive.ShowTest do
 
     test "renders group details is a user is authorized", %{
       conn: conn,
-      tenant: tenant
+      tenant: organisation
     } do
       {:ok, authorized_user} = create_user()
-      {:ok, group} = create_group(%{organisation_id: tenant.id})
+      {:ok, group} = create_group(%{organisation_id: organisation.id})
 
       create_group_user(%{
         group_id: group.id,
@@ -56,8 +56,8 @@ defmodule OmedisWeb.GroupLive.ShowTest do
 
       create_access_right(%{
         group_id: group.id,
-        resource_name: "Tenant",
-        organisation_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         read: true,
         write: true
       })
@@ -65,7 +65,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       create_access_right(%{
         group_id: group.id,
         resource_name: "Group",
-        organisation_id: tenant.id,
+        organisation_id: organisation.id,
         read: true,
         write: true
       })
@@ -73,7 +73,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}")
 
       assert html =~ group.name
     end
@@ -82,14 +82,14 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       conn: conn,
       user: user
     } do
-      {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{organisation_id: tenant.id})
+      {:ok, organisation} = create_organisation()
+      {:ok, group} = create_group(%{organisation_id: organisation.id})
       create_group_user(%{group_id: group.id, user_id: user.id})
 
       create_access_right(%{
         group_id: group.id,
         resource_name: "Group",
-        organisation_id: tenant.id,
+        organisation_id: organisation.id,
         read: false,
         write: false
       })
@@ -97,7 +97,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/organisations/#{organisation.slug}/groups/#{group.slug}")
       end
     end
   end

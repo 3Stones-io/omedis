@@ -9,7 +9,7 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.Activity
     resource Omedis.Accounts.User
     resource Omedis.Accounts.Token
-    resource Omedis.Accounts.Tenant
+    resource Omedis.Accounts.Organisation
     resource Omedis.Accounts.LogCategory
     resource Omedis.Accounts.LogEntry
     resource Omedis.Accounts.Project
