@@ -9,14 +9,14 @@ defmodule Omedis.Accounts.GroupTest do
     {:ok, user} = create_user()
     {:ok, tenant} = create_tenant(%{owner_id: user.id})
     {:ok, authorized_user} = create_user()
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
+    {:ok, group} = create_group(%{organisation_id: tenant.id})
     create_group_user(%{group_id: group.id, user_id: authorized_user.id})
 
     create_access_right(%{
       group_id: group.id,
       read: true,
       resource_name: "Group",
-      tenant_id: tenant.id,
+      organisation_id: tenant.id,
       write: true
     })
 
@@ -30,7 +30,7 @@ defmodule Omedis.Accounts.GroupTest do
                Group.create!(
                  %{
                    name: "Test Group",
-                   tenant_id: tenant.id,
+                   organisation_id: tenant.id,
                    user_id: user.id,
                    slug: "test-group"
                  },
@@ -51,7 +51,7 @@ defmodule Omedis.Accounts.GroupTest do
                Group.create!(
                  %{
                    name: "Test Group",
-                   tenant_id: tenant.id,
+                   organisation_id: tenant.id,
                    user_id: authorized_user.id,
                    slug: "test-group"
                  },
@@ -69,7 +69,7 @@ defmodule Omedis.Accounts.GroupTest do
 
       assert_raise Ash.Error.Forbidden, fn ->
         Group.create!(
-          %{name: "Test Group", tenant_id: tenant.id, user_id: user.id},
+          %{name: "Test Group", organisation_id: tenant.id, user_id: user.id},
           actor: user,
           tenant: tenant
         )
@@ -79,13 +79,13 @@ defmodule Omedis.Accounts.GroupTest do
 
   describe "update/2" do
     test "can update a group if user is the owner of the tenant", %{user: user, tenant: tenant} do
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id})
+      {:ok, group} = create_group(%{organisation_id: tenant.id, user_id: user.id})
 
       create_group_user(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: group.id,
         write: true,
         update: true
@@ -102,7 +102,7 @@ defmodule Omedis.Accounts.GroupTest do
       authorized_user: authorized_user,
       tenant: tenant
     } do
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: authorized_user.id})
+      {:ok, group} = create_group(%{organisation_id: tenant.id, user_id: authorized_user.id})
 
       assert %Group{} =
                updated_group =
@@ -115,13 +115,13 @@ defmodule Omedis.Accounts.GroupTest do
       user: user
     } do
       {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id})
+      {:ok, group} = create_group(%{organisation_id: tenant.id, user_id: user.id})
 
       create_group_user(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: group.id,
         write: false,
         update: false
@@ -135,13 +135,13 @@ defmodule Omedis.Accounts.GroupTest do
 
   describe "destroy/2" do
     test "tenant owner can delete a group", %{user: user, tenant: tenant} do
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id})
+      {:ok, group} = create_group(%{organisation_id: tenant.id, user_id: user.id})
 
       create_group_user(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: group.id,
         write: true,
         update: true
@@ -155,7 +155,7 @@ defmodule Omedis.Accounts.GroupTest do
       authorized_user: authorized_user,
       tenant: tenant
     } do
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: authorized_user.id})
+      {:ok, group} = create_group(%{organisation_id: tenant.id, user_id: authorized_user.id})
 
       assert :ok =
                Group.destroy(group, actor: authorized_user, tenant: tenant)
@@ -165,12 +165,15 @@ defmodule Omedis.Accounts.GroupTest do
       user: user
     } do
       {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group"})
+
+      {:ok, group} =
+        create_group(%{organisation_id: tenant.id, user_id: user.id, slug: "test-group"})
+
       create_group_user(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: group.id,
         write: false,
         update: false
@@ -187,13 +190,14 @@ defmodule Omedis.Accounts.GroupTest do
       user: user,
       tenant: tenant
     } do
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group"})
+      {:ok, group} =
+        create_group(%{organisation_id: tenant.id, user_id: user.id, slug: "test-group"})
 
       create_group_user(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: group.id,
         read: true
       })
@@ -209,7 +213,7 @@ defmodule Omedis.Accounts.GroupTest do
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: invalid_id,
         read: true
       })
@@ -221,13 +225,15 @@ defmodule Omedis.Accounts.GroupTest do
 
     test "returns an error if actor doesn't have read access", %{user: user} do
       {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group"})
+
+      {:ok, group} =
+        create_group(%{organisation_id: tenant.id, user_id: user.id, slug: "test-group"})
 
       create_group_user(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: group.id,
         read: false
       })
@@ -245,20 +251,20 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       Enum.each(1..15, fn i ->
         {:ok, group} =
-          create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group-#{i}"})
+          create_group(%{organisation_id: tenant.id, user_id: user.id, slug: "test-group-#{i}"})
 
         create_group_user(%{user_id: user.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           group_id: group.id,
           read: true
         })
       end)
 
       assert %Ash.Page.Offset{results: groups} =
-               Group.by_tenant_id!(%{tenant_id: tenant.id},
+               Group.by_tenant_id!(%{organisation_id: tenant.id},
                  actor: user,
                  tenant: tenant,
                  page: [limit: 10, offset: 0]
@@ -274,20 +280,20 @@ defmodule Omedis.Accounts.GroupTest do
 
       Enum.each(1..15, fn i ->
         {:ok, group} =
-          create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group-#{i}"})
+          create_group(%{organisation_id: tenant.id, user_id: user.id, slug: "test-group-#{i}"})
 
         create_group_user(%{user_id: user.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           group_id: group.id,
           read: false
         })
       end)
 
       assert %Ash.Page.Offset{results: []} =
-               Group.by_tenant_id!(%{tenant_id: tenant.id}, actor: user, tenant: tenant)
+               Group.by_tenant_id!(%{organisation_id: tenant.id}, actor: user, tenant: tenant)
     end
   end
 
@@ -297,16 +303,16 @@ defmodule Omedis.Accounts.GroupTest do
       tenant: tenant
     } do
       {:ok, group} =
-        create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group-slug"})
+        create_group(%{organisation_id: tenant.id, user_id: user.id, slug: "test-group-slug"})
 
       {:ok, group2} =
-        create_group(%{tenant_id: tenant.id, user_id: user.id})
+        create_group(%{organisation_id: tenant.id, user_id: user.id})
 
       create_group_user(%{user_id: user.id, group_id: group2.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: group.id,
         read: true
       })
@@ -322,7 +328,7 @@ defmodule Omedis.Accounts.GroupTest do
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: invalid_slug,
         read: true
       })
@@ -336,13 +342,13 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, tenant} = create_tenant()
 
       {:ok, group} =
-        create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group-slug"})
+        create_group(%{organisation_id: tenant.id, user_id: user.id, slug: "test-group-slug"})
 
       create_group_user(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         group_id: group.id,
         read: false
       })

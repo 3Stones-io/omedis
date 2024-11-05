@@ -24,7 +24,7 @@ defmodule Omedis.Accounts.Tenant do
   end
 
   postgres do
-    table "tenants"
+    table "organisations"
     repo Omedis.Repo
 
     references do
@@ -33,7 +33,7 @@ defmodule Omedis.Accounts.Tenant do
   end
 
   resource do
-    plural_name :tenants
+    plural_name :organisations
   end
 
   identities do

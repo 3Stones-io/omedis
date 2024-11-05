@@ -181,7 +181,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> assign(:groups, Ash.read!(Group, actor: socket.assigns.current_user, tenant: tenant))
      |> assign(
        :projects,
-       Project.by_tenant_id!(%{tenant_id: tenant.id},
+       Project.by_tenant_id!(%{organisation_id: tenant.id},
          actor: socket.assigns.current_user,
          tenant: tenant
        )

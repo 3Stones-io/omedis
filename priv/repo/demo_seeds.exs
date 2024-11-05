@@ -46,11 +46,11 @@ end
   bulk_create.(
     Accounts.Group,
     [
-      %{name: "Demo Group", slug: "demo-group", tenant_id: tenant_1.id},
-      %{name: "Demo Group 2", slug: "demo-group2", tenant_id: tenant_1.id},
-      %{name: "Demo Group 3", slug: "demo-group3", tenant_id: tenant_2.id}
+      %{name: "Demo Group", slug: "demo-group", organisation_id: tenant_1.id},
+      %{name: "Demo Group 2", slug: "demo-group2", organisation_id: tenant_1.id},
+      %{name: "Demo Group 3", slug: "demo-group3", organisation_id: tenant_2.id}
     ],
-    :unique_slug_per_tenant
+    :unique_slug_per_organisation
   )
 
 %{records: _records, status: :success} =
@@ -70,19 +70,19 @@ end
     [
       %{
         group_id: group_1.id,
-        tenant_id: tenant_1.id,
+        organisation_id: tenant_1.id,
         resource_name: "Project",
         read: true,
         write: true
       },
       %{
         group_id: group_2.id,
-        tenant_id: tenant_2.id,
+        organisation_id: tenant_2.id,
         resource_name: "Group",
         read: true,
         write: true
       },
-      %{group_id: group_3.id, read: true, resource_name: "Tenant", tenant_id: tenant_2.id}
+      %{group_id: group_3.id, read: true, resource_name: "Tenant", organisation_id: tenant_2.id}
     ],
     nil
   )
@@ -93,17 +93,17 @@ end
     [
       %{
         name: "Demo Project 1",
-        tenant_id: tenant_1.id,
+        organisation_id: tenant_1.id,
         position: "1"
       },
       %{
         name: "Demo Project 2",
-        tenant_id: tenant_1.id,
+        organisation_id: tenant_1.id,
         position: "2"
       },
       %{
         name: "Demo Project 3",
-        tenant_id: tenant_2.id,
+        organisation_id: tenant_2.id,
         position: "1"
       }
     ],
@@ -114,8 +114,8 @@ end
   bulk_create.(
     Accounts.Invitation,
     [
-      %{creator_id: user_1.id, tenant_id: tenant_1.id},
-      %{creator_id: user_2.id, tenant_id: tenant_1.id}
+      %{creator_id: user_1.id, organisation_id: tenant_1.id},
+      %{creator_id: user_2.id, organisation_id: tenant_1.id}
     ],
     nil
   )

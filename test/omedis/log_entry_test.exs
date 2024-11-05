@@ -6,8 +6,8 @@ defmodule Omedis.LogEntryTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, project} = create_project(%{tenant_id: tenant.id})
+    {:ok, group} = create_group(%{organisation_id: tenant.id})
+    {:ok, project} = create_project(%{organisation_id: tenant.id})
     {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
     {:ok, user} = create_user()
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
@@ -17,7 +17,7 @@ defmodule Omedis.LogEntryTest do
         group_id: group.id,
         read: true,
         resource_name: "LogEntry",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         write: true
       })
 
@@ -39,14 +39,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry_1} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
@@ -65,14 +65,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
@@ -112,14 +112,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry_1} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id,
           created_at: DateTime.add(DateTime.utc_now(), -2, :day)
         })
@@ -143,7 +143,7 @@ defmodule Omedis.LogEntryTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
@@ -169,18 +169,19 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry_1} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: another_tenant.id,
+          organisation_id: another_tenant.id,
           user_id: user.id
         })
 
-      {:ok, result} = LogEntry.by_tenant(%{tenant_id: tenant.id}, actor: user, tenant: tenant)
+      {:ok, result} =
+        LogEntry.by_tenant(%{organisation_id: tenant.id}, actor: user, tenant: tenant)
 
       assert length(result) == 1
       assert hd(result).id == log_entry_1.id
@@ -194,14 +195,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, unauthorized_user} = create_user()
 
       assert {:ok, []} =
-               LogEntry.by_tenant(%{tenant_id: tenant.id},
+               LogEntry.by_tenant(%{organisation_id: tenant.id},
                  actor: unauthorized_user,
                  tenant: tenant
                )
@@ -217,20 +218,20 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry_1} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id,
           created_at: DateTime.add(DateTime.utc_now(), -2, :day)
         })
 
       {:ok, result} =
-        LogEntry.by_tenant_today(%{tenant_id: tenant.id}, actor: user, tenant: tenant)
+        LogEntry.by_tenant_today(%{organisation_id: tenant.id}, actor: user, tenant: tenant)
 
       assert length(result) == 1
       assert hd(result).id == log_entry_1.id
@@ -244,7 +245,7 @@ defmodule Omedis.LogEntryTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
@@ -252,7 +253,7 @@ defmodule Omedis.LogEntryTest do
 
       assert {:ok, []} =
                LogEntry.by_tenant_today(
-                 %{tenant_id: tenant.id},
+                 %{organisation_id: tenant.id},
                  actor: unauthorized_user,
                  tenant: tenant
                )
@@ -267,7 +268,7 @@ defmodule Omedis.LogEntryTest do
     } do
       attrs = %{
         log_category_id: log_category.id,
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         user_id: owner.id
       }
 
@@ -284,7 +285,7 @@ defmodule Omedis.LogEntryTest do
     } do
       attrs = %{
         log_category_id: log_category.id,
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         user_id: user.id
       }
 
@@ -302,7 +303,7 @@ defmodule Omedis.LogEntryTest do
 
       attrs = %{
         log_category_id: log_category.id,
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         user_id: unauthorized_user.id
       }
 
@@ -320,14 +321,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry_1} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
@@ -347,14 +348,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry_1} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: another_user.id
         })
 
@@ -374,14 +375,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id
         })
 
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: unauthorized_user.id
         })
 
@@ -398,7 +399,7 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: owner.id,
           comment: "Original comment"
         })
@@ -419,7 +420,7 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id,
           comment: "Original comment"
         })
@@ -440,7 +441,7 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id,
           comment: "Original comment"
         })

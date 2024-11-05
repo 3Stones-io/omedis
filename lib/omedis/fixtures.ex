@@ -51,7 +51,7 @@ defmodule Omedis.Fixtures do
       group_id: fn -> create_group().id end,
       read: Enum.random([true, false]),
       resource_name: Enum.random(["tenant"]),
-      tenant_id: fn -> create_tenant().id end,
+      organisation_id: fn -> create_tenant().id end,
       update: Enum.random([true, false]),
       write: Enum.random([true, false])
     }
@@ -87,7 +87,7 @@ defmodule Omedis.Fixtures do
       end_at: ~T[18:00:00],
       log_category_id: fn -> create_log_category().id end,
       start_at: ~T[08:00:00],
-      tenant_id: fn -> create_tenant().id end,
+      organisation_id: fn -> create_tenant().id end,
       user_id: fn -> create_user().id end
     }
   end
@@ -97,7 +97,7 @@ defmodule Omedis.Fixtures do
       creator_id: fn -> create_user().id end,
       email: Faker.Internet.email(),
       language: "en",
-      tenant_id: fn -> create_tenant().id end
+      organisation_id: fn -> create_tenant().id end
     }
   end
 
@@ -111,7 +111,7 @@ defmodule Omedis.Fixtures do
   def attrs_for(Accounts.Project) do
     %{
       name: Faker.Lorem.sentence(),
-      tenant_id: fn -> create_tenant().id end,
+      organisation_id: fn -> create_tenant().id end,
       position: (System.os_time(:second) + :rand.uniform(1000)) |> to_string()
     }
   end

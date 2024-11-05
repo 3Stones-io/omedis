@@ -11,7 +11,7 @@ defmodule Omedis.Accounts.AccessRight do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :group, on_delete: :delete
     end
   end
@@ -30,7 +30,7 @@ defmodule Omedis.Accounts.AccessRight do
   end
 
   relationships do
-    belongs_to :tenant, Omedis.Accounts.Tenant
+    belongs_to :organisation, Omedis.Accounts.Tenant
     belongs_to :group, Omedis.Accounts.Group
   end
 
@@ -44,7 +44,7 @@ defmodule Omedis.Accounts.AccessRight do
         :write,
         :update,
         :create,
-        :tenant_id,
+        :organisation_id,
         :group_id
       ]
 

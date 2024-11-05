@@ -6,7 +6,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
+    {:ok, group} = create_group(%{organisation_id: tenant.id})
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
 
@@ -17,10 +17,10 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
-    {:ok, another_group} = create_group(%{tenant_id: tenant.id})
+    {:ok, another_group} = create_group(%{organisation_id: tenant.id})
     {:ok, _} = create_group_user(%{group_id: another_group.id, user_id: user.id})
 
     {:ok, _} =
@@ -28,7 +28,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
         group_id: another_group.id,
         read: true,
         resource_name: "Tenant",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
     %{authorized_user: authorized_user, group: group, owner: owner, tenant: tenant, user: user}
@@ -46,12 +46,12 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: tenant.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -74,12 +74,12 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: tenant.id, name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -97,7 +97,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       user: user
     } do
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: tenant.id, name: "Test Project"})
 
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
@@ -119,11 +119,11 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
-      params = %{tenant_id: tenant.id, name: "Test Project"}
+      params = %{organisation_id: tenant.id, name: "Test Project"}
       {:ok, project} = create_project(params)
 
       {:ok, index_live, _} =
@@ -155,11 +155,11 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
-      params = %{tenant_id: tenant.id, name: "Test Project"}
+      params = %{organisation_id: tenant.id, name: "Test Project"}
       {:ok, project} = create_project(params)
 
       {:ok, index_live, _} =
@@ -193,13 +193,13 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           update: false,
           write: false
         })
 
       {:ok, project} =
-        create_project(%{tenant_id: tenant.id, name: "Test Project"})
+        create_project(%{organisation_id: tenant.id, name: "Test Project"})
 
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn

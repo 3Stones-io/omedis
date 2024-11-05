@@ -11,7 +11,7 @@ defmodule OmedisWeb.Plugs.CurrentTenant do
 
   def call(conn, _opts) do
     current_tenant =
-      with %User{current_tenant_id: current_tenant_id} when not is_nil(current_tenant_id) <-
+      with %User{current_organisation_id: current_tenant_id} when not is_nil(current_tenant_id) <-
              conn.assigns[:current_user],
            {:ok, tenant} <- Tenant.by_id(current_tenant_id, actor: conn.assigns.current_user) do
         tenant

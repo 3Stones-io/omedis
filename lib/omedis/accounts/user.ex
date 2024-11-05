@@ -21,7 +21,7 @@ defmodule Omedis.Accounts.User do
     attribute :last_name, :string, allow_nil?: false, public?: true
     attribute :gender, :string, allow_nil?: true, public?: true
     attribute :birthdate, :date, allow_nil?: false, public?: true
-    attribute :current_tenant_id, :uuid, allow_nil?: true, public?: false
+    attribute :current_organisation_id, :uuid, allow_nil?: true, public?: false
     attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
     attribute :daily_start_at, :time, allow_nil?: true, public?: true
     attribute :daily_end_at, :time, allow_nil?: true, public?: true
@@ -53,7 +53,7 @@ defmodule Omedis.Accounts.User do
 
     create :create do
       accept [
-        :current_tenant_id,
+        :current_organisation_id,
         :email,
         :hashed_password,
         :first_name,
@@ -83,7 +83,7 @@ defmodule Omedis.Accounts.User do
         :gender,
         :birthdate,
         :lang,
-        :current_tenant_id
+        :current_organisation_id
       ]
 
       primary? true
@@ -106,7 +106,7 @@ defmodule Omedis.Accounts.User do
         confirmation_required?(false)
 
         register_action_accept([
-          :current_tenant_id,
+          :current_organisation_id,
           :email,
           :first_name,
           :last_name,
@@ -147,14 +147,14 @@ defmodule Omedis.Accounts.User do
   end
 
   defp maybe_add_tenant_defaults_to_changeset(changeset) do
-    tenant_id = Ash.Changeset.get_attribute(changeset, :current_tenant_id)
+    tenant_id = Ash.Changeset.get_attribute(changeset, :current_organisation_id)
 
     if tenant_id do
       tenant = Tenant.by_id!(tenant_id, authorize?: false)
 
       changeset_attributes =
         changeset.attributes
-        |> Map.drop([:id, :created_at, :updated_at, :current_tenant_id])
+        |> Map.drop([:id, :created_at, :updated_at, :current_organisation_id])
         |> Map.merge(
           %{
             daily_start_at: tenant.default_daily_start_at,

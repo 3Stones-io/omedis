@@ -22,7 +22,7 @@ defmodule Omedis.TenantTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
       {:ok, owned_tenant} = create_tenant(%{owner_id: user.id})
@@ -77,7 +77,7 @@ defmodule Omedis.TenantTest do
         create: true,
         group_id: group.id,
         resource_name: "Tenant",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         read: true,
         update: false,
         write: false
@@ -88,7 +88,7 @@ defmodule Omedis.TenantTest do
       create_access_right(%{
         group_id: group.id,
         resource_name: "Tenant",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         update: false,
         write: true
       })
@@ -101,7 +101,7 @@ defmodule Omedis.TenantTest do
       create_access_right(%{
         group_id: group.id,
         resource_name: "Tenant",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         update: true,
         write: false
       })
@@ -124,7 +124,7 @@ defmodule Omedis.TenantTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         update: false,
         write: false
       })
@@ -134,7 +134,7 @@ defmodule Omedis.TenantTest do
       create_access_right(%{
         group_id: group.id,
         resource_name: "Tenant",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         update: false,
         write: true
       })
@@ -146,7 +146,7 @@ defmodule Omedis.TenantTest do
       create_access_right(%{
         group_id: group.id,
         resource_name: "Tenant",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         update: true,
         write: false
       })
@@ -159,7 +159,7 @@ defmodule Omedis.TenantTest do
     test "returns a tenant given a valid id", %{user: user, tenant: tenant, group: group} do
       create_access_right(%{
         group_id: group.id,
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         read: true,
         resource_name: "Tenant"
       })
@@ -184,7 +184,7 @@ defmodule Omedis.TenantTest do
     test "returns a tenant given a slug", %{user: user, tenant: tenant, group: group} do
       create_access_right(%{
         group_id: group.id,
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         read: true,
         resource_name: "Tenant"
       })
@@ -225,7 +225,7 @@ defmodule Omedis.TenantTest do
 
         create_access_right(%{
           group_id: group.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           read: true,
           resource_name: "Tenant"
         })

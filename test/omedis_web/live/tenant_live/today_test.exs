@@ -6,8 +6,8 @@ defmodule OmedisWeb.TenantLive.TodayTest do
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, project} = create_project(%{tenant_id: tenant.id})
+    {:ok, group} = create_group(%{organisation_id: tenant.id})
+    {:ok, project} = create_project(%{organisation_id: tenant.id})
 
     {:ok, log_category} =
       create_log_category(%{group_id: group.id, is_default: true, project_id: project.id})
@@ -24,7 +24,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
     {:ok, _} =
@@ -32,7 +32,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
     {:ok, _} =
@@ -40,7 +40,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
     {:ok, _} =
@@ -48,7 +48,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
         group_id: group.id,
         read: true,
         resource_name: "LogCategory",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
     %{
@@ -78,7 +78,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
@@ -116,7 +116,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
@@ -159,7 +159,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
@@ -219,7 +219,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
@@ -257,7 +257,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
@@ -300,7 +300,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           write: true
         })
 
@@ -355,7 +355,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       tenant: tenant,
       user: unauthorized_user
     } do
-      {:ok, group2} = create_group(%{tenant_id: tenant.id})
+      {:ok, group2} = create_group(%{organisation_id: tenant.id})
       {:ok, _} = create_group_user(%{group_id: group2.id, user_id: unauthorized_user.id})
 
       {:ok, _} =
@@ -363,7 +363,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group2.id,
           read: true,
           resource_name: "Tenant",
-          tenant_id: tenant.id
+          organisation_id: tenant.id
         })
 
       {:ok, _} =
@@ -371,7 +371,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group2.id,
           read: true,
           resource_name: "Project",
-          tenant_id: tenant.id
+          organisation_id: tenant.id
         })
 
       {:ok, _} =
@@ -379,7 +379,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group2.id,
           read: true,
           resource_name: "Group",
-          tenant_id: tenant.id
+          organisation_id: tenant.id
         })
 
       {:ok, _} =
@@ -387,7 +387,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
           group_id: group2.id,
           read: true,
           resource_name: "LogCategory",
-          tenant_id: tenant.id
+          organisation_id: tenant.id
         })
 
       {:ok, lv, _html} =

@@ -8,8 +8,8 @@ defmodule Omedis.Accounts.LogCategoryTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, project} = create_project(%{tenant_id: tenant.id})
+    {:ok, group} = create_group(%{organisation_id: tenant.id})
+    {:ok, project} = create_project(%{organisation_id: tenant.id})
     {:ok, authorized_user} = create_user()
 
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
@@ -19,7 +19,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         group_id: group.id,
         read: true,
         resource_name: "LogCategory",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         write: true
       })
 
@@ -28,7 +28,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         write: true
       })
 
@@ -41,7 +41,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
         group_id: group_2.id,
         read: true,
         resource_name: "Tenant",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         write: true
       })
 

@@ -18,7 +18,7 @@ defmodule Omedis.Accounts.Project do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
+      reference :organisation, on_delete: :delete
     end
   end
 
@@ -37,15 +37,15 @@ defmodule Omedis.Accounts.Project do
   end
 
   identities do
-    identity :unique_name, [:name, :tenant_id]
-    identity :unique_position, [:position, :tenant_id]
+    identity :unique_name, [:name, :organisation_id]
+    identity :unique_position, [:position, :organisation_id]
   end
 
   actions do
     create :create do
       accept [
         :name,
-        :tenant_id,
+        :organisation_id,
         :position
       ]
 
@@ -55,7 +55,7 @@ defmodule Omedis.Accounts.Project do
     update :update do
       accept [
         :name,
-        :tenant_id,
+        :organisation_id,
         :position
       ]
 
@@ -72,8 +72,8 @@ defmodule Omedis.Accounts.Project do
         allow_nil? false
       end
 
-      prepare build(load: [:tenant])
-      filter expr(tenant_id == ^arg(:tenant_id))
+      prepare build(load: [:organisation])
+      filter expr(organisation_id == ^arg(:tenant_id))
     end
 
     read :list_paginated do
@@ -86,7 +86,7 @@ defmodule Omedis.Accounts.Project do
 
   validations do
     validate present(:name)
-    validate present(:tenant_id)
+    validate present(:organisation_id)
 
     validate present(:position)
   end
@@ -95,7 +95,7 @@ defmodule Omedis.Accounts.Project do
     uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :tenant_id, :uuid, allow_nil?: false, public?: true
+    attribute :organisation_id, :uuid, allow_nil?: false, public?: true
 
     attribute :position, :string, allow_nil?: false, public?: true
 
@@ -105,7 +105,7 @@ defmodule Omedis.Accounts.Project do
 
   def get_max_position_by_tenant_id(tenant_id, opts \\ []) do
     __MODULE__
-    |> Ash.Query.filter(tenant_id: tenant_id)
+    |> Ash.Query.filter(organisation_id: tenant_id)
     |> Ash.Query.sort(position: :desc)
     |> Ash.Query.limit(1)
     |> Ash.Query.select([:position])
@@ -118,7 +118,7 @@ defmodule Omedis.Accounts.Project do
   end
 
   relationships do
-    belongs_to :tenant, Omedis.Accounts.Tenant do
+    belongs_to :organisation, Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true
     end

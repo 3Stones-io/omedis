@@ -18,7 +18,7 @@ defmodule Omedis.Accounts.Group do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :user, on_delete: :delete
     end
   end
@@ -28,7 +28,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   identities do
-    identity :unique_slug_per_tenant, [:slug, :tenant_id]
+    identity :unique_slug_per_organisation, [:slug, :organisation_id]
   end
 
   code_interface do
@@ -45,7 +45,7 @@ defmodule Omedis.Accounts.Group do
     create :create do
       accept [
         :name,
-        :tenant_id,
+        :organisation_id,
         :user_id,
         :slug
       ]
@@ -85,7 +85,7 @@ defmodule Omedis.Accounts.Group do
 
       prepare build(sort: :created_at)
 
-      filter expr(tenant_id == ^arg(:tenant_id))
+      filter expr(organisation_id == ^arg(:tenant_id))
     end
 
     destroy :destroy do
@@ -98,7 +98,7 @@ defmodule Omedis.Accounts.Group do
 
   def slug_exists?(slug, tenant_id) do
     __MODULE__
-    |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
+    |> Ash.Query.filter(slug: slug, organisation_id: tenant_id)
     |> Ash.read_one!(authorize?: false)
     |> case do
       nil -> false
@@ -117,7 +117,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   relationships do
-    belongs_to :tenant, Omedis.Accounts.Tenant do
+    belongs_to :organisation, Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true
     end

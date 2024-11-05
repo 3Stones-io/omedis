@@ -14,7 +14,7 @@ defmodule OmedisWeb.LiveTenant do
 
   def on_mount(:assign_current_tenant, _params, _session, socket) do
     current_tenant =
-      with %User{current_tenant_id: current_tenant_id} when not is_nil(current_tenant_id) <-
+      with %User{current_organisation_id: current_tenant_id} when not is_nil(current_tenant_id) <-
              socket.assigns[:current_user],
            {:ok, tenant} <- Tenant.by_id(current_tenant_id, actor: socket.assigns.current_user) do
         tenant

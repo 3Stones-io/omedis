@@ -196,7 +196,7 @@ defmodule OmedisWeb.GroupLive.Index do
     |> assign(:group, nil)
     |> PaginationUtils.list_paginated(params, :groups, fn offset ->
       Group.by_tenant_id(
-        %{tenant_id: socket.assigns.tenant.id},
+        %{organisation_id: socket.assigns.tenant.id},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
         tenant: socket.assigns.tenant

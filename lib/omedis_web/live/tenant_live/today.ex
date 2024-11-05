@@ -67,7 +67,10 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(
-        LogEntry.by_tenant_today!(%{tenant_id: tenant.id}, actor: current_user, tenant: tenant)
+        LogEntry.by_tenant_today!(%{organisation_id: tenant.id},
+          actor: current_user,
+          tenant: tenant
+        )
       )
 
     start_at =
@@ -172,7 +175,10 @@ defmodule OmedisWeb.TenantLive.Today do
 
     {min_start_in_entries, max_end_in_entries} =
       get_time_range(
-        LogEntry.by_tenant_today!(%{tenant_id: tenant.id}, actor: current_user, tenant: tenant)
+        LogEntry.by_tenant_today!(%{organisation_id: tenant.id},
+          actor: current_user,
+          tenant: tenant
+        )
       )
 
     start_at =
@@ -388,7 +394,8 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp stop_any_active_log_entry(socket, tenant, user) do
-    {:ok, log_entries} = LogEntry.by_tenant(%{tenant_id: tenant.id}, actor: user, tenant: tenant)
+    {:ok, log_entries} =
+      LogEntry.by_tenant(%{organisation_id: tenant.id}, actor: user, tenant: tenant)
 
     case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
       nil ->
@@ -407,7 +414,7 @@ defmodule OmedisWeb.TenantLive.Today do
       LogEntry.create(
         %{
           log_category_id: log_category_id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id,
           start_at: Time.utc_now()
         },
@@ -432,7 +439,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp latest_group_for_a_tenant(tenant_id) do
-    case Group.by_tenant_id(%{tenant_id: tenant_id}) do
+    case Group.by_tenant_id(%{organisation_id: tenant_id}) do
       {:ok, %{results: groups}} ->
         Enum.min_by(groups, & &1.created_at)
 
@@ -444,7 +451,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp latest_project_for_a_tenant(tenant, current_user) do
-    case Project.by_tenant_id(%{tenant_id: tenant.id}, actor: current_user, tenant: tenant) do
+    case Project.by_tenant_id(%{organisation_id: tenant.id}, actor: current_user, tenant: tenant) do
       {:ok, projects} ->
         Enum.min_by(projects, & &1.created_at)
 
@@ -456,7 +463,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp groups_for_a_tenant(tenant_id) do
-    case Group.by_tenant_id(%{tenant_id: tenant_id}) do
+    case Group.by_tenant_id(%{organisation_id: tenant_id}) do
       {:ok, %{results: groups}} ->
         groups
         |> Enum.map(fn group -> {group.name, group.id} end)
@@ -467,7 +474,7 @@ defmodule OmedisWeb.TenantLive.Today do
   end
 
   defp projects_for_a_tenant(tenant, current_user) do
-    case Project.by_tenant_id(%{tenant_id: tenant.id}, actor: current_user, tenant: tenant) do
+    case Project.by_tenant_id(%{organisation_id: tenant.id}, actor: current_user, tenant: tenant) do
       {:ok, projects} ->
         projects
         |> Enum.map(fn project -> {project.name, project.id} end)

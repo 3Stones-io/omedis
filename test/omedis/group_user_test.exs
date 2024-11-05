@@ -6,7 +6,7 @@ defmodule Omedis.GroupUserTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
+    {:ok, group} = create_group(%{organisation_id: tenant.id})
     {:ok, user} = create_user()
     {:ok, authorized_user} = create_user()
 
@@ -17,7 +17,7 @@ defmodule Omedis.GroupUserTest do
         group_id: group.id,
         read: true,
         resource_name: "GroupUser",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         write: true
       })
 

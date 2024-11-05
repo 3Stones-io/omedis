@@ -24,7 +24,7 @@ defmodule OmedisWeb.TenantLive.ShowTest do
       {:ok, _access_right} =
         create_access_right(%{
           group_id: group.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           read: true,
           resource_name: "Tenant"
         })
@@ -59,7 +59,7 @@ defmodule OmedisWeb.TenantLive.ShowTest do
       {:ok, access_right} =
         create_access_right(%{
           group_id: group.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           read: true,
           resource_name: "Tenant",
           update: false,

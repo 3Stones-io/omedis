@@ -6,8 +6,8 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, project} = create_project(%{tenant_id: tenant.id})
+    {:ok, group} = create_group(%{organisation_id: tenant.id})
+    {:ok, project} = create_project(%{organisation_id: tenant.id})
     {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
@@ -18,7 +18,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
     {:ok, _} =
@@ -26,7 +26,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "LogCategory",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
     {:ok, _} =
@@ -34,7 +34,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "LogEntry",
-        tenant_id: tenant.id,
+        organisation_id: tenant.id,
         write: true
       })
 
@@ -43,7 +43,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Tenant",
-        tenant_id: tenant.id
+        organisation_id: tenant.id
       })
 
     %{
@@ -68,7 +68,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id,
           comment: "User's log entry"
         })
@@ -76,7 +76,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: owner.id,
           comment: "Owner's log entry"
         })
@@ -100,7 +100,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: authorized_user.id,
           comment: "Test comment 1"
         })
@@ -108,7 +108,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id,
           comment: "Test comment 2"
         })
@@ -124,9 +124,9 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
 
     test "unauthorized user cannot see log entries", %{conn: conn, user: user} do
       {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{tenant_id: tenant.id})
+      {:ok, group} = create_group(%{organisation_id: tenant.id})
       {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
-      {:ok, project} = create_project(%{tenant_id: tenant.id})
+      {:ok, project} = create_project(%{organisation_id: tenant.id})
 
       {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
 
@@ -135,7 +135,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
           group_id: group.id,
           read: true,
           resource_name: "Tenant",
-          tenant_id: tenant.id
+          organisation_id: tenant.id
         })
 
       {:ok, _} =
@@ -143,13 +143,13 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
           group_id: group.id,
           read: true,
           resource_name: "LogCategory",
-          tenant_id: tenant.id
+          organisation_id: tenant.id
         })
 
       {:ok, _} =
         create_log_entry(%{
           log_category_id: log_category.id,
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           user_id: user.id,
           comment: "Test comment"
         })

@@ -36,7 +36,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
         {:ok, _} =
           create_access_right(%{
             group_id: group_1.id,
-            tenant_id: Enum.at(tenants, i - 1).id,
+            organisation_id: Enum.at(tenants, i - 1).id,
             read: true,
             resource_name: "Tenant"
           })
@@ -47,7 +47,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
         {:ok, _} =
           create_access_right(%{
             group_id: group_2.id,
-            tenant_id: Enum.at(tenants, i - 1).id,
+            organisation_id: Enum.at(tenants, i - 1).id,
             read: true,
             resource_name: "Tenant"
           })
@@ -225,7 +225,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
           group_id: group.id,
           read: true,
           resource_name: "Tenant",
-          tenant_id: tenant.id,
+          organisation_id: tenant.id,
           update: false,
           write: false
         })

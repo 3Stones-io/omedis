@@ -136,7 +136,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
     next_position = log_category.position
 
     projects =
-      Project.by_tenant_id!(%{tenant_id: tenant.id},
+      Project.by_tenant_id!(%{organisation_id: tenant.id},
         actor: socket.assigns.current_user,
         tenant: tenant
       )

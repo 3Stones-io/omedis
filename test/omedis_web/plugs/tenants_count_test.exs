@@ -29,7 +29,7 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
       {:ok, _} =
         create_access_right(%{
           group_id: group_1.id,
-          tenant_id: tenant_1.id,
+          organisation_id: tenant_1.id,
           read: true,
           resource_name: "Tenant"
         })
@@ -37,7 +37,7 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
       {:ok, _} =
         create_access_right(%{
           group_id: group_1.id,
-          tenant_id: tenant_2.id,
+          organisation_id: tenant_2.id,
           read: true,
           resource_name: "User"
         })
@@ -45,7 +45,7 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
       {:ok, _} =
         create_access_right(%{
           group_id: group_1.id,
-          tenant_id: tenant_3.id,
+          organisation_id: tenant_3.id,
           read: false,
           resource_name: "Tenant"
         })
@@ -53,7 +53,7 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
       {:ok, _} =
         create_access_right(%{
           group_id: group_2.id,
-          tenant_id: tenant_1.id,
+          organisation_id: tenant_1.id,
           read: true,
           resource_name: "User"
         })
@@ -61,21 +61,21 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
       {:ok, _} =
         create_access_right(%{
           group_id: group_3.id,
-          tenant_id: tenant_1.id,
+          organisation_id: tenant_1.id,
           resource_name: "Tenant"
         })
 
       {:ok, _} =
         create_access_right(%{
           group_id: group_3.id,
-          tenant_id: tenant_2.id,
+          organisation_id: tenant_2.id,
           resource_name: "Tenant"
         })
 
       {:ok, _} =
         create_access_right(%{
           group_id: group_3.id,
-          tenant_id: tenant_3.id,
+          organisation_id: tenant_3.id,
           resource_name: "tenant"
         })
 
