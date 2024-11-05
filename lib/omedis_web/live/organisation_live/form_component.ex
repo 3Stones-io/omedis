@@ -316,7 +316,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 
-  defp assign_form(%{assigns: %{tenant: organisation}} = socket) do
+  defp assign_form(%{assigns: %{organisation: organisation}} = socket) do
     form =
       if organisation do
         AshPhoenix.Form.for_update(organisation, :update,

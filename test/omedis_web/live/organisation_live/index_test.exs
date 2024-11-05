@@ -195,7 +195,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       {:ok, index_live, _html} = live(conn, ~p"/organisations/new")
 
       assert index_live
-             |> form("#organisation-form", tenant: %{name: "", slug: ""})
+             |> form("#organisation-form", organisation: %{name: "", slug: ""})
              |> render_change() =~ "is required"
 
       attrs =
@@ -207,7 +207,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
 
       assert {:ok, _index_live, html} =
                index_live
-               |> form("#organisation-form", tenant: attrs)
+               |> form("#organisation-form", organisation: attrs)
                |> render_submit()
                |> follow_redirect(conn, ~p"/organisations")
 
@@ -226,13 +226,13 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       {:ok, group} = create_group()
       {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
 
-      {:ok, tenant: organisation, group: group}
+      {:ok, organisation: organisation, group: group}
     end
 
     test "redirects when user can't edit the organisation", %{
       conn: conn,
       group: group,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _access_right} =
         create_access_right(%{
@@ -257,7 +257,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation.slug}/edit")
 
       assert show_live
-             |> form("#organisation-form", tenant: %{street: ""})
+             |> form("#organisation-form", organisation: %{street: ""})
              |> render_change() =~ "is required"
 
       attrs =
@@ -269,7 +269,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
 
       assert {:ok, _show_live, html} =
                show_live
-               |> form("#organisation-form", tenant: attrs)
+               |> form("#organisation-form", organisation: attrs)
                |> render_submit()
                |> follow_redirect(conn, ~p"/organisations/#{attrs.slug}")
 

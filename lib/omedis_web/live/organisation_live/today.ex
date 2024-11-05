@@ -3,8 +3,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.LogEntry
-  alias Omedis.Accounts.Project
   alias Omedis.Accounts.Organisation
+  alias Omedis.Accounts.Project
 
   @impl true
   def render(assigns) do

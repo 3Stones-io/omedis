@@ -14,14 +14,14 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     {:ok, group} = create_group()
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
 
-    {:ok, tenant: organisation, group: group}
+    {:ok, organisation: organisation, group: group}
   end
 
   describe "/organisations/:slug" do
     test "shows organisation page when user has read access or is owner", %{
       conn: conn,
       group: group,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _access_right} =
         create_access_right(%{
@@ -60,7 +60,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     test "shows edit button when user has write or update access", %{
       conn: conn,
       group: group,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, access_right} =
         create_access_right(%{
@@ -107,7 +107,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       assert_patch(show_live, ~p"/organisations/#{owned_organisation.slug}/show/edit")
 
       assert show_live
-             |> form("#organisation-form", tenant: %{street: ""})
+             |> form("#organisation-form", organisation: %{street: ""})
              |> render_change() =~ "is required"
 
       attrs =
@@ -119,7 +119,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       assert {:ok, _show_live, html} =
                show_live
-               |> form("#organisation-form", tenant: attrs)
+               |> form("#organisation-form", organisation: attrs)
                |> render_submit()
                |> follow_redirect(conn, ~p"/organisations/#{attrs.slug}")
 
