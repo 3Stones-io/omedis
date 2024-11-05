@@ -1,8 +1,8 @@
 defmodule OmedisWeb.InvitationLive.Index do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Tenant
   alias Omedis.Accounts.Invitation
+  alias Omedis.Accounts.Tenant
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
@@ -30,7 +30,7 @@ defmodule OmedisWeb.InvitationLive.Index do
       )
       |> assign(:invitation, nil)
     else
-      # TODO: Redirect to the invitations index page
+      # Redirect to the invitations index page
       push_navigate(socket, to: ~p"/tenants/#{socket.assigns.tenant.slug}")
     end
   end
@@ -64,16 +64,23 @@ defmodule OmedisWeb.InvitationLive.Index do
           <%= @page_title %>
         </.header>
 
-        <.live_component
-          module={OmedisWeb.InvitationLive.FormComponent}
-          id={:new}
-          title={@page_title}
-          action={@live_action}
-          tenant={@tenant}
-          language={@language}
-          current_user={@current_user}
-          patch={~p"/tenants/#{@tenant.slug}"}
-        />
+        <.modal
+          :if={@live_action in [:new, :edit]}
+          id="invitation-modal"
+          show
+          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}")}
+        >
+          <.live_component
+            module={OmedisWeb.InvitationLive.FormComponent}
+            id={:new}
+            title={@page_title}
+            action={@live_action}
+            tenant={@tenant}
+            language={@language}
+            current_user={@current_user}
+            patch={~p"/tenants/#{@tenant.slug}"}
+          />
+        </.modal>
       </div>
     </.side_and_topbar>
     """

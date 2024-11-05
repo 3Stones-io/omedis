@@ -2,8 +2,8 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   use OmedisWeb, :live_component
 
   alias AshPhoenix.Form
-  alias Omedis.Accounts
-  alias Omedis.Accounts.{Group, Invitation}
+  alias Omedis.Accounts.Group
+  alias Omedis.Accounts.Invitation
 
   @supported_languages [
     {"English", "en"},
@@ -24,17 +24,19 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"invitation" => params}, socket) do
-    params = add_tenant_and_creator(socket, params)
-    form = Form.validate(socket.assigns.form, params)
-    {:noreply, assign(socket, :form, form)}
+  def handle_event("validate", %{"invitation" => _params}, socket) do
+    # params = add_tenant_and_creator(params, socket)
+
+    # Find a way to perform the validation without clearing the form group input
+    # form = Form.validate(socket.assigns.form, params, errors: true)
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("save", %{"invitation" => params}, socket) do
-    params = add_tenant_and_creator(socket, params)
+    params = add_tenant_and_creator(params, socket)
 
-    case Form.submit(socket.assigns.form, params) do
+    case Form.submit(socket.assigns.form, params: params) do
       {:ok, invitation} ->
         notify_parent({:saved, invitation})
 
@@ -44,12 +46,15 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
          |> push_navigate(to: socket.assigns.patch)}
 
       {:error, form} ->
-        {:noreply, assign(socket, form: form)}
+        {:noreply, assign(socket, :form, form)}
     end
   end
 
   defp assign_groups(socket) do
-    case Group.by_tenant_id(%{tenant_id: socket.assigns.tenant.id}) do
+    case Group.by_tenant_id(%{tenant_id: socket.assigns.tenant.id},
+           actor: socket.assigns.current_user,
+           tenant: socket.assigns.tenant
+         ) do
       {:ok, %Ash.Page.Offset{results: groups}} -> assign(socket, :groups, groups)
       _ -> assign(socket, :groups, [])
     end
@@ -60,11 +65,23 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
       Form.for_create(Invitation, :create,
         as: "invitation",
         actor: socket.assigns.current_user,
-        tenant: socket.assigns.tenant
+        tenant: socket.assigns.tenant,
+        prepare_params: &prepare_params/2
       )
 
     assign(socket, :form, to_form(form))
   end
+
+  defp prepare_params(%{"groups" => groups} = params, _) do
+    groups =
+      groups
+      |> Enum.filter(&(elem(&1, 1) == "true"))
+      |> Enum.map(&elem(&1, 0))
+
+    Map.put(params, "groups", groups)
+  end
+
+  defp prepare_params(params, _), do: params
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 
@@ -78,17 +95,19 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
     end
   end
 
-  defp add_tenant_and_creator(socket, params) do
+  defp add_tenant_and_creator(params, socket) do
     Map.merge(params, %{
       "creator_id" => socket.assigns.current_user.id,
       "tenant_id" => socket.assigns.tenant.id
     })
   end
 
+  defp starts_with_group?(changeset, group) do
+    group in List.wrap(changeset.data.groups)
+  end
+
   @impl true
   def render(assigns) do
-    assigns = assign(assigns, :groups, Enum.map(assigns.groups, &{&1.name, &1.id})) |> IO.inspect
-
     ~H"""
     <div>
       <.header>
@@ -117,7 +136,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
             <%= with_locale(@language, fn -> gettext("Language") end) %>
           </label>
           <div class="flex space-x-4">
-            <%= for {language, code} <- @supported_languages do %>
+            <%= for {_language, code} <- @supported_languages do %>
               <label class="cursor-pointer">
                 <input
                   type="radio"
@@ -134,19 +153,22 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
           </div>
         </div>
 
-        <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:pt-5">
-          <label class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Groups") %>
           </label>
 
-          <div class="mt-2 sm:col-span-2 sm:mt-0">
-            <div class="space-y-2">
-              <.checkgroup
-                field={@form[:groups]}
-                label="Groups"
-                options={@groups}
+          <div class="space-y-2">
+            <%= for group <- @groups do %>
+              <.input
+                type="checkbox"
+                label={group.name}
+                name={@form.name <> "[groups][#{group.id}]"}
+                id={@form.id <> "_groups_#{group.id}"}
+                value={starts_with_group?(@form.source.source, group)}
+                checked={starts_with_group?(@form.source.source, group)}
               />
-            </div>
+            <% end %>
           </div>
         </div>
         <:actions>
