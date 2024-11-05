@@ -23,7 +23,7 @@ defmodule Omedis.LogEntryTest do
 
     %{
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       log_category: log_category,
       user: user
@@ -33,7 +33,7 @@ defmodule Omedis.LogEntryTest do
   describe "by_log_category/1" do
     test "returns log entries for a specific log category", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry_1} =
@@ -62,7 +62,7 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an empty list for unauthorized user", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
@@ -91,7 +91,7 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an error if actor is not provided", %{
       log_category: log_category,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:error, %Ash.Error.Forbidden{}} =
                LogEntry.by_log_category(%{log_category_id: log_category.id}, tenant: organisation)
@@ -109,7 +109,7 @@ defmodule Omedis.LogEntryTest do
   describe "by_log_category_today/1" do
     test "returns log entries for a specific log category created today", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry_1} =
@@ -140,7 +140,7 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an empty list for unauthorized user", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
@@ -164,7 +164,7 @@ defmodule Omedis.LogEntryTest do
   describe "by_organisation/1" do
     test "returns log entries for a specific organisation", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, another_organisation} = create_organisation()
@@ -195,7 +195,7 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an empty list for unauthorized user", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
@@ -217,7 +217,7 @@ defmodule Omedis.LogEntryTest do
 
   describe "by_organisation_today/1" do
     test "returns log entries created today for the specific organisation", %{
-      tenant: organisation,
+      organisation: organisation,
       user: user,
       log_category: log_category
     } do
@@ -248,7 +248,7 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an empty list for unauthorized user", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
@@ -272,7 +272,7 @@ defmodule Omedis.LogEntryTest do
   describe "create/1" do
     test "organisation owner can create a log entry", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       owner: owner
     } do
       attrs = %{
@@ -289,7 +289,7 @@ defmodule Omedis.LogEntryTest do
 
     test "authorized user can create a log entry", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       attrs = %{
@@ -306,7 +306,7 @@ defmodule Omedis.LogEntryTest do
 
     test "unauthorized user cannot create a log entry", %{
       log_category: log_category,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, unauthorized_user} = create_user()
 
@@ -324,7 +324,7 @@ defmodule Omedis.LogEntryTest do
   describe "read/1" do
     test "organisation owner can read all log entries", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry_1} =
@@ -349,7 +349,7 @@ defmodule Omedis.LogEntryTest do
 
     test "authorized user can read all log entries", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, another_user} = create_user()
@@ -376,7 +376,7 @@ defmodule Omedis.LogEntryTest do
 
     test "unauthorized user cannot read log entries", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, unauthorized_user} = create_user()
@@ -402,7 +402,7 @@ defmodule Omedis.LogEntryTest do
   describe "update/1" do
     test "organisation owner can update a log entry", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, log_entry} =
@@ -423,7 +423,7 @@ defmodule Omedis.LogEntryTest do
 
     test "authorized user can update a log entry", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry} =
@@ -444,7 +444,7 @@ defmodule Omedis.LogEntryTest do
 
     test "unauthorized user cannot update a log entry", %{
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry} =

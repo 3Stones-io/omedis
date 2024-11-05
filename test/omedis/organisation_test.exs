@@ -9,13 +9,13 @@ defmodule Omedis.OrganisationTest do
     {:ok, group} = create_group()
     {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
 
-    {:ok, user: user, tenant: organisation, group: group}
+    {:ok, user: user, organisation: organisation, group: group}
   end
 
   describe "read/0" do
     test "returns organisations the user has read access to or is owner", %{
       user: user,
-      tenant: organisation,
+      organisation: organisation,
       group: group
     } do
       create_access_right(%{
@@ -167,7 +167,7 @@ defmodule Omedis.OrganisationTest do
   describe "by_id/1" do
     test "returns a organisation given a valid id", %{
       user: user,
-      tenant: organisation,
+      organisation: organisation,
       group: group
     } do
       create_access_right(%{
@@ -181,7 +181,7 @@ defmodule Omedis.OrganisationTest do
       assert organisation.id == fetched_organisation.id
     end
 
-    test "returns an error when user has no access", %{user: user, tenant: organisation} do
+    test "returns an error when user has no access", %{user: user, organisation: organisation} do
       assert {:error, _} = Organisation.by_id(organisation.id, actor: user)
     end
 
@@ -194,7 +194,11 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "by_slug/1" do
-    test "returns a organisation given a slug", %{user: user, tenant: organisation, group: group} do
+    test "returns a organisation given a slug", %{
+      user: user,
+      organisation: organisation,
+      group: group
+    } do
       create_access_right(%{
         group_id: group.id,
         organisation_id: organisation.id,
@@ -206,7 +210,7 @@ defmodule Omedis.OrganisationTest do
       assert organisation.slug == fetched_organisation.slug
     end
 
-    test "returns an error when user has no access", %{user: user, tenant: organisation} do
+    test "returns an error when user has no access", %{user: user, organisation: organisation} do
       assert {:error, _} = Organisation.by_slug(organisation.slug, actor: user)
     end
 

@@ -35,7 +35,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
       authorized_user: authorized_user,
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     }
   end
@@ -44,7 +44,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
     test "renders project details if user is the organisation owner", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, _} =
@@ -72,7 +72,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
     test "renders project details if user is authorized", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, _} =
@@ -99,7 +99,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
 
     test "does not render project details if user is unauthorized", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, project} =
@@ -117,7 +117,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
     test "allows updating a project if user is the organisation owner", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, _} =
@@ -153,7 +153,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
     test "allows updating a project if user is authorized", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, _} =
@@ -189,7 +189,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
     test "doesn't allow updating a project if user is unauthorized", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})

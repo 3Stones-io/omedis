@@ -27,7 +27,7 @@ defmodule OmedisWeb.RegisterTest do
 
   setup do
     {:ok, organisation} = create_organisation(@valid_organisation_params)
-    {:ok, %{tenant: organisation}}
+    {:ok, %{organisation: organisation}}
   end
 
   describe "Tests the Registration flow" do
@@ -39,7 +39,7 @@ defmodule OmedisWeb.RegisterTest do
 
     test "Form fields are disabled until a organisation is selected", %{
       conn: conn,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, view, _html} = live(conn, "/register")
 
@@ -68,7 +68,7 @@ defmodule OmedisWeb.RegisterTest do
 
     test "Once we make changes to the registration form, we see any errors if they are there", %{
       conn: conn,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, view, _html} = live(conn, "/register")
 
@@ -84,7 +84,7 @@ defmodule OmedisWeb.RegisterTest do
       assert html =~ "length must be greater than or equal to 8"
     end
 
-    test "You can sign in with valid data", %{conn: conn, tenant: organisation} do
+    test "You can sign in with valid data", %{conn: conn, organisation: organisation} do
       {:ok, view, _html} = live(conn, "/register")
 
       {:error, _} = User.by_email(@valid_registration_params["email"])

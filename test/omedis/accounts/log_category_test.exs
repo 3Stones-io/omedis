@@ -47,7 +47,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     %{
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project,
       authorized_user: authorized_user,
@@ -58,7 +58,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
   describe "create/2" do
     test "organisation owner can create a log category", %{
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -78,7 +78,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "authorized user can create a log category", %{
       authorized_user: authorized_user,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -98,7 +98,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "unauthorized user cannot create a log category", %{
       user: user,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -116,7 +116,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "returns error with invalid attributes", %{
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -133,7 +133,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
   describe "update/2" do
     test "organisation owner can update a log category", %{
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -157,7 +157,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "authorized user can update a log category", %{
       authorized_user: authorized_user,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -181,7 +181,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "unauthorized user cannot update a log category", %{
       user: user,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -203,7 +203,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "returns error with invalid attributes", %{
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -229,7 +229,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
   describe "by_id/2" do
     test "returns log category for organisation owner", %{
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -250,7 +250,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "returns log category for authorized user", %{
       authorized_user: authorized_user,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -271,7 +271,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "returns error for unauthorized user", %{
       user: user,
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       project: project
     } do
@@ -305,7 +305,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
     test "returns paginated log categories for organisation owner", %{
       group: group,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, paginated_result} =
                LogCategory.list_paginated(
@@ -321,7 +321,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
     test "returns paginated log categories for authorized user", %{
       authorized_user: authorized_user,
       group: group,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, paginated_result} =
                LogCategory.list_paginated(
@@ -336,7 +336,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "does not return paginated log categories for unauthorized user", %{
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       assert {:ok, paginated_result} =
@@ -368,7 +368,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       group: group,
       owner: owner,
       project: project,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, categories} =
                LogCategory.by_group_id_and_project_id(
@@ -386,7 +386,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       category: category,
       group: group,
       project: project,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, categories} =
                LogCategory.by_group_id_and_project_id(
@@ -403,7 +403,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
          %{
            group: group,
            project: project,
-           tenant: organisation,
+           organisation: organisation,
            user: user
          } do
       assert {:ok, categories} =
@@ -444,7 +444,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       category1: category1,
       category2: category2,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, moved_category} =
                LogCategory.move_up(category2, actor: owner, tenant: organisation)
@@ -461,7 +461,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       authorized_user: authorized_user,
       category1: category1,
       category2: category2,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, moved_category} =
                LogCategory.move_up(category2, actor: authorized_user, tenant: organisation)
@@ -476,7 +476,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "unauthorized user cannot move a category up in position", %{
       category2: category2,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       assert {:error, %Ash.Error.Forbidden{}} =
@@ -486,7 +486,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
     test "does nothing when category is at top position", %{
       category1: category1,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, unchanged_category} =
                LogCategory.move_up(category1, actor: owner, tenant: organisation)
@@ -522,7 +522,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       category1: category1,
       category2: category2,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, moved_category} =
                LogCategory.move_down(category2, actor: owner, tenant: organisation)
@@ -539,7 +539,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
       authorized_user: authorized_user,
       category1: category1,
       category2: category2,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, moved_category} =
                LogCategory.move_down(category2, actor: authorized_user, tenant: organisation)
@@ -554,7 +554,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
 
     test "unauthorized user cannot move a category down in position", %{
       category2: category2,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       assert {:error, %Ash.Error.Forbidden{}} =
@@ -564,7 +564,7 @@ defmodule Omedis.Accounts.LogCategoryTest do
     test "does nothing when category is at bottom position", %{
       category1: category1,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, unchanged_category} =
                LogCategory.move_down(category1, actor: owner, tenant: organisation)

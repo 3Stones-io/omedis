@@ -26,7 +26,7 @@ defmodule Omedis.GroupUserTest do
        authorized_user: authorized_user,
        group: group,
        owner: owner,
-       tenant: organisation,
+       organisation: organisation,
        user: user
      }}
   end
@@ -35,7 +35,7 @@ defmodule Omedis.GroupUserTest do
     test "organisation owner can create a group_user", %{
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       assert {:ok, group_user} =
@@ -55,7 +55,7 @@ defmodule Omedis.GroupUserTest do
     test "authorized user can create a group_user", %{
       authorized_user: authorized_user,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       assert {:ok, group_user} =
@@ -74,7 +74,7 @@ defmodule Omedis.GroupUserTest do
 
     test "unauthorized user cannot create a group_user", %{
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, unauthorized_user} = create_user()
@@ -95,7 +95,7 @@ defmodule Omedis.GroupUserTest do
     test "organisation owner can read all group_users", %{
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _group_user} =
@@ -115,7 +115,7 @@ defmodule Omedis.GroupUserTest do
     test "authorized user can read all group_users", %{
       authorized_user: authorized_user,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _group_user} =
@@ -135,7 +135,7 @@ defmodule Omedis.GroupUserTest do
     test "unauthorized user cannot read group_users", %{
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _group_user} =
@@ -157,7 +157,7 @@ defmodule Omedis.GroupUserTest do
     test "organisation owner can delete a group_user", %{
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, group_user} =
@@ -179,7 +179,7 @@ defmodule Omedis.GroupUserTest do
     test "authorized user can delete a group_user", %{
       authorized_user: authorized_user,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, group_user} =
@@ -201,7 +201,7 @@ defmodule Omedis.GroupUserTest do
     test "unauthorized user cannot delete a group_user", %{
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, group_user} =

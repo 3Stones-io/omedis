@@ -21,7 +21,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
 
     %{
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     }
   end
@@ -30,7 +30,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
     test "renders group details if user is the organisation owner", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _, html} =
@@ -44,7 +44,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
 
     test "renders group details is a user is authorized", %{
       conn: conn,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, authorized_user} = create_user()
       {:ok, group} = create_group(%{organisation_id: organisation.id})

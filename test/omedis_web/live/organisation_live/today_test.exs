@@ -57,7 +57,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     }
   end
@@ -71,7 +71,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _} =
         create_access_right(%{
@@ -111,7 +111,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _} =
         create_access_right(%{
@@ -156,7 +156,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       group: group,
       owner: owner,
       project: project,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _} =
         create_access_right(%{
@@ -218,7 +218,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       group: group,
       log_category: log_category,
       project: project,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _} =
         create_access_right(%{
@@ -258,7 +258,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       group: group,
       log_category: log_category,
       project: project,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _} =
         create_access_right(%{
@@ -303,7 +303,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _} =
         create_access_right(%{
@@ -364,7 +364,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       group: group,
       log_category: log_category,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       user: unauthorized_user
     } do
       {:ok, group2} = create_group(%{organisation_id: organisation.id})

@@ -14,7 +14,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       another_user: another_user,
       owner: owner,
       organisation_2: organisation_2,
-      tenant: organisation
+      organisation: organisation
     }
   end
 
@@ -23,7 +23,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       another_user: another_user,
       conn: conn,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       organisation_2: organisation_2
     } do
       Enum.each(1..15, fn i ->
@@ -157,7 +157,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
     test "authorized user can delete a group", %{
       conn: conn,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, group} =
         create_group(%{
@@ -201,7 +201,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
     test "authorized user can edit a group", %{
       conn: conn,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, group} =
         create_group(%{

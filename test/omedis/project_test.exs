@@ -25,7 +25,7 @@ defmodule Omedis.Accounts.ProjectTest do
       authorized_user: authorized_user,
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     }
   end
@@ -294,7 +294,7 @@ defmodule Omedis.Accounts.ProjectTest do
   end
 
   describe "create/1" do
-    test "organisation owner can create a project", %{owner: owner, tenant: organisation} do
+    test "organisation owner can create a project", %{owner: owner, organisation: organisation} do
       attrs =
         Project
         |> attrs_for()
@@ -307,7 +307,7 @@ defmodule Omedis.Accounts.ProjectTest do
 
     test "authorized user can create a project", %{
       authorized_user: authorized_user,
-      tenant: organisation
+      organisation: organisation
     } do
       attrs =
         Project
@@ -319,7 +319,7 @@ defmodule Omedis.Accounts.ProjectTest do
       assert project.name == "New Project"
     end
 
-    test "unauthorized user cannot create a project", %{user: user, tenant: organisation} do
+    test "unauthorized user cannot create a project", %{user: user, organisation: organisation} do
       attrs =
         Project
         |> attrs_for()
@@ -332,7 +332,7 @@ defmodule Omedis.Accounts.ProjectTest do
   end
 
   describe "update/1" do
-    test "organisation owner can update a project", %{owner: owner, tenant: organisation} do
+    test "organisation owner can update a project", %{owner: owner, organisation: organisation} do
       attrs =
         Project
         |> attrs_for()
@@ -356,7 +356,7 @@ defmodule Omedis.Accounts.ProjectTest do
 
     test "authorized user can update a project", %{
       authorized_user: authorized_user,
-      tenant: organisation
+      organisation: organisation
     } do
       attrs =
         Project
@@ -382,7 +382,7 @@ defmodule Omedis.Accounts.ProjectTest do
     test "unauthorized user cannot update a project", %{
       authorized_user: authorized_user,
       user: user,
-      tenant: organisation
+      organisation: organisation
     } do
       attrs =
         Project

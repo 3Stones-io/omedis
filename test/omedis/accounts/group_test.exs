@@ -20,11 +20,11 @@ defmodule Omedis.Accounts.GroupTest do
       write: true
     })
 
-    %{user: user, tenant: organisation, authorized_user: authorized_user}
+    %{user: user, organisation: organisation, authorized_user: authorized_user}
   end
 
   describe "create/2" do
-    test "organisation owner can create a group", %{user: user, tenant: organisation} do
+    test "organisation owner can create a group", %{user: user, organisation: organisation} do
       assert %Group{} =
                group =
                Group.create!(
@@ -44,7 +44,7 @@ defmodule Omedis.Accounts.GroupTest do
 
     test "authorised users can create a group", %{
       authorized_user: authorized_user,
-      tenant: organisation
+      organisation: organisation
     } do
       assert %Group{} =
                group =
@@ -80,7 +80,7 @@ defmodule Omedis.Accounts.GroupTest do
   describe "update/2" do
     test "can update a group if user is the owner of the organisation", %{
       user: user,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, group} = create_group(%{organisation_id: organisation.id, user_id: user.id})
 
@@ -103,7 +103,7 @@ defmodule Omedis.Accounts.GroupTest do
 
     test "authorised users can create a group", %{
       authorized_user: authorized_user,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, group} =
         create_group(%{organisation_id: organisation.id, user_id: authorized_user.id})
@@ -141,7 +141,7 @@ defmodule Omedis.Accounts.GroupTest do
   end
 
   describe "destroy/2" do
-    test "organisation owner can delete a group", %{user: user, tenant: organisation} do
+    test "organisation owner can delete a group", %{user: user, organisation: organisation} do
       {:ok, group} = create_group(%{organisation_id: organisation.id, user_id: user.id})
 
       create_group_user(%{user_id: user.id, group_id: group.id})
@@ -160,7 +160,7 @@ defmodule Omedis.Accounts.GroupTest do
 
     test "authorized users can delete a group", %{
       authorized_user: authorized_user,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, group} =
         create_group(%{organisation_id: organisation.id, user_id: authorized_user.id})
@@ -196,7 +196,7 @@ defmodule Omedis.Accounts.GroupTest do
   describe "by_id!/1" do
     test "returns a group given a valid id", %{
       user: user,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, group} =
         create_group(%{organisation_id: organisation.id, user_id: user.id, slug: "test-group"})
@@ -214,7 +214,10 @@ defmodule Omedis.Accounts.GroupTest do
       assert result.id == group.id
     end
 
-    test "returns an error when an invalid group id is given", %{user: user, tenant: organisation} do
+    test "returns an error when an invalid group id is given", %{
+      user: user,
+      organisation: organisation
+    } do
       invalid_id = Ecto.UUID.generate()
 
       create_group_user(%{user_id: user.id, group_id: invalid_id})
@@ -255,7 +258,7 @@ defmodule Omedis.Accounts.GroupTest do
   describe "by_organisation_id/1" do
     test "returns paginated groups the user and organisation have access to", %{
       user: user,
-      tenant: organisation
+      organisation: organisation
     } do
       Enum.each(1..15, fn i ->
         {:ok, group} =
@@ -319,7 +322,7 @@ defmodule Omedis.Accounts.GroupTest do
   describe "by_slug!/1" do
     test "returns a group given a valid slug and actor has read access", %{
       user: user,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, group} =
         create_group(%{
@@ -346,7 +349,10 @@ defmodule Omedis.Accounts.GroupTest do
       assert result.id == group.id
     end
 
-    test "returns an error when an invalid slug is given", %{user: user, tenant: organisation} do
+    test "returns an error when an invalid slug is given", %{
+      user: user,
+      organisation: organisation
+    } do
       invalid_slug = "invalid-slug"
 
       create_group_user(%{user_id: user.id, group_id: invalid_slug})

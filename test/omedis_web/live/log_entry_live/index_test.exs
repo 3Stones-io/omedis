@@ -52,7 +52,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     }
   end
@@ -60,7 +60,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
   describe "/organisations/:slug/log_categories/:id/log_entries" do
     test "organisation owner can see all log entries", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       log_category: log_category,
       owner: owner,
       user: user
@@ -96,7 +96,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       authorized_user: authorized_user,
       conn: conn,
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =

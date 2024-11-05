@@ -81,7 +81,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       group2: group2,
       owner: owner,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     }
   end
@@ -91,7 +91,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, _log_category} =
@@ -113,7 +113,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, _log_category} =
@@ -135,7 +135,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _log_category} =
@@ -160,7 +160,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, view, html} =
@@ -194,7 +194,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, view, html} =
@@ -227,7 +227,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "unauthorized user cannot create new log category", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:error, {:live_redirect, %{flash: flash, to: to}}} =
@@ -242,7 +242,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "shows validation errors", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, view, _html} =
@@ -263,7 +263,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "authorized user can move log categories up and down", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       project: project,
       authorized_user: authorized_user
     } do
@@ -307,7 +307,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "unauthorized user cannot see position controls", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       project: project,
       user: unauthorized_user
     } do
@@ -332,7 +332,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
     test "organisation owner can move log categories up and down", %{
       conn: conn,
       group: group,
-      tenant: organisation,
+      organisation: organisation,
       project: project,
       owner: owner
     } do

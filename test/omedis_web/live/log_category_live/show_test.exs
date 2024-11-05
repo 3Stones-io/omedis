@@ -87,7 +87,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       log_category: log_category,
       owner: owner,
       project: project,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     }
   end
@@ -97,7 +97,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, _show_live, html} =
@@ -115,7 +115,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, _show_live, html} =
@@ -133,7 +133,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       assert_raise Ash.Error.Query.NotFound, fn ->
@@ -151,7 +151,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, show_live, html} =
@@ -186,7 +186,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, show_live, html} =
@@ -217,7 +217,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       group: group,
       group2: group2,
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
@@ -247,7 +247,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       conn: conn,
       group: group,
       log_category: log_category,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, form_live, _html} =

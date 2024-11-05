@@ -46,7 +46,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       authorized_user: authorized_user,
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       user: user
     }
   end
@@ -55,7 +55,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
     test "lists all projects if user is the organisation owner", %{
       conn: conn,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, _} =
         create_project(%{organisation_id: organisation.id, name: "Test Project"})
@@ -70,7 +70,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "lists all projects if user is authorized", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, project} =
@@ -86,7 +86,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "does not list projects if user is not authorized", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       user: unauthorized_user
     } do
       {:ok, project} =
@@ -102,7 +102,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "does not show new project link if user is not authorized", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       user: unauthorized_user
     } do
       {:ok, _} =
@@ -118,7 +118,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "does not show edit project link if user is not authorized", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       user: unauthorized_user
     } do
       {:ok, project} =
@@ -137,7 +137,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
     test "organisation owner can create new project", %{
       conn: conn,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, index_live, html} =
         conn
@@ -161,7 +161,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "authorized user can create new project", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, index_live, html} =
@@ -186,7 +186,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "unauthorized user cannot create new project", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       user: unauthorized_user
     } do
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
@@ -203,7 +203,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
     test "organisation owner can edit project", %{
       conn: conn,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       {:ok, project} =
         create_project(%{organisation_id: organisation.id, name: "Test Project"})
@@ -228,7 +228,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "authorized user can edit project", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, project} =
@@ -254,7 +254,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
 
     test "unauthorized user cannot edit project", %{
       conn: conn,
-      tenant: organisation,
+      organisation: organisation,
       user: unauthorized_user
     } do
       {:ok, project} =
