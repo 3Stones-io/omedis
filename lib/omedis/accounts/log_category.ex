@@ -24,7 +24,7 @@ defmodule Omedis.Accounts.LogCategory do
     "#17becf"
   ]
   postgres do
-    table "log_categories"
+    table "activities"
     repo Omedis.Repo
 
     references do
@@ -34,7 +34,7 @@ defmodule Omedis.Accounts.LogCategory do
   end
 
   resource do
-    plural_name :log_categories
+    plural_name :activities
   end
 
   policies do
