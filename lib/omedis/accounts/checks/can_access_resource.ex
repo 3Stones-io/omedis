@@ -13,32 +13,25 @@ defmodule Omedis.Accounts.CanAccessResource do
     "User can access a resource if they have the access right through a group"
   end
 
-  def match?(actor, context, _options) do
-    resource = context.resource
-    tenant = context.subject.tenant
+  def match?(nil, _context, _options), do: false
+  def match?(_actor, %{subject: %{tenant: nil}}, _options), do: false
+
+  def match?(actor, %{subject: %{tenant: tenant}}, _options) when actor.id == tenant.owner_id do
+    true
+  end
+
+  def match?(actor, %{subject: %{tenant: tenant, resource: resource}} = context, _options) do
     resource_name = get_resource_name(resource)
     action = get_action(context)
 
-    cond do
-      is_nil(actor) ->
-        false
-
-      is_nil(tenant) ->
-        false
-
-      tenant.owner_id == actor.id ->
-        true
-
-      true ->
-        Ash.exists?(
-          filter(
-            AccessRight,
-            resource_name == ^resource_name and tenant_id == ^tenant.id and
-              (write == true or ^action == true) and
-              exists(group.group_users, user_id == ^actor.id)
-          )
-        )
-    end
+    Ash.exists?(
+      filter(
+        AccessRight,
+        resource_name == ^resource_name and tenant_id == ^tenant.id and
+          (write == true or ^action == true) and
+          exists(group.group_users, user_id == ^actor.id)
+      )
+    )
   end
 
   defp get_resource_name(resource) do

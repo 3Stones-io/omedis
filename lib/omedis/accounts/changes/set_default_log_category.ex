@@ -14,8 +14,9 @@ defmodule Omedis.Accounts.Changes.SetDefaultLogCategory do
     is_default = Ash.Changeset.get_attribute(changeset, :is_default)
 
     if is_default do
-      group_id
-      |> LogCategory.get_default_log_category()
+      LogCategory
+      |> Ash.Query.filter(group_id: group_id, is_default: true)
+      |> Ash.read_one!(authorize?: false)
       |> maybe_update_previous_default(changeset)
     else
       changeset

@@ -82,11 +82,16 @@ defmodule OmedisWeb.GroupLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug, "group_slug" => group_slug}, _, socket) do
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:tenant, Tenant.by_slug!(slug, actor: socket.assigns.current_user))
-     |> assign(:group, Group.by_slug!(group_slug))}
+     |> assign(:tenant, tenant)
+     |> assign(
+       :group,
+       Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
+     )}
   end
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Show Tenant") end)
