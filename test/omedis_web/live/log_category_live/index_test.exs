@@ -18,7 +18,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "LogCategory",
+        resource_name: "Activity",
         tenant_id: tenant.id,
         write: true
       })
@@ -86,77 +86,77 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
     }
   end
 
-  describe "/tenants/:slug/groups/:group_slug/log_categories" do
-    test "lists all log categories if user is tenant owner", %{
+  describe "/tenants/:slug/groups/:group_slug/activities" do
+    test "lists all activities if user is tenant owner", %{
       conn: conn,
       group: group,
       project: project,
       tenant: tenant,
       owner: owner
     } do
-      {:ok, _log_category} =
+      {:ok, _activity} =
         create_activity(%{
           group_id: group.id,
           project_id: project.id,
-          name: "Test Category"
+          name: "Test Activity"
         })
 
       {:ok, _, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities")
 
-      assert html =~ "Test Category"
+      assert html =~ "Test Activity"
     end
 
-    test "lists all log categories if user is authorized", %{
+    test "lists all activities if user is authorized", %{
       conn: conn,
       group: group,
       project: project,
       tenant: tenant,
       authorized_user: authorized_user
     } do
-      {:ok, _log_category} =
+      {:ok, _activity} =
         create_activity(%{
           group_id: group.id,
           project_id: project.id,
-          name: "Test Category"
+          name: "Test Activity"
         })
 
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities")
 
-      assert html =~ "Test Category"
+      assert html =~ "Test Activity"
     end
 
-    test "unauthorized user cannot see log categories", %{
+    test "unauthorized user cannot see activities", %{
       conn: conn,
       group: group,
       project: project,
       tenant: tenant,
       user: user
     } do
-      {:ok, _log_category} =
+      {:ok, _activity} =
         create_activity(%{
           group_id: group.id,
           project_id: project.id,
-          name: "Test Category"
+          name: "Test Activity"
         })
 
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities")
 
-      refute html =~ "Test Category"
-      refute html =~ "New Log Category"
+      refute html =~ "Test Activity"
+      refute html =~ "New Activity"
     end
   end
 
-  describe "/tenants/:slug/groups/:group_slug/log_categories/new" do
-    test "tenant owner can create new log category", %{
+  describe "/tenants/:slug/groups/:group_slug/activities/new" do
+    test "tenant owner can create new activity", %{
       conn: conn,
       group: group,
       project: project,
@@ -166,28 +166,28 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities/new")
 
-      assert html =~ "New Log Category"
+      assert html =~ "New Activity"
 
       assert html =
                view
-               |> form("#log_category-form",
-                 log_category: %{
-                   name: "New Category",
+               |> form("#activity-form",
+                 activity: %{
+                   name: "New Activity",
                    project_id: project.id,
-                   slug: "new-category"
+                   slug: "new-activity"
                  }
                )
                |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities")
 
-      assert html =~ "Log category saved successfully"
-      assert html =~ "New Category"
+      assert html =~ "Activity saved successfully"
+      assert html =~ "New Activity"
     end
 
-    test "authorized user can create new log category", %{
+    test "authorized user can create new activity", %{
       conn: conn,
       group: group,
       project: project,
@@ -197,28 +197,28 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities/new")
 
-      assert html =~ "New Log Category"
+      assert html =~ "New Activity"
 
       assert html =
                view
-               |> form("#log_category-form",
-                 log_category: %{
-                   name: "New Category",
+               |> form("#activity-form",
+                 activity: %{
+                   name: "New Activity",
                    project_id: project.id,
-                   slug: "new-category"
+                   slug: "new-activity"
                  }
                )
                |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities")
 
-      assert html =~ "Log category saved successfully"
-      assert html =~ "New Category"
+      assert html =~ "Activity saved successfully"
+      assert html =~ "New Activity"
     end
 
-    test "unauthorized user cannot create new log category", %{
+    test "unauthorized user cannot create new activity", %{
       conn: conn,
       group: group,
       tenant: tenant,
@@ -227,9 +227,9 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:error, {:live_redirect, %{flash: flash, to: to}}} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities/new")
 
-      assert to == ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories"
+      assert to == ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities"
       assert flash["error"] == "You are not authorized to access this page"
     end
 
@@ -242,11 +242,11 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities/new")
 
       html =
         view
-        |> form("#log_category-form", log_category: %{name: "", slug: ""})
+        |> form("#activity-form", activity: %{name: "", slug: ""})
         |> render_change()
 
       assert html =~ "must be present"
@@ -254,32 +254,32 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
   end
 
   describe "position updates" do
-    test "authorized user can move log categories up and down", %{
+    test "authorized user can move activities up and down", %{
       conn: conn,
       group: group,
       tenant: tenant,
       project: project,
       authorized_user: authorized_user
     } do
-      # Create categories with sequential positions
-      categories =
+      # Create activities with sequential positions
+      activities =
         Enum.map(1..3, fn i ->
-          {:ok, log_category} =
+          {:ok, activity} =
             create_activity(%{
               group_id: group.id,
               project_id: project.id,
-              name: "Log Category #{i}"
+              name: "Activity #{i}"
             })
 
-          log_category
+          activity
         end)
 
-      [first, second, third] = categories
+      [first, second, third] = activities
 
       {:ok, view, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities")
 
       # Verify position controls are rendered
       assert html =~ "move-up-#{second.id}"
@@ -305,49 +305,49 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       project: project,
       user: unauthorized_user
     } do
-      {:ok, log_category} =
+      {:ok, activity} =
         create_activity(%{
           group_id: group.id,
           project_id: project.id,
-          name: "Test Category"
+          name: "Test Activity"
         })
 
       {:ok, view, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities")
 
-      refute html =~ "move-up-#{log_category.id}"
-      refute html =~ "move-down-#{log_category.id}"
+      refute html =~ "move-up-#{activity.id}"
+      refute html =~ "move-down-#{activity.id}"
       refute view |> element(".position-up") |> has_element?()
       refute view |> element(".position-down") |> has_element?()
     end
 
-    test "tenant owner can move log categories up and down", %{
+    test "tenant owner can move activities up and down", %{
       conn: conn,
       group: group,
       tenant: tenant,
       project: project,
       owner: owner
     } do
-      categories =
+      activities =
         Enum.map(1..3, fn i ->
-          {:ok, log_category} =
+          {:ok, activity} =
             create_activity(%{
               group_id: group.id,
               project_id: project.id,
-              name: "Log Category #{i}"
+              name: "Activity #{i}"
             })
 
-          log_category
+          activity
         end)
 
-      [first, second, third] = categories
+      [first, second, third] = activities
 
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/activities")
 
       # Test moving up
       view

@@ -1,6 +1,6 @@
 defmodule Omedis.Accounts.Activity do
   @moduledoc """
-  This is the log category module
+  This is the activity module
   """
 
   require Ash.Query
@@ -183,25 +183,25 @@ defmodule Omedis.Accounts.Activity do
     update_timestamp :updated_at
   end
 
-  def move_up(log_category, opts \\ []) do
-    case log_category.position do
+  def move_up(activity, opts \\ []) do
+    case activity.position do
       1 ->
-        {:ok, log_category}
+        {:ok, activity}
 
       _ ->
-        __MODULE__.update_position(log_category, %{position: log_category.position - 1}, opts)
+        __MODULE__.update_position(activity, %{position: activity.position - 1}, opts)
     end
   end
 
-  def move_down(log_category, opts \\ []) do
-    last_position = get_max_position_by_group_id(log_category.group_id, opts)
+  def move_down(activity, opts \\ []) do
+    last_position = get_max_position_by_group_id(activity.group_id, opts)
 
-    case log_category.position do
+    case activity.position do
       ^last_position ->
-        {:ok, log_category}
+        {:ok, activity}
 
       _ ->
-        __MODULE__.update_position(log_category, %{position: log_category.position + 1}, opts)
+        __MODULE__.update_position(activity, %{position: activity.position + 1}, opts)
     end
   end
 

@@ -25,11 +25,10 @@ defmodule OmedisWeb.LogEntryLive.Index do
             {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
             {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
             {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-            {gettext("Log Categories"),
-             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
-            {@log_category.name,
-             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
+            {gettext("Activities"), ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities",
              false},
+            {@activity.name,
+             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{@activity.id}", false},
             {"Log Entries", "", true}
           ]}
           language={@language}
@@ -41,7 +40,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
               <%= gettext("Listing Log entries for") %>
             <% end) %>
           </span>
-          <%= @log_category.name %>
+          <%= @activity.name %>
         </.header>
 
         <.table id="log_entries" rows={@streams.log_entries}>
@@ -60,7 +59,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category.id}/log_entries"}
+          resource_path={~p"/tenants/#{@tenant.slug}/activities/#{@activity.id}/log_entries"}
           total_pages={@total_pages}
         />
       </div>
@@ -80,15 +79,15 @@ defmodule OmedisWeb.LogEntryLive.Index do
   def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
 
-    {:ok, log_category} =
+    {:ok, activity} =
       id
       |> Activity.by_id!(actor: socket.assigns.current_user, tenant: tenant)
       |> Ash.load(:group, authorize?: false)
 
     {:noreply,
      socket
-     |> assign(:group, log_category.group)
-     |> assign(:log_category, log_category)
+     |> assign(:group, activity.group)
+     |> assign(:activity, activity)
      |> assign(:tenant, tenant)
      |> apply_action(socket.assigns.live_action, params)}
   end

@@ -38,7 +38,7 @@ defmodule Omedis.Accounts.Changes.SetDefaultActivity do
       {:error, _error} ->
         Ash.Changeset.add_error(
           changeset,
-          [:is_default, "Only one default category is allowed per group"]
+          [:is_default, "Only one default activity is allowed per group"]
         )
     end
   end

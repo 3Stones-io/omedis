@@ -18,7 +18,7 @@ defmodule Omedis.Accounts.ActivityTest do
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "LogCategory",
+        resource_name: "Activity",
         tenant_id: tenant.id,
         write: true
       })
@@ -56,56 +56,56 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "create/2" do
-    test "tenant owner can create a log category", %{
+    test "tenant owner can create an activity", %{
       owner: owner,
       tenant: tenant,
       group: group,
       project: project
     } do
       attrs = %{
-        name: "Test Category",
+        name: "Test Activity",
         group_id: group.id,
         project_id: project.id,
         color_code: "#FF0000",
-        slug: "test-category"
+        slug: "test-activity"
       }
 
       assert {:ok, activity} = Activity.create(attrs, actor: owner, tenant: tenant)
-      assert category.name == "Test Category"
-      assert category.color_code == "#FF0000"
-      assert category.position == 1
+      assert activity.name == "Test Activity"
+      assert activity.color_code == "#FF0000"
+      assert activity.position == 1
     end
 
-    test "authorized user can create a log category", %{
+    test "authorized user can create an activity", %{
       authorized_user: authorized_user,
       tenant: tenant,
       group: group,
       project: project
     } do
       attrs = %{
-        name: "Test Category",
+        name: "Test Activity",
         group_id: group.id,
         project_id: project.id,
         color_code: "#FF0000",
-        slug: "test-category"
+        slug: "test-activity"
       }
 
       assert {:ok, activity} = Activity.create(attrs, actor: authorized_user, tenant: tenant)
-      assert category.name == "Test Category"
+      assert activity.name == "Test Activity"
     end
 
-    test "unauthorized user cannot create a log category", %{
+    test "unauthorized user cannot create an activity", %{
       user: user,
       tenant: tenant,
       group: group,
       project: project
     } do
       attrs = %{
-        name: "Test Category",
+        name: "Test Activity",
         group_id: group.id,
         project_id: project.id,
         color_code: "#FF0000",
-        slug: "test-category"
+        slug: "test-activity"
       }
 
       assert {:error, %Ash.Error.Forbidden{}} =
@@ -129,67 +129,67 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "update/2" do
-    test "tenant owner can update a log category", %{
+    test "tenant owner can update an activity", %{
       owner: owner,
       tenant: tenant,
       group: group,
       project: project
     } do
-      {:ok, category} =
+      {:ok, activity} =
         create_activity(%{
-          name: "Test Category",
+          name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0000",
-          slug: "test-category"
+          slug: "test-activity"
         })
 
-      assert {:ok, updated_category} =
+      assert {:ok, updated_activity} =
                Activity.update(activity, %{name: "Updated Activity"},
                  actor: owner,
                  tenant: tenant
                )
 
-      assert updated_category.name == "Updated Category"
+      assert updated_activity.name == "Updated Activity"
     end
 
-    test "authorized user can update a log category", %{
+    test "authorized user can update an activity", %{
       authorized_user: authorized_user,
       tenant: tenant,
       group: group,
       project: project
     } do
-      {:ok, category} =
+      {:ok, activity} =
         create_activity(%{
-          name: "Test Category",
+          name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0000",
-          slug: "test-category"
+          slug: "test-activity"
         })
 
-      assert {:ok, updated_category} =
+      assert {:ok, updated_activity} =
                Activity.update(activity, %{name: "Updated Activity"},
                  actor: authorized_user,
                  tenant: tenant
                )
 
-      assert updated_category.name == "Updated Category"
+      assert updated_activity.name == "Updated Activity"
     end
 
-    test "unauthorized user cannot update a log category", %{
+    test "unauthorized user cannot update an activity", %{
       user: user,
       tenant: tenant,
       group: group,
       project: project
     } do
-      {:ok, category} =
+      {:ok, activity} =
         create_activity(%{
-          name: "Test Category",
+          name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0000",
-          slug: "test-category"
+          slug: "test-activity"
         })
 
       assert {:error, %Ash.Error.Forbidden{}} =
@@ -205,13 +205,13 @@ defmodule Omedis.Accounts.ActivityTest do
       group: group,
       project: project
     } do
-      {:ok, category} =
+      {:ok, activity} =
         create_activity(%{
-          name: "Test Category",
+          name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0000",
-          slug: "test-category"
+          slug: "test-activity"
         })
 
       invalid_attrs = %{
@@ -225,44 +225,44 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "by_id/2" do
-    test "returns log category for tenant owner", %{
+    test "returns activity for tenant owner", %{
       owner: owner,
       tenant: tenant,
       group: group,
       project: project
     } do
-      {:ok, category} =
+      {:ok, activity} =
         create_activity(%{
-          name: "Test Category",
+          name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0000",
-          slug: "test-category"
+          slug: "test-activity"
         })
 
       assert {:ok, found_activity} = Activity.by_id(activity.id, actor: owner, tenant: tenant)
-      assert found_category.id == category.id
+      assert found_activity.id == activity.id
     end
 
-    test "returns log category for authorized user", %{
+    test "returns activity for authorized user", %{
       authorized_user: authorized_user,
       tenant: tenant,
       group: group,
       project: project
     } do
-      {:ok, category} =
+      {:ok, activity} =
         create_activity(%{
-          name: "Test Category",
+          name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0000",
-          slug: "test-category"
+          slug: "test-activity"
         })
 
-      assert {:ok, found_category} =
+      assert {:ok, found_activity} =
                Activity.by_id(activity.id, actor: authorized_user, tenant: tenant)
 
-      assert found_category.id == category.id
+      assert found_activity.id == activity.id
     end
 
     test "returns error for unauthorized user", %{
@@ -271,13 +271,13 @@ defmodule Omedis.Accounts.ActivityTest do
       group: group,
       project: project
     } do
-      {:ok, category} =
+      {:ok, activity} =
         create_activity(%{
-          name: "Test Category",
+          name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0000",
-          slug: "test-category"
+          slug: "test-activity"
         })
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
@@ -298,7 +298,7 @@ defmodule Omedis.Accounts.ActivityTest do
       :ok
     end
 
-    test "returns paginated log categories for tenant owner", %{
+    test "returns paginated activities for tenant owner", %{
       group: group,
       owner: owner,
       tenant: tenant
@@ -314,7 +314,7 @@ defmodule Omedis.Accounts.ActivityTest do
       assert length(paginated_result.results) == 10
     end
 
-    test "returns paginated log categories for authorized user", %{
+    test "returns paginated activities for authorized user", %{
       authorized_user: authorized_user,
       group: group,
       tenant: tenant
@@ -330,7 +330,7 @@ defmodule Omedis.Accounts.ActivityTest do
       assert length(paginated_result.results) == 10
     end
 
-    test "does not return paginated log categories for unauthorized user", %{
+    test "does not return paginated activities for unauthorized user", %{
       group: group,
       tenant: tenant,
       user: user
@@ -349,127 +349,127 @@ defmodule Omedis.Accounts.ActivityTest do
 
   describe "by_group_id_and_project_id/2" do
     setup %{group: group, project: project} do
-      {:ok, category} =
+      {:ok, activity} =
         create_activity(%{
-          name: "Test Category",
+          name: "Test Activity",
           group_id: group.id,
           project_id: project.id
         })
 
-      %{category: category}
+      %{activity: activity}
     end
 
-    test "returns log categories for specific group and project for tenant owner", %{
-      category: category,
+    test "returns activities for specific group and project for tenant owner", %{
+      activity: activity,
       group: group,
       owner: owner,
       project: project,
       tenant: tenant
     } do
-      assert {:ok, categories} =
+      assert {:ok, activities} =
                Activity.by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: owner,
                  tenant: tenant
                )
 
-      assert length(categories) == 1
-      assert hd(categories).id == category.id
+      assert length(activities) == 1
+      assert hd(activities).id == activity.id
     end
 
-    test "returns log categories for specific group and project for an authorized user", %{
+    test "returns activities for specific group and project for an authorized user", %{
       authorized_user: authorized_user,
-      category: category,
+      activity: activity,
       group: group,
       project: project,
       tenant: tenant
     } do
-      assert {:ok, categories} =
+      assert {:ok, activities} =
                Activity.by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: authorized_user,
                  tenant: tenant
                )
 
-      assert length(categories) == 1
-      assert hd(categories).id == category.id
+      assert length(activities) == 1
+      assert hd(activities).id == activity.id
     end
 
-    test "does not return log categories for specific group and project for an unauthorized user",
+    test "does not return activities for specific group and project for an unauthorized user",
          %{
            group: group,
            project: project,
            tenant: tenant,
            user: user
          } do
-      assert {:ok, categories} =
+      assert {:ok, activities} =
                Activity.by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: user,
                  tenant: tenant
                )
 
-      assert Enum.empty?(categories)
+      assert Enum.empty?(activities)
     end
   end
 
   describe "move_up/2" do
     setup %{group: group, project: project} do
-      {:ok, category1} =
+      {:ok, activity1} =
         create_activity(%{
-          name: "Category 1",
+          name: "Activity 1",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0001",
-          slug: "category-1"
+          slug: "activity-1"
         })
 
-      {:ok, category2} =
+      {:ok, activity2} =
         create_activity(%{
-          name: "Category 2",
+          name: "Activity 2",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0002",
-          slug: "category-2"
+          slug: "activity-2"
         })
 
-      %{category1: category1, category2: category2}
+      %{activity1: activity1, activity2: activity2}
     end
 
-    test "tenant owner can move a category up in position", %{
-      category1: category1,
-      category2: category2,
+    test "tenant owner can move an activity up in position", %{
+      activity1: activity1,
+      activity2: activity2,
       owner: owner,
       tenant: tenant
     } do
-      assert {:ok, moved_category} =
+      assert {:ok, moved_activity} =
                Activity.move_up(activity2, actor: owner, tenant: tenant)
 
-      assert moved_category.position == 1
+      assert moved_activity.position == 1
 
       {:ok, updated_activity1} = Activity.by_id(activity1.id, actor: owner, tenant: tenant)
-      assert updated_category1.position == 2
+      assert updated_activity1.position == 2
     end
 
-    test "authorized user can move a category up in position", %{
+    test "authorized user can move an activity up in position", %{
       authorized_user: authorized_user,
-      category1: category1,
-      category2: category2,
+      activity1: activity1,
+      activity2: activity2,
       tenant: tenant
     } do
-      assert {:ok, moved_category} =
+      assert {:ok, moved_activity} =
                Activity.move_up(activity2, actor: authorized_user, tenant: tenant)
 
-      assert moved_category.position == 1
+      assert moved_activity.position == 1
 
-      {:ok, updated_category1} =
+      {:ok, updated_activity1} =
         Activity.by_id(activity1.id, actor: authorized_user, tenant: tenant)
 
-      assert updated_category1.position == 2
+      assert updated_activity1.position == 2
     end
 
-    test "unauthorized user cannot move a category up in position", %{
-      category2: category2,
+    test "unauthorized user cannot move an activity up in position", %{
+      activity2: activity2,
       tenant: tenant,
       user: user
     } do
@@ -477,75 +477,75 @@ defmodule Omedis.Accounts.ActivityTest do
                Activity.move_up(activity2, actor: user, tenant: tenant)
     end
 
-    test "does nothing when category is at top position", %{
-      category1: category1,
+    test "does nothing when activity is at top position", %{
+      activity1: activity1,
       owner: owner,
       tenant: tenant
     } do
-      assert {:ok, unchanged_category} =
+      assert {:ok, unchanged_activity} =
                Activity.move_up(activity1, actor: owner, tenant: tenant)
 
-      assert unchanged_category.position == 1
+      assert unchanged_activity.position == 1
     end
   end
 
   describe "move_down/2" do
     setup %{group: group, project: project} do
-      {:ok, category2} =
+      {:ok, activity2} =
         create_activity(%{
-          name: "Category 1",
+          name: "Activity 1",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0001",
-          slug: "category-1"
+          slug: "activity-1"
         })
 
-      {:ok, category1} =
+      {:ok, activity1} =
         create_activity(%{
-          name: "Category 2",
+          name: "Activity 2",
           group_id: group.id,
           project_id: project.id,
           color_code: "#FF0002",
-          slug: "category-2"
+          slug: "activity-2"
         })
 
-      %{category1: category1, category2: category2}
+      %{activity1: activity1, activity2: activity2}
     end
 
-    test "tenant owner can move a category down in position", %{
-      category1: category1,
-      category2: category2,
+    test "tenant owner can move an activity down in position", %{
+      activity1: activity1,
+      activity2: activity2,
       owner: owner,
       tenant: tenant
     } do
-      assert {:ok, moved_category} =
+      assert {:ok, moved_activity} =
                Activity.move_down(activity2, actor: owner, tenant: tenant)
 
-      assert moved_category.position == 2
+      assert moved_activity.position == 2
 
       {:ok, updated_activity1} = Activity.by_id(activity1.id, actor: owner, tenant: tenant)
-      assert updated_category1.position == 1
+      assert updated_activity1.position == 1
     end
 
-    test "authorized user can move a category down in position", %{
+    test "authorized user can move an activity down in position", %{
       authorized_user: authorized_user,
-      category1: category1,
-      category2: category2,
+      activity1: activity1,
+      activity2: activity2,
       tenant: tenant
     } do
-      assert {:ok, moved_category} =
+      assert {:ok, moved_activity} =
                Activity.move_down(activity2, actor: authorized_user, tenant: tenant)
 
-      assert moved_category.position == 2
+      assert moved_activity.position == 2
 
-      {:ok, updated_category1} =
+      {:ok, updated_activity1} =
         Activity.by_id(activity1.id, actor: authorized_user, tenant: tenant)
 
-      assert updated_category1.position == 1
+      assert updated_activity1.position == 1
     end
 
-    test "unauthorized user cannot move a category down in position", %{
-      category2: category2,
+    test "unauthorized user cannot move an activity down in position", %{
+      activity2: activity2,
       tenant: tenant,
       user: user
     } do
@@ -553,15 +553,15 @@ defmodule Omedis.Accounts.ActivityTest do
                Activity.move_down(activity2, actor: user, tenant: tenant)
     end
 
-    test "does nothing when category is at bottom position", %{
-      category1: category1,
+    test "does nothing when activity is at bottom position", %{
+      activity1: activity1,
       owner: owner,
       tenant: tenant
     } do
-      assert {:ok, unchanged_category} =
+      assert {:ok, unchanged_activity} =
                Activity.move_down(activity1, actor: owner, tenant: tenant)
 
-      assert unchanged_category.position == 2
+      assert unchanged_activity.position == 2
     end
   end
 end

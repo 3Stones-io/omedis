@@ -4,7 +4,7 @@ defmodule Omedis.Accounts.Notifiers do
 
   @impl true
   def notify(%{resource: Omedis.Accounts.Activity, action: %{name: :update_position}}) do
-    Phoenix.PubSub.broadcast(Omedis.PubSub, "log_category_positions_updated", "updated_positions")
+    Phoenix.PubSub.broadcast(Omedis.PubSub, "activity_positions_updated", "updated_positions")
     :ok
   end
 

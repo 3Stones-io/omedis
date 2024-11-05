@@ -12,7 +12,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
 
       <.simple_form
         for={@form}
-        id="log_category-form"
+        id="activity-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
@@ -28,7 +28,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           field={@form[:slug]}
           type="text"
           label={Phoenix.HTML.raw("Slug <span class='text-red-600'>*</span>")}
-          id="log-category-slug"
+          id="activity-slug"
           phx-hook="SlugInput"
         />
 
@@ -41,7 +41,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
             disabled={true}
             value={@group.id}
           />
-          <input type="hidden" name="log_category[group_id]" value={@group.id} />
+          <input type="hidden" name="activity[group_id]" value={@group.id} />
         <% else %>
           <.input
             field={@form[:group_id]}
@@ -136,7 +136,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
             phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}
           >
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Save Log category") %>
+              <%= gettext("Save Activity") %>
             <% end) %>
           </.button>
         </:actions>
@@ -154,14 +154,14 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"log_category" => log_category_params}, socket) do
+  def handle_event("validate", %{"activity" => activity_params}, socket) do
     form =
-      AshPhoenix.Form.validate(socket.assigns.form, log_category_params)
+      AshPhoenix.Form.validate(socket.assigns.form, activity_params)
 
     {:noreply, assign(socket, form: form)}
   end
 
-  def handle_event("generate-slug", %{"log_category" => %{"name" => name}}, socket) do
+  def handle_event("generate-slug", %{"activity" => %{"name" => name}}, socket) do
     slug =
       name
       |> String.trim()
@@ -179,17 +179,17 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
      |> update(:is_custom_color, fn is_custom_color -> not is_custom_color end)}
   end
 
-  def handle_event("save", %{"log_category" => log_category_params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: log_category_params) do
-      {:ok, log_category} ->
-        notify_parent({:saved, log_category})
+  def handle_event("save", %{"activity" => activity_params}, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: activity_params) do
+      {:ok, activity} ->
+        notify_parent({:saved, activity})
 
         socket =
           socket
           |> put_flash(
             :info,
             with_locale(socket.assigns.language, fn ->
-              gettext("Log category saved successfully")
+              gettext("Activity saved successfully")
             end)
           )
           |> push_patch(to: socket.assigns.patch)
@@ -211,13 +211,13 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 
-  defp assign_form(%{assigns: %{log_category: log_category}} = socket) do
+  defp assign_form(%{assigns: %{activity: activity}} = socket) do
     form =
-      if log_category do
+      if activity do
         AshPhoenix.Form.for_update(
-          log_category,
+          activity,
           :update,
-          as: "log_category",
+          as: "activity",
           actor: socket.assigns.current_user,
           tenant: socket.assigns.tenant
         )
@@ -225,7 +225,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         AshPhoenix.Form.for_create(
           Activity,
           :create,
-          as: "log_category",
+          as: "activity",
           actor: socket.assigns.current_user,
           tenant: socket.assigns.tenant
         )
