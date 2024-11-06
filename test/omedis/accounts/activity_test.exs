@@ -12,7 +12,7 @@ defmodule Omedis.Accounts.ActivityTest do
     {:ok, project} = create_project(%{tenant_id: tenant.id})
     {:ok, authorized_user} = create_user()
 
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -34,7 +34,7 @@ defmodule Omedis.Accounts.ActivityTest do
 
     {:ok, user} = create_user()
     {:ok, group_2} = create_group()
-    {:ok, _} = create_group_user(%{group_id: group_2.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: group_2.id, user_id: user.id})
 
     {:ok, _} =
       create_access_right(%{

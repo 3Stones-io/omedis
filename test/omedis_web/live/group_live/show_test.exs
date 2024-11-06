@@ -9,7 +9,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
     {:ok, tenant} = create_tenant(%{owner_id: user.id})
     {:ok, group} = create_group(%{tenant_id: tenant.id})
 
-    create_group_user(%{group_id: group.id, user_id: user.id})
+    create_group_membership(%{group_id: group.id, user_id: user.id})
 
     create_access_right(%{
       group_id: group.id,
@@ -36,7 +36,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}")
 
       assert html =~ "Slug"
       assert html =~ group.name
@@ -49,7 +49,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, authorized_user} = create_user()
       {:ok, group} = create_group(%{name: "Test Group", tenant_id: tenant.id})
 
-      create_group_user(%{
+      create_group_membership(%{
         group_id: group.id,
         user_id: authorized_user.id
       })
@@ -73,7 +73,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}")
 
       assert html =~ "Test Group"
     end
@@ -84,7 +84,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
     } do
       {:ok, tenant} = create_tenant()
       {:ok, group} = create_group(%{tenant_id: tenant.id})
-      create_group_user(%{group_id: group.id, user_id: user.id})
+      create_group_membership(%{group_id: group.id, user_id: user.id})
 
       create_access_right(%{
         group_id: group.id,
@@ -97,7 +97,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}")
       end
     end
   end

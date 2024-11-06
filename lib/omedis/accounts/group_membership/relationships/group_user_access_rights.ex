@@ -1,6 +1,6 @@
-defmodule Omedis.Accounts.GroupUser.Relationships.GroupUserAccessRights do
+defmodule Omedis.Accounts.GroupMembership.Relationships.GroupMembershipAccessRights do
   @moduledoc """
-  A relationship that allows us to access the group user access rights for a group user.
+  A relationship that allows us to access the group membership access rights for a group membership.
   """
 
   use Ash.Resource.ManualRelationship
@@ -9,12 +9,12 @@ defmodule Omedis.Accounts.GroupUser.Relationships.GroupUserAccessRights do
   alias Omedis.Accounts.Relationships.ResourceAccessRights
 
   def load(resources, opts, context) do
-    ResourceAccessRights.load("GroupUser", resources, opts, context)
+    ResourceAccessRights.load("GroupMembership", resources, opts, context)
   end
 
   def ash_postgres_join(query, opts, current_binding, as_binding, type, destination_query) do
     ResourceAccessRights.ash_postgres_join(
-      "GroupUser",
+      "GroupMembership",
       query,
       opts,
       current_binding,
@@ -26,7 +26,7 @@ defmodule Omedis.Accounts.GroupUser.Relationships.GroupUserAccessRights do
 
   def ash_postgres_subquery(opts, current_binding, as_binding, destination_query) do
     ResourceAccessRights.ash_postgres_subquery(
-      "GroupUser",
+      "GroupMembership",
       opts,
       current_binding,
       as_binding,

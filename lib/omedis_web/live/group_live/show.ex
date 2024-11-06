@@ -17,8 +17,8 @@ defmodule OmedisWeb.GroupLive.Show do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
             {@group.name, "", true}
           ]}
           language={@language}
@@ -27,7 +27,7 @@ defmodule OmedisWeb.GroupLive.Show do
         <.header>
           <:actions>
             <.link
-              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities"}
+              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -44,7 +44,7 @@ defmodule OmedisWeb.GroupLive.Show do
           <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @group.slug %></:item>
         </.list>
 
-        <.back navigate={~p"/tenants/#{@tenant.slug}/groups"}>
+        <.back navigate={~p"/tenants/#{@tenant}/groups"}>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Back to groups") %>
           <% end) %>
@@ -54,7 +54,7 @@ defmodule OmedisWeb.GroupLive.Show do
           :if={@live_action == :edit}
           id="group-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}")}
+          on_cancel={JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}")}
         >
           <.live_component
             module={OmedisWeb.GroupLive.FormComponent}
@@ -64,7 +64,7 @@ defmodule OmedisWeb.GroupLive.Show do
             tenant={@tenant}
             language={@language}
             group={@group}
-            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"}
+            patch={~p"/tenants/#{@tenant}/groups/#{@group}"}
           />
         </.modal>
       </div>
