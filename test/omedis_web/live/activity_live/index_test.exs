@@ -290,7 +290,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
              |> element("#move-up-#{second.id}")
              |> render_click()
 
-      :timer.sleep(1000)
+      :timer.sleep(100)
 
       # Verify positions after moving up
       assert Ash.get!(Activity, second.id, authorize?: false).position == 1
@@ -354,7 +354,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       |> element("#move-up-#{second.id}")
       |> render_click()
 
-      :timer.sleep(1000)
+      :timer.sleep(100)
 
       # Verify positions after moving up
       assert Ash.get!(Activity, second.id, authorize?: false).position == 1
