@@ -10,7 +10,7 @@ defmodule OmedisWeb.TenantLive.ShowTest do
   setup %{user: user} do
     {:ok, tenant} = create_tenant(%{name: "Test Tenant", slug: "test-tenant"})
     {:ok, group} = create_group()
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
     {:ok, tenant: tenant, group: group}
   end

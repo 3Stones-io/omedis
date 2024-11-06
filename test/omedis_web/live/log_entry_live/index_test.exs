@@ -11,7 +11,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
     {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -125,7 +125,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
     test "unauthorized user cannot see log entries", %{conn: conn, user: user} do
       {:ok, tenant} = create_tenant()
       {:ok, group} = create_group(%{tenant_id: tenant.id})
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
       {:ok, project} = create_project(%{tenant_id: tenant.id})
 
       {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})

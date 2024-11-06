@@ -17,7 +17,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
 
     {:ok, user} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
 
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -356,7 +356,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       user: unauthorized_user
     } do
       {:ok, group2} = create_group(%{tenant_id: tenant.id})
-      {:ok, _} = create_group_user(%{group_id: group2.id, user_id: unauthorized_user.id})
+      {:ok, _} = create_group_membership(%{group_id: group2.id, user_id: unauthorized_user.id})
 
       {:ok, _} =
         create_access_right(%{

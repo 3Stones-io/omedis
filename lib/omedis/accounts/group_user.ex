@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.GroupUser do
+defmodule Omedis.Accounts.GroupMembership do
   @moduledoc """
   Represents a user in a group.
   """
@@ -10,7 +10,7 @@ defmodule Omedis.Accounts.GroupUser do
 
   alias Omedis.Accounts.CanAccessResource
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupUserAccessFilter
+  alias Omedis.Accounts.GroupMembershipAccessFilter
   alias Omedis.Accounts.User
 
   postgres do
@@ -32,7 +32,7 @@ defmodule Omedis.Accounts.GroupUser do
     belongs_to :user, User, primary_key?: true, allow_nil?: false
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.GroupUser.Relationships.GroupUserAccessRights
+      manual Omedis.Accounts.GroupMembership.Relationships.GroupMembershipAccessRights
     end
   end
 
@@ -54,7 +54,7 @@ defmodule Omedis.Accounts.GroupUser do
 
   policies do
     policy action_type(:read) do
-      authorize_if GroupUserAccessFilter
+      authorize_if GroupMembershipAccessFilter
     end
 
     policy action_type([:create, :destroy]) do

@@ -10,7 +10,7 @@ defmodule Omedis.Accounts.Group do
     domain: Omedis.Accounts,
     authorizers: [Ash.Policy.Authorizer]
 
-  alias Omedis.Accounts.GroupUser
+  alias Omedis.Accounts.GroupMembership
   alias Omedis.Accounts.User
 
   postgres do
@@ -128,10 +128,10 @@ defmodule Omedis.Accounts.Group do
     end
 
     many_to_many :members, User do
-      through GroupUser
+      through GroupMembership
     end
 
-    has_many :group_memberships, GroupUser
+    has_many :group_memberships, GroupMembership
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
       manual Omedis.Accounts.Group.Relationships.GroupAccessRights
