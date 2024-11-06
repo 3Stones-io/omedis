@@ -1,7 +1,7 @@
-defmodule OmedisWeb.LogCategoryLive.Show do
+defmodule OmedisWeb.ActivityLive.Show do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
 
@@ -22,40 +22,37 @@ defmodule OmedisWeb.LogCategoryLive.Show do
             {@tenant.name, ~p"/tenants/#{@tenant}", false},
             {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
             {@group.name, ~p"/tenants/#{@tenant}/groups/#{@group}", false},
-            {gettext("Log Categories"), ~p"/tenants/#{@tenant}/groups/#{@group}/log_categories",
-             false},
-            {@log_category.name, "", true}
+            {gettext("Activities"), ~p"/tenants/#{@tenant}/groups/#{@group}/activities", false},
+            {@activity.name, "", true}
           ]}
           language={@language}
         />
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Log category") %>
+            <%= gettext("Activity") %>
           <% end) %>
 
           <:subtitle>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("This is a log_category record from your database.") %>
+              <%= gettext("This is a activity record from your database.") %>
             <% end) %>
           </:subtitle>
 
           <:actions>
             <.link
-              patch={
-                ~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{@log_category}/show/edit"
-              }
+              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{@activity}/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Edit log_category") %>
+                  <%= gettext("Edit activity") %>
                 <% end) %>
               </.button>
             </.link>
 
             <.link
-              navigate={~p"/tenants/#{@tenant}/log_categories/#{@log_category}/log_entries"}
+              navigate={~p"/tenants/#{@tenant}/activities/#{@activity}/log_entries"}
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -69,34 +66,32 @@ defmodule OmedisWeb.LogCategoryLive.Show do
 
         <.list>
           <:item title={with_locale(@language, fn -> gettext("Name") end)}>
-            <%= @log_category.name %>
+            <%= @activity.name %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Color code") end)}>
-            <%= @log_category.color_code %>
+            <%= @activity.color_code %>
           </:item>
           <:item title={with_locale(@language, fn -> gettext("Position") end)}>
-            <%= @log_category.position %>
+            <%= @activity.position %>
           </:item>
         </.list>
 
-        <.back navigate={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories"}>
+        <.back navigate={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Back to log categories") %>
+            <%= gettext("Back to activities") %>
           <% end) %>
         </.back>
 
         <.modal
           :if={@live_action == :edit}
-          id="log_category-modal"
+          id="activity-modal"
           show
-          on_cancel={
-            JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{@log_category}")
-          }
+          on_cancel={JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{@activity}")}
         >
           <.live_component
-            module={OmedisWeb.LogCategoryLive.FormComponent}
-            id={@log_category.id}
+            module={OmedisWeb.ActivityLive.FormComponent}
+            id={@activity.id}
             current_user={@current_user}
             projects={@projects}
             title={@page_title}
@@ -109,8 +104,8 @@ defmodule OmedisWeb.LogCategoryLive.Show do
             group={@group}
             next_position={@next_position}
             language={@language}
-            log_category={@log_category}
-            patch={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{@log_category}"}
+            activity={@activity}
+            patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{@activity}"}
           />
         </.modal>
       </div>
@@ -130,8 +125,8 @@ defmodule OmedisWeb.LogCategoryLive.Show do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
     groups = Ash.read!(Group, actor: socket.assigns.current_user, tenant: tenant)
-    log_category = LogCategory.by_id!(id, actor: socket.assigns.current_user, tenant: tenant)
-    next_position = log_category.position
+    activity = Activity.by_id!(id, actor: socket.assigns.current_user, tenant: tenant)
+    next_position = activity.position
 
     projects =
       Project.by_tenant_id!(%{tenant_id: tenant.id},
@@ -142,37 +137,36 @@ defmodule OmedisWeb.LogCategoryLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:log_category, log_category)
+     |> assign(:activity, activity)
      |> assign(:tenants, Ash.read!(Tenant, actor: socket.assigns.current_user))
      |> assign(:projects, projects)
      |> assign(:group, group)
      |> assign(:groups, groups)
      |> assign(:tenant, tenant)
      |> assign(:is_custom_color, true)
-     |> assign(:color_code, log_category.color_code)
+     |> assign(:color_code, activity.color_code)
      |> assign(:next_position, next_position)
      |> apply_action(socket.assigns.live_action)}
   end
 
   defp page_title(:show, language),
-    do: with_locale(language, fn -> gettext("Show Log category") end)
+    do: with_locale(language, fn -> gettext("Show Activity") end)
 
   defp page_title(:edit, language),
-    do: with_locale(language, fn -> gettext("Edit Log category") end)
+    do: with_locale(language, fn -> gettext("Edit Activity") end)
 
   defp apply_action(socket, :edit) do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
-    log_category = socket.assigns.log_category
+    activity = socket.assigns.activity
 
-    if Ash.can?({log_category, :update}, actor, tenant: tenant) do
+    if Ash.can?({activity, :update}, actor, tenant: tenant) do
       assign(socket, :page_title, page_title(:edit, socket.assigns.language))
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
       |> push_navigate(
-        to:
-          ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/log_categories/#{log_category.id}"
+        to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/activities/#{activity.id}"
       )
     end
   end

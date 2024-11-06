@@ -27,12 +27,12 @@ defmodule OmedisWeb.GroupLive.Show do
         <.header>
           <:actions>
             <.link
-              patch={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories"}
+              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
               phx-click={JS.push_focus()}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Log categories") %>
+                  <%= gettext("Activities") %>
                 <% end) %>
               </.button>
             </.link>
