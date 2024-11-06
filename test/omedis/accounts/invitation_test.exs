@@ -29,7 +29,7 @@ defmodule Omedis.Accounts.InvitationTest do
       resource_name: "Tenant",
       tenant_id: tenant.id,
       write: true,
-      create: true,
+      create: true
     })
 
     create_access_right(%{
