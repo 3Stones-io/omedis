@@ -207,9 +207,9 @@ defmodule OmedisWeb.RegisterLive do
                       type="select"
                       id="select_organisation"
                       field={f[:current_organisation_id]}
-                      label={with_locale(@language, fn -> gettext("Select a Organisation") end)}
+                      label={with_locale(@language, fn -> gettext("Select an Organisation") end)}
                       options={Enum.map(@organisations, &{&1.name, &1.id})}
-                      prompt={with_locale(@language, fn -> gettext("Select a Organisation") end)}
+                      prompt={with_locale(@language, fn -> gettext("Select an Organisation") end)}
                       required
                     />
                   </div>
