@@ -17,8 +17,8 @@ defmodule OmedisWeb.ProjectLive.Show do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Projects"), ~p"/tenants/#{@tenant.slug}/projects", false},
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Projects"), ~p"/tenants/#{@tenant}/projects", false},
             {@project.name, "", true}
           ]}
           language={@language}
@@ -36,7 +36,7 @@ defmodule OmedisWeb.ProjectLive.Show do
 
           <:actions>
             <.link
-              patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}/show/edit"}
+              patch={~p"/tenants/#{@tenant}/projects/#{@project}/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @tenant)}>
@@ -58,7 +58,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/tenants/#{@tenant.slug}/projects"}>
+        <.back navigate={~p"/tenants/#{@tenant}/projects"}>
           <%= with_locale(@language, fn -> gettext("Back to projects") end) %>
         </.back>
 
@@ -68,7 +68,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           }
           id="project-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/projects/#{@project}")}
+          on_cancel={JS.patch(~p"/tenants/#{@tenant}/projects/#{@project}")}
         >
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
@@ -81,7 +81,7 @@ defmodule OmedisWeb.ProjectLive.Show do
             action={@live_action}
             language={@language}
             project={@project}
-            patch={~p"/tenants/#{@tenant.slug}/projects/#{@project}"}
+            patch={~p"/tenants/#{@tenant}/projects/#{@project}"}
           />
         </.modal>
       </div>
@@ -123,7 +123,7 @@ defmodule OmedisWeb.ProjectLive.Show do
       socket
     else
       socket
-      |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects/#{socket.assigns.project.id}")
+      |> push_patch(to: ~p"/tenants/#{tenant}/projects/#{socket.assigns.project.id}")
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->

@@ -20,9 +20,9 @@ defmodule OmedisWeb.TenantLive.Today do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
-            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
+            {@group.name, ~p"/tenants/#{@tenant}/groups/#{@group}", false},
             {gettext("Today"), "", true}
           ]}
           language={@language}
@@ -113,7 +113,7 @@ defmodule OmedisWeb.TenantLive.Today do
     {:noreply,
      socket
      |> push_navigate(
-       to: "/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}"
+       to: "/tenants/#{tenant}/today?group_id=#{group.id}&project_id=#{project.id}"
      )}
   end
 
@@ -347,7 +347,7 @@ defmodule OmedisWeb.TenantLive.Today do
      socket
      |> push_navigate(
        to:
-         "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{id}&project_id=#{socket.assigns.project.id}"
+         "/tenants/#{socket.assigns.tenant}/today?group_id=#{id}&project_id=#{socket.assigns.project.id}"
      )}
   end
 
@@ -356,7 +356,7 @@ defmodule OmedisWeb.TenantLive.Today do
      socket
      |> push_navigate(
        to:
-         "/tenants/#{socket.assigns.tenant.slug}/today?group_id=#{socket.assigns.group.id}&project_id=#{id}"
+         "/tenants/#{socket.assigns.tenant}/today?group_id=#{socket.assigns.group.id}&project_id=#{id}"
      )}
   end
 

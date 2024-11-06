@@ -16,8 +16,8 @@ defmodule OmedisWeb.TenantLive.IndexTest do
       {:ok, group_2} = create_group()
 
       # Associate users with groups
-      {:ok, _} = create_group_user(%{group_id: group_1.id, user_id: user_1.id})
-      {:ok, _} = create_group_user(%{group_id: group_2.id, user_id: user_2.id})
+      {:ok, _} = create_group_membership(%{group_id: group_1.id, user_id: user_1.id})
+      {:ok, _} = create_group_membership(%{group_id: group_2.id, user_id: user_2.id})
 
       # Create tenants (15 for user_1, 5 for user_2)
       tenants =
@@ -214,7 +214,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
     setup %{user: user} do
       {:ok, tenant} = create_tenant(%{name: "Test Tenant", slug: "test-tenant"})
       {:ok, group} = create_group()
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
       {:ok, tenant: tenant, group: group}
     end
@@ -231,7 +231,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
         })
 
       assert {:error, {:live_redirect, %{to: path, flash: flash}}} =
-               live(conn, ~p"/tenants/#{tenant.slug}/edit")
+               live(conn, ~p"/tenants/#{tenant}/edit")
 
       assert path == ~p"/tenants"
       assert flash["error"] == "You are not authorized to access this page"
@@ -240,7 +240,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
     test "edits the tenant when user has access", %{conn: conn, user: user} do
       {:ok, tenant} = create_tenant(%{owner_id: user.id})
 
-      {:ok, show_live, _html} = live(conn, ~p"/tenants/#{tenant.slug}/edit")
+      {:ok, show_live, _html} = live(conn, ~p"/tenants/#{tenant}/edit")
 
       assert show_live
              |> form("#tenant-form", tenant: %{street: ""})

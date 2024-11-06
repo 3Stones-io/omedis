@@ -11,7 +11,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
     {:ok, activity} = create_activity(%{group_id: group.id, project_id: project.id})
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -84,7 +84,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/activities/#{activity.id}/log_entries")
+        |> live(~p"/tenants/#{tenant}/activities/#{activity.id}/log_entries")
 
       assert html =~ "User&#39;s log entry"
       assert html =~ "Owner&#39;s log entry"
@@ -116,7 +116,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/activities/#{activity.id}/log_entries")
+        |> live(~p"/tenants/#{tenant}/activities/#{activity.id}/log_entries")
 
       assert html =~ "Test comment 1"
       assert html =~ "Test comment 2"
@@ -125,7 +125,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
     test "unauthorized user cannot see log entries", %{conn: conn, user: user} do
       {:ok, tenant} = create_tenant()
       {:ok, group} = create_group(%{tenant_id: tenant.id})
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
       {:ok, project} = create_project(%{tenant_id: tenant.id})
 
       {:ok, activity} = create_activity(%{group_id: group.id, project_id: project.id})
@@ -157,7 +157,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/activities/#{activity.id}/log_entries")
+        |> live(~p"/tenants/#{tenant}/activities/#{activity.id}/log_entries")
 
       refute html =~ "Test comment"
     end

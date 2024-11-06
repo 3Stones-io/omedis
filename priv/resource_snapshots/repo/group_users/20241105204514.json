@@ -29,7 +29,7 @@
           "strategy": null
         },
         "name": "group_users_group_id_fkey",
-        "on_delete": null,
+        "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
@@ -58,7 +58,7 @@
           "strategy": null
         },
         "name": "group_users_user_id_fkey",
-        "on_delete": null,
+        "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
@@ -74,7 +74,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "9C3D6A4B5F804CACDBC23CEDD9682EA2D92EDAD71DF3D0AF0166DC7740A61416",
+  "hash": "4C1BA6E9D99A7979BE3176481B6209384570C31A3BE5609C5FFB8112CD38D084",
   "identities": [
     {
       "all_tenants?": false,

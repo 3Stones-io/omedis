@@ -23,9 +23,9 @@ defmodule OmedisWeb.ActivityLive.Index do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
-            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
+            {@group.name, ~p"/tenants/#{@tenant}/groups/#{@group}", false},
             {gettext("Activities"), "", true}
           ]}
           language={@language}
@@ -39,7 +39,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           <:actions>
             <.link
               :if={Ash.can?({Activity, :create}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/new"}
+              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities/new"}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
@@ -55,7 +55,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           rows={@streams.activities}
           row_click={
             fn {_id, activity} ->
-              JS.navigate(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{activity}")
+              JS.navigate(~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}")
             end
           }
         >
@@ -103,9 +103,7 @@ defmodule OmedisWeb.ActivityLive.Index do
 
           <:action :let={{_id, activity}}>
             <div class="sr-only">
-              <.link navigate={
-                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{activity}"
-              }>
+              <.link navigate={~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}"}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Show") %>
                 <% end) %>
@@ -114,7 +112,7 @@ defmodule OmedisWeb.ActivityLive.Index do
 
             <.link
               :if={Ash.can?({activity, :update}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities/#{activity}/edit"}
+              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}/edit"}
             >
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
@@ -127,7 +125,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           :if={@live_action in [:new, :edit]}
           id="activity-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities")}
+          on_cancel={JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}/activities")}
         >
           <.live_component
             module={OmedisWeb.ActivityLive.FormComponent}
@@ -142,13 +140,13 @@ defmodule OmedisWeb.ActivityLive.Index do
             language={@language}
             action={@live_action}
             activity={@activity}
-            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities"}
+            patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/activities"}
+          resource_path={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
           total_pages={@total_pages}
         />
       </div>
@@ -221,9 +219,7 @@ defmodule OmedisWeb.ActivityLive.Index do
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(
-        to: ~p"/tenants/#{tenant.slug}/groups/#{socket.assigns.group.slug}/activities"
-      )
+      |> push_navigate(to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/activities")
     end
   end
 
@@ -241,9 +237,7 @@ defmodule OmedisWeb.ActivityLive.Index do
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(
-        to: ~p"/tenants/#{tenant.slug}/groups/#{socket.assigns.group.slug}/activities"
-      )
+      |> push_navigate(to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/activities")
     end
   end
 

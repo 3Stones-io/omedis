@@ -28,7 +28,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "group_users_group_id_fkey",
+        "name": "group_memberships_group_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
@@ -57,7 +57,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "group_users_user_id_fkey",
+        "name": "group_memberships_user_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
@@ -74,8 +74,27 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "3942101235751C543D2863C2E4200D0A533C702972CE7A1EC0940CC488C235F4",
-  "identities": [],
+  "hash": "7D189113A0B065DBCA5CB527313A3521A36B9BE5A60F9B3B81BACBC9E8046D0A",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "group_memberships_unique_group_membership_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "group_id"
+        },
+        {
+          "type": "atom",
+          "value": "user_id"
+        }
+      ],
+      "name": "unique_group_membership",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -83,5 +102,5 @@
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,
-  "table": "group_users"
+  "table": "group_memberships"
 }

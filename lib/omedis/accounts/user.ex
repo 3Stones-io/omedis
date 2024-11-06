@@ -9,7 +9,7 @@ defmodule Omedis.Accounts.User do
     domain: Omedis.Accounts
 
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupUser
+  alias Omedis.Accounts.GroupMembership
   alias Omedis.Accounts.Tenant
   alias Omedis.Validations
 
@@ -93,7 +93,7 @@ defmodule Omedis.Accounts.User do
 
   relationships do
     many_to_many :groups, Group do
-      through GroupUser
+      through GroupMembership
     end
   end
 

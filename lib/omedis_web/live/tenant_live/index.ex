@@ -43,7 +43,7 @@ defmodule OmedisWeb.TenantLive.Index do
           <.table
             id="tenants"
             rows={@streams.tenants}
-            row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant.slug}") end}
+            row_click={fn {_id, tenant} -> JS.navigate(~p"/tenants/#{tenant}") end}
           >
             <:col :let={{_id, tenant}} label={with_locale(@language, fn -> gettext("Name") end)}>
               <%= tenant.name %>
@@ -78,13 +78,13 @@ defmodule OmedisWeb.TenantLive.Index do
             </:col>
             <:action :let={{_id, tenant}}>
               <div class="sr-only">
-                <.link navigate={~p"/tenants/#{tenant.slug}"}>
+                <.link navigate={~p"/tenants/#{tenant}"}>
                   <%= with_locale(@language, fn -> %>
                     <%= gettext("Show") %>
                   <% end) %>
                 </.link>
               </div>
-              <.link patch={~p"/tenants/#{tenant.slug}/edit"}>
+              <.link patch={~p"/tenants/#{tenant}/edit"}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Edit") %>
                 <% end) %>

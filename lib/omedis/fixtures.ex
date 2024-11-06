@@ -13,8 +13,8 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.Group, attrs)
   end
 
-  def create_group_user(attrs \\ %{}) do
-    fixture(Accounts.GroupUser, attrs)
+  def create_group_membership(attrs \\ %{}) do
+    fixture(Accounts.GroupMembership, attrs)
   end
 
   def create_activity(attrs \\ %{}) do
@@ -64,7 +64,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.GroupUser) do
+  def attrs_for(Accounts.GroupMembership) do
     %{
       group_id: fn -> create_group().id end,
       user_id: fn -> create_user().id end
