@@ -10,7 +10,15 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 # Seed data
 
-If you want to seed the database with demo data, run `mix seed.demo`.
+If you want to seed the database with demo data, run `mix seed.demo`. Those demo seeds include the following test accounts:
+
+```elixir
+%{email: "user@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")},
+%{email: "user2@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")},
+%{email: "user3@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")}
+```
+
+You can then log in with any of the above email addresses, with the password: **password**.
 
 You can safely run it as many times as you want without duplicating the data.
 
