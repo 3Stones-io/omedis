@@ -104,7 +104,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories")
 
       assert html =~ "Test Category"
     end
@@ -126,7 +126,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories")
 
       assert html =~ "Test Category"
     end
@@ -148,7 +148,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories")
 
       refute html =~ "Test Category"
       refute html =~ "New Log Category"
@@ -166,7 +166,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories/new")
 
       assert html =~ "New Log Category"
 
@@ -181,7 +181,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
                )
                |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+      assert_patch(view, ~p"/tenants/#{tenant}/groups/#{group}/log_categories")
 
       assert html =~ "Log category saved successfully"
       assert html =~ "New Category"
@@ -197,7 +197,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories/new")
 
       assert html =~ "New Log Category"
 
@@ -212,7 +212,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
                )
                |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+      assert_patch(view, ~p"/tenants/#{tenant}/groups/#{group}/log_categories")
 
       assert html =~ "Log category saved successfully"
       assert html =~ "New Category"
@@ -227,9 +227,9 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:error, {:live_redirect, %{flash: flash, to: to}}} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories/new")
 
-      assert to == ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories"
+      assert to == ~p"/tenants/#{tenant}/groups/#{group}/log_categories"
       assert flash["error"] == "You are not authorized to access this page"
     end
 
@@ -242,7 +242,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/new")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories/new")
 
       html =
         view
@@ -279,7 +279,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories")
 
       # Verify position controls are rendered
       assert html =~ "move-up-#{second.id}"
@@ -315,7 +315,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories")
 
       refute html =~ "move-up-#{log_category.id}"
       refute html =~ "move-down-#{log_category.id}"
@@ -347,7 +347,7 @@ defmodule OmedisWeb.LogCategoryLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories")
 
       # Test moving up
       view

@@ -231,7 +231,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
         })
 
       assert {:error, {:live_redirect, %{to: path, flash: flash}}} =
-               live(conn, ~p"/tenants/#{tenant.slug}/edit")
+               live(conn, ~p"/tenants/#{tenant}/edit")
 
       assert path == ~p"/tenants"
       assert flash["error"] == "You are not authorized to access this page"
@@ -240,7 +240,7 @@ defmodule OmedisWeb.TenantLive.IndexTest do
     test "edits the tenant when user has access", %{conn: conn, user: user} do
       {:ok, tenant} = create_tenant(%{owner_id: user.id})
 
-      {:ok, show_live, _html} = live(conn, ~p"/tenants/#{tenant.slug}/edit")
+      {:ok, show_live, _html} = live(conn, ~p"/tenants/#{tenant}/edit")
 
       assert show_live
              |> form("#tenant-form", tenant: %{street: ""})

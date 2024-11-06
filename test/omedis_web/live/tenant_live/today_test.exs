@@ -85,7 +85,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(~p"/tenants/#{tenant}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       assert lv
              |> element("#log-category-#{log_category.id}")
@@ -123,7 +123,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(~p"/tenants/#{tenant}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       # Create a log entry
       assert lv
@@ -172,7 +172,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(~p"/tenants/#{tenant}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       # Start log entry for the first category
       assert lv
@@ -226,7 +226,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(~p"/tenants/#{tenant}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       assert lv
              |> element("#log-category-#{log_category.id}")
@@ -264,7 +264,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(~p"/tenants/#{tenant}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       # Create a log entry
       assert lv
@@ -313,7 +313,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(~p"/tenants/#{tenant}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       # Start log entry for the first category
       assert lv
@@ -393,7 +393,7 @@ defmodule OmedisWeb.TenantLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/today?group_id=#{group.id}&project_id=#{project.id}")
+        |> live(~p"/tenants/#{tenant}/today?group_id=#{group.id}&project_id=#{project.id}")
 
       refute lv
              |> element("#log-category-#{log_category.id}")

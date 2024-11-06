@@ -13,6 +13,8 @@ defmodule Omedis.Accounts.Group do
   alias Omedis.Accounts.GroupUser
   alias Omedis.Accounts.User
 
+  @derive {Phoenix.Param, key: :slug}
+
   postgres do
     table "groups"
     repo Omedis.Repo

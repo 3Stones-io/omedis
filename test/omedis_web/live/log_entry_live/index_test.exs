@@ -84,7 +84,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/log_categories/#{log_category.id}/log_entries")
+        |> live(~p"/tenants/#{tenant}/log_categories/#{log_category.id}/log_entries")
 
       assert html =~ "User&#39;s log entry"
       assert html =~ "Owner&#39;s log entry"
@@ -116,7 +116,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/log_categories/#{log_category.id}/log_entries")
+        |> live(~p"/tenants/#{tenant}/log_categories/#{log_category.id}/log_entries")
 
       assert html =~ "Test comment 1"
       assert html =~ "Test comment 2"
@@ -157,7 +157,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/log_categories/#{log_category.id}/log_entries")
+        |> live(~p"/tenants/#{tenant}/log_categories/#{log_category.id}/log_entries")
 
       refute html =~ "Test comment"
     end
