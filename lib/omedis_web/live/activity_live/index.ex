@@ -1,7 +1,7 @@
-defmodule OmedisWeb.LogCategoryLive.Index do
+defmodule OmedisWeb.ActivityLive.Index do
   use OmedisWeb, :live_view
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.LogCategory
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
   alias OmedisWeb.PaginationComponent
@@ -26,24 +26,24 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             {@tenant.name, ~p"/tenants/#{@tenant}", false},
             {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
             {@group.name, ~p"/tenants/#{@tenant}/groups/#{@group}", false},
-            {gettext("Log Categories"), "", true}
+            {gettext("Activities"), "", true}
           ]}
           language={@language}
         />
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Listing Log categories") %>
+            <%= gettext("Listing Activities") %>
           <% end) %>
 
           <:actions>
             <.link
-              :if={Ash.can?({LogCategory, :create}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/new"}
+              :if={Ash.can?({Activity, :create}, @current_user, tenant: @tenant)}
+              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities/new"}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("New Log category") %>
+                  <%= gettext("New Activity") %>
                 <% end) %>
               </.button>
             </.link>
@@ -51,44 +51,41 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         </.header>
 
         <.table
-          id="log-categories"
-          rows={@streams.log_categories}
+          id="activities"
+          rows={@streams.activities}
           row_click={
-            fn {_id, log_category} ->
-              JS.navigate(~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{log_category}")
+            fn {_id, activity} ->
+              JS.navigate(~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}")
             end
           }
         >
-          <:col :let={{_id, log_category}} label={with_locale(@language, fn -> gettext("Name") end)}>
-            <.custom_color_button color={log_category.color_code}>
-              <%= log_category.name %>
+          <:col :let={{_id, activity}} label={with_locale(@language, fn -> gettext("Name") end)}>
+            <.custom_color_button color={activity.color_code}>
+              <%= activity.name %>
             </.custom_color_button>
           </:col>
 
-          <:col
-            :let={{_id, log_category}}
-            label={with_locale(@language, fn -> gettext("Position") end)}
-          >
+          <:col :let={{_id, activity}} label={with_locale(@language, fn -> gettext("Position") end)}>
             <div
-              :if={Ash.can?({log_category, :update}, @current_user, tenant: @tenant)}
+              :if={Ash.can?({activity, :update}, @current_user, tenant: @tenant)}
               class="position flex items-center"
             >
               <span class="inline-flex flex-col">
                 <button
                   type="button"
                   class="position-up"
-                  id={"move-up-#{log_category.id}"}
+                  id={"move-up-#{activity.id}"}
                   phx-click="move-up"
-                  phx-value-log-category-id={log_category.id}
+                  phx-value-activity-id={activity.id}
                 >
                   <.icon name="hero-arrow-up-circle-solid" class="h-5 w-5 arrow" />
                 </button>
                 <button
                   type="button"
                   class="position-down"
-                  id={"move-down-#{log_category.id}"}
+                  id={"move-down-#{activity.id}"}
                   phx-click="move-down"
-                  phx-value-log-category-id={log_category.id}
+                  phx-value-activity-id={activity.id}
                 >
                   <.icon name="hero-arrow-down-circle-solid" class="h-5 w-5 arrow" />
                 </button>
@@ -96,19 +93,17 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             </div>
           </:col>
 
-          <:col :let={{_id, log_category}}>
-            <%= if log_category.is_default do %>
+          <:col :let={{_id, activity}}>
+            <%= if activity.is_default do %>
               <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                 <%= with_locale(@language, fn -> gettext("Default") end) %>
               </span>
             <% end %>
           </:col>
 
-          <:action :let={{_id, log_category}}>
+          <:action :let={{_id, activity}}>
             <div class="sr-only">
-              <.link navigate={
-                ~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{log_category}"
-              }>
+              <.link navigate={~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}"}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Show") %>
                 <% end) %>
@@ -116,8 +111,8 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             </div>
 
             <.link
-              :if={Ash.can?({log_category, :update}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{log_category}/edit"}
+              :if={Ash.can?({activity, :update}, @current_user, tenant: @tenant)}
+              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}/edit"}
             >
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
@@ -128,13 +123,13 @@ defmodule OmedisWeb.LogCategoryLive.Index do
 
         <.modal
           :if={@live_action in [:new, :edit]}
-          id="log_category-modal"
+          id="activity-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}/log_categories")}
+          on_cancel={JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}/activities")}
         >
           <.live_component
-            module={OmedisWeb.LogCategoryLive.FormComponent}
-            id={(@log_category && @log_category.id) || :new}
+            module={OmedisWeb.ActivityLive.FormComponent}
+            id={(@activity && @activity.id) || :new}
             current_user={@current_user}
             title={@page_title}
             groups={@groups}
@@ -144,14 +139,14 @@ defmodule OmedisWeb.LogCategoryLive.Index do
             is_custom_color={@is_custom_color}
             language={@language}
             action={@live_action}
-            log_category={@log_category}
-            patch={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories"}
+            activity={@activity}
+            patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories"}
+          resource_path={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
           total_pages={@total_pages}
         />
       </div>
@@ -165,7 +160,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
         socket
       ) do
     if connected?(socket),
-      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
+      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "activity_positions_updated")
 
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
     group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
@@ -184,13 +179,13 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      )
      |> assign(:group, group)
      |> assign(:is_custom_color, false)
-     |> stream(:log_categories, [])}
+     |> stream(:activities, [])}
   end
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     if connected?(socket),
-      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "log_category_positions_updated")
+      do: Phoenix.PubSub.subscribe(Omedis.PubSub, "activity_positions_updated")
 
     {:ok,
      socket
@@ -199,7 +194,7 @@ defmodule OmedisWeb.LogCategoryLive.Index do
      |> assign(:total_pages, 0)
      |> assign(:tenants, Ash.read!(Tenant, actor: socket.assigns.current_user))
      |> assign(:tenant, nil)
-     |> stream(:log_categories, [])}
+     |> stream(:activities, [])}
   end
 
   @impl true
@@ -212,19 +207,19 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
-    log_category = LogCategory.by_id!(id, actor: actor, tenant: tenant)
+    activity = Activity.by_id!(id, actor: actor, tenant: tenant)
 
-    if Ash.can?({log_category, :update}, actor, tenant: tenant) do
+    if Ash.can?({activity, :update}, actor, tenant: tenant) do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("Edit Log Category") end)
+        with_locale(socket.assigns.language, fn -> gettext("Edit Activity") end)
       )
-      |> assign(:log_category, log_category)
+      |> assign(:activity, activity)
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/log_categories")
+      |> push_navigate(to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/activities")
     end
   end
 
@@ -232,17 +227,17 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     actor = socket.assigns.current_user
     tenant = socket.assigns.tenant
 
-    if Ash.can?({LogCategory, :create}, actor, tenant: tenant) do
+    if Ash.can?({Activity, :create}, actor, tenant: tenant) do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("New Log Category") end)
+        with_locale(socket.assigns.language, fn -> gettext("New Activity") end)
       )
-      |> assign(:log_category, nil)
+      |> assign(:activity, nil)
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/log_categories")
+      |> push_navigate(to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/activities")
     end
   end
 
@@ -250,16 +245,16 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Listing Log categories") end)
+      with_locale(socket.assigns.language, fn -> gettext("Listing Activities") end)
     )
-    |> assign(:log_category, nil)
+    |> assign(:activity, nil)
     |> assign(:params, params)
-    |> list_paginated_log_categories(params)
+    |> list_paginated_activities(params)
   end
 
-  defp list_paginated_log_categories(socket, params) do
-    PaginationUtils.list_paginated(socket, params, :log_categories, fn offset ->
-      LogCategory.list_paginated(
+  defp list_paginated_activities(socket, params) do
+    PaginationUtils.list_paginated(socket, params, :activities, fn offset ->
+      Activity.list_paginated(
         %{group_id: socket.assigns.group.id},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
@@ -269,23 +264,23 @@ defmodule OmedisWeb.LogCategoryLive.Index do
   end
 
   @impl true
-  def handle_info({OmedisWeb.LogCategoryLive.FormComponent, {:saved, log_category}}, socket) do
-    {:noreply, stream_insert(socket, :log_categories, log_category)}
+  def handle_info({OmedisWeb.ActivityLive.FormComponent, {:saved, activity}}, socket) do
+    {:noreply, stream_insert(socket, :activities, activity)}
   end
 
   @impl true
   def handle_info("updated_positions", socket) do
-    {:noreply, list_paginated_log_categories(socket, Map.get(socket.assigns, :params, %{}))}
+    {:noreply, list_paginated_activities(socket, Map.get(socket.assigns, :params, %{}))}
   end
 
   @impl true
-  def handle_event("move-up", %{"log-category-id" => log_category_id}, socket) do
-    case Ash.get(LogCategory, log_category_id,
+  def handle_event("move-up", %{"activity-id" => activity_id}, socket) do
+    case Ash.get(Activity, activity_id,
            actor: socket.assigns.current_user,
            tenant: socket.assigns.tenant
          ) do
-      {:ok, log_category} ->
-        LogCategory.move_up(log_category,
+      {:ok, activity} ->
+        Activity.move_up(activity,
           actor: socket.assigns.current_user,
           tenant: socket.assigns.tenant
         )
@@ -297,13 +292,13 @@ defmodule OmedisWeb.LogCategoryLive.Index do
     end
   end
 
-  def handle_event("move-down", %{"log-category-id" => log_category_id}, socket) do
-    case Ash.get(LogCategory, log_category_id,
+  def handle_event("move-down", %{"activity-id" => activity_id}, socket) do
+    case Ash.get(Activity, activity_id,
            actor: socket.assigns.current_user,
            tenant: socket.assigns.tenant
          ) do
-      {:ok, log_category} ->
-        LogCategory.move_down(log_category,
+      {:ok, activity} ->
+        Activity.move_down(activity,
           actor: socket.assigns.current_user,
           tenant: socket.assigns.tenant
         )

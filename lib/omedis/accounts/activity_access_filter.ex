@@ -1,11 +1,11 @@
-defmodule Omedis.Accounts.LogCategoryAccessFilter do
+defmodule Omedis.Accounts.ActivityAccessFilter do
   @moduledoc """
-  This policy filter is used to filter log categories based on user access rights.
+  This policy filter is used to filter activities based on user access rights.
   """
   use Ash.Policy.FilterCheck
 
   def describe(_) do
-    "Filtering log categories based on user access rights"
+    "Filtering activities based on user access rights"
   end
 
   def filter(nil, _context, _options), do: expr(false)
