@@ -42,7 +42,7 @@ defmodule Omedis.Repo.Migrations.RenameLogCategories do
 
     # Re-create indices with new names
     create unique_index(:activities, [:color_code, :group_id],
-             name: "activities_unique_color_code_position_index"
+             name: "activities_unique_color_code_index"
            )
 
     create unique_index(:activities, [:slug, :group_id], name: "activities_unique_slug_index")
@@ -51,7 +51,7 @@ defmodule Omedis.Repo.Migrations.RenameLogCategories do
   def down do
     # Drop indices
     drop_if_exists unique_index(:activities, [:color_code, :group_id],
-                     name: "activities_unique_color_code_position_index"
+                     name: "activities_unique_color_code_index"
                    )
 
     drop_if_exists unique_index(:activities, [:position, :group_id],
@@ -90,10 +90,6 @@ defmodule Omedis.Repo.Migrations.RenameLogCategories do
     # Re-create original indices
     create unique_index(:log_categories, [:color_code, :group_id],
              name: "log_categories_unique_color_code_position_index"
-           )
-
-    create unique_index(:log_categories, [:position, :group_id],
-             name: "log_categories_unique_position_index"
            )
 
     create unique_index(:log_categories, [:slug, :group_id],
