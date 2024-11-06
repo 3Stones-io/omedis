@@ -15,7 +15,6 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.Project
     resource Omedis.Accounts.Group
     resource Omedis.Accounts.GroupMembership
-    resource Omedis.Accounts.GroupUser
     resource Omedis.Accounts.Invitation
     resource Omedis.Accounts.InvitationGroup
   end

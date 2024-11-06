@@ -10,7 +10,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
     {:ok, project} = create_project(%{tenant_id: tenant.id})
     {:ok, authorized_user} = create_user()
 
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -54,7 +54,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
 
     {:ok, user} = create_user()
     {:ok, group2} = create_group(%{tenant_id: tenant.id})
-    {:ok, _} = create_group_user(%{group_id: group2.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: group2.id, user_id: user.id})
 
     {:ok, _} =
       create_access_right(%{

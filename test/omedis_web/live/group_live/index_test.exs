@@ -35,7 +35,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
             name: "Group #{i}"
           })
 
-        create_group_user(%{user_id: owner.id, group_id: group.id})
+        create_group_membership(%{user_id: owner.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
@@ -54,7 +54,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
             name: "Group #{i}"
           })
 
-        create_group_user(%{user_id: owner.id, group_id: group.id})
+        create_group_membership(%{user_id: owner.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
@@ -73,7 +73,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
             name: "Group #{i}"
           })
 
-        create_group_user(%{user_id: another_user.id, group_id: group.id})
+        create_group_membership(%{user_id: another_user.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
@@ -118,7 +118,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
 
-      create_group_user(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Tenant",
@@ -157,7 +157,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
 
-      create_group_user(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -196,7 +196,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
 
-      create_group_user(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -242,7 +242,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
 
-      create_group_user(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Tenant",

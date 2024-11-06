@@ -12,7 +12,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
 
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -32,7 +32,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       })
 
     {:ok, another_group} = create_group(%{tenant_id: tenant.id})
-    {:ok, _} = create_group_user(%{group_id: another_group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: another_group.id, user_id: user.id})
 
     {:ok, _} =
       create_access_right(%{

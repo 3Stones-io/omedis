@@ -9,7 +9,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
     {:ok, tenant} = create_tenant(%{owner_id: user.id})
     {:ok, group} = create_group(%{tenant_id: tenant.id})
 
-    create_group_user(%{group_id: group.id, user_id: user.id})
+    create_group_membership(%{group_id: group.id, user_id: user.id})
 
     create_access_right(%{
       group_id: group.id,
@@ -49,7 +49,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, authorized_user} = create_user()
       {:ok, group} = create_group(%{tenant_id: tenant.id})
 
-      create_group_user(%{
+      create_group_membership(%{
         group_id: group.id,
         user_id: authorized_user.id
       })
@@ -84,7 +84,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
     } do
       {:ok, tenant} = create_tenant()
       {:ok, group} = create_group(%{tenant_id: tenant.id})
-      create_group_user(%{group_id: group.id, user_id: user.id})
+      create_group_membership(%{group_id: group.id, user_id: user.id})
 
       create_access_right(%{
         group_id: group.id,

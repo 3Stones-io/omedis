@@ -10,7 +10,7 @@ defmodule Omedis.Accounts.GroupTest do
     {:ok, tenant} = create_tenant(%{owner_id: user.id})
     {:ok, authorized_user} = create_user()
     {:ok, group} = create_group(%{tenant_id: tenant.id})
-    create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     create_access_right(%{
       group_id: group.id,
@@ -81,7 +81,7 @@ defmodule Omedis.Accounts.GroupTest do
     test "can update a group if user is the owner of the tenant", %{user: user, tenant: tenant} do
       {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -117,7 +117,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, tenant} = create_tenant()
       {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -137,7 +137,7 @@ defmodule Omedis.Accounts.GroupTest do
     test "tenant owner can delete a group", %{user: user, tenant: tenant} do
       {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -166,7 +166,7 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       {:ok, tenant} = create_tenant()
       {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group"})
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -189,7 +189,7 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group"})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -205,7 +205,7 @@ defmodule Omedis.Accounts.GroupTest do
     test "returns an error when an invalid group id is given", %{user: user, tenant: tenant} do
       invalid_id = Ecto.UUID.generate()
 
-      create_group_user(%{user_id: user.id, group_id: invalid_id})
+      create_group_membership(%{user_id: user.id, group_id: invalid_id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -223,7 +223,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, tenant} = create_tenant()
       {:ok, group} = create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group"})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -247,7 +247,7 @@ defmodule Omedis.Accounts.GroupTest do
         {:ok, group} =
           create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group-#{i}"})
 
-        create_group_user(%{user_id: user.id, group_id: group.id})
+        create_group_membership(%{user_id: user.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
@@ -276,7 +276,7 @@ defmodule Omedis.Accounts.GroupTest do
         {:ok, group} =
           create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group-#{i}"})
 
-        create_group_user(%{user_id: user.id, group_id: group.id})
+        create_group_membership(%{user_id: user.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
@@ -302,7 +302,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, group2} =
         create_group(%{tenant_id: tenant.id, user_id: user.id})
 
-      create_group_user(%{user_id: user.id, group_id: group2.id})
+      create_group_membership(%{user_id: user.id, group_id: group2.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -318,7 +318,7 @@ defmodule Omedis.Accounts.GroupTest do
     test "returns an error when an invalid slug is given", %{user: user, tenant: tenant} do
       invalid_slug = "invalid-slug"
 
-      create_group_user(%{user_id: user.id, group_id: invalid_slug})
+      create_group_membership(%{user_id: user.id, group_id: invalid_slug})
 
       create_access_right(%{
         resource_name: "Group",
@@ -338,7 +338,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, group} =
         create_group(%{tenant_id: tenant.id, user_id: user.id, slug: "test-group-slug"})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",

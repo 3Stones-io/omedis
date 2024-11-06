@@ -7,7 +7,7 @@ defmodule Omedis.TenantTest do
     {:ok, user} = create_user()
     {:ok, tenant} = create_tenant()
     {:ok, group} = create_group()
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
     {:ok, user: user, tenant: tenant, group: group}
   end

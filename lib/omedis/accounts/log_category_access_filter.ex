@@ -21,7 +21,7 @@ defmodule Omedis.Accounts.LogCategoryAccessFilter do
         access_rights,
         tenant_id == ^tenant.id and
           read == true and
-          exists(group.group_users, user_id == ^actor.id)
+          exists(group.group_memberships, user_id == ^actor.id)
       ) and exists(group, tenant_id == ^tenant.id)
     )
   end

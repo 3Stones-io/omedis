@@ -10,7 +10,7 @@ defmodule Omedis.LogEntryTest do
     {:ok, project} = create_project(%{tenant_id: tenant.id})
     {:ok, log_category} = create_log_category(%{group_id: group.id, project_id: project.id})
     {:ok, user} = create_user()
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
     {:ok, _} =
       create_access_right(%{
