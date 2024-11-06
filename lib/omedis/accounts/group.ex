@@ -127,11 +127,11 @@ defmodule Omedis.Accounts.Group do
       attribute_writable? true
     end
 
-    many_to_many :users, User do
+    many_to_many :members, User do
       through GroupUser
     end
 
-    has_many :group_users, GroupUser
+    has_many :group_memberships, GroupUser
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
       manual Omedis.Accounts.Group.Relationships.GroupAccessRights

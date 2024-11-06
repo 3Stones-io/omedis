@@ -14,7 +14,7 @@ defmodule Omedis.Accounts.GroupUser do
   alias Omedis.Accounts.User
 
   postgres do
-    table "group_users"
+    table "group_memberships"
     repo Omedis.Repo
 
     references do
@@ -24,7 +24,7 @@ defmodule Omedis.Accounts.GroupUser do
   end
 
   identities do
-    identity :unique_group_user, [:group_id, :user_id]
+    identity :unique_group_membership, [:group_id, :user_id]
   end
 
   relationships do
