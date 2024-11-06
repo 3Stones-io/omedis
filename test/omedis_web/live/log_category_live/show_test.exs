@@ -103,9 +103,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       {:ok, _show_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
-        )
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}")
 
       assert html =~ log_category.name
       assert html =~ "Edit log_category"
@@ -121,9 +119,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       {:ok, _show_live, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
-        )
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}")
 
       assert html =~ log_category.name
       assert html =~ "Edit log_category"
@@ -139,9 +135,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
-        |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
-        )
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}")
       end
     end
   end
@@ -158,7 +152,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         conn
         |> log_in_user(owner)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
+          ~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}/show/edit"
         )
 
       assert html =~ "Edit log_category"
@@ -175,7 +169,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
 
       assert_patch(
         show_live,
-        ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+        ~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}"
       )
 
       assert html =~ "Log category saved successfully"
@@ -193,7 +187,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         conn
         |> log_in_user(authorized_user)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
+          ~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}/show/edit"
         )
 
       assert html =~ "Edit log_category"
@@ -205,7 +199,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
 
       assert_patch(
         show_live,
-        ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+        ~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}"
       )
 
       assert html =~ "Log category saved successfully"
@@ -234,11 +228,11 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         conn
         |> log_in_user(user)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
+          ~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}/show/edit"
         )
 
       assert to ==
-               ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}"
+               ~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}"
 
       assert flash["error"] == "You are not authorized to access this page"
     end
@@ -254,7 +248,7 @@ defmodule OmedisWeb.LogCategoryLive.ShowTest do
         conn
         |> log_in_user(authorized_user)
         |> live(
-          ~p"/tenants/#{tenant.slug}/groups/#{group.slug}/log_categories/#{log_category.id}/show/edit"
+          ~p"/tenants/#{tenant}/groups/#{group}/log_categories/#{log_category.id}/show/edit"
         )
 
       assert html =

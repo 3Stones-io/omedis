@@ -22,14 +22,13 @@ defmodule OmedisWeb.LogEntryLive.Index do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
-            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-            {gettext("Log Categories"),
-             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
-            {@log_category.name,
-             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
+            {@group.name, ~p"/tenants/#{@tenant}/groups/#{@group}", false},
+            {gettext("Log Categories"), ~p"/tenants/#{@tenant}/groups/#{@group}/log_categories",
              false},
+            {@log_category.name,
+             ~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{@log_category.id}", false},
             {"Log Entries", "", true}
           ]}
           language={@language}
@@ -60,7 +59,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category.id}/log_entries"}
+          resource_path={~p"/tenants/#{@tenant}/log_categories/#{@log_category.id}/log_entries"}
           total_pages={@total_pages}
         />
       </div>

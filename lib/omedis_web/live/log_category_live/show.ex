@@ -19,11 +19,11 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
-            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-            {gettext("Log Categories"),
-             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
+            {@group.name, ~p"/tenants/#{@tenant}/groups/#{@group}", false},
+            {gettext("Log Categories"), ~p"/tenants/#{@tenant}/groups/#{@group}/log_categories",
+             false},
             {@log_category.name, "", true}
           ]}
           language={@language}
@@ -43,7 +43,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           <:actions>
             <.link
               patch={
-                ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}/show/edit"
+                ~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{@log_category}/show/edit"
               }
               phx-click={JS.push_focus()}
             >
@@ -55,7 +55,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
             </.link>
 
             <.link
-              navigate={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category}/log_entries"}
+              navigate={~p"/tenants/#{@tenant}/log_categories/#{@log_category}/log_entries"}
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -80,7 +80,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}>
+        <.back navigate={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories"}>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Back to log categories") %>
           <% end) %>
@@ -91,9 +91,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
           id="log_category-modal"
           show
           on_cancel={
-            JS.patch(
-              ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"
-            )
+            JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{@log_category}")
           }
         >
           <.live_component
@@ -112,7 +110,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
             next_position={@next_position}
             language={@language}
             log_category={@log_category}
-            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category}"}
+            patch={~p"/tenants/#{@tenant}/groups/#{@group}/log_categories/#{@log_category}"}
           />
         </.modal>
       </div>
@@ -174,7 +172,7 @@ defmodule OmedisWeb.LogCategoryLive.Show do
       |> put_flash(:error, gettext("You are not authorized to access this page"))
       |> push_navigate(
         to:
-          ~p"/tenants/#{tenant.slug}/groups/#{socket.assigns.group.slug}/log_categories/#{log_category.id}"
+          ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/log_categories/#{log_category.id}"
       )
     end
   end

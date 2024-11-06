@@ -86,7 +86,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups")
+        |> live(~p"/tenants/#{tenant}/groups")
 
       assert html =~ "Listing Groups"
       assert html =~ "New Group"
@@ -141,7 +141,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups")
+        |> live(~p"/tenants/#{tenant}/groups")
 
       refute view |> element("#edit-group-#{group.id}") |> has_element?()
       refute view |> element("#delete-group-#{group.id}") |> has_element?()
@@ -171,7 +171,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups")
+        |> live(~p"/tenants/#{tenant}/groups")
 
       assert view
              |> element("#delete-group-#{group.id}")
@@ -210,7 +210,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups")
+        |> live(~p"/tenants/#{tenant}/groups")
 
       assert view
              |> element("#edit-group-#{group.id}")
@@ -224,7 +224,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
              |> form("#group-form", group: %{name: "New Group Name", slug: "new-group-name"})
              |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups")
+      assert_patch(view, ~p"/tenants/#{tenant}/groups")
 
       html = render(view)
       assert html =~ "Group updated successfully"
@@ -265,9 +265,9 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:error, {:redirect, %{to: path, flash: flash}}} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}/edit")
 
-      assert path == ~p"/tenants/#{tenant.slug}/groups"
+      assert path == ~p"/tenants/#{tenant}/groups"
       assert flash["error"] == "You are not authorized to access this page"
     end
   end

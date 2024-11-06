@@ -36,7 +36,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}")
 
       assert html =~ "Slug"
       assert html =~ group.name
@@ -73,7 +73,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}")
 
       assert html =~ group.name
     end
@@ -97,7 +97,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}")
+        |> live(~p"/tenants/#{tenant}/groups/#{group}")
       end
     end
   end
