@@ -80,6 +80,7 @@ defmodule OmedisWeb.Router do
       live "/tenants/:slug/log_categories/:id/log_entries", LogEntryLive.Index, :index
 
       live "/tenants/:slug/invitations/new", InvitationLive.Index, :new
+      live "/tenants/:slug/invitations/:id", InvitationLive.Show, :show
     end
   end
 

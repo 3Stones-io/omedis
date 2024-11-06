@@ -1,0 +1,42 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/omedis/accounts/user_notifier.ex:42
+#, elixir-autogen, elixir-format
+msgid "Best regards,"
+msgstr "Cordiali saluti,"
+
+#: lib/omedis/accounts/user_notifier.ex:34
+#, elixir-autogen, elixir-format
+msgid "Hello!"
+msgstr "Ciao!"
+
+#: lib/omedis/accounts/user_notifier.ex:40
+#, elixir-autogen, elixir-format
+msgid "Please click on this link %{url} to create the account"
+msgstr "Si prega di cliccare su questo link %{url} per creare l'account"
+
+#: lib/omedis/accounts/user_notifier.ex:36
+#, elixir-autogen, elixir-format
+msgid "Please register your new Omedis account for %{tenant_name}"
+msgstr "Si prega di registrare il nuovo account Omedis per %{tenant_name}"
+
+#: lib/omedis/accounts/user_notifier.ex:38
+#, elixir-autogen, elixir-format
+msgid "This invitation is good till %{expires_at}"
+msgstr "Questo invito è valido fino al %{expires_at}"
+
+#: lib/omedis/accounts/user_notifier.ex:28
+#, elixir-autogen, elixir-format
+msgid "Omedis | Invitation to join %{tenant_name}"
+msgstr "Omedis | Invito a unire a %{tenant_name}"
