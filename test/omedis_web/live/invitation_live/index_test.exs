@@ -20,7 +20,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       resource_name: "Invitation",
       create: true,
       tenant_id: tenant.id,
-      group_id: group.id
+      group_id: group.id,
+      read: true
     })
 
     create_access_right(%{
@@ -28,7 +29,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       read: true,
       resource_name: "Tenant",
       tenant_id: tenant.id,
-      write: true
+      write: true,
+      create: true
     })
 
     create_access_right(%{
@@ -36,7 +38,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       read: true,
       resource_name: "Group",
       tenant_id: tenant.id,
-      write: true
+      write: true,
+      create: true
     })
 
     {:ok, unauthorized_user} = create_user()
