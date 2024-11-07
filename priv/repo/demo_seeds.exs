@@ -55,13 +55,13 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.GroupUser,
+    Accounts.GroupMembership,
     [
       %{group_id: group_1.id, user_id: user_1.id},
       %{group_id: group_2.id, user_id: user_2.id},
       %{group_id: group_3.id, user_id: user_3.id}
     ],
-    :unique_group_user
+    :unique_group_membership
   )
 
 %{records: _records, status: :success} =

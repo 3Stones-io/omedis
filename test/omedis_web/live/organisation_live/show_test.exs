@@ -12,7 +12,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
 
     {:ok, group} = create_group()
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
     {:ok, organisation: organisation, group: group}
   end

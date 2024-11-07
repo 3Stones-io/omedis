@@ -16,8 +16,8 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       {:ok, group_2} = create_group()
 
       # Associate users with groups
-      {:ok, _} = create_group_user(%{group_id: group_1.id, user_id: user_1.id})
-      {:ok, _} = create_group_user(%{group_id: group_2.id, user_id: user_2.id})
+      {:ok, _} = create_group_membership(%{group_id: group_1.id, user_id: user_1.id})
+      {:ok, _} = create_group_membership(%{group_id: group_2.id, user_id: user_2.id})
 
       # Create organisations (15 for user_1, 5 for user_2)
       organisations =
@@ -224,7 +224,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
         create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
 
       {:ok, group} = create_group()
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
       {:ok, organisation: organisation, group: group}
     end

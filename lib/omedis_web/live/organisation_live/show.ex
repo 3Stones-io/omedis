@@ -16,7 +16,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Organisations"), ~p"/organisations", false},
-            {@organisation.name, ~p"/organisations/#{@organisation.slug}", true}
+            {@organisation.name, ~p"/organisations/#{@organisation}", true}
           ]}
           language={@language}
         />
@@ -27,7 +27,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
           <:actions>
             <.link
               :if={Ash.can?({@organisation, :update}, @current_user)}
-              patch={~p"/organisations/#{@organisation.slug}/show/edit"}
+              patch={~p"/organisations/#{@organisation}/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -37,17 +37,14 @@ defmodule OmedisWeb.OrganisationLive.Show do
               </.button>
             </.link>
 
-            <.link
-              patch={~p"/organisations/#{@organisation.slug}/projects"}
-              phx-click={JS.push_focus()}
-            >
+            <.link patch={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Projects") %>
                 <% end) %>
               </.button>
             </.link>
-            <.link patch={~p"/organisations/#{@organisation.slug}/groups"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Groups") %>
@@ -55,7 +52,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
               </.button>
             </.link>
 
-            <.link patch={~p"/organisations/#{@organisation.slug}/today"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Today") %>
@@ -184,7 +181,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
           :if={@live_action == :edit}
           id="organisation-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation.slug}")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}")}
         >
           <.live_component
             module={OmedisWeb.OrganisationLive.FormComponent}
@@ -228,13 +225,15 @@ defmodule OmedisWeb.OrganisationLive.Show do
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/organisations/#{socket.assigns.organisation.slug}")
+      |> push_navigate(to: ~p"/organisations/#{socket.assigns.organisation}")
     end
   end
 
-  defp page_title(:show, language),
-    do: with_locale(language, fn -> gettext("Show Organisation") end)
+  defp page_title(:show, language) do
+    with_locale(language, fn -> gettext("Show Organisation") end)
+  end
 
-  defp page_title(:edit, language),
-    do: with_locale(language, fn -> gettext("Edit Organisation") end)
+  defp page_title(:edit, language) do
+    with_locale(language, fn -> gettext("Edit Organisation") end)
+  end
 end

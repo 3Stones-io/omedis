@@ -25,7 +25,7 @@ defmodule Omedis.Accounts.CanUpdateOrganisation do
       filter(
         AccessRight,
         organisation_id == ^organisation.id && (write || update) &&
-          exists(group.group_users, user_id == ^actor.id)
+          exists(group.group_memberships, user_id == ^actor.id)
       )
     )
   end

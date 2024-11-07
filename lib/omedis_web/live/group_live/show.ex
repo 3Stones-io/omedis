@@ -17,8 +17,8 @@ defmodule OmedisWeb.GroupLive.Show do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Organisations"), ~p"/organisations", false},
-            {@organisation.name, ~p"/organisations/#{@organisation.slug}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation.slug}/groups", false},
+            {@organisation.name, ~p"/organisations/#{@organisation}", false},
+            {gettext("Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, "", true}
           ]}
           language={@language}
@@ -27,12 +27,12 @@ defmodule OmedisWeb.GroupLive.Show do
         <.header>
           <:actions>
             <.link
-              patch={~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}/log_categories"}
+              patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}
               phx-click={JS.push_focus()}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Log categories") %>
+                  <%= gettext("Activities") %>
                 <% end) %>
               </.button>
             </.link>
@@ -44,7 +44,7 @@ defmodule OmedisWeb.GroupLive.Show do
           <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @group.slug %></:item>
         </.list>
 
-        <.back navigate={~p"/organisations/#{@organisation.slug}/groups"}>
+        <.back navigate={~p"/organisations/#{@organisation}/groups"}>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Back to groups") %>
           <% end) %>
@@ -54,7 +54,7 @@ defmodule OmedisWeb.GroupLive.Show do
           :if={@live_action == :edit}
           id="group-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}/groups/#{@group}")}
         >
           <.live_component
             module={OmedisWeb.GroupLive.FormComponent}
@@ -64,7 +64,7 @@ defmodule OmedisWeb.GroupLive.Show do
             organisation={@organisation}
             language={@language}
             group={@group}
-            patch={~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}"}
+            patch={~p"/organisations/#{@organisation}/groups/#{@group}"}
           />
         </.modal>
       </div>

@@ -10,7 +10,7 @@ defmodule Omedis.Accounts.ProjectTest do
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
 
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -37,7 +37,7 @@ defmodule Omedis.Accounts.ProjectTest do
       {:ok, organisation} = create_organisation(%{owner_id: owner.id})
       {:ok, group} = create_group(%{organisation_id: organisation.id})
 
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: another_user.id})
+      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: another_user.id})
 
       {:ok, _} =
         create_access_right(%{
@@ -68,8 +68,8 @@ defmodule Omedis.Accounts.ProjectTest do
       {:ok, other_organisation} = create_organisation()
       {:ok, group} = create_group(%{organisation_id: organisation.id})
       {:ok, other_group} = create_group(%{organisation_id: other_organisation.id})
-      {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
-      {:ok, _} = create_group_user(%{user_id: user.id, group_id: other_group.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: other_group.id})
 
       {:ok, _} =
         create_access_right(%{
@@ -147,7 +147,7 @@ defmodule Omedis.Accounts.ProjectTest do
           group_id: group.id
         })
 
-      {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group.id})
       {:ok, _} = create_project(%{organisation_id: organisation.id, name: "Project X"})
 
       assert {:ok, paginated_result} =
@@ -184,8 +184,8 @@ defmodule Omedis.Accounts.ProjectTest do
           group_id: group_2.id
         })
 
-      {:ok, _} = create_group_user(%{user_id: user.id, group_id: group_1.id})
-      {:ok, _} = create_group_user(%{user_id: user.id, group_id: group_2.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group_1.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group_2.id})
 
       for i <- 1..5 do
         {:ok, _} =
@@ -233,7 +233,7 @@ defmodule Omedis.Accounts.ProjectTest do
           group_id: group.id
         })
 
-      {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group.id})
       {:ok, _} = create_project(%{organisation_id: organisation.id, name: "Project X"})
 
       assert {:error, %Ash.Error.Forbidden{} = _error} =
@@ -256,7 +256,7 @@ defmodule Omedis.Accounts.ProjectTest do
           group_id: group.id
         })
 
-      {:ok, _} = create_group_user(%{user_id: user.id, group_id: group.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group.id})
       {:ok, _} = create_project(%{organisation_id: organisation.id, name: "Project X"})
 
       assert {:error, %Ash.Error.Forbidden{} = _error} =

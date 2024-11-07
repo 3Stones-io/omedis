@@ -10,7 +10,7 @@ defmodule Omedis.Accounts.GroupTest do
     {:ok, organisation} = create_organisation(%{owner_id: user.id})
     {:ok, authorized_user} = create_user()
     {:ok, group} = create_group(%{organisation_id: organisation.id})
-    create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     create_access_right(%{
       group_id: group.id,
@@ -84,7 +84,7 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       {:ok, group} = create_group(%{organisation_id: organisation.id, user_id: user.id})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -124,7 +124,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, organisation} = create_organisation()
       {:ok, group} = create_group(%{organisation_id: organisation.id, user_id: user.id})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -144,7 +144,7 @@ defmodule Omedis.Accounts.GroupTest do
     test "organisation owner can delete a group", %{user: user, organisation: organisation} do
       {:ok, group} = create_group(%{organisation_id: organisation.id, user_id: user.id})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -177,7 +177,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, group} =
         create_group(%{organisation_id: organisation.id, user_id: user.id, slug: "test-group"})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -201,7 +201,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, group} =
         create_group(%{organisation_id: organisation.id, user_id: user.id, slug: "test-group"})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -220,7 +220,7 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       invalid_id = Ecto.UUID.generate()
 
-      create_group_user(%{user_id: user.id, group_id: invalid_id})
+      create_group_membership(%{user_id: user.id, group_id: invalid_id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -240,7 +240,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, group} =
         create_group(%{organisation_id: organisation.id, user_id: user.id, slug: "test-group"})
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -268,7 +268,7 @@ defmodule Omedis.Accounts.GroupTest do
             slug: "test-group-#{i}"
           })
 
-        create_group_user(%{user_id: user.id, group_id: group.id})
+        create_group_membership(%{user_id: user.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
@@ -301,7 +301,7 @@ defmodule Omedis.Accounts.GroupTest do
             slug: "test-group-#{i}"
           })
 
-        create_group_user(%{user_id: user.id, group_id: group.id})
+        create_group_membership(%{user_id: user.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
@@ -334,7 +334,7 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, group2} =
         create_group(%{organisation_id: organisation.id, user_id: user.id})
 
-      create_group_user(%{user_id: user.id, group_id: group2.id})
+      create_group_membership(%{user_id: user.id, group_id: group2.id})
 
       create_access_right(%{
         resource_name: "Group",
@@ -355,7 +355,7 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       invalid_slug = "invalid-slug"
 
-      create_group_user(%{user_id: user.id, group_id: invalid_slug})
+      create_group_membership(%{user_id: user.id, group_id: invalid_slug})
 
       create_access_right(%{
         resource_name: "Group",
@@ -379,7 +379,7 @@ defmodule Omedis.Accounts.GroupTest do
           slug: "test-group-slug"
         })
 
-      create_group_user(%{user_id: user.id, group_id: group.id})
+      create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",

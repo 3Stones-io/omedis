@@ -22,14 +22,14 @@ defmodule OmedisWeb.GroupLive.Index do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Organisations"), ~p"/organisations", false},
-            {@organisation.name, ~p"/organisations/#{@organisation.slug}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation.slug}", true}
+            {@organisation.name, ~p"/organisations/#{@organisation}", false},
+            {gettext("Groups"), ~p"/organisations/#{@organisation}", true}
           ]}
           language={@language}
         />
 
         <div>
-          <.link navigate={~p"/organisations/#{@organisation.slug}"} class="button">
+          <.link navigate={~p"/organisations/#{@organisation}"} class="button">
             <%= gettext("Back") %>
           </.link>
         </div>
@@ -42,7 +42,7 @@ defmodule OmedisWeb.GroupLive.Index do
               :if={
                 Ash.can?({Group, :create}, @current_user, actor: @current_user, tenant: @organisation)
               }
-              patch={~p"/organisations/#{@organisation.slug}/groups/new"}
+              patch={~p"/organisations/#{@organisation}/groups/new"}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
@@ -57,9 +57,7 @@ defmodule OmedisWeb.GroupLive.Index do
           id="groups"
           rows={@streams.groups}
           row_click={
-            fn {_id, group} ->
-              JS.navigate(~p"/organisations/#{@organisation.slug}/groups/#{group.slug}")
-            end
+            fn {_id, group} -> JS.navigate(~p"/organisations/#{@organisation}/groups/#{group}") end
           }
         >
           <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Name") end)}>
@@ -80,7 +78,7 @@ defmodule OmedisWeb.GroupLive.Index do
                   )
                 }
                 id={"edit-group-#{group.id}"}
-                patch={~p"/organisations/#{@organisation.slug}/groups/#{group.slug}/edit"}
+                patch={~p"/organisations/#{@organisation}/groups/#{group}/edit"}
                 class="font-semibold"
               >
                 <%= with_locale(@language, fn -> %>
@@ -110,24 +108,24 @@ defmodule OmedisWeb.GroupLive.Index do
           :if={@live_action in [:new, :edit]}
           id="group-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation.slug}/groups")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}/groups")}
         >
           <.live_component
             module={OmedisWeb.GroupLive.FormComponent}
-            id={(@group && @group.slug) || :new}
+            id={(@group && @group) || :new}
             title={@page_title}
             action={@live_action}
             language={@language}
             group={@group}
             current_user={@current_user}
             organisation={@organisation}
-            patch={~p"/organisations/#{@organisation.slug}/groups"}
+            patch={~p"/organisations/#{@organisation}/groups"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/organisations/#{@organisation.slug}/groups"}
+          resource_path={~p"/organisations/#{@organisation}/groups"}
           total_pages={@total_pages}
         />
       </div>
@@ -175,7 +173,7 @@ defmodule OmedisWeb.GroupLive.Index do
           gettext("You are not authorized to access this page")
         end)
       )
-      |> redirect(to: ~p"/organisations/#{socket.assigns.organisation.slug}/groups")
+      |> redirect(to: ~p"/organisations/#{socket.assigns.organisation}/groups")
     end
   end
 
@@ -195,7 +193,7 @@ defmodule OmedisWeb.GroupLive.Index do
           gettext("You are not authorized to access this page")
         end)
       )
-      |> redirect(to: ~p"/organisations/#{socket.assigns.organisation.slug}/groups")
+      |> redirect(to: ~p"/organisations/#{socket.assigns.organisation}/groups")
     end
   end
 

@@ -10,13 +10,13 @@ defmodule OmedisWeb.TimeTracking do
 
   import Gettext, only: [with_locale: 2]
 
-  attr :categories, :list, required: true
+  attr :activities, :list, required: true
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
   attr :current_time, :any, required: true
   attr :log_entries, :list, required: true
   attr :language, :any, required: true
-  attr :active_log_category_id, :string, required: true
+  attr :active_activity_id, :string, required: true
 
   @doc """
   Renders the main dashboard component.
@@ -24,7 +24,7 @@ defmodule OmedisWeb.TimeTracking do
   ## Example
 
       <.dashboard_component
-        categories={[%{name: "Work", color_code: "#FF0000", log_entries: [...]}, ...]}
+        activities={[%{name: "Work", color_code: "#FF0000", log_entries: [...]}, ...]}
         starts_a={~T[08:00:00]}
         ends_a={~T[18:00:00]}
         current_time={~T[13:30:00]}
@@ -35,12 +35,12 @@ defmodule OmedisWeb.TimeTracking do
   def dashboard_component(assigns) do
     ~H"""
     <div class="w-[100%] flex flex-col gap-1 ">
-      <%= if Enum.empty?(@categories) do %>
-        <.no_log_categories language={@language} />
+      <%= if Enum.empty?(@activities) do %>
+        <.no_activities language={@language} />
       <% else %>
         <.dashboard_card
-          active_log_category_id={@active_log_category_id}
-          categories={@categories}
+          active_activity_id={@active_activity_id}
+          activities={@activities}
           start_at={@start_at}
           end_at={@end_at}
           log_entries={@log_entries}
@@ -52,12 +52,12 @@ defmodule OmedisWeb.TimeTracking do
     """
   end
 
-  def no_log_categories(assigns) do
+  def no_activities(assigns) do
     ~H"""
     <div class="w-[100%] h-[30vh] flex justify-center items-center">
       <%= with_locale(@language, fn -> %>
         <p>
-          <%= gettext("No log categories are defined yet.") %>
+          <%= gettext("No activities are defined yet.") %>
         </p>
       <% end) %>
     </div>
@@ -68,22 +68,22 @@ defmodule OmedisWeb.TimeTracking do
   Dashboard card component. This holds the whole dashboard.
   """
 
-  attr :categories, :list, required: true
+  attr :activities, :list, required: true
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
   attr :current_time, :any, required: true
   attr :log_entries, :list, required: true
   attr :language, :any, required: true
-  attr :active_log_category_id, :string, required: true
+  attr :active_activity_id, :string, required: true
 
   def dashboard_card(assigns) do
     ~H"""
     <div class="md:w-[50%] w-[90%] h-[70vh]  m-auto flex justify-start gap-1 items-end">
       <div class="md:w-[40%]  flex justify-start flex-col gap-5 h-[100%]">
-        <%= for category <- @categories do %>
-          <.category_button
-            active_log_category_id={@active_log_category_id}
-            category={category}
+        <%= for activity <- @activities do %>
+          <.activity_button
+            active_activity_id={@active_activity_id}
+            activity={activity}
             language={@language}
             current_time={@current_time}
           />
@@ -225,39 +225,39 @@ defmodule OmedisWeb.TimeTracking do
   end
 
   @doc """
-  The category button component. This holds the category button.
+  The activity button component. This holds the activity button.
   """
 
-  attr :category, :any, required: true
+  attr :activity, :any, required: true
   attr :current_time, :any, required: true
   attr :language, :any, required: true
-  attr :active_log_category_id, :string, required: true
+  attr :active_activity_id, :string, required: true
 
-  def category_button(assigns) do
+  def activity_button(assigns) do
     ~H"""
     <div class="flex flex-col gap-0">
       <div class="flex flex-row gap-2 items-center">
         <p
-          :if={@active_log_category_id == @category.id}
+          :if={@active_activity_id == @activity.id}
           class="h-[10px] w-[10px] bg-green-500 rounded-full"
-          id={"active-log-category-#{@category.id}"}
+          id={"active-activity-#{@activity.id}"}
         />
 
         <button
           class="w-[100%] h-[100%] h-[40px] rounded-md"
-          id={"log-category-#{@category.id}"}
-          phx-click="select_log_category"
-          phx-value-log_category_id={@category.id}
-          style={"background-color: #{@category.color_code};"}
+          id={"activity-#{@activity.id}"}
+          phx-click="select_activity"
+          phx-value-activity_id={@activity.id}
+          style={"background-color: #{@activity.color_code};"}
         >
           <div class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
             <span>
-              <%= @category.name %>
+              <%= @activity.name %>
             </span>
             <span>
               <.counter_for_time_taken_by_current_task
                 language={@language}
-                category={@category}
+                activity={@activity}
                 current_time={@current_time}
               />
             </span>
@@ -334,7 +334,7 @@ defmodule OmedisWeb.TimeTracking do
 
   def counter_for_time_taken_by_current_task(assigns) do
     ~H"""
-    <%= for log_entry <- @category.log_entries |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
+    <%= for log_entry <- @activity.log_entries |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
       <p :if={log_entry.end_at == nil}>
         <%= Time.diff(Time.utc_now(), log_entry.start_at, :minute) |> minutes_to_hhmm() %>
       </p>

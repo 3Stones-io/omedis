@@ -17,8 +17,8 @@ defmodule OmedisWeb.ProjectLive.Show do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Organisations"), ~p"/organisations", false},
-            {@organisation.name, ~p"/organisations/#{@organisation.slug}", false},
-            {gettext("Projects"), ~p"/organisations/#{@organisation.slug}/projects", false},
+            {@organisation.name, ~p"/organisations/#{@organisation}", false},
+            {gettext("Projects"), ~p"/organisations/#{@organisation}/projects", false},
             {@project.name, "", true}
           ]}
           language={@language}
@@ -36,7 +36,7 @@ defmodule OmedisWeb.ProjectLive.Show do
 
           <:actions>
             <.link
-              patch={~p"/organisations/#{@organisation.slug}/projects/#{@project}/show/edit"}
+              patch={~p"/organisations/#{@organisation}/projects/#{@project}/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
@@ -58,7 +58,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/organisations/#{@organisation.slug}/projects"}>
+        <.back navigate={~p"/organisations/#{@organisation}/projects"}>
           <%= with_locale(@language, fn -> gettext("Back to projects") end) %>
         </.back>
 
@@ -69,7 +69,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           }
           id="project-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation.slug}/projects/#{@project}")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}/projects/#{@project}")}
         >
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
@@ -82,7 +82,7 @@ defmodule OmedisWeb.ProjectLive.Show do
             action={@live_action}
             language={@language}
             project={@project}
-            patch={~p"/organisations/#{@organisation.slug}/projects/#{@project}"}
+            patch={~p"/organisations/#{@organisation}/projects/#{@project}"}
           />
         </.modal>
       </div>
@@ -124,9 +124,7 @@ defmodule OmedisWeb.ProjectLive.Show do
       socket
     else
       socket
-      |> push_patch(
-        to: ~p"/organisations/#{organisation.slug}/projects/#{socket.assigns.project.id}"
-      )
+      |> push_patch(to: ~p"/organisations/#{organisation}/projects/#{socket.assigns.project.id}")
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->

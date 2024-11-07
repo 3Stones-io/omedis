@@ -339,7 +339,7 @@ defmodule OmedisWeb.GeneralComponents do
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
                   <.link
-                    navigate={~p"/organisations/#{@current_organisation.slug}/groups"}
+                    navigate={~p"/organisations/#{@current_organisation}/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -352,7 +352,7 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
                 <li>
                   <.link
-                    navigate={~p"/organisations/#{@current_organisation.slug}/projects"}
+                    navigate={~p"/organisations/#{@current_organisation}/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -727,7 +727,7 @@ defmodule OmedisWeb.GeneralComponents do
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
                   <.link
-                    navigate={~p"/organisations/#{@current_organisation.slug}/groups"}
+                    navigate={~p"/organisations/#{@current_organisation}/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -740,7 +740,7 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
                 <li>
                   <.link
-                    navigate={~p"/organisations/#{@current_organisation.slug}/projects"}
+                    navigate={~p"/organisations/#{@current_organisation}/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -839,8 +839,9 @@ defmodule OmedisWeb.GeneralComponents do
 
   defp get_current_organisation_path(nil), do: "/organisations"
 
-  defp get_current_organisation_path(current_organisation),
-    do: "/organisations/#{current_organisation.slug}"
+  defp get_current_organisation_path(current_organisation) do
+    "/organisations/#{current_organisation}"
+  end
 
   defp organisations_link(assigns) do
     ~H"""

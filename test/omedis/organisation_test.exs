@@ -7,7 +7,7 @@ defmodule Omedis.OrganisationTest do
     {:ok, user} = create_user()
     {:ok, organisation} = create_organisation()
     {:ok, group} = create_group()
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
     {:ok, user: user, organisation: organisation, group: group}
   end
