@@ -12,36 +12,40 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     {:ok, owner} = create_user()
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
     {:ok, group} = create_group(%{tenant_id: tenant.id})
+    {:ok, _} = create_group_user(%{user_id: owner.id, group_id: group.id})
 
     {:ok, authorized_user} = create_user()
-    create_group_user(%{user_id: authorized_user.id, group_id: group.id})
+    {:ok, _} = create_group_user(%{user_id: authorized_user.id, group_id: group.id})
 
-    create_access_right(%{
-      resource_name: "Invitation",
-      create: true,
-      tenant_id: tenant.id,
-      group_id: group.id
-    })
+    {:ok, _} =
+      create_access_right(%{
+        resource_name: "Invitation",
+        create: true,
+        tenant_id: tenant.id,
+        group_id: group.id
+      })
 
-    create_access_right(%{
-      group_id: group.id,
-      read: true,
-      resource_name: "Tenant",
-      tenant_id: tenant.id,
-      write: true
-    })
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Tenant",
+        tenant_id: tenant.id,
+        write: true
+      })
 
-    create_access_right(%{
-      group_id: group.id,
-      read: true,
-      resource_name: "Group",
-      tenant_id: tenant.id,
-      write: true
-    })
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
+        tenant_id: tenant.id,
+        write: true
+      })
 
     {:ok, unauthorized_user} = create_user()
     {:ok, group_2} = create_group()
-    create_group_user(%{user_id: unauthorized_user.id, group_id: group_2.id})
+    {:ok, _} = create_group_user(%{user_id: unauthorized_user.id, group_id: group_2.id})
 
     %{
       authorized_user: authorized_user,

@@ -125,4 +125,39 @@ defmodule Omedis.Accounts.InvitationTest do
                Invitation.create(attrs, actor: owner, tenant: tenant)
     end
   end
+
+  describe "get_valid_invitation/1" do
+    test "returns invitation if it has not expired", %{
+      tenant: tenant,
+      owner: owner
+    } do
+      {:ok, invitation} =
+        create_invitation(%{tenant_id: tenant.id, creator_id: owner.id})
+
+      assert {:ok, _invitation} = Invitation.by_id(%{id: invitation.id})
+    end
+
+    test "returns nil if invitation has expired", %{
+      tenant: tenant,
+      owner: owner
+    } do
+      expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
+
+      {:ok, invitation} =
+        create_invitation(%{
+          tenant_id: tenant.id,
+          creator_id: owner.id,
+          expires_at: expired_at
+        })
+
+      assert {:ok, []} = Invitation.by_id(%{id: invitation.id})
+    end
+
+    test "returns empty list if invitation does not exist", %{
+      tenant: tenant
+    } do
+      assert {:ok, []} =
+               Invitation.by_id(%{id: Ecto.UUID.generate()})
+    end
+  end
 end

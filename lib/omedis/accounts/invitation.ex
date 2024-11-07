@@ -15,6 +15,7 @@ defmodule Omedis.Accounts.Invitation do
 
   code_interface do
     define :create
+    define :by_id
   end
 
   attributes do
@@ -35,7 +36,7 @@ defmodule Omedis.Accounts.Invitation do
     defaults [:read, :destroy]
 
     create :create do
-      accept [:email, :language, :creator_id, :tenant_id]
+      accept [:email, :language, :creator_id, :tenant_id, :expires_at]
 
       argument :groups, {:array, :uuid}, allow_nil?: false
 
@@ -47,6 +48,14 @@ defmodule Omedis.Accounts.Invitation do
              )
 
       primary? true
+    end
+
+    read :by_id do
+      argument :id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(id == ^arg(:id))
     end
   end
 
@@ -78,6 +87,10 @@ defmodule Omedis.Accounts.Invitation do
   policies do
     policy action_type(:create) do
       authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action(:by_id) do
+      authorize_if Omedis.Accounts.HasExpiredInvitation
     end
 
     policy do

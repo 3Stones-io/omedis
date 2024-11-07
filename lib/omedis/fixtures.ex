@@ -97,7 +97,8 @@ defmodule Omedis.Fixtures do
       creator_id: fn -> create_user().id end,
       email: Faker.Internet.email(),
       language: "en",
-      tenant_id: fn -> create_tenant().id end
+      tenant_id: fn -> create_tenant().id end,
+      groups: []
     }
   end
 
