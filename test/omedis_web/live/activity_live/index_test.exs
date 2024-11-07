@@ -7,9 +7,9 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, project} = create_project(%{tenant_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, project} = create_project(%{organisation_id: organisation.id})
     {:ok, authorized_user} = create_user()
 
     {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
@@ -19,7 +19,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Activity",
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         write: true
       })
 
@@ -28,7 +28,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        tenant_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -36,19 +36,19 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        tenant_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        tenant_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     {:ok, user} = create_user()
-    {:ok, group2} = create_group(%{tenant_id: tenant.id})
+    {:ok, group2} = create_group(%{organisation_id: organisation.id})
     {:ok, _} = create_group_membership(%{group_id: group2.id, user_id: user.id})
 
     {:ok, _} =
@@ -56,7 +56,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
         group_id: group2.id,
         read: true,
         resource_name: "Group",
-        tenant_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -64,15 +64,15 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
         group_id: group2.id,
         read: true,
         resource_name: "Project",
-        tenant_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
       create_access_right(%{
         group_id: group2.id,
         read: true,
-        resource_name: "Tenant",
-        tenant_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     %{
@@ -81,17 +81,17 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       group2: group2,
       owner: owner,
       project: project,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     }
   end
 
-  describe "/tenants/:slug/groups/:group_slug/activities" do
-    test "lists all activities if user is tenant owner", %{
+  describe "/organisations/:slug/groups/:group_slug/activities" do
+    test "lists all activities if user is organisation owner", %{
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, _activity} =
@@ -104,7 +104,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities")
 
       assert html =~ "Test Activity"
     end
@@ -113,7 +113,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, _activity} =
@@ -126,7 +126,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities")
 
       assert html =~ "Test Activity"
     end
@@ -135,7 +135,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, _activity} =
@@ -148,25 +148,25 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities")
 
       refute html =~ "Test Activity"
       refute html =~ "New Activity"
     end
   end
 
-  describe "/tenants/:slug/groups/:group_slug/activities/new" do
-    test "tenant owner can create new activity", %{
+  describe "/organisations/:slug/groups/:group_slug/activities/new" do
+    test "organisation owner can create new activity", %{
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/new")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/new")
 
       assert html =~ "New Activity"
 
@@ -181,7 +181,10 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
                )
                |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant}/groups/#{group}/activities")
+      assert_patch(
+        view,
+        ~p"/organisations/#{organisation}/groups/#{group}/activities"
+      )
 
       assert html =~ "Activity saved successfully"
       assert html =~ "New Activity"
@@ -191,13 +194,13 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       conn: conn,
       group: group,
       project: project,
-      tenant: tenant,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, view, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/new")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/new")
 
       assert html =~ "New Activity"
 
@@ -212,7 +215,10 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
                )
                |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant}/groups/#{group}/activities")
+      assert_patch(
+        view,
+        ~p"/organisations/#{organisation}/groups/#{group}/activities"
+      )
 
       assert html =~ "Activity saved successfully"
       assert html =~ "New Activity"
@@ -221,28 +227,28 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
     test "unauthorized user cannot create new activity", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:error, {:live_redirect, %{flash: flash, to: to}}} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/new")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/new")
 
-      assert to == ~p"/tenants/#{tenant}/groups/#{group}/activities"
+      assert to == ~p"/organisations/#{organisation}/groups/#{group}/activities"
       assert flash["error"] == "You are not authorized to access this page"
     end
 
     test "shows validation errors", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, view, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/new")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/new")
 
       html =
         view
@@ -257,7 +263,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
     test "authorized user can move activities up and down", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      organisation: organisation,
       project: project,
       authorized_user: authorized_user
     } do
@@ -279,7 +285,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities")
 
       # Verify position controls are rendered
       assert html =~ "move-up-#{second.id}"
@@ -301,7 +307,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
     test "unauthorized user cannot see position controls", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      organisation: organisation,
       project: project,
       user: unauthorized_user
     } do
@@ -315,7 +321,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities")
 
       refute html =~ "move-up-#{activity.id}"
       refute html =~ "move-down-#{activity.id}"
@@ -323,10 +329,10 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       refute view |> element(".position-down") |> has_element?()
     end
 
-    test "tenant owner can move activities up and down", %{
+    test "organisation owner can move activities up and down", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      organisation: organisation,
       project: project,
       owner: owner
     } do
@@ -347,7 +353,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities")
 
       # Test moving up
       view

@@ -11,22 +11,22 @@ defmodule Omedis.Accounts.GroupMembershipAccessFilter do
   def filter(nil, _context, _options), do: expr(false)
 
   def filter(actor, context, _options) do
-    tenant = context.subject.tenant
+    organisation = context.subject.tenant
 
-    case tenant do
+    case organisation do
       nil ->
         expr(false)
 
-      tenant ->
+      organisation ->
         expr(
           (exists(
              access_rights,
-             tenant_id == ^tenant.id and
+             organisation_id == ^organisation.id and
                read == true and
                exists(group.group_memberships, user_id == ^actor.id)
            ) and
-             exists(group, tenant_id == ^tenant.id)) or
-            group.tenant.owner_id == ^actor.id
+             exists(group, organisation_id == ^organisation.id)) or
+            group.organisation.owner_id == ^actor.id
         )
     end
   end

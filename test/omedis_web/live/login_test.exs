@@ -30,7 +30,7 @@ defmodule OmedisWeb.LoginTest do
 
       conn = submit_form(form, conn)
 
-      assert {:ok, _index_live, _html} = live(conn, ~p"/tenants")
+      assert {:ok, _index_live, _html} = live(conn, ~p"/organisations")
     end
   end
 end

@@ -11,13 +11,13 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "comment",
+      "source": "email",
       "type": "text"
     },
     {
@@ -25,107 +25,20 @@
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "log_entries_tenant_id_fkey",
-        "on_delete": "delete",
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "tenants"
-      },
+      "references": null,
       "size": null,
-      "source": "tenant_id",
-      "type": "uuid"
+      "source": "expires_at",
+      "type": "utc_datetime"
     },
     {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "log_entries_log_category_id_fkey",
-        "on_delete": "delete",
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "log_categories"
-      },
-      "size": null,
-      "source": "log_category_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "log_entries_user_id_fkey",
-        "on_delete": "delete",
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "user_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "start_at",
-      "type": "time"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "end_at",
-      "type": "time"
+      "source": "language",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -134,7 +47,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "created_at",
+      "source": "inserted_at",
       "type": "utc_datetime_usec"
     },
     {
@@ -148,6 +61,64 @@
       "type": "utc_datetime_usec"
     },
     {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "invitations_creator_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "users"
+      },
+      "size": null,
+      "source": "creator_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "invitations_organisation_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "organisations"
+      },
+      "size": null,
+      "source": "organisation_id",
+      "type": "uuid"
+    },
+    {
       "allow_nil?": true,
       "default": "nil",
       "generated?": false,
@@ -165,15 +136,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "log_entries_activity_id_fkey",
+        "name": "invitations_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "activities"
+        "table": "users"
       },
       "size": null,
-      "source": "activity_id",
+      "source": "user_id",
       "type": "uuid"
     }
   ],
@@ -182,7 +153,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "54A1AFFF609EE95AC5169564149CA38532BBECA4914644F13D3BA82F9A2DF6D3",
+  "hash": "3B6AD7040A805490438A3A5CCB9E0587A8AC43C6E82EE2138E4A40B4B3EB619B",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -191,5 +162,5 @@
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,
-  "table": "log_entries"
+  "table": "invitations"
 }

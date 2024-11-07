@@ -1,56 +1,56 @@
-defmodule OmedisWeb.TenantLive.Show do
+defmodule OmedisWeb.OrganisationLive.Show do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
 
   @impl true
   def render(assigns) do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@current_tenant}
+      current_organisation={@current_organisation}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {gettext("Home"), ~p"/", false},
-            {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant}", true}
+            {gettext("Organisations"), ~p"/organisations", false},
+            {@organisation.name, ~p"/organisations/#{@organisation}", true}
           ]}
           language={@language}
         />
 
         <.header>
-          <%= @tenant.slug %>
+          <%= @organisation.slug %>
 
           <:actions>
             <.link
-              :if={Ash.can?({@tenant, :update}, @current_user)}
-              patch={~p"/tenants/#{@tenant}/show/edit"}
+              :if={Ash.can?({@organisation, :update}, @current_user)}
+              patch={~p"/organisations/#{@organisation}/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Edit tenant") %>
+                  <%= gettext("Edit organisation") %>
                 <% end) %>
               </.button>
             </.link>
-            <.link patch={~p"/tenants/#{@tenant}/invitations"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/organisations/#{@organisation}/invitations"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Invitations") %>
                 <% end) %>
               </.button>
             </.link>
-            <.link patch={~p"/tenants/#{@tenant}/projects"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Projects") %>
                 <% end) %>
               </.button>
             </.link>
-            <.link patch={~p"/tenants/#{@tenant}/groups"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Groups") %>
@@ -58,7 +58,7 @@ defmodule OmedisWeb.TenantLive.Show do
               </.button>
             </.link>
 
-            <.link patch={~p"/tenants/#{@tenant}/today"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Today") %>
@@ -69,126 +69,134 @@ defmodule OmedisWeb.TenantLive.Show do
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @tenant.slug %></:item>
+          <:item title={with_locale(@language, fn -> gettext("Slug") end)}>
+            <%= @organisation.slug %>
+          </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Name") end)}><%= @tenant.name %></:item>
+          <:item title={with_locale(@language, fn -> gettext("Name") end)}>
+            <%= @organisation.name %>
+          </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Owner") end)}>
-            <%= @tenant.owner.as_string %>
+            <%= @organisation.owner.as_string %>
           </:item>
           <:item title={with_locale(@language, fn -> gettext("Timezone") end)}>
-            <%= @tenant.timezone %>
+            <%= @organisation.timezone %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Additional info") end)}>
-            <%= @tenant.additional_info %>
+            <%= @organisation.additional_info %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Street") end)}>
-            <%= @tenant.street %>
+            <%= @organisation.street %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Street2") end)}>
-            <%= @tenant.street2 %>
+            <%= @organisation.street2 %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Po box") end)}>
-            <%= @tenant.po_box %>
+            <%= @organisation.po_box %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Zip code") end)}>
-            <%= @tenant.zip_code %>
+            <%= @organisation.zip_code %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("City") end)}><%= @tenant.city %></:item>
+          <:item title={with_locale(@language, fn -> gettext("City") end)}>
+            <%= @organisation.city %>
+          </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Canton") end)}>
-            <%= @tenant.canton %>
+            <%= @organisation.canton %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Country") end)}>
-            <%= @tenant.country %>
+            <%= @organisation.country %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Description") end)}>
-            <%= @tenant.description %>
+            <%= @organisation.description %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Phone") end)}>
-            <%= @tenant.phone %>
+            <%= @organisation.phone %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Fax") end)}>
-            <%= @tenant.fax %>
+            <%= @organisation.fax %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Email") end)}>
-            <%= @tenant.email %>
+            <%= @organisation.email %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Website") end)}>
-            <%= @tenant.website %>
+            <%= @organisation.website %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Zsr Number") end)}>
-            <%= @tenant.zsr_number %>
+            <%= @organisation.zsr_number %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Ean gln") end)}>
-            <%= @tenant.ean_gln %>
+            <%= @organisation.ean_gln %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Uid Bfs Number") end)}>
-            <%= @tenant.uid_bfs_number %>
+            <%= @organisation.uid_bfs_number %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Trade register no") end)}>
-            <%= @tenant.trade_register_no %>
+            <%= @organisation.trade_register_no %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Bur number") end)}>
-            <%= @tenant.bur_number %>
+            <%= @organisation.bur_number %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Account number") end)}>
-            <%= @tenant.account_number %>
+            <%= @organisation.account_number %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Iban") end)}>
-            <%= @tenant.iban %>
+            <%= @organisation.iban %>
           </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Bic") end)}>
-            <%= @tenant.bic %>
+            <%= @organisation.bic %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Bank") end)}><%= @tenant.bank %></:item>
+          <:item title={with_locale(@language, fn -> gettext("Bank") end)}>
+            <%= @organisation.bank %>
+          </:item>
 
           <:item title={with_locale(@language, fn -> gettext("Account holder") end)}>
-            <%= @tenant.account_holder %>
+            <%= @organisation.account_holder %>
           </:item>
         </.list>
 
-        <.back navigate={~p"/tenants"}>
+        <.back navigate={~p"/organisations"}>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Back to tenants") %>
+            <%= gettext("Back to organisations") %>
           <% end) %>
         </.back>
 
         <.modal
           :if={@live_action == :edit}
-          id="tenant-modal"
+          id="organisation-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant}")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}")}
         >
           <.live_component
-            module={OmedisWeb.TenantLive.FormComponent}
-            id={@tenant.id}
+            module={OmedisWeb.OrganisationLive.FormComponent}
+            id={@organisation.id}
             title={@page_title}
             current_user={@current_user}
             action={@live_action}
             language={@language}
-            tenant={@tenant}
+            organisation={@organisation}
           />
         </.modal>
       </div>
@@ -205,11 +213,11 @@ defmodule OmedisWeb.TenantLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
 
     {:noreply,
      socket
-     |> assign(:tenant, tenant)
+     |> assign(:organisation, organisation)
      |> apply_action(socket.assigns.live_action)}
   end
 
@@ -218,15 +226,20 @@ defmodule OmedisWeb.TenantLive.Show do
   end
 
   defp apply_action(socket, :edit) do
-    if Ash.can?({socket.assigns.tenant, :update}, socket.assigns.current_user) do
+    if Ash.can?({socket.assigns.organisation, :update}, socket.assigns.current_user) do
       assign(socket, :page_title, page_title(:edit, socket.assigns.language))
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/tenants/#{socket.assigns.tenant}")
+      |> push_navigate(to: ~p"/organisations/#{socket.assigns.organisation}")
     end
   end
 
-  defp page_title(:show, language), do: with_locale(language, fn -> gettext("Show Tenant") end)
-  defp page_title(:edit, language), do: with_locale(language, fn -> gettext("Edit Tenant") end)
+  defp page_title(:show, language) do
+    with_locale(language, fn -> gettext("Show Organisation") end)
+  end
+
+  defp page_title(:edit, language) do
+    with_locale(language, fn -> gettext("Edit Organisation") end)
+  end
 end

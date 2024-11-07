@@ -5,9 +5,9 @@ defmodule Omedis.LogEntryTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, project} = create_project(%{tenant_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, project} = create_project(%{organisation_id: organisation.id})
     {:ok, activity} = create_activity(%{group_id: group.id, project_id: project.id})
     {:ok, user} = create_user()
     {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
@@ -17,13 +17,13 @@ defmodule Omedis.LogEntryTest do
         group_id: group.id,
         read: true,
         resource_name: "LogEntry",
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         write: true
       })
 
     %{
       owner: owner,
-      tenant: tenant,
+      organisation: organisation,
       group: group,
       activity: activity,
       user: user
@@ -33,25 +33,28 @@ defmodule Omedis.LogEntryTest do
   describe "by_activity/1" do
     test "returns log entries for a specific activity", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry_1} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, %{results: result}} =
-        LogEntry.by_activity(%{activity_id: activity.id}, actor: user, tenant: tenant)
+        LogEntry.by_activity(%{activity_id: activity.id},
+          actor: user,
+          tenant: organisation
+        )
 
       assert length(result) == 2
       assert Enum.map(result, & &1.id) == [log_entry_1.id, log_entry_2.id]
@@ -59,20 +62,20 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an empty list for unauthorized user", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
@@ -82,19 +85,19 @@ defmodule Omedis.LogEntryTest do
                LogEntry.by_activity(
                  %{activity_id: activity.id},
                  actor: unauthorized_user,
-                 tenant: tenant
+                 tenant: organisation
                )
     end
 
     test "returns an error if actor is not provided", %{
       activity: activity,
-      tenant: tenant
+      organisation: organisation
     } do
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogEntry.by_activity(%{activity_id: activity.id}, tenant: tenant)
+               LogEntry.by_activity(%{activity_id: activity.id}, tenant: organisation)
     end
 
-    test "returns an error if tenant is not provided", %{
+    test "returns an error if organisation is not provided", %{
       activity: activity,
       user: user
     } do
@@ -106,20 +109,20 @@ defmodule Omedis.LogEntryTest do
   describe "by_activity_today/1" do
     test "returns log entries for a specific activity created today", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry_1} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id,
           created_at: DateTime.add(DateTime.utc_now(), -2, :day)
         })
@@ -128,7 +131,7 @@ defmodule Omedis.LogEntryTest do
         LogEntry.by_activity_today(
           %{activity_id: activity.id},
           actor: user,
-          tenant: tenant
+          tenant: organisation
         )
 
       assert length(result) == 1
@@ -137,13 +140,13 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an empty list for unauthorized user", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
@@ -153,34 +156,38 @@ defmodule Omedis.LogEntryTest do
                LogEntry.by_activity_today(
                  %{activity_id: activity.id},
                  actor: unauthorized_user,
-                 tenant: tenant
+                 tenant: organisation
                )
     end
   end
 
-  describe "by_tenant/1" do
-    test "returns log entries for a specific tenant", %{
+  describe "by_organisation/1" do
+    test "returns log entries for a specific organisation", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
-      {:ok, another_tenant} = create_tenant()
+      {:ok, another_organisation} = create_organisation()
 
       {:ok, log_entry_1} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: another_tenant.id,
+          organisation_id: another_organisation.id,
           user_id: user.id
         })
 
-      {:ok, result} = LogEntry.by_tenant(%{tenant_id: tenant.id}, actor: user, tenant: tenant)
+      {:ok, result} =
+        LogEntry.by_organisation(%{organisation_id: organisation.id},
+          actor: user,
+          tenant: organisation
+        )
 
       assert length(result) == 1
       assert hd(result).id == log_entry_1.id
@@ -188,49 +195,52 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an empty list for unauthorized user", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, unauthorized_user} = create_user()
 
       assert {:ok, []} =
-               LogEntry.by_tenant(%{tenant_id: tenant.id},
+               LogEntry.by_organisation(%{organisation_id: organisation.id},
                  actor: unauthorized_user,
-                 tenant: tenant
+                 tenant: organisation
                )
     end
   end
 
-  describe "by_tenant_today/1" do
-    test "returns log entries created today for the specific tenant", %{
-      tenant: tenant,
+  describe "by_organisation_today/1" do
+    test "returns log entries created today for the specific organisation", %{
+      organisation: organisation,
       user: user,
       activity: activity
     } do
       {:ok, log_entry_1} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id,
           created_at: DateTime.add(DateTime.utc_now(), -2, :day)
         })
 
       {:ok, result} =
-        LogEntry.by_tenant_today(%{tenant_id: tenant.id}, actor: user, tenant: tenant)
+        LogEntry.by_organisation_today(%{organisation_id: organisation.id},
+          actor: user,
+          tenant: organisation
+        )
 
       assert length(result) == 1
       assert hd(result).id == log_entry_1.id
@@ -238,100 +248,100 @@ defmodule Omedis.LogEntryTest do
 
     test "returns an empty list for unauthorized user", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, unauthorized_user} = create_user()
 
       assert {:ok, []} =
-               LogEntry.by_tenant_today(
-                 %{tenant_id: tenant.id},
+               LogEntry.by_organisation_today(
+                 %{organisation_id: organisation.id},
                  actor: unauthorized_user,
-                 tenant: tenant
+                 tenant: organisation
                )
     end
   end
 
   describe "create/1" do
-    test "tenant owner can create a log entry", %{
+    test "organisation owner can create a log entry", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       owner: owner
     } do
       attrs = %{
         activity_id: activity.id,
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         user_id: owner.id
       }
 
-      assert {:ok, log_entry} = LogEntry.create(attrs, actor: owner, tenant: tenant)
+      assert {:ok, log_entry} = LogEntry.create(attrs, actor: owner, tenant: organisation)
       assert log_entry.activity_id == activity.id
-      assert log_entry.tenant_id == tenant.id
+      assert log_entry.organisation_id == organisation.id
       assert log_entry.user_id == owner.id
     end
 
     test "authorized user can create a log entry", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       attrs = %{
         activity_id: activity.id,
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         user_id: user.id
       }
 
-      assert {:ok, log_entry} = LogEntry.create(attrs, actor: user, tenant: tenant)
+      assert {:ok, log_entry} = LogEntry.create(attrs, actor: user, tenant: organisation)
       assert log_entry.activity_id == activity.id
-      assert log_entry.tenant_id == tenant.id
+      assert log_entry.organisation_id == organisation.id
       assert log_entry.user_id == user.id
     end
 
     test "unauthorized user cannot create a log entry", %{
       activity: activity,
-      tenant: tenant
+      organisation: organisation
     } do
       {:ok, unauthorized_user} = create_user()
 
       attrs = %{
         activity_id: activity.id,
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         user_id: unauthorized_user.id
       }
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogEntry.create(attrs, actor: unauthorized_user, tenant: tenant)
+               LogEntry.create(attrs, actor: unauthorized_user, tenant: organisation)
     end
   end
 
   describe "read/1" do
-    test "tenant owner can read all log entries", %{
+    test "organisation owner can read all log entries", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry_1} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
-      {:ok, result} = LogEntry.read(actor: user, tenant: tenant)
+      {:ok, result} = LogEntry.read(actor: user, tenant: organisation)
 
       assert length(result) == 2
       assert Enum.map(result, & &1.id) == [log_entry_1.id, log_entry_2.id]
@@ -339,7 +349,7 @@ defmodule Omedis.LogEntryTest do
 
     test "authorized user can read all log entries", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, another_user} = create_user()
@@ -347,18 +357,18 @@ defmodule Omedis.LogEntryTest do
       {:ok, log_entry_1} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: another_user.id
         })
 
-      {:ok, result} = LogEntry.read(actor: user, tenant: tenant)
+      {:ok, result} = LogEntry.read(actor: user, tenant: organisation)
 
       assert length(result) == 2
       assert Enum.map(result, & &1.id) == [log_entry_1.id, log_entry_2.id]
@@ -366,7 +376,7 @@ defmodule Omedis.LogEntryTest do
 
     test "unauthorized user cannot read log entries", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, unauthorized_user} = create_user()
@@ -374,31 +384,31 @@ defmodule Omedis.LogEntryTest do
       {:ok, _} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: unauthorized_user.id
         })
 
-      assert {:ok, []} = LogEntry.read(actor: unauthorized_user, tenant: tenant)
+      assert {:ok, []} = LogEntry.read(actor: unauthorized_user, tenant: organisation)
     end
   end
 
   describe "update/1" do
-    test "tenant owner can update a log entry", %{
+    test "organisation owner can update a log entry", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, log_entry} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: owner.id,
           comment: "Original comment"
         })
@@ -406,20 +416,20 @@ defmodule Omedis.LogEntryTest do
       update_attrs = %{comment: "Updated comment"}
 
       assert {:ok, updated_log_entry} =
-               LogEntry.update(log_entry, update_attrs, actor: owner, tenant: tenant)
+               LogEntry.update(log_entry, update_attrs, actor: owner, tenant: organisation)
 
       assert updated_log_entry.comment == "Updated comment"
     end
 
     test "authorized user can update a log entry", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id,
           comment: "Original comment"
         })
@@ -427,20 +437,20 @@ defmodule Omedis.LogEntryTest do
       update_attrs = %{comment: "Updated comment"}
 
       assert {:ok, updated_log_entry} =
-               LogEntry.update(log_entry, update_attrs, actor: user, tenant: tenant)
+               LogEntry.update(log_entry, update_attrs, actor: user, tenant: organisation)
 
       assert updated_log_entry.comment == "Updated comment"
     end
 
     test "unauthorized user cannot update a log entry", %{
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, log_entry} =
         create_log_entry(%{
           activity_id: activity.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           user_id: user.id,
           comment: "Original comment"
         })
@@ -450,7 +460,10 @@ defmodule Omedis.LogEntryTest do
       update_attrs = %{comment: "Updated comment"}
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               LogEntry.update(log_entry, update_attrs, actor: unauthorized_user, tenant: tenant)
+               LogEntry.update(log_entry, update_attrs,
+                 actor: unauthorized_user,
+                 tenant: organisation
+               )
     end
   end
 end

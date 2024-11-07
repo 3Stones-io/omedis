@@ -1,12 +1,12 @@
-defmodule Omedis.Accounts.Tenant do
+defmodule Omedis.Accounts.Organisation do
   @moduledoc """
-  This is the Tenant module
+  This is the Organisation module
   """
-  alias Omedis.Accounts.CanCreateTenant
-  alias Omedis.Accounts.CanUpdateTenant
+  alias Omedis.Accounts.CanCreateOrganisation
+  alias Omedis.Accounts.CanUpdateOrganisation
   alias Omedis.Accounts.Group
+  alias Omedis.Accounts.OrganisationsAccessFilter
   alias Omedis.Accounts.Project
-  alias Omedis.Accounts.TenantsAccessFilter
   alias Omedis.Validations
 
   require Ash.Query
@@ -17,16 +17,16 @@ defmodule Omedis.Accounts.Tenant do
     domain: Omedis.Accounts
 
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.TenantsAccessFilter
+  alias Omedis.Accounts.OrganisationsAccessFilter
 
   @derive {Phoenix.Param, key: :slug}
 
-  defimpl Ash.ToTenant, for: Omedis.Accounts.Tenant do
-    def to_tenant(%{id: id}, _), do: "tenant_#{id}"
+  defimpl Ash.ToTenant, for: Omedis.Accounts.Organisation do
+    def to_tenant(%{id: id}, _), do: "org_#{id}"
   end
 
   postgres do
-    table "tenants"
+    table "organisations"
     repo Omedis.Repo
 
     references do
@@ -35,7 +35,7 @@ defmodule Omedis.Accounts.Tenant do
   end
 
   resource do
-    plural_name :tenants
+    plural_name :organisations
   end
 
   identities do
@@ -260,15 +260,15 @@ defmodule Omedis.Accounts.Tenant do
 
   policies do
     policy action_type(:read) do
-      authorize_if TenantsAccessFilter
+      authorize_if OrganisationsAccessFilter
     end
 
     policy action_type(:create) do
-      authorize_if CanCreateTenant
+      authorize_if CanCreateOrganisation
     end
 
     policy action_type([:destroy, :update]) do
-      authorize_if CanUpdateTenant
+      authorize_if CanUpdateOrganisation
     end
   end
 end

@@ -130,15 +130,15 @@ defmodule OmedisWeb.GeneralComponents do
     ~H"""
     <div>
       <.topbar
-        current_tenant={@current_tenant}
+        current_organisation={@current_organisation}
         current_user={@current_user}
         language={@language}
-        tenants_count={@tenants_count}
+        organisations_count={@organisations_count}
       />
       <.desktop_sidebar
-        current_tenant={@current_tenant}
+        current_organisation={@current_organisation}
         current_user={@current_user}
-        tenants_count={@tenants_count}
+        organisations_count={@organisations_count}
         language={@language}
       />
       <%= render_slot(@inner_block) %>
@@ -185,13 +185,16 @@ defmodule OmedisWeb.GeneralComponents do
                   </a>
                 </li>
                 <li>
-                  <.tenants_link tenants_count={@tenants_count} language={@language} />
+                  <.organisations_link
+                    organisations_count={@organisations_count}
+                    language={@language}
+                  />
                 </li>
 
                 <li>
                   <.link
-                    :if={@current_tenant}
-                    navigate={get_current_tenant_path(@current_tenant)}
+                    :if={@current_organisation}
+                    navigate={get_current_organisation_path(@current_organisation)}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -329,14 +332,14 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
               </ul>
             </li>
-            <li :if={@current_tenant}>
+            <li :if={@current_organisation}>
               <div class="text-xs font-semibold leading-6 text-gray-400">
-                <%= @current_tenant.name %>
+                <%= @current_organisation.name %>
               </div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
                   <.link
-                    navigate={~p"/tenants/#{@current_tenant}/groups"}
+                    navigate={~p"/organisations/#{@current_organisation}/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -349,7 +352,7 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
                 <li>
                   <.link
-                    navigate={~p"/tenants/#{@current_tenant}/projects"}
+                    navigate={~p"/organisations/#{@current_organisation}/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -433,9 +436,9 @@ defmodule OmedisWeb.GeneralComponents do
               class="w-[75%]   h-[100vh] "
             >
               <.mobile_sidebar
-                current_tenant={@current_tenant}
+                current_organisation={@current_organisation}
                 current_user={@current_user}
-                tenants_count={@tenants_count}
+                organisations_count={@organisations_count}
                 language={@language}
               />
             </div>
@@ -572,12 +575,15 @@ defmodule OmedisWeb.GeneralComponents do
                   </a>
                 </li>
                 <li>
-                  <.tenants_link tenants_count={@tenants_count} language={@language} />
+                  <.organisations_link
+                    organisations_count={@organisations_count}
+                    language={@language}
+                  />
                 </li>
                 <li>
                   <.link
-                    :if={@current_tenant}
-                    navigate={get_current_tenant_path(@current_tenant)}
+                    :if={@current_organisation}
+                    navigate={get_current_organisation_path(@current_organisation)}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -714,14 +720,14 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
               </ul>
             </li>
-            <li :if={@current_tenant}>
+            <li :if={@current_organisation}>
               <div class="text-xs font-semibold leading-6 text-gray-400">
-                <%= @current_tenant.name %>
+                <%= @current_organisation.name %>
               </div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
                   <.link
-                    navigate={~p"/tenants/#{@current_tenant}/groups"}
+                    navigate={~p"/organisations/#{@current_organisation}/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -734,7 +740,7 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
                 <li>
                   <.link
-                    navigate={~p"/tenants/#{@current_tenant}/projects"}
+                    navigate={~p"/organisations/#{@current_organisation}/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -831,13 +837,16 @@ defmodule OmedisWeb.GeneralComponents do
     """
   end
 
-  defp get_current_tenant_path(nil), do: "/tenants"
-  defp get_current_tenant_path(current_tenant), do: "/tenants/#{current_tenant}"
+  defp get_current_organisation_path(nil), do: "/organisations"
 
-  defp tenants_link(assigns) do
+  defp get_current_organisation_path(current_organisation) do
+    "/organisations/#{current_organisation}"
+  end
+
+  defp organisations_link(assigns) do
     ~H"""
     <.link
-      navigate={tenants_link_path(@tenants_count)}
+      navigate={organisations_link_path(@organisations_count)}
       class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
     >
       <svg
@@ -854,19 +863,19 @@ defmodule OmedisWeb.GeneralComponents do
           d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
         />
       </svg>
-      <%= tenants_link_text(@tenants_count, @language) %>
+      <%= organisations_link_text(@organisations_count, @language) %>
     </.link>
     """
   end
 
-  defp tenants_link_path(0), do: ~p"/tenants/new"
-  defp tenants_link_path(_tenants_count), do: ~p"/tenants"
+  defp organisations_link_path(0), do: ~p"/organisations/new"
+  defp organisations_link_path(_organisations_count), do: ~p"/organisations"
 
-  defp tenants_link_text(0, language),
-    do: with_locale(language, fn -> gettext("Create first tenant") end)
+  defp organisations_link_text(0, language),
+    do: with_locale(language, fn -> gettext("Create first organisation") end)
 
-  defp tenants_link_text(tenants_count, language) do
-    "#{with_locale(language, fn -> gettext("Tenants") end)} (#{tenants_count})"
+  defp organisations_link_text(organisations_count, language) do
+    "#{with_locale(language, fn -> gettext("Organisations") end)} (#{organisations_count})"
   end
 
   attr :class, :string, default: nil

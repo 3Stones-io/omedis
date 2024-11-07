@@ -2,8 +2,8 @@ defmodule OmedisWeb.ActivityLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
-  alias Omedis.Accounts.Tenant
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -14,18 +14,18 @@ defmodule OmedisWeb.ActivityLive.Index do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@current_tenant}
+      current_organisation={@current_organisation}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {gettext("Home"), ~p"/", false},
-            {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
-            {@group.name, ~p"/tenants/#{@tenant}/groups/#{@group}", false},
+            {gettext("Organisations"), ~p"/organisations", false},
+            {@organisation.name, ~p"/organisations/#{@organisation}", false},
+            {gettext("Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
             {gettext("Activities"), "", true}
           ]}
           language={@language}
@@ -38,8 +38,8 @@ defmodule OmedisWeb.ActivityLive.Index do
 
           <:actions>
             <.link
-              :if={Ash.can?({Activity, :create}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities/new"}
+              :if={Ash.can?({Activity, :create}, @current_user, tenant: @organisation)}
+              patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/new"}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
@@ -55,7 +55,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           rows={@streams.activities}
           row_click={
             fn {_id, activity} ->
-              JS.navigate(~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}")
+              JS.navigate(~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}")
             end
           }
         >
@@ -67,7 +67,7 @@ defmodule OmedisWeb.ActivityLive.Index do
 
           <:col :let={{_id, activity}} label={with_locale(@language, fn -> gettext("Position") end)}>
             <div
-              :if={Ash.can?({activity, :update}, @current_user, tenant: @tenant)}
+              :if={Ash.can?({activity, :update}, @current_user, tenant: @organisation)}
               class="position flex items-center"
             >
               <span class="inline-flex flex-col">
@@ -103,7 +103,9 @@ defmodule OmedisWeb.ActivityLive.Index do
 
           <:action :let={{_id, activity}}>
             <div class="sr-only">
-              <.link navigate={~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}"}>
+              <.link navigate={
+                ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}"
+              }>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Show") %>
                 <% end) %>
@@ -111,8 +113,8 @@ defmodule OmedisWeb.ActivityLive.Index do
             </div>
 
             <.link
-              :if={Ash.can?({activity, :update}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{activity}/edit"}
+              :if={Ash.can?({activity, :update}, @current_user, tenant: @organisation)}
+              patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}/edit"}
             >
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
@@ -125,7 +127,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           :if={@live_action in [:new, :edit]}
           id="activity-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}/activities")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}/groups/#{@group}/activities")}
         >
           <.live_component
             module={OmedisWeb.ActivityLive.FormComponent}
@@ -133,20 +135,20 @@ defmodule OmedisWeb.ActivityLive.Index do
             current_user={@current_user}
             title={@page_title}
             groups={@groups}
-            tenant={@tenant}
+            organisation={@organisation}
             projects={@projects}
             group={@group}
             is_custom_color={@is_custom_color}
             language={@language}
             action={@live_action}
             activity={@activity}
-            patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
+            patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
+          resource_path={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}
           total_pages={@total_pages}
         />
       </div>
@@ -162,19 +164,22 @@ defmodule OmedisWeb.ActivityLive.Index do
     if connected?(socket),
       do: Phoenix.PubSub.subscribe(Omedis.PubSub, "activity_positions_updated")
 
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
-    group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
+    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+    group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: organisation)
 
     {:ok,
      socket
      |> assign(:language, language)
-     |> assign(:tenant, tenant)
-     |> assign(:groups, Ash.read!(Group, actor: socket.assigns.current_user, tenant: tenant))
+     |> assign(:organisation, organisation)
+     |> assign(
+       :groups,
+       Ash.read!(Group, actor: socket.assigns.current_user, tenant: organisation)
+     )
      |> assign(
        :projects,
-       Project.by_tenant_id!(%{tenant_id: tenant.id},
+       Project.by_organisation_id!(%{organisation_id: organisation.id},
          actor: socket.assigns.current_user,
-         tenant: tenant
+         tenant: organisation
        )
      )
      |> assign(:group, group)
@@ -192,8 +197,8 @@ defmodule OmedisWeb.ActivityLive.Index do
      |> assign(:current_page, 1)
      |> assign(:language, language)
      |> assign(:total_pages, 0)
-     |> assign(:tenants, Ash.read!(Tenant, actor: socket.assigns.current_user))
-     |> assign(:tenant, nil)
+     |> assign(:organisations, Ash.read!(Organisation, actor: socket.assigns.current_user))
+     |> assign(:organisation, nil)
      |> stream(:activities, [])}
   end
 
@@ -206,10 +211,10 @@ defmodule OmedisWeb.ActivityLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     actor = socket.assigns.current_user
-    tenant = socket.assigns.tenant
-    activity = Activity.by_id!(id, actor: actor, tenant: tenant)
+    organisation = socket.assigns.organisation
+    activity = Activity.by_id!(id, actor: actor, tenant: organisation)
 
-    if Ash.can?({activity, :update}, actor, tenant: tenant) do
+    if Ash.can?({activity, :update}, actor, tenant: organisation) do
       socket
       |> assign(
         :page_title,
@@ -219,15 +224,17 @@ defmodule OmedisWeb.ActivityLive.Index do
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/activities")
+      |> push_navigate(
+        to: ~p"/organisations/#{organisation}/groups/#{socket.assigns.group}/activities"
+      )
     end
   end
 
   defp apply_action(socket, :new, _params) do
     actor = socket.assigns.current_user
-    tenant = socket.assigns.tenant
+    organisation = socket.assigns.organisation
 
-    if Ash.can?({Activity, :create}, actor, tenant: tenant) do
+    if Ash.can?({Activity, :create}, actor, tenant: organisation) do
       socket
       |> assign(
         :page_title,
@@ -237,7 +244,9 @@ defmodule OmedisWeb.ActivityLive.Index do
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/tenants/#{tenant}/groups/#{socket.assigns.group}/activities")
+      |> push_navigate(
+        to: ~p"/organisations/#{organisation}/groups/#{socket.assigns.group}/activities"
+      )
     end
   end
 
@@ -258,7 +267,7 @@ defmodule OmedisWeb.ActivityLive.Index do
         %{group_id: socket.assigns.group.id},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
-        tenant: socket.assigns.tenant
+        tenant: socket.assigns.organisation
       )
     end)
   end
@@ -277,12 +286,12 @@ defmodule OmedisWeb.ActivityLive.Index do
   def handle_event("move-up", %{"activity-id" => activity_id}, socket) do
     case Ash.get(Activity, activity_id,
            actor: socket.assigns.current_user,
-           tenant: socket.assigns.tenant
+           tenant: socket.assigns.organisation
          ) do
       {:ok, activity} ->
         Activity.move_up(activity,
           actor: socket.assigns.current_user,
-          tenant: socket.assigns.tenant
+          tenant: socket.assigns.organisation
         )
 
         {:noreply, socket}
@@ -295,12 +304,12 @@ defmodule OmedisWeb.ActivityLive.Index do
   def handle_event("move-down", %{"activity-id" => activity_id}, socket) do
     case Ash.get(Activity, activity_id,
            actor: socket.assigns.current_user,
-           tenant: socket.assigns.tenant
+           tenant: socket.assigns.organisation
          ) do
       {:ok, activity} ->
         Activity.move_down(activity,
           actor: socket.assigns.current_user,
-          tenant: socket.assigns.tenant
+          tenant: socket.assigns.organisation
         )
 
         {:noreply, socket}

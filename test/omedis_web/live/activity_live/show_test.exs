@@ -5,9 +5,9 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, project} = create_project(%{tenant_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, project} = create_project(%{organisation_id: organisation.id})
     {:ok, authorized_user} = create_user()
 
     {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
@@ -17,7 +17,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
         group_id: group.id,
         read: true,
         resource_name: "Activity",
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         write: true
       })
 
@@ -26,7 +26,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        tenant_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -34,15 +34,15 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        tenant_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        tenant_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     {:ok, activity} =
@@ -53,7 +53,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
       })
 
     {:ok, user} = create_user()
-    {:ok, group2} = create_group(%{tenant_id: tenant.id})
+    {:ok, group2} = create_group(%{organisation_id: organisation.id})
     {:ok, _} = create_group_membership(%{group_id: group2.id, user_id: user.id})
 
     {:ok, _} =
@@ -61,7 +61,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
         group_id: group2.id,
         read: true,
         resource_name: "Group",
-        tenant_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
@@ -69,15 +69,15 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
         group_id: group2.id,
         read: true,
         resource_name: "Project",
-        tenant_id: tenant.id
+        organisation_id: organisation.id
       })
 
     {:ok, _} =
       create_access_right(%{
         group_id: group2.id,
         read: true,
-        resource_name: "Tenant",
-        tenant_id: tenant.id
+        resource_name: "Organisation",
+        organisation_id: organisation.id
       })
 
     %{
@@ -87,71 +87,73 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
       activity: activity,
       owner: owner,
       project: project,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     }
   end
 
-  describe "/tenants/:slug/groups/:group_slug/activities/:id" do
-    test "shows activity details if user is tenant owner", %{
+  describe "/organisations/:slug/groups/:group_slug/activities/:id" do
+    test "shows activity details if user is organisation owner", %{
+      activity: activity,
       conn: conn,
       group: group,
-      activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, _show_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}")
 
       assert html =~ activity.name
       assert html =~ "Edit activity"
     end
 
     test "shows activity details if user is authorized", %{
+      activity: activity,
+      authorized_user: authorized_user,
       conn: conn,
       group: group,
-      activity: activity,
-      tenant: tenant,
-      authorized_user: authorized_user
+      organisation: organisation
     } do
       {:ok, _show_live, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}")
 
       assert html =~ activity.name
       assert html =~ "Edit activity"
     end
 
     test "unauthorized user cannot see activity details", %{
+      activity: activity,
       conn: conn,
       group: group,
-      activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}")
       end
     end
   end
 
-  describe "/tenants/:slug/groups/:group_slug/activities/:id/show/edit" do
-    test "tenant owner can edit activity", %{
+  describe "/organisations/:slug/groups/:group_slug/activities/:id/show/edit" do
+    test "organisation owner can edit activity", %{
+      activity: activity,
       conn: conn,
       group: group,
-      activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, show_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}/show/edit")
+        |> live(
+          ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}/show/edit"
+        )
 
       assert html =~ "Edit activity"
 
@@ -167,7 +169,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
 
       assert_patch(
         show_live,
-        ~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}"
+        ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}"
       )
 
       assert html =~ "Activity saved successfully"
@@ -178,13 +180,15 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
       conn: conn,
       group: group,
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, show_live, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}/show/edit")
+        |> live(
+          ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}/show/edit"
+        )
 
       assert html =~ "Edit activity"
 
@@ -195,7 +199,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
 
       assert_patch(
         show_live,
-        ~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}"
+        ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}"
       )
 
       assert html =~ "Activity saved successfully"
@@ -207,7 +211,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
       group: group,
       group2: group2,
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, _} =
@@ -215,7 +219,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
           group_id: group2.id,
           read: true,
           resource_name: "Activity",
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           update: false,
           write: false
         })
@@ -223,10 +227,12 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
       {:error, {:live_redirect, %{flash: flash, to: to}}} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}/show/edit")
+        |> live(
+          ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}/show/edit"
+        )
 
       assert to ==
-               ~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}"
+               ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}"
 
       assert flash["error"] == "You are not authorized to access this page"
     end
@@ -235,13 +241,15 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
       conn: conn,
       group: group,
       activity: activity,
-      tenant: tenant,
+      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, form_live, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}/activities/#{activity.id}/show/edit")
+        |> live(
+          ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}/show/edit"
+        )
 
       assert html =
                form_live
