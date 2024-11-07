@@ -38,15 +38,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "log_entries_tenant_id_fkey",
+        "name": "log_entries_organisation_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "tenants"
+        "table": "organisations"
       },
       "size": null,
-      "source": "tenant_id",
+      "source": "organisation_id",
       "type": "uuid"
     },
     {
@@ -67,15 +67,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "log_entries_log_category_id_fkey",
+        "name": "log_entries_activity_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "log_categories"
+        "table": "activities"
       },
       "size": null,
-      "source": "log_category_id",
+      "source": "activity_id",
       "type": "uuid"
     },
     {
@@ -153,7 +153,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "00B0E18FB1D23099D52560C5A58F0C381023BCEAA325E78E35875E8748977830",
+  "hash": "3BDB472E27CA9D724A74398D453E423A0C88227ECB9CBAEF09508D9662F94409",
   "identities": [],
   "multitenancy": {
     "attribute": null,

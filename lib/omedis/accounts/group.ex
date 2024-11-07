@@ -20,7 +20,7 @@ defmodule Omedis.Accounts.Group do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :user, on_delete: :delete
     end
   end
@@ -30,7 +30,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   identities do
-    identity :unique_slug_per_tenant, [:slug, :tenant_id]
+    identity :unique_slug_per_organisation, [:slug, :organisation_id]
   end
 
   code_interface do
@@ -39,7 +39,7 @@ defmodule Omedis.Accounts.Group do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
-    define :by_tenant_id
+    define :by_organisation_id
     define :by_slug, get_by: [:slug], action: :read
   end
 
@@ -47,7 +47,7 @@ defmodule Omedis.Accounts.Group do
     create :create do
       accept [
         :name,
-        :tenant_id,
+        :organisation_id,
         :user_id,
         :slug
       ]
@@ -77,8 +77,8 @@ defmodule Omedis.Accounts.Group do
       filter expr(slug == ^arg(:slug))
     end
 
-    read :by_tenant_id do
-      argument :tenant_id, :uuid do
+    read :by_organisation_id do
+      argument :organisation_id, :uuid do
         allow_nil? false
       end
 
@@ -87,7 +87,7 @@ defmodule Omedis.Accounts.Group do
 
       prepare build(sort: :created_at)
 
-      filter expr(tenant_id == ^arg(:tenant_id))
+      filter expr(organisation_id == ^arg(:organisation_id))
     end
 
     destroy :destroy do
@@ -98,9 +98,9 @@ defmodule Omedis.Accounts.Group do
     validate present(:name)
   end
 
-  def slug_exists?(slug, tenant_id) do
+  def slug_exists?(slug, organisation_id) do
     __MODULE__
-    |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
+    |> Ash.Query.filter(slug: slug, organisation_id: organisation_id)
     |> Ash.read_one!(authorize?: false)
     |> case do
       nil -> false
@@ -119,7 +119,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   relationships do
-    belongs_to :tenant, Omedis.Accounts.Tenant do
+    belongs_to :organisation, Omedis.Accounts.Organisation do
       allow_nil? true
       attribute_writable? true
     end

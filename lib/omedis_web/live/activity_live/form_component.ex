@@ -46,7 +46,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           <.input
             field={@form[:group_id]}
             type="select"
-            label={Phoenix.HTML.raw("Tenant  <span class='text-red-600'>*</span>")}
+            label={Phoenix.HTML.raw("Organisation  <span class='text-red-600'>*</span>")}
             options={Enum.map(@groups, &{&1.name, &1.id})}
           />
         <% end %>
@@ -219,7 +219,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           :update,
           as: "activity",
           actor: socket.assigns.current_user,
-          tenant: socket.assigns.tenant
+          tenant: socket.assigns.organisation
         )
       else
         AshPhoenix.Form.for_create(
@@ -227,12 +227,11 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           :create,
           as: "activity",
           actor: socket.assigns.current_user,
-          tenant: socket.assigns.tenant
+          tenant: socket.assigns.organisation
         )
       end
 
-    color_code =
-      Activity.select_unused_color_code(socket.assigns.tenant.id)
+    color_code = Activity.select_unused_color_code(socket.assigns.organisation.id)
 
     assign(socket,
       form: to_form(form),
