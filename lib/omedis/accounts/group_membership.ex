@@ -10,16 +10,21 @@ defmodule Omedis.Accounts.GroupMembership do
 
   alias Omedis.Accounts.CanAccessResource
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupUserAccessFilter
+  alias Omedis.Accounts.GroupMembershipAccessFilter
   alias Omedis.Accounts.User
 
   postgres do
     table "group_memberships"
     repo Omedis.Repo
+
+    references do
+      reference :group, on_delete: :delete
+      reference :user, on_delete: :delete
+    end
   end
 
   identities do
-    identity :unique_group_member, [:group_id, :user_id]
+    identity :unique_group_membership, [:group_id, :user_id]
   end
 
   relationships do
@@ -27,7 +32,7 @@ defmodule Omedis.Accounts.GroupMembership do
     belongs_to :user, User, primary_key?: true, allow_nil?: false
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.GroupUser.Relationships.GroupUserAccessRights
+      manual Omedis.Accounts.GroupMembership.Relationships.GroupMembershipAccessRights
     end
   end
 
@@ -49,7 +54,7 @@ defmodule Omedis.Accounts.GroupMembership do
 
   policies do
     policy action_type(:read) do
-      authorize_if GroupUserAccessFilter
+      authorize_if GroupMembershipAccessFilter
     end
 
     policy action_type([:create, :destroy]) do

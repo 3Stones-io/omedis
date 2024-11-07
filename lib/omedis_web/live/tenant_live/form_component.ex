@@ -335,6 +335,6 @@ defmodule OmedisWeb.TenantLive.FormComponent do
     Enum.map(field.errors, &translate_error(&1))
   end
 
-  defp path_for(:edit, tenant), do: ~p"/tenants/#{tenant.slug}"
+  defp path_for(:edit, tenant), do: ~p"/tenants/#{tenant}"
   defp path_for(:new, _tenant), do: ~p"/tenants"
 end

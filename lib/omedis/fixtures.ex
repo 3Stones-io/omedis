@@ -13,12 +13,12 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.Group, attrs)
   end
 
-  def create_group_user(attrs \\ %{}) do
-    fixture(Accounts.GroupUser, attrs)
+  def create_group_membership(attrs \\ %{}) do
+    fixture(Accounts.GroupMembership, attrs)
   end
 
-  def create_log_category(attrs \\ %{}) do
-    fixture(Accounts.LogCategory, attrs)
+  def create_activity(attrs \\ %{}) do
+    fixture(Accounts.Activity, attrs)
   end
 
   def create_log_entry(attrs \\ %{}) do
@@ -64,14 +64,14 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.GroupUser) do
+  def attrs_for(Accounts.GroupMembership) do
     %{
       group_id: fn -> create_group().id end,
       user_id: fn -> create_user().id end
     }
   end
 
-  def attrs_for(Accounts.LogCategory) do
+  def attrs_for(Accounts.Activity) do
     %{
       color_code: "#" <> Faker.Color.rgb_hex(),
       group_id: fn -> create_group().id end,
@@ -85,7 +85,7 @@ defmodule Omedis.Fixtures do
   def attrs_for(Accounts.LogEntry) do
     %{
       end_at: ~T[18:00:00],
-      log_category_id: fn -> create_log_category().id end,
+      activity_id: fn -> create_activity().id end,
       start_at: ~T[08:00:00],
       tenant_id: fn -> create_tenant().id end,
       user_id: fn -> create_user().id end
