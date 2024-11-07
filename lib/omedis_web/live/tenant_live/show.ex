@@ -16,7 +16,7 @@ defmodule OmedisWeb.TenantLive.Show do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", true}
+            {@tenant.name, ~p"/tenants/#{@tenant}", true}
           ]}
           language={@language}
         />
@@ -27,7 +27,7 @@ defmodule OmedisWeb.TenantLive.Show do
           <:actions>
             <.link
               :if={Ash.can?({@tenant, :update}, @current_user)}
-              patch={~p"/tenants/#{@tenant.slug}/show/edit"}
+              patch={~p"/tenants/#{@tenant}/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -50,7 +50,7 @@ defmodule OmedisWeb.TenantLive.Show do
                 <% end) %>
               </.button>
             </.link>
-            <.link patch={~p"/tenants/#{@tenant.slug}/groups"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/tenants/#{@tenant}/groups"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Groups") %>
@@ -58,7 +58,7 @@ defmodule OmedisWeb.TenantLive.Show do
               </.button>
             </.link>
 
-            <.link patch={~p"/tenants/#{@tenant.slug}/today"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/tenants/#{@tenant}/today"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Today") %>
@@ -179,7 +179,7 @@ defmodule OmedisWeb.TenantLive.Show do
           :if={@live_action == :edit}
           id="tenant-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}")}
+          on_cancel={JS.patch(~p"/tenants/#{@tenant}")}
         >
           <.live_component
             module={OmedisWeb.TenantLive.FormComponent}
@@ -223,7 +223,7 @@ defmodule OmedisWeb.TenantLive.Show do
     else
       socket
       |> put_flash(:error, gettext("You are not authorized to access this page"))
-      |> push_navigate(to: ~p"/tenants/#{socket.assigns.tenant.slug}")
+      |> push_navigate(to: ~p"/tenants/#{socket.assigns.tenant}")
     end
   end
 

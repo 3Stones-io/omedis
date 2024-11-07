@@ -12,7 +12,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
 
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -32,7 +32,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       })
 
     {:ok, another_group} = create_group(%{tenant_id: tenant.id})
-    {:ok, _} = create_group_user(%{group_id: another_group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: another_group.id, user_id: user.id})
 
     {:ok, _} =
       create_access_right(%{
@@ -57,7 +57,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/tenants/#{tenant}/projects")
 
       assert html =~ "Test Project"
     end
@@ -73,7 +73,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/tenants/#{tenant}/projects")
 
       assert html =~ project.name
     end
@@ -89,7 +89,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/tenants/#{tenant}/projects")
 
       refute html =~ project.name
     end
@@ -105,7 +105,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/tenants/#{tenant}/projects")
 
       refute html =~ "New Project"
     end
@@ -121,7 +121,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, index_live, _} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects")
+        |> live(~p"/tenants/#{tenant}/projects")
 
       refute has_element?(index_live, "#edit-project-#{project.id}")
     end
@@ -136,7 +136,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, index_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/projects/new")
+        |> live(~p"/tenants/#{tenant}/projects/new")
 
       assert html =~ "New Project"
 
@@ -147,7 +147,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/tenants/#{tenant}/projects")
 
       assert html =~ "Project saved."
       assert html =~ "Dummy Project"
@@ -161,7 +161,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, index_live, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/new")
+        |> live(~p"/tenants/#{tenant}/projects/new")
 
       assert html =~ "New Project"
 
@@ -172,7 +172,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/tenants/#{tenant}/projects")
 
       assert html =~ "Project saved."
       assert html =~ "Dummy Project"
@@ -186,9 +186,9 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/new")
+        |> live(~p"/tenants/#{tenant}/projects/new")
 
-      assert redirect_path == ~p"/tenants/#{tenant.slug}/projects"
+      assert redirect_path == ~p"/tenants/#{tenant}/projects"
       assert flash["error"] == "You are not authorized to access this page"
     end
   end
@@ -205,7 +205,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, index_live, _} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/tenants/#{tenant}/projects/#{project.id}/edit")
 
       params = %{name: "Updated Project"}
 
@@ -214,7 +214,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/tenants/#{tenant}/projects")
 
       assert html =~ "Project saved."
       assert html =~ "Updated Project"
@@ -231,7 +231,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:ok, index_live, _} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/tenants/#{tenant}/projects/#{project.id}/edit")
 
       params = %{name: "Updated Project"}
 
@@ -240,7 +240,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> form("#project-form", project: params)
                |> render_submit()
 
-      assert_patch(index_live, ~p"/tenants/#{tenant.slug}/projects")
+      assert_patch(index_live, ~p"/tenants/#{tenant}/projects")
 
       assert html =~ "Project saved."
       assert html =~ "Updated Project"
@@ -257,9 +257,9 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/projects/#{project.id}/edit")
+        |> live(~p"/tenants/#{tenant}/projects/#{project.id}/edit")
 
-      assert redirect_path == ~p"/tenants/#{tenant.slug}/projects"
+      assert redirect_path == ~p"/tenants/#{tenant}/projects"
       assert flash["error"] == "You are not authorized to access this page"
     end
   end

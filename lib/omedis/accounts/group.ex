@@ -1,17 +1,19 @@
 defmodule Omedis.Accounts.Group do
   @moduledoc """
-  This is the log category module
+  This is the group module
   """
 
   require Ash.Query
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Accounts,
+    authorizers: [Ash.Policy.Authorizer]
 
-  alias Omedis.Accounts.AccessRight
-  alias Omedis.Accounts.GroupUser
+  alias Omedis.Accounts.GroupMembership
   alias Omedis.Accounts.User
+
+  @derive {Phoenix.Param, key: :slug}
 
   postgres do
     table "groups"
@@ -33,7 +35,6 @@ defmodule Omedis.Accounts.Group do
 
   code_interface do
     domain Omedis.Accounts
-    define :read
     define :create
     define :update
     define :by_id, get_by: [:id], action: :read
@@ -100,7 +101,7 @@ defmodule Omedis.Accounts.Group do
   def slug_exists?(slug, tenant_id) do
     __MODULE__
     |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
-    |> Ash.read_one!()
+    |> Ash.read_one!(authorize?: false)
     |> case do
       nil -> false
       _ -> true
@@ -129,10 +130,23 @@ defmodule Omedis.Accounts.Group do
     end
 
     many_to_many :users, User do
-      through GroupUser
+      through GroupMembership
     end
 
-    has_many :access_rights, AccessRight
-    has_many :group_users, GroupUser
+    has_many :group_memberships, GroupMembership
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Group.Relationships.GroupAccessRights
+    end
+  end
+
+  policies do
+    policy action_type([:create, :update, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action_type([:read]) do
+      authorize_if Omedis.Accounts.AccessFilter
+    end
   end
 end

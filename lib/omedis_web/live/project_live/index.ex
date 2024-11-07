@@ -3,8 +3,8 @@ defmodule OmedisWeb.ProjectLive.Index do
 
   alias Omedis.Accounts.Project
   alias Omedis.Accounts.Tenant
-  alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
+  alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
@@ -22,8 +22,8 @@ defmodule OmedisWeb.ProjectLive.Index do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Projects"), ~p"/tenants/#{@tenant.slug}", true}
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Projects"), ~p"/tenants/#{@tenant}", true}
           ]}
           language={@language}
         />
@@ -35,7 +35,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           <:actions>
             <.link
               :if={Ash.can?({Project, :create}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant.slug}/projects/new"}
+              patch={~p"/tenants/#{@tenant}/projects/new"}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
@@ -50,7 +50,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           id="projects"
           rows={@streams.projects}
           row_click={
-            fn {_id, project} -> JS.navigate(~p"/tenants/#{@tenant.slug}/projects/#{project}") end
+            fn {_id, project} -> JS.navigate(~p"/tenants/#{@tenant}/projects/#{project}") end
           }
         >
           <:col :let={{_id, project}} label={with_locale(@language, fn -> gettext("Name") end)}>
@@ -63,7 +63,7 @@ defmodule OmedisWeb.ProjectLive.Index do
 
           <:action :let={{_id, project}}>
             <div class="sr-only">
-              <.link navigate={~p"/tenants/#{@tenant.slug}/projects/#{project}"}>
+              <.link navigate={~p"/tenants/#{@tenant}/projects/#{project}"}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Show") %>
                 <% end) %>
@@ -72,7 +72,7 @@ defmodule OmedisWeb.ProjectLive.Index do
 
             <.link
               :if={Ash.can?({project, :update}, @current_user, tenant: @tenant)}
-              patch={~p"/tenants/#{@tenant.slug}/projects/#{project}/edit"}
+              patch={~p"/tenants/#{@tenant}/projects/#{project}/edit"}
             >
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
@@ -85,7 +85,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           :if={@live_action in [:new, :edit]}
           id="project-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/projects")}
+          on_cancel={JS.patch(~p"/tenants/#{@tenant}/projects")}
         >
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
@@ -98,13 +98,13 @@ defmodule OmedisWeb.ProjectLive.Index do
             language={@language}
             action={@live_action}
             project={@project}
-            patch={~p"/tenants/#{@tenant.slug}/projects"}
+            patch={~p"/tenants/#{@tenant}/projects"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/projects"}
+          resource_path={~p"/tenants/#{@tenant}/projects"}
           total_pages={@total_pages}
         />
       </div>
@@ -165,7 +165,13 @@ defmodule OmedisWeb.ProjectLive.Index do
       with_locale(socket.assigns.language, fn -> gettext("Projects") end)
     )
     |> assign(:project, nil)
-    |> list_paginated_projects(params)
+    |> PaginationUtils.list_paginated(params, :projects, fn offset ->
+      Project.list_paginated(
+        actor: socket.assigns.current_user,
+        page: [count: true, offset: offset],
+        tenant: socket.assigns.tenant
+      )
+    end)
   end
 
   defp maybe_enforce_access_rights_and_apply_action(socket, :new, _) do
@@ -211,45 +217,13 @@ defmodule OmedisWeb.ProjectLive.Index do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
     |> assign(:user_has_access_rights, false)
-    |> push_patch(to: ~p"/tenants/#{tenant.slug}/projects")
+    |> push_patch(to: ~p"/tenants/#{tenant}/projects")
     |> put_flash(
       :error,
       with_locale(socket.assigns.language, fn ->
         gettext("You are not authorized to access this page")
       end)
     )
-  end
-
-  defp list_paginated_projects(%Phoenix.LiveView.Socket{} = socket, params) do
-    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
-
-    case list_paginated_projects(params, opts) do
-      {:ok, %{count: total_count, results: projects}} ->
-        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
-        current_page = min(page, total_pages)
-
-        socket
-        |> assign(:current_page, current_page)
-        |> assign(:total_pages, total_pages)
-        |> stream(:projects, projects, reset: true)
-
-      {:error, _error} ->
-        socket
-    end
-  end
-
-  defp list_paginated_projects(params, opts) do
-    case params do
-      %{"page" => page} when not is_nil(page) ->
-        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
-        offset_value = (page_value - 1) * 10
-
-        Project.list_paginated(opts ++ [page: [count: true, offset: offset_value]])
-
-      _ ->
-        Project.list_paginated(opts ++ [page: [count: true]])
-    end
   end
 
   @impl true

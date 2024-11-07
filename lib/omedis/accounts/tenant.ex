@@ -19,6 +19,8 @@ defmodule Omedis.Accounts.Tenant do
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.TenantsAccessFilter
 
+  @derive {Phoenix.Param, key: :slug}
+
   defimpl Ash.ToTenant, for: Omedis.Accounts.Tenant do
     def to_tenant(%{id: id}, _), do: "tenant_#{id}"
   end

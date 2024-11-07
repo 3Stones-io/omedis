@@ -15,11 +15,17 @@ defmodule OmedisWeb.Plugs.TenantsCountTest do
       {:ok, group_2} = create_group()
       {:ok, group_3} = create_group()
 
-      {:ok, _group_user_1} = create_group_user(%{group_id: group_1.id, user_id: user_1.id})
-      {:ok, _group_user_2} = create_group_user(%{group_id: group_2.id, user_id: user_1.id})
+      {:ok, _group_membership_1} =
+        create_group_membership(%{group_id: group_1.id, user_id: user_1.id})
 
-      {:ok, _group_user_3} = create_group_user(%{group_id: group_1.id, user_id: user_2.id})
-      {:ok, _group_user_4} = create_group_user(%{group_id: group_2.id, user_id: user_3.id})
+      {:ok, _group_membership_2} =
+        create_group_membership(%{group_id: group_2.id, user_id: user_1.id})
+
+      {:ok, _group_membership_3} =
+        create_group_membership(%{group_id: group_1.id, user_id: user_2.id})
+
+      {:ok, _group_membership_4} =
+        create_group_membership(%{group_id: group_2.id, user_id: user_3.id})
 
       {:ok, tenant_1} = create_tenant()
       {:ok, tenant_2} = create_tenant()

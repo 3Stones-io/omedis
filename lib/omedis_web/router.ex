@@ -51,8 +51,8 @@ defmodule OmedisWeb.Router do
 
       live "/tenants/:slug/today", TenantLive.Today, :index
 
-      live "/tenants/:slug/groups/:group_slug/log_categories", LogCategoryLive.Index, :index
-      live "/tenants/:slug/groups/:group_slug/log_categories/new", LogCategoryLive.Index, :new
+      live "/tenants/:slug/groups/:group_slug/activities", ActivityLive.Index, :index
+      live "/tenants/:slug/groups/:group_slug/activities/new", ActivityLive.Index, :new
 
       live "/tenants/:slug/projects", ProjectLive.Index, :index
       live "/tenants/:slug/projects/new", ProjectLive.Index, :new
@@ -66,20 +66,20 @@ defmodule OmedisWeb.Router do
       live "/tenants/:slug/groups/:group_slug", GroupLive.Show, :show
       live "/tenants/:slug/groups/:group_slug/edit", GroupLive.Index, :edit
 
-      live "/tenants/:slug/groups/:group_slug/log_categories/:id", LogCategoryLive.Show, :show
+      live "/tenants/:slug/groups/:group_slug/activities/:id", ActivityLive.Show, :show
 
-      live "/tenants/:slug/groups/:group_slug/log_categories/:id/edit",
-           LogCategoryLive.Index,
+      live "/tenants/:slug/groups/:group_slug/activities/:id/edit",
+           ActivityLive.Index,
            :edit
 
-      live "/tenants/:slug/groups/:group_slug/log_categories/:id/show/edit",
-           LogCategoryLive.Show,
+      live "/tenants/:slug/groups/:group_slug/activities/:id/show/edit",
+           ActivityLive.Show,
            :edit
 
       live "/tenants/:slug", TenantLive.Show, :show
       live "/tenants/:slug/show/edit", TenantLive.Show, :edit
 
-      live "/tenants/:slug/log_categories/:id/log_entries", LogEntryLive.Index, :index
+      live "/tenants/:slug/activities/:id/log_entries", LogEntryLive.Index, :index
     end
   end
 

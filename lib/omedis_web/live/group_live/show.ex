@@ -17,8 +17,8 @@ defmodule OmedisWeb.GroupLive.Show do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
             {@group.name, "", true}
           ]}
           language={@language}
@@ -27,12 +27,12 @@ defmodule OmedisWeb.GroupLive.Show do
         <.header>
           <:actions>
             <.link
-              patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories"}
+              patch={~p"/tenants/#{@tenant}/groups/#{@group}/activities"}
               phx-click={JS.push_focus()}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Log categories") %>
+                  <%= gettext("Activities") %>
                 <% end) %>
               </.button>
             </.link>
@@ -44,7 +44,7 @@ defmodule OmedisWeb.GroupLive.Show do
           <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @group.slug %></:item>
         </.list>
 
-        <.back navigate={~p"/tenants/#{@tenant.slug}/groups"}>
+        <.back navigate={~p"/tenants/#{@tenant}/groups"}>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Back to groups") %>
           <% end) %>
@@ -54,7 +54,7 @@ defmodule OmedisWeb.GroupLive.Show do
           :if={@live_action == :edit}
           id="group-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}")}
+          on_cancel={JS.patch(~p"/tenants/#{@tenant}/groups/#{@group}")}
         >
           <.live_component
             module={OmedisWeb.GroupLive.FormComponent}
@@ -64,7 +64,7 @@ defmodule OmedisWeb.GroupLive.Show do
             tenant={@tenant}
             language={@language}
             group={@group}
-            patch={~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}"}
+            patch={~p"/tenants/#{@tenant}/groups/#{@group}"}
           />
         </.modal>
       </div>
@@ -82,11 +82,16 @@ defmodule OmedisWeb.GroupLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug, "group_slug" => group_slug}, _, socket) do
+    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:tenant, Tenant.by_slug!(slug, actor: socket.assigns.current_user))
-     |> assign(:group, Group.by_slug!(group_slug))}
+     |> assign(:tenant, tenant)
+     |> assign(
+       :group,
+       Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: tenant)
+     )}
   end
 
   defp page_title(:show, language), do: with_locale(language, fn -> gettext("Show Tenant") end)

@@ -1,10 +1,10 @@
 defmodule OmedisWeb.LogEntryLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Tenant
-  alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
+  alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
@@ -22,13 +22,11 @@ defmodule OmedisWeb.LogEntryLive.Index do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
-            {gettext("Groups"), ~p"/tenants/#{@tenant.slug}/groups", false},
-            {@group.name, ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}", false},
-            {gettext("Log Categories"),
-             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories", false},
-            {@log_category.name,
-             ~p"/tenants/#{@tenant.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {gettext("Groups"), ~p"/tenants/#{@tenant}/groups", false},
+            {@group.name, ~p"/tenants/#{@tenant}/groups/#{@group}", false},
+            {gettext("Activities"), ~p"/tenants/#{@tenant}/groups/#{@group}/activities", false},
+            {@activity.name, ~p"/tenants/#{@tenant}/groups/#{@group}/activities/#{@activity.id}",
              false},
             {"Log Entries", "", true}
           ]}
@@ -41,7 +39,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
               <%= gettext("Listing Log entries for") %>
             <% end) %>
           </span>
-          <%= @log_category.name %>
+          <%= @activity.name %>
         </.header>
 
         <.table id="log_entries" rows={@streams.log_entries}>
@@ -60,7 +58,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/tenants/#{@tenant.slug}/log_categories/#{@log_category.id}/log_entries"}
+          resource_path={~p"/tenants/#{@tenant}/activities/#{@activity.id}/log_entries"}
           total_pages={@total_pages}
         />
       </div>
@@ -80,15 +78,15 @@ defmodule OmedisWeb.LogEntryLive.Index do
   def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
     tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
 
-    {:ok, log_category} =
+    {:ok, activity} =
       id
-      |> LogCategory.by_id!()
-      |> Ash.load(:group)
+      |> Activity.by_id!(actor: socket.assigns.current_user, tenant: tenant)
+      |> Ash.load(:group, authorize?: false)
 
     {:noreply,
      socket
-     |> assign(:group, log_category.group)
-     |> assign(:log_category, log_category)
+     |> assign(:group, activity.group)
+     |> assign(:activity, activity)
      |> assign(:tenant, tenant)
      |> apply_action(socket.assigns.live_action, params)}
   end
@@ -97,41 +95,12 @@ defmodule OmedisWeb.LogEntryLive.Index do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
     |> assign(:log_entry, nil)
-    |> list_paginated_log_entries(params)
-  end
-
-  defp list_paginated_log_entries(%Phoenix.LiveView.Socket{} = socket, params) do
-    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
-
-    case list_paginated_log_entries(params, opts) do
-      {:ok, %{count: total_count, results: log_entries}} ->
-        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
-        current_page = min(page, total_pages)
-
-        socket
-        |> assign(:current_page, current_page)
-        |> assign(:total_pages, total_pages)
-        |> stream(:log_entries, log_entries, reset: true)
-
-      {:error, _error} ->
-        socket
-    end
-  end
-
-  defp list_paginated_log_entries(params, opts) do
-    case params do
-      %{"page" => page} when not is_nil(page) ->
-        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
-        offset_value = (page_value - 1) * 10
-
-        LogEntry.by_log_category(
-          %{log_category_id: params["id"]},
-          opts ++ [page: [count: true, offset: offset_value]]
-        )
-
-      _ ->
-        LogEntry.by_log_category(%{log_category_id: params["id"]}, opts ++ [page: [count: true]])
-    end
+    |> PaginationUtils.list_paginated(params, :log_entries, fn offset ->
+      LogEntry.by_activity(%{activity_id: params["id"]},
+        actor: socket.assigns.current_user,
+        page: [count: true, offset: offset],
+        tenant: socket.assigns.tenant
+      )
+    end)
   end
 end
