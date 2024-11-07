@@ -47,7 +47,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       tenant: tenant
     } do
       {:ok, authorized_user} = create_user()
-      {:ok, group} = create_group(%{tenant_id: tenant.id})
+      {:ok, group} = create_group(%{name: "Test Group", tenant_id: tenant.id})
 
       create_group_membership(%{
         group_id: group.id,
@@ -75,7 +75,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
         |> log_in_user(authorized_user)
         |> live(~p"/tenants/#{tenant}/groups/#{group}")
 
-      assert html =~ group.name
+      assert html =~ "Test Group"
     end
 
     test "does not render a group details if user is unauthorized", %{
