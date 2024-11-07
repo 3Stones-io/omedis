@@ -1,6 +1,6 @@
 defmodule Omedis.Accounts.CanCreateOrganisation do
   @moduledoc """
-  Determines whether a user can create a organisation.
+  Determines whether a user can create an organisation.
   User can create only one organisation.
   """
   use Ash.Policy.SimpleCheck

@@ -56,7 +56,7 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "create/2" do
-    test "organisation owner can create a log category", %{
+    test "organisation owner can create an activity", %{
       owner: owner,
       organisation: organisation,
       group: group,
@@ -131,7 +131,7 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "update/2" do
-    test "organisation owner can update a log category", %{
+    test "organisation owner can update an activity", %{
       owner: owner,
       organisation: organisation,
       group: group,

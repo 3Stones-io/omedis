@@ -82,7 +82,7 @@ defmodule OmedisWeb.Plugs.OrganisationsCountTest do
         create_access_right(%{
           group_id: group_3.id,
           organisation_id: organisation_3.id,
-          resource_name: "organisation"
+          resource_name: "Organisation"
         })
 
       conn = OrganisationsCount.call(conn, [])

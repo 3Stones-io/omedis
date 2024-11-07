@@ -141,7 +141,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
   end
 
   describe "/organisations/:slug/groups/:group_slug/activities/:id/show/edit" do
-    test "organisation owner can edit log category", %{
+    test "organisation owner can edit activity", %{
       activity: activity,
       conn: conn,
       group: group,

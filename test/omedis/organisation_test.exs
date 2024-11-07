@@ -43,7 +43,7 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "create/1" do
-    test "is only allowed for users without a organisation", %{user: user} do
+    test "is only allowed for users without an organisation", %{user: user} do
       assert {:error, _} =
                Organisation.create(%{name: "New Organisation", slug: "new-organisation"},
                  actor: user
@@ -165,7 +165,7 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "by_id/1" do
-    test "returns a organisation given a valid id", %{
+    test "returns an organisation given a valid id", %{
       user: user,
       organisation: organisation,
       group: group
@@ -185,7 +185,7 @@ defmodule Omedis.OrganisationTest do
       assert {:error, _} = Organisation.by_id(organisation.id, actor: user)
     end
 
-    test "returns a organisation for the owner without access rights", %{user: user} do
+    test "returns an organisation for the owner without access rights", %{user: user} do
       {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
 
       assert {:ok, fetched_organisation} = Organisation.by_id(owned_organisation.id, actor: user)
@@ -194,7 +194,7 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "by_slug/1" do
-    test "returns a organisation given a slug", %{
+    test "returns an organisation given a slug", %{
       user: user,
       organisation: organisation,
       group: group
@@ -214,7 +214,7 @@ defmodule Omedis.OrganisationTest do
       assert {:error, _} = Organisation.by_slug(organisation.slug, actor: user)
     end
 
-    test "returns a organisation for the owner without access rights", %{user: user} do
+    test "returns an organisation for the owner without access rights", %{user: user} do
       {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
 
       assert {:ok, fetched_organisation} =
@@ -225,7 +225,7 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "by_owner_id/1" do
-    test "returns a organisation for a specific user", %{user: user} do
+    test "returns an organisation for a specific user", %{user: user} do
       {:ok, organisation} = create_organisation(%{slug: "organisation-one", owner_id: user.id})
 
       assert {:ok, [fetched_organisation]} =

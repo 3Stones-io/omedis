@@ -8,11 +8,11 @@ defmodule Omedis.Repo.Migrations.RenameTenants do
 
   def up do
     # Drop all existing foreign key constraints
-    drop constraint(:projects, "projects_tenant_id_fkey")
-    drop constraint(:log_entries, "log_entries_tenant_id_fkey")
-    drop constraint(:invitations, "invitations_tenant_id_fkey")
-    drop constraint(:groups, "groups_tenant_id_fkey")
-    drop constraint(:access_rights, "access_rights_tenant_id_fkey")
+    tables = [:access_rights, :groups, :invitations, :log_entries, :projects]
+
+    for table <- tables do
+      drop constraint(table, "#{table}_tenant_id_fkey")
+    end
 
     # Drop existing indexes
     drop_if_exists unique_index(:tenants, [:slug], name: "tenants_unique_slug_index")
@@ -36,8 +36,6 @@ defmodule Omedis.Repo.Migrations.RenameTenants do
     rename table(:users), :current_tenant_id, to: :current_organisation_id
 
     # Update all related tables to reference organisations and rename tenant_id columns
-    tables = [:projects, :log_entries, :invitations, :groups, :access_rights]
-
     for table <- tables do
       rename table(table), :tenant_id, to: :organisation_id
 
@@ -115,5 +113,6 @@ defmodule Omedis.Repo.Migrations.RenameTenants do
 
     create unique_index(:projects, [:name, :tenant_id], name: "projects_unique_name_index")
     create unique_index(:groups, [:slug, :tenant_id], name: "groups_unique_slug_per_tenant_index")
+    create unique_index(:tenants, [:slug], name: "tenants_unique_slug_index")
   end
 end

@@ -50,7 +50,7 @@ defmodule Omedis.Fixtures do
       create: Enum.random([true, false]),
       group_id: fn -> create_group().id end,
       read: Enum.random([true, false]),
-      resource_name: Enum.random(["organisation"]),
+      resource_name: Enum.random(["Organisation"]),
       organisation_id: fn -> create_organisation().id end,
       update: Enum.random([true, false]),
       write: Enum.random([true, false])

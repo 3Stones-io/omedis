@@ -1,6 +1,6 @@
 defmodule Omedis.Accounts.CanUpdateOrganisation do
   @moduledoc """
-  Determines whether a user can update a organisation.
+  Determines whether a user can update an organisation.
   User either needs to be the owner of the organisation or have write access to the organisation through a group.
   """
   use Ash.Policy.SimpleCheck

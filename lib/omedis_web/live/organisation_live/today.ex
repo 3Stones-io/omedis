@@ -98,8 +98,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
      |> assign(:organisation, organisation)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
-     |> assign(:groups, groups_for_a_organisation(organisation.id))
-     |> assign(:projects, projects_for_a_organisation(organisation, current_user))
+     |> assign(:groups, groups_for_an_organisation(organisation.id))
+     |> assign(:projects, projects_for_an_organisation(organisation, current_user))
      |> assign(:group, group)
      |> assign(:project, project)
      |> assign(:log_entries, log_entries)
@@ -110,7 +110,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
     organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-    group = latest_group_for_a_organisation(organisation.id)
+    group = latest_group_for_an_organisation(organisation.id)
     project = latest_project_for_an_organisation(organisation, socket.assigns.current_user)
 
     {:noreply,
@@ -444,7 +444,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp latest_group_for_a_organisation(organisation_id) do
+  defp latest_group_for_an_organisation(organisation_id) do
     case Group.by_organisation_id(%{organisation_id: organisation_id}) do
       {:ok, %{results: groups}} ->
         Enum.min_by(groups, & &1.created_at)
@@ -471,7 +471,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp groups_for_a_organisation(organisation_id) do
+  defp groups_for_an_organisation(organisation_id) do
     case Group.by_organisation_id(%{organisation_id: organisation_id}) do
       {:ok, %{results: groups}} ->
         groups
@@ -482,7 +482,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp projects_for_a_organisation(organisation, current_user) do
+  defp projects_for_an_organisation(organisation, current_user) do
     case Project.by_organisation_id(%{organisation_id: organisation.id},
            actor: current_user,
            tenant: organisation
