@@ -14,7 +14,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         create_tenant(%{name: "Test Tenant", slug: "test-tenant", owner_id: owner.id})
 
       {:ok, group} = create_group()
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user_2.id})
+      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user_2.id})
 
       # Create invitations (15 for owner, 5 for user_2)
       invitations =
@@ -23,7 +23,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
             create_invitation(%{
               email: "test#{i}@example.com",
               tenant_id: tenant.id,
-              creator_id: if(i <= 15, do: owner.id, else: user_2.id),
+              creator_id: if(Enum.random([true, false]), do: owner.id, else: user_2.id),
               language: "en"
             })
 
@@ -44,7 +44,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
           group_id: group.id,
           tenant_id: tenant.id,
           read: true,
-          resource_name: "Tenant"
+          resource_name: "Tenant",
+          write: true
         })
 
       %{
@@ -64,10 +65,12 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, index_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/invitations")
+        |> live(~p"/tenants/#{tenant}/invitations")
 
       assert html =~ "Listing Invitations"
       assert html =~ "test1@example.com"
+      assert html =~ "test2@example.com"
+      assert html =~ "test3@example.com"
       assert html =~ "test10@example.com"
       refute html =~ "test11@example.com"
 
@@ -90,36 +93,45 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
     test "authorized user can see only invitations they have access to", %{
       conn: conn,
-      group: group,
       tenant: tenant,
       user_2: authorized_user
     } do
-      {:ok, _} =
-        create_access_right(%{
-          group_id: group.id,
-          tenant_id: tenant.id,
-          read: true,
-          resource_name: "Tenant"
-        })
-
-      {:ok, _lv, html} =
+      {:ok, index_live, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/invitations")
+        |> live(~p"/tenants/#{tenant}/invitations")
 
+      assert html =~ "Listing Invitations"
+      assert html =~ "test1@example.com"
+      assert html =~ "test2@example.com"
+      assert html =~ "test3@example.com"
+      assert html =~ "test10@example.com"
+      refute html =~ "test11@example.com"
+
+      # Test pagination
+      assert index_live
+             |> element("nav[aria-label=Pagination]")
+             |> has_element?()
+
+      # Navigate to the second page
+      index_live
+      |> element("nav[aria-label=Pagination] a", "2")
+      |> render_click()
+
+      html = render(index_live)
       refute html =~ "test1@example.com"
       refute html =~ "test10@example.com"
-      assert html =~ "test16@example.com"
-      assert html =~ "test20@example.com"
+      assert html =~ "test11@example.com"
+      assert html =~ "test15@example.com"
     end
 
     test "unauthorized user cannot see invitations", %{
       conn: conn,
-      group: group,
       tenant: tenant
     } do
       {:ok, unauthorized_user} = create_user()
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: unauthorized_user.id})
+      {:ok, group} = create_group()
+      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: unauthorized_user.id})
 
       {:ok, _} =
         create_access_right(%{
@@ -132,7 +144,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/invitations")
+        |> live(~p"/tenants/#{tenant}/invitations")
 
       assert html =~ "Listing Invitations"
       refute html =~ "test1@example.com"
@@ -150,7 +162,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, index_live, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/invitations")
+        |> live(~p"/tenants/#{tenant}/invitations")
 
       assert index_live
              |> element("#invitations")
@@ -170,12 +182,12 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       tenant: tenant,
       invitations: invitations
     } do
-      invitation = Enum.at(invitations, 16)
+      invitation = Enum.at(invitations, 1)
 
       {:ok, index_live, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant.slug}/invitations")
+        |> live(~p"/tenants/#{tenant}/invitations")
 
       assert index_live
              |> element("#invitations")

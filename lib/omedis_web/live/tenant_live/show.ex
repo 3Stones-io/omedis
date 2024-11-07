@@ -36,14 +36,14 @@ defmodule OmedisWeb.TenantLive.Show do
                 <% end) %>
               </.button>
             </.link>
-            <.link patch={~p"/tenants/#{@tenant.slug}/invitations"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/tenants/#{@tenant}/invitations"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Invitations") %>
                 <% end) %>
               </.button>
             </.link>
-            <.link patch={~p"/tenants/#{@tenant.slug}/projects"} phx-click={JS.push_focus()}>
+            <.link patch={~p"/tenants/#{@tenant}/projects"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Projects") %>

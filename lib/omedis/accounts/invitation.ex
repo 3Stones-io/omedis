@@ -39,10 +39,6 @@ defmodule Omedis.Accounts.Invitation do
     defaults [:destroy, :read]
 
     read :list_paginated do
-      argument :creator_id, :uuid do
-        allow_nil? false
-      end
-
       argument :sort_order, :atom do
         allow_nil? true
         default :asc
@@ -53,7 +49,6 @@ defmodule Omedis.Accounts.Invitation do
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit),
                  countable: :by_default
 
-      filter expr(creator_id == ^arg(:creator_id))
       prepare build(sort: [inserted_at: arg(:sort_order)])
     end
 

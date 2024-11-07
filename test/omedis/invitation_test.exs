@@ -10,7 +10,7 @@ defmodule Omedis.Accounts.InvitationTest do
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
     {:ok, authorized_user} = create_user()
     {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, access_right} =
       create_access_right(%{
@@ -109,7 +109,7 @@ defmodule Omedis.Accounts.InvitationTest do
       {:ok, invitation} = Invitation.create(params, actor: tenant_owner, tenant: tenant)
 
       assert {:ok, %{results: results, count: 1}} =
-               Invitation.list_paginated(%{creator_id: creator_id},
+               Invitation.list_paginated(
                  actor: tenant_owner,
                  page: [limit: 10, offset: 0],
                  tenant: tenant
@@ -136,7 +136,7 @@ defmodule Omedis.Accounts.InvitationTest do
       end
 
       assert {:ok, %{results: results, count: 15}} =
-               Invitation.list_paginated(%{creator_id: creator_id},
+               Invitation.list_paginated(
                  actor: authorized_user,
                  page: [limit: 10, offset: 0],
                  tenant: tenant
@@ -146,7 +146,7 @@ defmodule Omedis.Accounts.InvitationTest do
 
       # Second page
       assert {:ok, %{results: more_results}} =
-               Invitation.list_paginated(%{creator_id: creator_id},
+               Invitation.list_paginated(
                  actor: authorized_user,
                  page: [limit: 10, offset: 10],
                  tenant: tenant
@@ -177,7 +177,7 @@ defmodule Omedis.Accounts.InvitationTest do
       Ash.destroy!(access_right)
 
       assert {:ok, %{results: [], count: 0}} =
-               Invitation.list_paginated(%{creator_id: creator_id},
+               Invitation.list_paginated(
                  actor: authorized_user,
                  page: [limit: 20, offset: 0],
                  tenant: tenant

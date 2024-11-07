@@ -5,8 +5,8 @@ defmodule OmedisWeb.InvitationLive.Index do
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.Tenant
-  alias Omedis.PaginationUtils
   alias OmedisWeb.PaginationComponent
+  alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
@@ -24,7 +24,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           items={[
             {with_locale(@language, fn -> gettext("Home") end), ~p"/", false},
             {with_locale(@language, fn -> gettext("Tenants") end), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+            {@tenant.name, ~p"/tenants/#{@tenant}", false},
             {with_locale(@language, fn -> gettext("Invitations") end), "", true}
           ]}
           language={@language}
@@ -98,7 +98,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           <PaginationComponent.pagination
             current_page={@current_page}
             language={@language}
-            resource_path={~p"/tenants/#{@tenant.slug}/invitations"}
+            resource_path={~p"/tenants/#{@tenant}/invitations"}
             total_pages={@total_pages}
           />
         </div>
@@ -120,10 +120,7 @@ defmodule OmedisWeb.InvitationLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply,
-     socket
-     |> apply_action(socket.assigns.live_action, params)
-     |> list_paginated_invitations(params)}
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   @impl true
@@ -144,71 +141,39 @@ defmodule OmedisWeb.InvitationLive.Index do
   @impl true
   def handle_event("sort_invitations", %{"current_sort_order" => current_sort_order}, socket) do
     new_sort_order = if current_sort_order == "asc", do: "desc", else: "asc"
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
-
-    params = %{"sort_order" => new_sort_order, "creator_id" => opts[:actor].id}
-    maybe_updated_socket = list_paginated_invitations(socket, params)
+    params = %{"sort_order" => new_sort_order}
 
     {:noreply,
-     maybe_updated_socket
+     socket
+     |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
+       Invitation.list_paginated(
+         params,
+         page: [count: true, offset: offset],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.tenant
+       )
+     end)
      |> assign(:sort_order, new_sort_order)}
   end
 
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(
-      :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Listing Invitations") end)
-    )
-  end
-
-  defp list_paginated_invitations(socket, params) do
-    page = PaginationUtils.maybe_convert_page_to_integer(params["page"])
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
-
+  defp apply_action(socket, :index, params) do
     sort_order =
       params
       |> Map.get("sort_order", "asc")
       |> String.to_existing_atom()
 
-    updated_params =
-      params
-      |> Map.put("creator_id", socket.assigns.current_user.id)
-      |> Map.put("sort_order", sort_order)
-
-    case list_invitations(updated_params, opts) do
-      {:ok, %{count: total_count, results: invitations}} ->
-        total_pages = max(1, ceil(total_count / socket.assigns.number_of_records_per_page))
-        current_page = min(page, total_pages)
-
-        socket
-        |> assign(:current_page, current_page)
-        |> assign(:total_pages, total_pages)
-        |> stream(:invitations, invitations, reset: true)
-
-      {:error, _error} ->
-        socket
-    end
-  end
-
-  defp list_invitations(params, opts) do
-    updated_params = Map.drop(params, ["page", "slug"])
-
-    case params do
-      %{"page" => page} when not is_nil(page) ->
-        page_value = max(1, PaginationUtils.maybe_convert_page_to_integer(page))
-        offset_value = (page_value - 1) * 10
-
-        Invitation.list_paginated(
-          updated_params,
-          opts ++ [page: [offset: offset_value, limit: 10, count: true]]
-        )
-
-      _ ->
-        Invitation.list_paginated(
-          updated_params,
-          opts ++ [page: [offset: 0, limit: 10, count: true]]
-        )
-    end
+    socket
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn -> gettext("Listing Invitations") end)
+    )
+    |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
+      Invitation.list_paginated(
+        %{sort_order: sort_order},
+        page: [count: true, offset: offset],
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.tenant
+      )
+    end)
   end
 end
