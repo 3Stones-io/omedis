@@ -22,7 +22,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
     {:ok, owner} = create_user()
     {:ok, tenant} = create_tenant(%{owner_id: owner.id})
     {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, _} = create_group_user(%{user_id: owner.id, group_id: group.id})
+    {:ok, _} = create_group_membership(%{user_id: owner.id, group_id: group.id})
 
     {:ok, _} =
       create_access_right(%{

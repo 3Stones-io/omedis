@@ -1,5 +1,5 @@
 defmodule Omedis.Accounts.InvitationTest do
-  use Omedis.DataCase, async: true
+  use Omedis.DataCase, async: false
 
   import Omedis.Fixtures
 
@@ -12,7 +12,7 @@ defmodule Omedis.Accounts.InvitationTest do
     {:ok, group} = create_group(%{tenant_id: tenant.id})
 
     {:ok, authorized_user} = create_user()
-    create_group_user(%{user_id: authorized_user.id, group_id: group.id})
+    create_group_membership(%{user_id: authorized_user.id, group_id: group.id})
 
     create_access_right(%{
       resource_name: "Invitation",
@@ -39,7 +39,7 @@ defmodule Omedis.Accounts.InvitationTest do
 
     {:ok, unauthorized_user} = create_user()
     {:ok, group_2} = create_group()
-    create_group_user(%{user_id: unauthorized_user.id, group_id: group_2.id})
+    create_group_membership(%{user_id: unauthorized_user.id, group_id: group_2.id})
 
     %{
       authorized_user: authorized_user,
@@ -153,9 +153,7 @@ defmodule Omedis.Accounts.InvitationTest do
       assert {:ok, []} = Invitation.by_id(%{id: invitation.id})
     end
 
-    test "returns empty list if invitation does not exist", %{
-      tenant: tenant
-    } do
+    test "returns empty list if invitation does not exist" do
       assert {:ok, []} =
                Invitation.by_id(%{id: Ecto.UUID.generate()})
     end

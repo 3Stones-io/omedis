@@ -832,7 +832,7 @@ defmodule OmedisWeb.GeneralComponents do
   end
 
   defp get_current_tenant_path(nil), do: "/tenants"
-  defp get_current_tenant_path(current_tenant), do: "/tenants/#{current_tenant}"
+  defp get_current_tenant_path(current_tenant), do: "/tenants/#{current_tenant.slug}"
 
   defp tenants_link(assigns) do
     ~H"""
