@@ -32,7 +32,20 @@ defmodule Omedis.Accounts.Invitation do
 
     attribute :language, :string, allow_nil?: false
 
-    timestamps()
+    attribute :inserted_at, :utc_datetime_usec do
+      writable? true
+      default &DateTime.utc_now/0
+      match_other_defaults? true
+      allow_nil? false
+    end
+
+    attribute :updated_at, :utc_datetime_usec do
+      writable? false
+      default &DateTime.utc_now/0
+      update_default &DateTime.utc_now/0
+      match_other_defaults? true
+      allow_nil? false
+    end
   end
 
   actions do
@@ -50,6 +63,12 @@ defmodule Omedis.Accounts.Invitation do
                  countable: :by_default
 
       prepare build(sort: [inserted_at: arg(:sort_order)])
+    end
+
+    update :update do
+      accept [:email, :language, :creator_id, :tenant_id, :inserted_at]
+
+      primary? true
     end
 
     create :create do

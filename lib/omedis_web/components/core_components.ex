@@ -511,7 +511,7 @@ defmodule OmedisWeb.CoreComponents do
               phx-click={col[:col_click]}
               class={[
                 "p-0 pb-4 pr-6 font-normal",
-                col[:col_click] && "hover:cursor-pointer"
+                col[:col_click] && "hover:cursor-pointer clickable"
               ]}
             >
               <div class="flex items-center gap-1">

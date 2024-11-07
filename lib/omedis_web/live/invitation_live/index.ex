@@ -141,7 +141,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   @impl true
   def handle_event("sort_invitations", %{"current_sort_order" => current_sort_order}, socket) do
     new_sort_order = if current_sort_order == "asc", do: "desc", else: "asc"
-    params = %{"sort_order" => new_sort_order}
+    params = %{sort_order: String.to_atom(new_sort_order)}
 
     {:noreply,
      socket
@@ -167,6 +167,7 @@ defmodule OmedisWeb.InvitationLive.Index do
       :page_title,
       with_locale(socket.assigns.language, fn -> gettext("Listing Invitations") end)
     )
+    |> assign(:sort_order, Atom.to_string(sort_order))
     |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
       Invitation.list_paginated(
         %{sort_order: sort_order},

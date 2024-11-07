@@ -1,6 +1,8 @@
 defmodule Omedis.Accounts.InvitationTest do
   use Omedis.DataCase, async: true
 
+  import Omedis.Fixtures
+
   alias Omedis.Accounts.Invitation
 
   @params %{email: "test@example.com", language: "en"}
@@ -155,6 +157,35 @@ defmodule Omedis.Accounts.InvitationTest do
       assert length(more_results) == 5
     end
 
+    test "sorts invitations by inserted_at", %{
+      tenant: tenant,
+      owner: tenant_owner
+    } do
+      invitations =
+        for i <- 1..3 do
+          {:ok, invitation} =
+            create_invitation(%{
+              creator_id: tenant_owner.id,
+              tenant_id: tenant.id
+            })
+
+          invitation
+          |> Ash.Changeset.for_update(:update, %{inserted_at: time_before_or_after(-i * 12_000)},
+            authorize?: false
+          )
+          |> Ash.update!()
+        end
+
+      assert {:ok, %{results: results}} =
+               Invitation.list_paginated(%{sort_order: :asc},
+                 actor: tenant_owner,
+                 tenant: tenant
+               )
+
+      assert Enum.map(results, & &1.inserted_at) ==
+               invitations |> Enum.map(& &1.inserted_at) |> Enum.reverse()
+    end
+
     test "does not return invitations if user is unauthorized", %{
       access_right: access_right,
       authorized_user: authorized_user,
@@ -183,5 +214,12 @@ defmodule Omedis.Accounts.InvitationTest do
                  tenant: tenant
                )
     end
+  end
+
+  defp time_before_or_after(seconds_offset) do
+    DateTime.utc_now()
+    |> DateTime.add(seconds_offset)
+    |> DateTime.to_naive()
+    |> NaiveDateTime.truncate(:second)
   end
 end
