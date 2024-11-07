@@ -17,7 +17,7 @@ defmodule Omedis.Accounts.LogEntry do
 
     references do
       reference :tenant, on_delete: :delete
-      reference :log_category, on_delete: :delete
+      reference :activity, on_delete: :delete
       reference :user, on_delete: :delete
     end
   end
@@ -31,16 +31,16 @@ defmodule Omedis.Accounts.LogEntry do
     define :read
     define :create
     define :update
-    define :by_log_category
-    define :by_log_category_today
+    define :by_activity
+    define :by_activity_today
     define :by_tenant
     define :by_tenant_today
     define :by_id, get_by: [:id], action: :read
   end
 
   actions do
-    read :by_log_category do
-      argument :log_category_id, :uuid do
+    read :by_activity do
+      argument :activity_id, :uuid do
         allow_nil? false
       end
 
@@ -49,7 +49,7 @@ defmodule Omedis.Accounts.LogEntry do
 
       prepare build(sort: :created_at)
 
-      filter expr(log_category_id == ^arg(:log_category_id))
+      filter expr(activity_id == ^arg(:activity_id))
     end
 
     read :by_tenant do
@@ -71,13 +71,13 @@ defmodule Omedis.Accounts.LogEntry do
              )
     end
 
-    read :by_log_category_today do
-      argument :log_category_id, :uuid do
+    read :by_activity_today do
+      argument :activity_id, :uuid do
         allow_nil? false
       end
 
       filter expr(
-               log_category_id == ^arg(:log_category_id) and
+               activity_id == ^arg(:activity_id) and
                  fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
              )
     end
@@ -89,7 +89,7 @@ defmodule Omedis.Accounts.LogEntry do
         :start_at,
         :end_at,
         :tenant_id,
-        :log_category_id,
+        :activity_id,
         :user_id
       ]
 
@@ -102,7 +102,7 @@ defmodule Omedis.Accounts.LogEntry do
         :start_at,
         :end_at,
         :tenant_id,
-        :log_category_id,
+        :activity_id,
         :user_id
       ]
 
@@ -120,7 +120,7 @@ defmodule Omedis.Accounts.LogEntry do
 
     attribute :comment, :string, allow_nil?: true, public?: true
     attribute :tenant_id, :uuid, allow_nil?: false, public?: true
-    attribute :log_category_id, :uuid, allow_nil?: false, public?: true
+    attribute :activity_id, :uuid, allow_nil?: false, public?: true
     attribute :user_id, :uuid, allow_nil?: false, public?: true
 
     attribute :start_at, :time, allow_nil?: true, public?: true
@@ -131,17 +131,12 @@ defmodule Omedis.Accounts.LogEntry do
   end
 
   relationships do
-    belongs_to :activity, Omedis.Accounts.Activity do
-      allow_nil? true
-      attribute_writable? true
-    end
-
     belongs_to :tenant, Omedis.Accounts.Tenant do
       allow_nil? true
       attribute_writable? true
     end
 
-    belongs_to :log_category, Omedis.Accounts.LogCategory do
+    belongs_to :activity, Omedis.Accounts.Activity do
       allow_nil? true
       attribute_writable? true
     end

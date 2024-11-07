@@ -29,7 +29,7 @@ defmodule Omedis.Accounts.CanAccessResource do
         AccessRight,
         resource_name == ^resource_name and tenant_id == ^tenant.id and
           (write == true or ^action == true) and
-          exists(group.group_users, user_id == ^actor.id)
+          exists(group.group_memberships, user_id == ^actor.id)
       )
     )
   end
