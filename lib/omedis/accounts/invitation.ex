@@ -66,7 +66,7 @@ defmodule Omedis.Accounts.Invitation do
     end
 
     update :update do
-      accept [:email, :language, :creator_id, :tenant_id, :inserted_at]
+      accept [:email, :language, :creator_id, :organisation_id, :inserted_at]
 
       primary? true
     end

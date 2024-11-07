@@ -9,8 +9,12 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     {:ok, owner} = create_user()
     {:ok, user_2} = create_user()
 
-    {:ok, tenant} =
-      create_tenant(%{name: "Test Tenant", slug: "test-tenant", owner_id: owner.id})
+    {:ok, organisation} =
+      create_organisation(%{
+        name: "Test Organisation",
+        slug: "test-organisation",
+        owner_id: owner.id
+      })
 
     {:ok, group} = create_group()
     {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user_2.id})
@@ -21,7 +25,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         {:ok, invitation} =
           create_invitation(%{
             email: "test#{i}@example.com",
-            tenant_id: tenant.id,
+            organisation_id: organisation.id,
             creator_id: if(Enum.random([true, false]), do: owner.id, else: user_2.id),
             language: "en"
           })
@@ -36,7 +40,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     {:ok, _} =
       create_access_right(%{
         group_id: group.id,
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         read: true,
         write: true,
         resource_name: "Invitation"
@@ -45,9 +49,9 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     {:ok, _} =
       create_access_right(%{
         group_id: group.id,
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         read: true,
-        resource_name: "Tenant",
+        resource_name: "Organisation",
         write: true
       })
 
@@ -55,21 +59,21 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       group: group,
       invitations: invitations,
       owner: owner,
-      tenant: tenant,
+      organisation: organisation,
       user_2: user_2
     }
   end
 
-  describe "/tenants/:slug/invitations" do
-    test "tenant owner can see all invitations with pagination", %{
+  describe "/organisations/:slug/invitations" do
+    test "organisation owner can see all invitations with pagination", %{
       conn: conn,
       owner: owner,
-      tenant: tenant
+      organisation: organisation
     } do
       {:ok, index_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant}/invitations")
+        |> live(~p"/organisations/#{organisation}/invitations")
 
       assert html =~ "Listing Invitations"
       refute html =~ "test1@example.com"
@@ -97,13 +101,13 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
     test "authorized user can see only invitations they have access to", %{
       conn: conn,
-      tenant: tenant,
+      organisation: organisation,
       user_2: authorized_user
     } do
       {:ok, index_live, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/invitations")
+        |> live(~p"/organisations/#{organisation}/invitations")
 
       assert html =~ "Listing Invitations"
       refute html =~ "test1@example.com"
@@ -131,7 +135,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
     test "unauthorized user cannot see invitations", %{
       conn: conn,
-      tenant: tenant
+      organisation: organisation
     } do
       {:ok, unauthorized_user} = create_user()
       {:ok, group} = create_group()
@@ -140,15 +144,15 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, _} =
         create_access_right(%{
           group_id: group.id,
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           read: true,
-          resource_name: "Tenant"
+          resource_name: "Organisation"
         })
 
       {:ok, _lv, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/tenants/#{tenant}/invitations")
+        |> live(~p"/organisations/#{organisation}/invitations")
 
       assert html =~ "Listing Invitations"
       refute html =~ "test1@example.com"
@@ -158,7 +162,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     test "tenant owner can delete invitations", %{
       conn: conn,
       owner: owner,
-      tenant: tenant,
+      organisation: organisation,
       invitations: invitations
     } do
       invitation = Enum.at(invitations, 15)
@@ -166,7 +170,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, index_live, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant}/invitations")
+        |> live(~p"/organisations/#{organisation}/invitations")
 
       assert index_live
              |> element("#invitations")
@@ -177,13 +181,13 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       |> render_click()
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
-               Invitation.by_id(invitation.id, actor: owner, tenant: tenant)
+               Invitation.by_id(invitation.id, actor: owner, tenant: organisation)
     end
 
     test "authorized user can delete invitations", %{
       conn: conn,
       user_2: authorized_user,
-      tenant: tenant,
+      organisation: organisation,
       invitations: invitations
     } do
       invitation = Enum.at(invitations, 15)
@@ -191,7 +195,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, index_live, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/invitations")
+        |> live(~p"/organisations/#{organisation}/invitations")
 
       assert index_live
              |> element("#invitations")
@@ -202,30 +206,30 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       |> render_click()
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
-               Invitation.by_id(invitation.id, actor: authorized_user, tenant: tenant)
+               Invitation.by_id(invitation.id, actor: authorized_user, tenant: organisation)
     end
 
     test "can sort invitations by inserted_at", %{
       conn: conn,
       owner: owner,
-      tenant: tenant
+      organisation: organisation
     } do
       oldest_invitation =
         Invitation
         |> Ash.Query.sort(inserted_at: :desc)
-        |> Ash.read!(actor: owner, tenant: tenant)
+        |> Ash.read!(actor: owner, tenant: organisation)
         |> List.first()
 
       newest_invitation =
         Invitation
         |> Ash.Query.sort(inserted_at: :asc)
-        |> Ash.read!(actor: owner, tenant: tenant)
+        |> Ash.read!(actor: owner, tenant: organisation)
         |> List.first()
 
       {:ok, index_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant}/invitations")
+        |> live(~p"/organisations/#{organisation}/invitations")
 
       assert html =~ newest_invitation.email
       refute html =~ oldest_invitation.email

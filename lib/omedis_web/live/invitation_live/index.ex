@@ -4,7 +4,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Invitation
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -15,16 +15,16 @@ defmodule OmedisWeb.InvitationLive.Index do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@current_tenant}
+      current_organisation={@current_organisation}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {with_locale(@language, fn -> gettext("Home") end), ~p"/", false},
-            {with_locale(@language, fn -> gettext("Tenants") end), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant}", false},
+            {with_locale(@language, fn -> gettext("Organisations") end), ~p"/organisations", false},
+            {@organisation.name, ~p"/organisations/#{@organisation}", false},
             {with_locale(@language, fn -> gettext("Invitations") end), "", true}
           ]}
           language={@language}
@@ -76,7 +76,7 @@ defmodule OmedisWeb.InvitationLive.Index do
 
             <:action :let={{dom_id, invitation}}>
               <.link
-                :if={Ash.can?({invitation, :destroy}, @current_user, tenant: @tenant)}
+                :if={Ash.can?({invitation, :destroy}, @current_user, tenant: @organisation)}
                 id={"delete_invitation_#{invitation.id}"}
                 phx-click={
                   JS.push("delete_invitation", value: %{id: invitation.id}) |> hide("##{dom_id}")
@@ -98,7 +98,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           <PaginationComponent.pagination
             current_page={@current_page}
             language={@language}
-            resource_path={~p"/tenants/#{@tenant}/invitations"}
+            resource_path={~p"/organisations/#{@organisation}/invitations"}
             total_pages={@total_pages}
           />
         </div>
@@ -109,11 +109,11 @@ defmodule OmedisWeb.InvitationLive.Index do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
 
     {:ok,
      socket
-     |> assign(:tenant, tenant)
+     |> assign(:organisation, organisation)
      |> assign(:sort_order, :desc)
      |> stream(:invitations, [])}
   end
@@ -125,7 +125,7 @@ defmodule OmedisWeb.InvitationLive.Index do
 
   @impl true
   def handle_event("delete_invitation", %{"id" => id}, socket) do
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.tenant]
+    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.organisation]
     invitation = Invitation.by_id!(id, opts)
     :ok = Invitation.destroy!(invitation, opts)
 
@@ -150,7 +150,7 @@ defmodule OmedisWeb.InvitationLive.Index do
          params,
          page: [count: true, offset: offset],
          actor: socket.assigns.current_user,
-         tenant: socket.assigns.tenant
+         tenant: socket.assigns.organisation
        )
      end)
      |> assign(:sort_order, new_sort_order)}
@@ -173,7 +173,7 @@ defmodule OmedisWeb.InvitationLive.Index do
         %{sort_order: sort_order},
         page: [count: true, offset: offset],
         actor: socket.assigns.current_user,
-        tenant: socket.assigns.tenant
+        tenant: socket.assigns.organisation
       )
     end)
   end
