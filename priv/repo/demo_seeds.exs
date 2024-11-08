@@ -32,12 +32,12 @@ end
     :unique_email
   )
 
-%{records: [tenant_1, tenant_2], status: :success} =
+%{records: [organisation_1, organisation_2], status: :success} =
   bulk_create.(
-    Accounts.Tenant,
+    Accounts.Organisation,
     [
-      %{owner_id: user_1.id, slug: "demo-tenant"},
-      %{owner_id: user_2.id, slug: "demo-tenant-2"}
+      %{owner_id: user_1.id, slug: "demo-organisation"},
+      %{owner_id: user_2.id, slug: "demo-organisation-2"}
     ],
     :unique_slug
   )
@@ -46,9 +46,9 @@ end
   bulk_create.(
     Accounts.Group,
     [
-      %{name: "Demo Group", slug: "demo-group", organisation_id: tenant_1.id},
-      %{name: "Demo Group 2", slug: "demo-group2", organisation_id: tenant_1.id},
-      %{name: "Demo Group 3", slug: "demo-group3", organisation_id: tenant_2.id}
+      %{name: "Demo Group", slug: "demo-group", organisation_id: organisation_1.id},
+      %{name: "Demo Group 2", slug: "demo-group2", organisation_id: organisation_1.id},
+      %{name: "Demo Group 3", slug: "demo-group3", organisation_id: organisation_2.id}
     ],
     :unique_slug_per_organisation
   )
@@ -70,19 +70,24 @@ end
     [
       %{
         group_id: group_1.id,
-        organisation_id: tenant_1.id,
+        organisation_id: organisation_1.id,
         resource_name: "Project",
         read: true,
         write: true
       },
       %{
         group_id: group_2.id,
-        organisation_id: tenant_2.id,
+        organisation_id: organisation_2.id,
         resource_name: "Group",
         read: true,
         write: true
       },
-      %{group_id: group_3.id, read: true, resource_name: "Tenant", organisation_id: tenant_2.id}
+      %{
+        group_id: group_3.id,
+        read: true,
+        resource_name: "Organisation",
+        organisation_id: organisation_2.id
+      }
     ],
     nil
   )
@@ -93,17 +98,17 @@ end
     [
       %{
         name: "Demo Project 1",
-        organisation_id: tenant_1.id,
+        organisation_id: organisation_1.id,
         position: "1"
       },
       %{
         name: "Demo Project 2",
-        organisation_id: tenant_1.id,
+        organisation_id: organisation_1.id,
         position: "2"
       },
       %{
         name: "Demo Project 3",
-        organisation_id: tenant_2.id,
+        organisation_id: organisation_2.id,
         position: "1"
       }
     ],
@@ -114,8 +119,8 @@ end
   bulk_create.(
     Accounts.Invitation,
     [
-      %{creator_id: user_1.id, organisation_id: tenant_1.id},
-      %{creator_id: user_2.id, organisation_id: tenant_1.id}
+      %{creator_id: user_1.id, organisation_id: organisation_1.id},
+      %{creator_id: user_2.id, organisation_id: organisation_1.id}
     ],
     nil
   )
