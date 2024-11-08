@@ -32,7 +32,7 @@ defmodule OmedisWeb.InvitationLive.Index do
       )
       |> assign(:invitation, nil)
     else
-      # FIX: Redirect to the invitations index page
+      # FIXME: Redirect to the invitations index page
       push_navigate(socket, to: ~p"/organisations/#{socket.assigns.organisation}")
     end
   end
@@ -67,7 +67,7 @@ defmodule OmedisWeb.InvitationLive.Index do
         </.header>
 
         <.modal
-          :if={@live_action in [:new]}
+          :if={@live_action == :new}
           id="invitation-modal"
           show
           on_cancel={JS.patch(~p"/organisations/#{@organisation}")}
