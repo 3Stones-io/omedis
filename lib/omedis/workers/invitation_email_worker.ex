@@ -21,13 +21,14 @@ defmodule Omedis.Workers.InvitationEmailWorker do
              load: [:organisation]
            ) do
       url =
-        static_url_fun().(~p"/organisations/#{organisation.slug}/invitations/#{invitation.id}")
+        static_url(
+          OmedisWeb.Endpoint,
+          ~p"/organisations/#{organisation}/invitations/#{invitation}"
+        )
 
       Omedis.Accounts.deliver_invitation_email(invitation, url)
     end
 
     :ok
   end
-
-  defp static_url_fun, do: &static_url(OmedisWeb.Endpoint, &1)
 end

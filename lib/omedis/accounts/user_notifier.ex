@@ -28,23 +28,29 @@ defmodule Omedis.Accounts.UserNotifier do
       dgettext("emails", "Omedis | Invitation to join %{organisation_name}",
         organisation_name: invitation.organisation.name
       ),
-      """
-      ==============================
+      dgettext(
+        "emails",
+        """
+        ==============================
 
-      #{dgettext("emails", "Hello!")}
+        Hello!
 
-      #{dgettext("emails", "Please register your new Omedis account for %{organisation_name}", organisation_name: invitation.organisation.name)}
+        Please register your new Omedis account for %{organisation_name}
 
-      #{dgettext("emails", "This invitation is good till %{expires_at}", expires_at: invitation.expires_at)}
+        This invitation is good till %{expires_at}
 
-      #{dgettext("emails", "Please click on this link %{url} to create the account", url: url)}
+        Please click on this link %{url} to create the account
 
-      #{dgettext("emails", "Best regards,")}
+        Best regards,
 
-      Omedis.
+        Omedis.
 
-      ==============================
-      """
+        ==============================
+        """,
+        expires_at: invitation.expires_at,
+        organisation_name: invitation.organisation.name,
+        url: url
+      )
     )
   end
 end
