@@ -70,7 +70,7 @@ defmodule Omedis.Accounts.InvitationTest do
       }
 
       assert {:ok, invitation} =
-               Invitation.create(attrs, actor: owner, organisation: organisation)
+               Invitation.create(attrs, actor: owner, tenant: organisation)
 
       assert_enqueued(
         worker: InvitationEmailWorker,

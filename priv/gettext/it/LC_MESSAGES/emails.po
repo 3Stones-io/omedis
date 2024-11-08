@@ -34,9 +34,9 @@ msgstr "Questo invito è valido fino al %{expires_at}"
 #: lib/omedis/accounts/user_notifier.ex:28
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Omedis | Invitation to join %{organisation_name}"
-msgstr "Omedis | Invito a unire a %{tenant_name}"
+msgstr "Omedis | Invito a unire a %{organisation_name}"
 
 #: lib/omedis/accounts/user_notifier.ex:36
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Please register your new Omedis account for %{organisation_name}"
-msgstr "Si prega di registrare il nuovo account Omedis per %{tenant_name}"
+msgstr "Si prega di registrare il nuovo account Omedis per %{organisation_name}"
