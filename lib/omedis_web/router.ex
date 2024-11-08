@@ -49,11 +49,17 @@ defmodule OmedisWeb.Router do
 
       live "/organisations/:slug/today", OrganisationLive.Today, :index
 
-      live "/organisations/:slug/groups/:group_slug/log_categories", LogCategoryLive.Index, :index
+      live "/organisations/:slug/groups/:group_slug/activities", ActivityLive.Index, :index
+      live "/organisations/:slug/groups/:group_slug/activities/new", ActivityLive.Index, :new
+      live "/organisations/:slug/groups/:group_slug/activities/:id", ActivityLive.Show, :show
 
-      live "/organisations/:slug/groups/:group_slug/log_categories/new",
-           LogCategoryLive.Index,
-           :new
+      live "/organisations/:slug/groups/:group_slug/activities/:id/edit",
+           ActivityLive.Index,
+           :edit
+
+      live "/organisations/:slug/groups/:group_slug/activities/:id/show/edit",
+           ActivityLive.Show,
+           :edit
 
       live "/organisations/:slug/projects", ProjectLive.Index, :index
       live "/organisations/:slug/projects/new", ProjectLive.Index, :new
@@ -67,22 +73,10 @@ defmodule OmedisWeb.Router do
       live "/organisations/:slug/groups/:group_slug", GroupLive.Show, :show
       live "/organisations/:slug/groups/:group_slug/edit", GroupLive.Index, :edit
 
-      live "/organisations/:slug/groups/:group_slug/log_categories/:id",
-           LogCategoryLive.Show,
-           :show
-
-      live "/organisations/:slug/groups/:group_slug/log_categories/:id/edit",
-           LogCategoryLive.Index,
-           :edit
-
-      live "/organisations/:slug/groups/:group_slug/log_categories/:id/show/edit",
-           LogCategoryLive.Show,
-           :edit
-
       live "/organisations/:slug", OrganisationLive.Show, :show
       live "/organisations/:slug/show/edit", OrganisationLive.Show, :edit
 
-      live "/organisations/:slug/log_categories/:id/log_entries", LogEntryLive.Index, :index
+      live "/organisations/:slug/activities/:id/log_entries", LogEntryLive.Index, :index
     end
   end
 

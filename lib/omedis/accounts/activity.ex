@@ -38,12 +38,12 @@ defmodule Omedis.Accounts.Activity do
   end
 
   policies do
-    policy action(:create) do
-      authorize_if Omedis.Accounts.Checks.GroupAndProjectExist
+    policy action_type([:create, :update, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
     end
 
-    policy do
-      authorize_if always()
+    policy action_type(:read) do
+      authorize_if Omedis.Accounts.ActivityAccessFilter
     end
   end
 
@@ -54,11 +54,8 @@ defmodule Omedis.Accounts.Activity do
     define :update
     define :update_position
     define :by_id, get_by: [:id], action: :read
-    define :destroy
-    define :by_group_id
     define :list_paginated
     define :by_group_id_and_project_id
-    define :max_position_by_group_id
   end
 
   identities do
@@ -79,8 +76,8 @@ defmodule Omedis.Accounts.Activity do
         :slug
       ]
 
-      change Omedis.Accounts.Changes.NewLogCategoryPosition
-      change Omedis.Accounts.Changes.SetDefaultLogCategory
+      change Omedis.Accounts.Changes.NewActivityPosition
+      change Omedis.Accounts.Changes.SetDefaultActivity
 
       primary? true
     end
@@ -96,7 +93,7 @@ defmodule Omedis.Accounts.Activity do
         :slug
       ]
 
-      change Omedis.Accounts.Changes.SetDefaultLogCategory
+      change Omedis.Accounts.Changes.SetDefaultActivity
 
       primary? true
       require_atomic? false
@@ -105,7 +102,7 @@ defmodule Omedis.Accounts.Activity do
     update :update_position do
       accept [:position]
 
-      change Omedis.Accounts.Changes.UpdateLogCategoryPositions
+      change Omedis.Accounts.Changes.UpdateActivityPositions
 
       require_atomic? false
     end
@@ -128,24 +125,18 @@ defmodule Omedis.Accounts.Activity do
       pagination offset?: true, keyset?: true, required?: false
     end
 
-    read :by_group_id do
+    read :list_paginated do
       argument :group_id, :uuid do
         allow_nil? false
       end
 
       pagination offset?: true,
-                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 countable: :by_default
 
       prepare build(load: [:log_entries], sort: [position: :asc])
 
       filter expr(group_id == ^arg(:group_id))
-    end
-
-    read :list_paginated do
-      pagination offset?: true,
-                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
-
-      prepare build(sort: [position: :asc])
     end
 
     read :by_group_id_and_project_id do
@@ -160,21 +151,6 @@ defmodule Omedis.Accounts.Activity do
       prepare build(load: [:log_entries])
 
       filter expr(group_id == ^arg(:group_id) and project_id == ^arg(:project_id))
-    end
-
-    read :max_position_by_group_id do
-      argument :group_id, :uuid do
-        allow_nil? false
-      end
-
-      aggregates do
-        max(:max_position, :position)
-      end
-
-      filter expr(group_id == ^arg(:group_id))
-    end
-
-    destroy :destroy do
     end
   end
 
@@ -207,25 +183,25 @@ defmodule Omedis.Accounts.Activity do
     update_timestamp :updated_at
   end
 
-  def move_up(log_category) do
-    case log_category.position do
+  def move_up(activity, opts \\ []) do
+    case activity.position do
       1 ->
-        {:ok, log_category}
+        {:ok, activity}
 
       _ ->
-        __MODULE__.update_position(log_category, %{position: log_category.position - 1})
+        __MODULE__.update_position(activity, %{position: activity.position - 1}, opts)
     end
   end
 
-  def move_down(log_category) do
-    last_position = get_max_position_by_group_id(log_category.group_id)
+  def move_down(activity, opts \\ []) do
+    last_position = get_max_position_by_group_id(activity.group_id, opts)
 
-    case log_category.position do
+    case activity.position do
       ^last_position ->
-        {:ok, log_category}
+        {:ok, activity}
 
       _ ->
-        __MODULE__.update_position(log_category, %{position: log_category.position + 1})
+        __MODULE__.update_position(activity, %{position: activity.position + 1}, opts)
     end
   end
 
@@ -235,13 +211,13 @@ defmodule Omedis.Accounts.Activity do
     |> Ash.read_one!()
   end
 
-  def get_max_position_by_group_id(group_id) do
+  def get_max_position_by_group_id(group_id, opts \\ []) do
     __MODULE__
     |> Ash.Query.filter(group_id: group_id)
     |> Ash.Query.sort(position: :desc)
     |> Ash.Query.limit(1)
     |> Ash.Query.select([:position])
-    |> Ash.read!()
+    |> Ash.read!(opts)
     |> Enum.at(0)
     |> case do
       nil -> 0
@@ -253,7 +229,7 @@ defmodule Omedis.Accounts.Activity do
     __MODULE__
     |> Ash.Query.filter(group_id: group_id)
     |> Ash.Query.select([:color_code])
-    |> Ash.read!()
+    |> Ash.read!(authorize?: false)
     |> Enum.map(& &1.color_code)
   end
 
@@ -271,12 +247,6 @@ defmodule Omedis.Accounts.Activity do
     end
   end
 
-  def get_default_log_category(group_id) do
-    __MODULE__
-    |> Ash.Query.filter(group_id: group_id, is_default: true)
-    |> Ash.read_one!()
-  end
-
   relationships do
     belongs_to :group, Omedis.Accounts.Group do
       allow_nil? false
@@ -290,6 +260,10 @@ defmodule Omedis.Accounts.Activity do
 
     has_many :log_entries, Omedis.Accounts.LogEntry do
       domain Omedis.Accounts
+    end
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Activity.Relationships.ActivityAccessRights
     end
   end
 end

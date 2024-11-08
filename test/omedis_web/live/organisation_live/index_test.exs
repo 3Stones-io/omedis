@@ -16,8 +16,8 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       {:ok, group_2} = create_group()
 
       # Associate users with groups
-      {:ok, _} = create_group_user(%{group_id: group_1.id, user_id: user_1.id})
-      {:ok, _} = create_group_user(%{group_id: group_2.id, user_id: user_2.id})
+      {:ok, _} = create_group_membership(%{group_id: group_1.id, user_id: user_1.id})
+      {:ok, _} = create_group_membership(%{group_id: group_2.id, user_id: user_2.id})
 
       # Create organisations (15 for user_1, 5 for user_2)
       organisations =
@@ -117,7 +117,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       user_2: user_2,
       organisations: organisations
     } do
-      # Assign ownership of a organisation to user_2
+      # Assign ownership of an organisation to user_2
       # This organisation is not in user_2's access rights
       owned_organisation = Enum.at(organisations, 0)
 
@@ -146,7 +146,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       assert html =~ "Organisations (16)"
     end
 
-    test "shows create button when user does not have a organisation", %{conn: conn} do
+    test "shows create button when user does not have an organisation", %{conn: conn} do
       {:ok, user} = create_user()
 
       {:ok, index_live, html} =
@@ -180,8 +180,8 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
   describe "/organisations/new" do
     setup [:register_and_log_in_user]
 
-    test "redirects when user can't create a organisation", %{conn: conn, user: user} do
-      # Create a organisation for the user to make them ineligible for creating another
+    test "redirects when user can't create an organisation", %{conn: conn, user: user} do
+      # Create an organisation for the user to make them ineligible for creating another
       {:ok, _organisation} = create_organisation(%{owner_id: user.id})
 
       assert {:error, {:live_redirect, %{to: path, flash: flash}}} =
@@ -224,7 +224,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
         create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
 
       {:ok, group} = create_group()
-      {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
       {:ok, organisation: organisation, group: group}
     end
@@ -245,7 +245,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
         })
 
       assert {:error, {:live_redirect, %{to: path, flash: flash}}} =
-               live(conn, ~p"/organisations/#{organisation.slug}/edit")
+               live(conn, ~p"/organisations/#{organisation}/edit")
 
       assert path == ~p"/organisations"
       assert flash["error"] == "You are not authorized to access this page"
@@ -254,7 +254,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
     test "edits the organisation when user has access", %{conn: conn, user: user} do
       {:ok, organisation} = create_organisation(%{owner_id: user.id})
 
-      {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation.slug}/edit")
+      {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation}/edit")
 
       assert show_live
              |> form("#organisation-form", organisation: %{street: ""})

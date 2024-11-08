@@ -15,11 +15,17 @@ defmodule OmedisWeb.Plugs.OrganisationsCountTest do
       {:ok, group_2} = create_group()
       {:ok, group_3} = create_group()
 
-      {:ok, _group_user_1} = create_group_user(%{group_id: group_1.id, user_id: user_1.id})
-      {:ok, _group_user_2} = create_group_user(%{group_id: group_2.id, user_id: user_1.id})
+      {:ok, _group_membership_1} =
+        create_group_membership(%{group_id: group_1.id, user_id: user_1.id})
 
-      {:ok, _group_user_3} = create_group_user(%{group_id: group_1.id, user_id: user_2.id})
-      {:ok, _group_user_4} = create_group_user(%{group_id: group_2.id, user_id: user_3.id})
+      {:ok, _group_membership_2} =
+        create_group_membership(%{group_id: group_2.id, user_id: user_1.id})
+
+      {:ok, _group_membership_3} =
+        create_group_membership(%{group_id: group_1.id, user_id: user_2.id})
+
+      {:ok, _group_membership_4} =
+        create_group_membership(%{group_id: group_2.id, user_id: user_3.id})
 
       {:ok, organisation_1} = create_organisation()
       {:ok, organisation_2} = create_organisation()
@@ -76,7 +82,7 @@ defmodule OmedisWeb.Plugs.OrganisationsCountTest do
         create_access_right(%{
           group_id: group_3.id,
           organisation_id: organisation_3.id,
-          resource_name: "organisation"
+          resource_name: "Organisation"
         })
 
       conn = OrganisationsCount.call(conn, [])

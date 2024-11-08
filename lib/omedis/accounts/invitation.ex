@@ -1,6 +1,6 @@
 defmodule Omedis.Accounts.Invitation do
   @moduledoc """
-  Represents an invitation to join a organisation.
+  Represents an invitation to join an organisation.
   """
 
   use Ash.Resource,

@@ -22,7 +22,7 @@ defmodule Omedis.Accounts.AccessFilter do
         access_rights,
         organisation_id == ^organisation.id and
           read == true and
-          exists(group.group_users, user_id == ^actor.id)
+          exists(group.group_memberships, user_id == ^actor.id)
       ) and exists(organisation, id == ^organisation.id)
     )
   end

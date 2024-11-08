@@ -12,7 +12,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
 
     {:ok, group} = create_group()
-    {:ok, _} = create_group_user(%{group_id: group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
 
     {:ok, organisation: organisation, group: group}
   end
@@ -31,7 +31,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
           resource_name: "Organisation"
         })
 
-      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation.slug}")
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
 
       assert html =~ organisation.name
     end
@@ -40,7 +40,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       {:ok, organisation} = create_organisation()
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        live(conn, ~p"/organisations/#{organisation.slug}")
+        live(conn, ~p"/organisations/#{organisation}")
       end
     end
 
@@ -52,7 +52,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
           owner_id: user.id
         })
 
-      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{owned_organisation.slug}")
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{owned_organisation}")
 
       assert html =~ owned_organisation.name
     end
@@ -72,17 +72,17 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
           write: false
         })
 
-      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation.slug}")
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
       refute html =~ "Edit organisation"
 
       Ash.update!(access_right, %{write: true, update: false})
 
-      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation.slug}")
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
       assert html =~ "Edit organisation"
 
       Ash.update!(access_right, %{write: false, update: true})
 
-      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation.slug}")
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
       assert html =~ "Edit organisation"
     end
 
@@ -97,14 +97,14 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
           owner_id: user.id
         })
 
-      {:ok, show_live, html} = live(conn, ~p"/organisations/#{owned_organisation.slug}")
+      {:ok, show_live, html} = live(conn, ~p"/organisations/#{owned_organisation}")
 
       assert html =~ "Edit organisation"
 
       assert show_live |> element("a", "Edit organisation") |> render_click() =~
                "Edit Organisation"
 
-      assert_patch(show_live, ~p"/organisations/#{owned_organisation.slug}/show/edit")
+      assert_patch(show_live, ~p"/organisations/#{owned_organisation}/show/edit")
 
       assert show_live
              |> form("#organisation-form", organisation: %{street: ""})

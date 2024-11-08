@@ -46,9 +46,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
           <.table
             id="organisations"
             rows={@streams.organisations}
-            row_click={
-              fn {_id, organisation} -> JS.navigate(~p"/organisations/#{organisation.slug}") end
-            }
+            row_click={fn {_id, organisation} -> JS.navigate(~p"/organisations/#{organisation}") end}
           >
             <:col :let={{_id, organisation}} label={with_locale(@language, fn -> gettext("Name") end)}>
               <%= organisation.name %>
@@ -95,13 +93,13 @@ defmodule OmedisWeb.OrganisationLive.Index do
             </:col>
             <:action :let={{_id, organisation}}>
               <div class="sr-only">
-                <.link navigate={~p"/organisations/#{organisation.slug}"}>
+                <.link navigate={~p"/organisations/#{organisation}"}>
                   <%= with_locale(@language, fn -> %>
                     <%= gettext("Show") %>
                   <% end) %>
                 </.link>
               </div>
-              <.link patch={~p"/organisations/#{organisation.slug}/edit"}>
+              <.link patch={~p"/organisations/#{organisation}/edit"}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Edit") %>
                 <% end) %>

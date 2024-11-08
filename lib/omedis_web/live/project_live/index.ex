@@ -22,8 +22,8 @@ defmodule OmedisWeb.ProjectLive.Index do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Organisations"), ~p"/organisations", false},
-            {@organisation.name, ~p"/organisations/#{@organisation.slug}", false},
-            {gettext("Projects"), ~p"/organisations/#{@organisation.slug}", true}
+            {@organisation.name, ~p"/organisations/#{@organisation}", false},
+            {gettext("Projects"), ~p"/organisations/#{@organisation}", true}
           ]}
           language={@language}
         />
@@ -35,7 +35,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           <:actions>
             <.link
               :if={Ash.can?({Project, :create}, @current_user, tenant: @organisation)}
-              patch={~p"/organisations/#{@organisation.slug}/projects/new"}
+              patch={~p"/organisations/#{@organisation}/projects/new"}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
@@ -51,7 +51,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           rows={@streams.projects}
           row_click={
             fn {_id, project} ->
-              JS.navigate(~p"/organisations/#{@organisation.slug}/projects/#{project}")
+              JS.navigate(~p"/organisations/#{@organisation}/projects/#{project}")
             end
           }
         >
@@ -65,7 +65,7 @@ defmodule OmedisWeb.ProjectLive.Index do
 
           <:action :let={{_id, project}}>
             <div class="sr-only">
-              <.link navigate={~p"/organisations/#{@organisation.slug}/projects/#{project}"}>
+              <.link navigate={~p"/organisations/#{@organisation}/projects/#{project}"}>
                 <%= with_locale(@language, fn -> %>
                   <%= gettext("Show") %>
                 <% end) %>
@@ -74,7 +74,7 @@ defmodule OmedisWeb.ProjectLive.Index do
 
             <.link
               :if={Ash.can?({project, :update}, @current_user, tenant: @organisation)}
-              patch={~p"/organisations/#{@organisation.slug}/projects/#{project}/edit"}
+              patch={~p"/organisations/#{@organisation}/projects/#{project}/edit"}
             >
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Edit") %>
@@ -87,7 +87,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           :if={@live_action in [:new, :edit]}
           id="project-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation.slug}/projects")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}/projects")}
         >
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
@@ -100,13 +100,13 @@ defmodule OmedisWeb.ProjectLive.Index do
             language={@language}
             action={@live_action}
             project={@project}
-            patch={~p"/organisations/#{@organisation.slug}/projects"}
+            patch={~p"/organisations/#{@organisation}/projects"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/organisations/#{@organisation.slug}/projects"}
+          resource_path={~p"/organisations/#{@organisation}/projects"}
           total_pages={@total_pages}
         />
       </div>
@@ -227,7 +227,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     socket
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Projects") end))
     |> assign(:user_has_access_rights, false)
-    |> push_patch(to: ~p"/organisations/#{organisation.slug}/projects")
+    |> push_patch(to: ~p"/organisations/#{organisation}/projects")
     |> put_flash(
       :error,
       with_locale(socket.assigns.language, fn ->

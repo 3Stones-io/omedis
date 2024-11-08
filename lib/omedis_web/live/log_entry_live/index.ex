@@ -1,6 +1,6 @@
 defmodule OmedisWeb.LogEntryLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.LogCategory
+  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
@@ -22,14 +22,13 @@ defmodule OmedisWeb.LogEntryLive.Index do
           items={[
             {gettext("Home"), ~p"/", false},
             {gettext("Organisations"), ~p"/organisations", false},
-            {@organisation.name, ~p"/organisations/#{@organisation.slug}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation.slug}/groups", false},
-            {@group.name, ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}", false},
-            {gettext("Log Categories"),
-             ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}/log_categories", false},
-            {@log_category.name,
-             ~p"/organisations/#{@organisation.slug}/groups/#{@group.slug}/log_categories/#{@log_category.id}",
+            {@organisation.name, ~p"/organisations/#{@organisation}", false},
+            {gettext("Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
+            {gettext("Activities"), ~p"/organisations/#{@organisation}/groups/#{@group}/activities",
              false},
+            {@activity.name,
+             ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity.id}", false},
             {"Log Entries", "", true}
           ]}
           language={@language}
@@ -41,7 +40,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
               <%= gettext("Listing Log entries for") %>
             <% end) %>
           </span>
-          <%= @log_category.name %>
+          <%= @activity.name %>
         </.header>
 
         <.table id="log_entries" rows={@streams.log_entries}>
@@ -60,9 +59,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={
-            ~p"/organisations/#{@organisation.slug}/log_categories/#{@log_category.id}/log_entries"
-          }
+          resource_path={~p"/organisations/#{@organisation}/activities/#{@activity.id}/log_entries"}
           total_pages={@total_pages}
         />
       </div>
@@ -82,15 +79,15 @@ defmodule OmedisWeb.LogEntryLive.Index do
   def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
     organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
 
-    {:ok, log_category} =
+    {:ok, activity} =
       id
-      |> LogCategory.by_id!(actor: socket.assigns.current_user, tenant: organisation)
+      |> Activity.by_id!(actor: socket.assigns.current_user, tenant: organisation)
       |> Ash.load(:group, authorize?: false)
 
     {:noreply,
      socket
-     |> assign(:group, log_category.group)
-     |> assign(:log_category, log_category)
+     |> assign(:activity, activity)
+     |> assign(:group, activity.group)
      |> assign(:organisation, organisation)
      |> apply_action(socket.assigns.live_action, params)}
   end
@@ -100,7 +97,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
     |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
     |> assign(:log_entry, nil)
     |> PaginationUtils.list_paginated(params, :log_entries, fn offset ->
-      LogEntry.by_log_category(%{log_category_id: params["id"]},
+      LogEntry.by_activity(%{activity_id: params["id"]},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
         tenant: socket.assigns.organisation

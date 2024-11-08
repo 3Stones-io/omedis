@@ -37,7 +37,7 @@ defmodule OmedisWeb.RegisterTest do
       assert has_element?(view, "#basic_user_sign_up_form")
     end
 
-    test "Form fields are disabled until a organisation is selected", %{
+    test "Form fields are disabled until an organisation is selected", %{
       conn: conn,
       organisation: organisation
     } do

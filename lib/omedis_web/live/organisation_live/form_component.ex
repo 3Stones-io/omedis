@@ -337,6 +337,6 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
     Enum.map(field.errors, &translate_error(&1))
   end
 
-  defp path_for(:edit, organisation), do: ~p"/organisations/#{organisation.slug}"
+  defp path_for(:edit, organisation), do: ~p"/organisations/#{organisation}"
   defp path_for(:new, _organisation), do: ~p"/organisations"
 end
