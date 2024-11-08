@@ -10,9 +10,16 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 # Seed data
 
-If you want to seed the database with demo data, run `mix seed.demo`.
+If you want to seed the database with demo data, run `mix seed.demo`. You can safely run it as many times as you want without duplicating the data.
+Those demo seeds include test accounts with the following email addresses:
 
-You can safely run it as many times as you want without duplicating the data.
+- **user@demo.com**
+- **user2@demo.com**
+- **user3@demo.com**
+
+You can log in on the UI with any of the above email addresses, with the password: **password**.
+
+The demo seeds file can be found [here](priv/repo/demo_seeds.exs).
 
 # Developers
 

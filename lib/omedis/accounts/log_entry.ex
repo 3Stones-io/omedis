@@ -16,8 +16,8 @@ defmodule Omedis.Accounts.LogEntry do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
-      reference :log_category, on_delete: :delete
+      reference :activity, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :user, on_delete: :delete
     end
   end
@@ -31,16 +31,16 @@ defmodule Omedis.Accounts.LogEntry do
     define :read
     define :create
     define :update
-    define :by_log_category
-    define :by_log_category_today
-    define :by_tenant
-    define :by_tenant_today
+    define :by_activity
+    define :by_activity_today
+    define :by_organisation
+    define :by_organisation_today
     define :by_id, get_by: [:id], action: :read
   end
 
   actions do
-    read :by_log_category do
-      argument :log_category_id, :uuid do
+    read :by_activity do
+      argument :activity_id, :uuid do
         allow_nil? false
       end
 
@@ -49,35 +49,35 @@ defmodule Omedis.Accounts.LogEntry do
 
       prepare build(sort: :created_at)
 
-      filter expr(log_category_id == ^arg(:log_category_id))
+      filter expr(activity_id == ^arg(:activity_id))
     end
 
-    read :by_tenant do
-      argument :tenant_id, :uuid do
+    read :by_organisation do
+      argument :organisation_id, :uuid do
         allow_nil? false
       end
 
-      filter expr(tenant_id == ^arg(:tenant_id))
+      filter expr(organisation_id == ^arg(:organisation_id))
     end
 
-    read :by_tenant_today do
-      argument :tenant_id, :uuid do
+    read :by_organisation_today do
+      argument :organisation_id, :uuid do
         allow_nil? false
       end
 
       filter expr(
-               tenant_id == ^arg(:tenant_id) and
+               organisation_id == ^arg(:organisation_id) and
                  fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
              )
     end
 
-    read :by_log_category_today do
-      argument :log_category_id, :uuid do
+    read :by_activity_today do
+      argument :activity_id, :uuid do
         allow_nil? false
       end
 
       filter expr(
-               log_category_id == ^arg(:log_category_id) and
+               activity_id == ^arg(:activity_id) and
                  fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
              )
     end
@@ -88,8 +88,8 @@ defmodule Omedis.Accounts.LogEntry do
         :comment,
         :start_at,
         :end_at,
-        :tenant_id,
-        :log_category_id,
+        :organisation_id,
+        :activity_id,
         :user_id
       ]
 
@@ -101,8 +101,8 @@ defmodule Omedis.Accounts.LogEntry do
         :comment,
         :start_at,
         :end_at,
-        :tenant_id,
-        :log_category_id,
+        :organisation_id,
+        :activity_id,
         :user_id
       ]
 
@@ -119,8 +119,8 @@ defmodule Omedis.Accounts.LogEntry do
     uuid_primary_key :id
 
     attribute :comment, :string, allow_nil?: true, public?: true
-    attribute :tenant_id, :uuid, allow_nil?: false, public?: true
-    attribute :log_category_id, :uuid, allow_nil?: false, public?: true
+    attribute :organisation_id, :uuid, allow_nil?: false, public?: true
+    attribute :activity_id, :uuid, allow_nil?: false, public?: true
     attribute :user_id, :uuid, allow_nil?: false, public?: true
 
     attribute :start_at, :time, allow_nil?: true, public?: true
@@ -136,12 +136,7 @@ defmodule Omedis.Accounts.LogEntry do
       attribute_writable? true
     end
 
-    belongs_to :tenant, Omedis.Accounts.Tenant do
-      allow_nil? true
-      attribute_writable? true
-    end
-
-    belongs_to :log_category, Omedis.Accounts.LogCategory do
+    belongs_to :organisation, Omedis.Accounts.Organisation do
       allow_nil? true
       attribute_writable? true
     end
