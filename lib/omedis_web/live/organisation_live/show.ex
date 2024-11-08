@@ -36,7 +36,13 @@ defmodule OmedisWeb.OrganisationLive.Show do
                 <% end) %>
               </.button>
             </.link>
-
+            <.link patch={~p"/organisations/#{@organisation}/invitations"} phx-click={JS.push_focus()}>
+              <.button>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Invitations") %>
+                <% end) %>
+              </.button>
+            </.link>
             <.link patch={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
