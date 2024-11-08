@@ -91,7 +91,8 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       assert html =~ "Listing Groups"
       assert html =~ "New Group"
       assert html =~ "Group 1"
-      assert html =~ "Group 10"
+      assert html =~ "Group 2"
+      assert html =~ "Group 8"
       refute html =~ "Group 11"
 
       assert view |> element("nav[aria-label=Pagination]") |> has_element?()
