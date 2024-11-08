@@ -10,10 +10,10 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias Omedis.Accounts.Tenant
+alias Omedis.Accounts.Organisation
 alias Omedis.Accounts.User
 
-case Ash.read(Tenant, authorize?: false) do
+case Ash.read(Organisation, authorize?: false) do
   {:ok, []} ->
     user =
       User.create!(%{
@@ -25,12 +25,12 @@ case Ash.read(Tenant, authorize?: false) do
         birthdate: "1980-01-01"
       })
 
-    Tenant.create!(
+    Organisation.create!(
       %{
         city: "Dummy City",
         country: "Dummy republic",
-        name: "Initial Tenant",
-        slug: "initial-tenant",
+        name: "Initial Organisation",
+        slug: "initial-organisation",
         street: "Dummy Street",
         owner_id: user.id,
         zip_code: "12345"
@@ -38,6 +38,6 @@ case Ash.read(Tenant, authorize?: false) do
       authorize?: false
     )
 
-  {:ok, _tenants} ->
-    IO.puts("Tenants already exist. Skipping initial tenant creation.")
+  {:ok, _organisations} ->
+    IO.puts("Organisations already exist. Skipping initial organisation creation.")
 end
