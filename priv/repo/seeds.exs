@@ -39,5 +39,5 @@ case Ash.read(Organisation, authorize?: false) do
     )
 
   {:ok, _organisations} ->
-    IO.puts("Organisations already exist. Skipping initial tenant creation.")
+    IO.puts("Organisations already exist. Skipping initial organisation creation.")
 end
