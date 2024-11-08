@@ -13,7 +13,7 @@ defmodule OmedisWeb.LoginLive do
       socket
       |> assign(current_user: nil)
       |> assign(:language, language)
-      |> assign(:tenants_count, 0)
+      |> assign(:organisations_count, 0)
       |> assign(trigger_action: false)
       |> assign(:errors, [])
 
@@ -65,9 +65,9 @@ defmodule OmedisWeb.LoginLive do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={nil}
+      current_organisation={nil}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.form

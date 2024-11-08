@@ -2,15 +2,15 @@ defmodule OmedisWeb.InvitationLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Invitation
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    tenant = Tenant.by_slug!(slug, actor: socket.assigns.current_user)
+    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
 
     {:ok,
      socket
-     |> assign(:tenant, tenant)}
+     |> assign(:organisation, organisation)}
   end
 
   @impl true
@@ -19,7 +19,9 @@ defmodule OmedisWeb.InvitationLive.Index do
   end
 
   defp apply_action(socket, :new, _params) do
-    if Ash.can?({Invitation, :create}, socket.assigns.current_user, tenant: socket.assigns.tenant) do
+    if Ash.can?({Invitation, :create}, socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       ) do
       socket
       |> assign(
         :page_title,
@@ -31,13 +33,13 @@ defmodule OmedisWeb.InvitationLive.Index do
       |> assign(:invitation, nil)
     else
       # Redirect to the invitations index page
-      push_navigate(socket, to: ~p"/tenants/#{socket.assigns.tenant.slug}")
+      push_navigate(socket, to: ~p"/organisations/#{socket.assigns.organisation}")
     end
   end
 
   defp apply_action(socket, _, _params) do
     socket
-    |> push_navigate(to: ~p"/tenants/#{socket.assigns.tenant.slug}/invitations/new")
+    |> push_navigate(to: ~p"/organisations/#{socket.assigns.organisation}/invitations/new")
   end
 
   @impl true
@@ -45,16 +47,16 @@ defmodule OmedisWeb.InvitationLive.Index do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@current_tenant}
+      current_organisation={@current_organisation}
       language={@language}
-      tenants_count={@tenants_count}
+      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {gettext("Home"), ~p"/", false},
-            {gettext("Tenants"), ~p"/tenants", false},
-            {@tenant.name, ~p"/tenants/#{@tenant.slug}", false},
+            {gettext("Organisations"), ~p"/organisations", false},
+            {@organisation.name, ~p"/organisations/#{@organisation}", false},
             {gettext("Invitations"), "", true}
           ]}
           language={@language}
@@ -68,17 +70,17 @@ defmodule OmedisWeb.InvitationLive.Index do
           :if={@live_action in [:new, :edit]}
           id="invitation-modal"
           show
-          on_cancel={JS.patch(~p"/tenants/#{@tenant.slug}")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}")}
         >
           <.live_component
             module={OmedisWeb.InvitationLive.FormComponent}
             id={:new}
             title={@page_title}
             action={@live_action}
-            tenant={@tenant}
+            organisation={@organisation}
             language={@language}
             current_user={@current_user}
-            patch={~p"/tenants/#{@tenant.slug}"}
+            patch={~p"/organisations/#{@organisation}"}
           />
         </.modal>
       </div>

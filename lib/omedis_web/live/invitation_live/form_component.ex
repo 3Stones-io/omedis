@@ -25,7 +25,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"invitation" => _params}, socket) do
-    # params = add_tenant_and_creator(params, socket)
+    # params = add_organisation_and_creator(params, socket)
 
     # Find a way to perform the validation without clearing the form group input
     # form = Form.validate(socket.assigns.form, params, errors: true)
@@ -34,7 +34,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
   @impl true
   def handle_event("save", %{"invitation" => params}, socket) do
-    params = add_tenant_and_creator(params, socket)
+    params = add_organisation_and_creator(params, socket)
 
     case Form.submit(socket.assigns.form, params: params) do
       {:ok, invitation} ->
@@ -51,9 +51,9 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   end
 
   defp assign_groups(socket) do
-    case Group.by_tenant_id(%{tenant_id: socket.assigns.tenant.id},
+    case Group.by_organisation_id(%{organisation_id: socket.assigns.organisation.id},
            actor: socket.assigns.current_user,
-           tenant: socket.assigns.tenant
+           tenant: socket.assigns.organisation
          ) do
       {:ok, %Ash.Page.Offset{results: groups}} -> assign(socket, :groups, groups)
       _ -> assign(socket, :groups, [])
@@ -65,7 +65,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
       Form.for_create(Invitation, :create,
         as: "invitation",
         actor: socket.assigns.current_user,
-        tenant: socket.assigns.tenant,
+        tenant: socket.assigns.organisation,
         prepare_params: &prepare_params/2
       )
 
@@ -95,10 +95,10 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
     end
   end
 
-  defp add_tenant_and_creator(params, socket) do
+  defp add_organisation_and_creator(params, socket) do
     Map.merge(params, %{
       "creator_id" => socket.assigns.current_user.id,
-      "tenant_id" => socket.assigns.tenant.id
+      "organisation_id" => socket.assigns.organisation.id
     })
   end
 

@@ -16,18 +16,18 @@ defmodule OmedisWeb.RegisterTest do
     "daily_end_at" => "17:00:00"
   }
 
-  @valid_tenant_params %{
-    "name" => "Test Tenant",
+  @valid_organisation_params %{
+    "name" => "Test Organisation",
     "street" => "123 Test St",
     "zip_code" => "12345",
     "city" => "Test City",
     "country" => "Test Country",
-    "slug" => "test-tenant"
+    "slug" => "test-organisation"
   }
 
   setup do
-    {:ok, tenant} = create_tenant(@valid_tenant_params)
-    {:ok, %{tenant: tenant}}
+    {:ok, organisation} = create_organisation(@valid_organisation_params)
+    {:ok, %{organisation: organisation}}
   end
 
   describe "Tests the Registration flow" do
@@ -37,7 +37,10 @@ defmodule OmedisWeb.RegisterTest do
       assert has_element?(view, "#basic_user_sign_up_form")
     end
 
-    test "Form fields are disabled until a tenant is selected", %{conn: conn, tenant: tenant} do
+    test "Form fields are disabled until an organisation is selected", %{
+      conn: conn,
+      organisation: organisation
+    } do
       {:ok, view, _html} = live(conn, "/register")
 
       assert view |> element("#user_email") |> render() =~ "disabled"
@@ -51,7 +54,7 @@ defmodule OmedisWeb.RegisterTest do
 
       view
       |> form("#basic_user_sign_up_form")
-      |> render_change(user: %{current_tenant_id: tenant.id})
+      |> render_change(user: %{current_organisation_id: organisation.id})
 
       refute view |> element("#user_email") |> render() =~ "disabled"
       refute view |> element("#user_first_name") |> render() =~ "disabled"
@@ -65,13 +68,13 @@ defmodule OmedisWeb.RegisterTest do
 
     test "Once we make changes to the registration form, we see any errors if they are there", %{
       conn: conn,
-      tenant: tenant
+      organisation: organisation
     } do
       {:ok, view, _html} = live(conn, "/register")
 
       view
       |> form("#basic_user_sign_up_form")
-      |> render_change(user: %{current_tenant_id: tenant.id})
+      |> render_change(user: %{current_organisation_id: organisation.id})
 
       html =
         view
@@ -81,14 +84,14 @@ defmodule OmedisWeb.RegisterTest do
       assert html =~ "length must be greater than or equal to 8"
     end
 
-    test "You can sign in with valid data", %{conn: conn, tenant: tenant} do
+    test "You can sign in with valid data", %{conn: conn, organisation: organisation} do
       {:ok, view, _html} = live(conn, "/register")
 
       {:error, _} = User.by_email(@valid_registration_params["email"])
 
       view
       |> form("#basic_user_sign_up_form")
-      |> render_change(user: %{current_tenant_id: tenant.id})
+      |> render_change(user: %{current_organisation_id: organisation.id})
 
       params =
         @valid_registration_params
@@ -106,7 +109,7 @@ defmodule OmedisWeb.RegisterTest do
 
       conn = submit_form(form, conn)
 
-      {:ok, _index_live, _html} = live(conn, ~p"/tenants")
+      {:ok, _index_live, _html} = live(conn, ~p"/organisations")
 
       assert {:ok, user} = User.by_email("test@user.com")
       assert user.first_name == "Mary"

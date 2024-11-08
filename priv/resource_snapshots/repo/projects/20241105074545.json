@@ -38,15 +38,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "projects_tenant_id_fkey",
+        "name": "projects_organisation_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "tenants"
+        "table": "organisations"
       },
       "size": null,
-      "source": "tenant_id",
+      "source": "organisation_id",
       "type": "uuid"
     },
     {
@@ -85,7 +85,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "D168AB47413EF04766004DBEF38780F401873B9648F3AFBD3647ED1ABBB7B6BA",
+  "hash": "512A99FD7612CC57D5FE8D384DB6701CA433BDEF162919C875AD36DAA1F4EB99",
   "identities": [
     {
       "all_tenants?": false,
@@ -98,7 +98,7 @@
         },
         {
           "type": "atom",
-          "value": "tenant_id"
+          "value": "organisation_id"
         }
       ],
       "name": "unique_name",
@@ -116,7 +116,7 @@
         },
         {
           "type": "atom",
-          "value": "tenant_id"
+          "value": "organisation_id"
         }
       ],
       "name": "unique_position",

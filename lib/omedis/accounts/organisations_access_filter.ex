@@ -1,18 +1,18 @@
-defmodule Omedis.Accounts.TenantsAccessFilter do
+defmodule Omedis.Accounts.OrganisationsAccessFilter do
   @moduledoc """
-  This policy filter is used to filter tenants based on user access rights.
+  This policy filter is used to filter organisations based on user access rights.
   """
   use Ash.Policy.FilterCheck
 
   def describe(_) do
-    "Filtering tenants based on user access rights"
+    "Filtering organisations based on user access rights"
   end
 
   def filter(actor, _context, _options) do
     expr(
       exists(
         access_rights,
-        resource_name == "Tenant" and
+        resource_name == "Organisation" and
           read == true and
           exists(group.group_memberships, user_id == ^actor.id)
       ) or

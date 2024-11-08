@@ -3,7 +3,7 @@ defmodule OmedisWeb.InvitationLive.Show do
 
   alias AshPhoenix.Form
   alias Omedis.Accounts.Invitation
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
 
   @impl true
@@ -11,9 +11,9 @@ defmodule OmedisWeb.InvitationLive.Show do
     ~H"""
     <.side_and_topbar
       current_user={@current_user}
-      current_tenant={@tenant}
+      current_organisation={@organisation}
       language={@language}
-      tenants_count={1}
+      organisations_count={1}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <div class="flex justify-stretch w-full">
@@ -127,7 +127,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                     <%= time_input(f, :daily_start_at,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      value: f[:daily_start_at].value || @tenant.default_daily_start_at,
+                      value: f[:daily_start_at].value || @organisation.default_daily_start_at,
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
@@ -149,7 +149,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                     <%= time_input(f, :daily_end_at,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      value: f[:daily_end_at].value || @tenant.default_daily_end_at,
+                      value: f[:daily_end_at].value || @organisation.default_daily_end_at,
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
@@ -175,9 +175,9 @@ defmodule OmedisWeb.InvitationLive.Show do
             <div>
               <.input
                 type="hidden"
-                id="select_tenant"
-                field={f[:current_tenant_id]}
-                value={@tenant.id}
+                id="select_organisation"
+                field={f[:current_organisation_id]}
+                value={@organisation.id}
                 required
               />
             </div>
@@ -227,13 +227,13 @@ defmodule OmedisWeb.InvitationLive.Show do
         |> redirect(to: "/")
 
       [%Invitation{} = invitation] ->
-        tenant = Tenant.by_id!(invitation.tenant_id, authorize?: false)
+        organisation = Organisation.by_id!(invitation.organisation_id, authorize?: false)
         Gettext.put_locale(OmedisWeb.Gettext, invitation.language)
 
         socket
         |> assign(:invitation, invitation)
         |> assign(:language, invitation.language)
-        |> assign(:tenant, tenant)
+        |> assign(:organisation, organisation)
         |> assign(:page_title, gettext("Complete Registration"))
         |> assign(:action, "/auth/user/password/register/")
         |> assign(:trigger_action, false)

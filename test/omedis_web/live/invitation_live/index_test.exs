@@ -10,39 +10,36 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-    {:ok, _} = create_group_membership(%{user_id: owner.id, group_id: group.id})
+
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
 
     {:ok, authorized_user} = create_user()
-    {:ok, _} = create_group_membership(%{user_id: authorized_user.id, group_id: group.id})
+    create_group_membership(%{user_id: authorized_user.id, group_id: group.id})
 
-    {:ok, _} =
-      create_access_right(%{
-        resource_name: "Invitation",
-        create: true,
-        tenant_id: tenant.id,
-        group_id: group.id,
-        write: true
-      })
+    create_access_right(%{
+      resource_name: "Invitation",
+      create: true,
+      organisation_id: organisation.id,
+      group_id: group.id,
+      write: true
+    })
 
-    {:ok, _} =
-      create_access_right(%{
-        group_id: group.id,
-        read: true,
-        resource_name: "Tenant",
-        tenant_id: tenant.id,
-        write: true
-      })
+    create_access_right(%{
+      group_id: group.id,
+      read: true,
+      resource_name: "Organisation",
+      organisation_id: organisation.id,
+      write: true
+    })
 
-    {:ok, _} =
-      create_access_right(%{
-        group_id: group.id,
-        read: true,
-        resource_name: "Group",
-        tenant_id: tenant.id,
-        write: true
-      })
+    create_access_right(%{
+      group_id: group.id,
+      read: true,
+      resource_name: "Group",
+      organisation_id: organisation.id,
+      write: true
+    })
 
     {:ok, unauthorized_user} = create_user()
     {:ok, group_2} = create_group()
@@ -52,22 +49,22 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       authorized_user: authorized_user,
       group: group,
       owner: owner,
-      tenant: tenant,
+      organisation: organisation,
       unauthorized_user: unauthorized_user
     }
   end
 
-  describe "/tenants/:slug/invitations/new" do
-    test "tenant owner can create an invitation", %{
+  describe "/organisations/:slug/invitations/new" do
+    test "organisation owner can create an invitation", %{
       conn: conn,
       group: group,
       owner: owner,
-      tenant: tenant
+      organisation: organisation
     } do
       assert {:ok, view, _html} =
                conn
                |> log_in_user(owner)
-               |> live(~p"/tenants/#{tenant.slug}/invitations/new")
+               |> live(~p"/organisations/#{organisation}/invitations/new")
 
       view
       |> form("#invitation-form",
@@ -79,7 +76,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       )
       |> render_submit()
 
-      assert_redirected(view, ~p"/tenants/#{tenant.slug}")
+      assert_redirected(view, ~p"/organisations/#{organisation}")
 
       assert [invitation] =
                Invitation
@@ -89,7 +86,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert invitation.email == "test@example.com"
       assert invitation.language == "en"
       assert invitation.creator_id == owner.id
-      assert invitation.tenant_id == tenant.id
+      assert invitation.organisation_id == organisation.id
       assert Enum.map(invitation.groups, & &1.id) == [group.id]
     end
 
@@ -97,12 +94,12 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       conn: conn,
       group: group,
       authorized_user: authorized_user,
-      tenant: tenant
+      organisation: organisation
     } do
       assert {:ok, view, _html} =
                conn
                |> log_in_user(authorized_user)
-               |> live(~p"/tenants/#{tenant.slug}/invitations/new")
+               |> live(~p"/organisations/#{organisation}/invitations/new")
 
       view
       |> form("#invitation-form",
@@ -114,7 +111,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       )
       |> render_submit()
 
-      assert_redirected(view, ~p"/tenants/#{tenant.slug}")
+      assert_redirected(view, ~p"/organisations/#{organisation}")
 
       assert [invitation] =
                Invitation
@@ -124,7 +121,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert invitation.email == "test@example.com"
       assert invitation.language == "en"
       assert invitation.creator_id == authorized_user.id
-      assert invitation.tenant_id == tenant.id
+      assert invitation.organisation_id == organisation.id
       assert Enum.map(invitation.groups, & &1.id) == [group.id]
     end
 
@@ -132,16 +129,16 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       conn: conn,
       unauthorized_user: user
     } do
-      {:ok, tenant} = create_tenant()
+      {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(%{tenant_id: tenant.id, user_id: user.id})
+        create_group(%{organisation_id: organisation.id, user_id: user.id})
 
       create_group_membership(%{user_id: user.id, group_id: group.id})
 
       create_access_right(%{
-        resource_name: "Tenant",
-        tenant_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         group_id: group.id,
         read: true
       })
@@ -149,9 +146,9 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert {:error, {:live_redirect, %{to: path}}} =
                conn
                |> log_in_user(user)
-               |> live(~p"/tenants/#{tenant.slug}/invitations/new")
+               |> live(~p"/organisations/#{organisation}/invitations/new")
 
-      assert path == ~p"/tenants/#{tenant.slug}"
+      assert path == ~p"/organisations/#{organisation}"
     end
   end
 end

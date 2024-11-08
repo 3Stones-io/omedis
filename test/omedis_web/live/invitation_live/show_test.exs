@@ -20,15 +20,15 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
     {:ok, _} = create_group_membership(%{user_id: owner.id, group_id: group.id})
 
     {:ok, _} =
       create_access_right(%{
         resource_name: "Invitation",
         create: true,
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         group_id: group.id
       })
 
@@ -36,14 +36,14 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       create_access_right(%{
         group_id: group.id,
         read: true,
-        resource_name: "Tenant",
-        tenant_id: tenant.id,
+        resource_name: "organisation",
+        organisation_id: organisation.id,
         write: true
       })
 
     {:ok, valid_invitation} =
       create_invitation(%{
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         creator_id: owner.id
       })
 
@@ -51,27 +51,27 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
     {:ok, expired_invitation} =
       create_invitation(%{
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         creator_id: owner.id,
         expires_at: expired_at
       })
 
     %{
       expired_invitation: expired_invitation,
-      tenant: tenant,
+      organisation: organisation,
       owner: owner,
       valid_invitation: valid_invitation
     }
   end
 
-  describe "/tenants/:slug/invitations/:id" do
+  describe "/organisations/:slug/invitations/:id" do
     test "invitee with a valid invitation can register for an account", %{
       conn: conn,
-      tenant: tenant,
+      organisation: organisation,
       valid_invitation: valid_invitation
     } do
       {:ok, view, _html} =
-        live(conn, "/tenants/#{tenant.slug}/invitations/#{valid_invitation.id}")
+        live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
 
       form =
         form(
@@ -88,11 +88,11 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
     test "form errors are displayed", %{
       conn: conn,
-      tenant: tenant,
+      organisation: organisation,
       valid_invitation: valid_invitation
     } do
       {:ok, view, _html} =
-        live(conn, "/tenants/#{tenant.slug}/invitations/#{valid_invitation.id}")
+        live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
 
       html =
         view
@@ -104,18 +104,18 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
     test "page is displayed in the correct language", %{
       conn: conn,
-      tenant: tenant,
+      organisation: organisation,
       owner: owner
     } do
       {:ok, invitation} =
         create_invitation(%{
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           creator_id: owner.id,
           language: "fr"
         })
 
       {:ok, _view, html} =
-        live(conn, "/tenants/#{tenant.slug}/invitations/#{invitation.id}")
+        live(conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
 
       assert html =~ "Date de naissance"
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
@@ -124,10 +124,10 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
     test "invitee with an expired invitation is redirected", %{
       conn: conn,
       expired_invitation: expired_invitation,
-      tenant: tenant
+      organisation: organisation
     } do
       assert {:error, {:redirect, %{to: path, flash: flash}}} =
-               live(conn, "/tenants/#{tenant.slug}/invitations/#{expired_invitation.id}")
+               live(conn, ~p"/organisations/#{organisation}/invitations/#{expired_invitation.id}")
 
       assert path == "/"
       assert flash["error"] == "Invitation is not valid"
