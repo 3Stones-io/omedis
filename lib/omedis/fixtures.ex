@@ -142,13 +142,6 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def time_after(seconds_offset) do
-    DateTime.utc_now()
-    |> DateTime.add(seconds_offset)
-    |> DateTime.to_naive()
-    |> NaiveDateTime.truncate(:second)
-  end
-
   defp fixture(module, attrs) do
     attrs =
       module

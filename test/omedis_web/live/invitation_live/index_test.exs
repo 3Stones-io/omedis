@@ -31,7 +31,9 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
           })
 
         invitation
-        |> Ash.Changeset.for_update(:update, %{inserted_at: time_after(-i * 12_000)},
+        |> Ash.Changeset.for_update(
+          :update,
+          %{inserted_at: Omedis.TestUtils.time_after(-i * 12_000)},
           authorize?: false
         )
         |> Ash.update!()
@@ -173,12 +175,16 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> live(~p"/organisations/#{organisation}/invitations")
 
       assert index_live
-             |> element("#invitations")
-             |> render() =~ invitation.email
+             |> element("#delete_invitation_#{invitation.id}")
+             |> has_element?()
 
-      index_live
-      |> element("#delete_invitation_#{invitation.id}")
-      |> render_click()
+      html =
+        index_live
+        |> element("#delete_invitation_#{invitation.id}")
+        |> render_click()
+
+      assert html =~ "Invitation deleted successfully"
+      refute html =~ invitation.email
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
                Invitation.by_id(invitation.id, actor: owner, tenant: organisation)
@@ -198,12 +204,16 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> live(~p"/organisations/#{organisation}/invitations")
 
       assert index_live
-             |> element("#invitations")
-             |> render() =~ invitation.email
+             |> element("#delete_invitation_#{invitation.id}")
+             |> has_element?()
 
-      index_live
-      |> element("#delete_invitation_#{invitation.id}")
-      |> render_click()
+      html =
+        index_live
+        |> element("#delete_invitation_#{invitation.id}")
+        |> render_click()
+
+      assert html =~ "Invitation deleted successfully"
+      refute html =~ invitation.email
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
                Invitation.by_id(invitation.id, actor: authorized_user, tenant: organisation)

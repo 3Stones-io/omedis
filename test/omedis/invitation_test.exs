@@ -198,7 +198,9 @@ defmodule Omedis.Accounts.InvitationTest do
             })
 
           invitation
-          |> Ash.Changeset.for_update(:update, %{inserted_at: time_after(-i * 12_000)},
+          |> Ash.Changeset.for_update(
+            :update,
+            %{inserted_at: Omedis.TestUtils.time_after(-i * 12_000)},
             authorize?: false
           )
           |> Ash.update!()
