@@ -47,7 +47,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       authorized_user: authorized_user,
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       unauthorized_user: unauthorized_user
     }
   end
@@ -57,7 +57,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       conn: conn,
       group: group,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, view, _html} =
                conn
@@ -92,7 +92,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       conn: conn,
       group: group,
       authorized_user: authorized_user,
-      tenant: organisation
+      organisation: organisation
     } do
       assert {:ok, view, _html} =
                conn

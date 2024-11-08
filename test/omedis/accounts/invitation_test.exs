@@ -45,7 +45,7 @@ defmodule Omedis.Accounts.InvitationTest do
       authorized_user: authorized_user,
       group: group,
       owner: owner,
-      tenant: organisation,
+      organisation: organisation,
       unauthorized_user: unauthorized_user
     }
   end
@@ -54,7 +54,7 @@ defmodule Omedis.Accounts.InvitationTest do
     test "organisation owner can create invitation", %{
       group: group,
       owner: owner,
-      tenant: organisation
+      organisation: organisation
     } do
       attrs = %{
         email: "test@example.com",
@@ -76,7 +76,7 @@ defmodule Omedis.Accounts.InvitationTest do
     end
 
     test "authorized user can create invitation", %{
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       authorized_user: user
     } do
@@ -97,7 +97,7 @@ defmodule Omedis.Accounts.InvitationTest do
     end
 
     test "unauthorized user cannot create invitation", %{
-      tenant: organisation,
+      organisation: organisation,
       group: group,
       unauthorized_user: user
     } do
@@ -113,7 +113,11 @@ defmodule Omedis.Accounts.InvitationTest do
                Invitation.create(attrs, actor: user, tenant: organisation)
     end
 
-    test "validates required attributes", %{tenant: organisation, owner: owner, group: group} do
+    test "validates required attributes", %{
+      organisation: organisation,
+      owner: owner,
+      group: group
+    } do
       attrs = %{
         language: "en",
         creator_id: owner.id,
