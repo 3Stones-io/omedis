@@ -31,7 +31,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
           })
 
         invitation
-        |> Ash.Changeset.for_update(:update, %{inserted_at: time_before_or_after(-i * 12_000)},
+        |> Ash.Changeset.for_update(:update, %{inserted_at: time_after(-i * 12_000)},
           authorize?: false
         )
         |> Ash.update!()
@@ -99,7 +99,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       refute html =~ "test15@example.com"
     end
 
-    test "authorized user can see only invitations they have access to", %{
+    test "authorized user can see all invitations with pagination", %{
       conn: conn,
       organisation: organisation,
       user_2: authorized_user
@@ -212,19 +212,11 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     test "can sort invitations by inserted_at", %{
       conn: conn,
       owner: owner,
-      organisation: organisation
+      organisation: organisation,
+      invitations: invitations
     } do
-      oldest_invitation =
-        Invitation
-        |> Ash.Query.sort(inserted_at: :desc)
-        |> Ash.read!(actor: owner, tenant: organisation)
-        |> List.first()
-
-      newest_invitation =
-        Invitation
-        |> Ash.Query.sort(inserted_at: :asc)
-        |> Ash.read!(actor: owner, tenant: organisation)
-        |> List.first()
+      oldest_invitation = List.first(invitations)
+      newest_invitation = List.last(invitations)
 
       {:ok, index_live, html} =
         conn
@@ -242,12 +234,5 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ oldest_invitation.email
       refute html =~ newest_invitation.email
     end
-  end
-
-  defp time_before_or_after(seconds_offset) do
-    DateTime.utc_now()
-    |> DateTime.add(seconds_offset)
-    |> DateTime.to_naive()
-    |> NaiveDateTime.truncate(:second)
   end
 end

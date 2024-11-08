@@ -198,7 +198,7 @@ defmodule Omedis.Accounts.InvitationTest do
             })
 
           invitation
-          |> Ash.Changeset.for_update(:update, %{inserted_at: time_before_or_after(-i * 12_000)},
+          |> Ash.Changeset.for_update(:update, %{inserted_at: time_after(-i * 12_000)},
             authorize?: false
           )
           |> Ash.update!()
@@ -242,12 +242,5 @@ defmodule Omedis.Accounts.InvitationTest do
                  tenant: organisation
                )
     end
-  end
-
-  defp time_before_or_after(seconds_offset) do
-    DateTime.utc_now()
-    |> DateTime.add(seconds_offset)
-    |> DateTime.to_naive()
-    |> NaiveDateTime.truncate(:second)
   end
 end
