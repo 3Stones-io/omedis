@@ -8,12 +8,12 @@ defmodule Omedis.Workers.InvitationEmailWorkerTest do
 
   setup do
     {:ok, user} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: user.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
 
     {:ok, invitation} =
       create_invitation(%{
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         creator_id: user.id,
         groups: [group.id]
       })
@@ -21,21 +21,21 @@ defmodule Omedis.Workers.InvitationEmailWorkerTest do
     create_access_right(%{
       resource_name: "Invitation",
       create: true,
-      tenant_id: tenant.id,
+      organisation_id: organisation.id,
       group_id: group.id
     })
 
     create_access_right(%{
-      resource_name: "Tenant",
+      resource_name: "organisation",
       create: true,
-      tenant_id: tenant.id,
+      organisation_id: organisation.id,
       group_id: group.id
     })
 
     %{
       group: group,
       invitation: invitation,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     }
   end
@@ -43,10 +43,10 @@ defmodule Omedis.Workers.InvitationEmailWorkerTest do
   describe "perform/1" do
     test "sends an invitation email", %{
       invitation: invitation,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
-      args = %{actor_id: user.id, tenant_id: tenant.id, id: invitation.id}
+      args = %{actor_id: user.id, organisation_id: organisation.id, id: invitation.id}
 
       assert :ok =
                perform_job(
@@ -56,7 +56,7 @@ defmodule Omedis.Workers.InvitationEmailWorkerTest do
 
       assert_email_sent(
         from: {"Omedis", "contact@omedis.com"},
-        subject: "Omedis | Invitation to join #{tenant.name}",
+        subject: "Omedis | Invitation to join #{organisation.name}",
         to: invitation.email,
         text_body: ~r/Please register your new Omedis account for /
       )

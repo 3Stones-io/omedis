@@ -26,17 +26,17 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
           type="text"
           label={with_locale(@language, fn -> gettext("Name") end)}
         />
-        <input type="hidden" name="project[tenant_id]" value={@tenant.id} />
+        <input type="hidden" name="project[organisation_id]" value={@organisation.id} />
         <.input
-          field={@form[:tenant_id]}
+          field={@form[:organisation_id]}
           type="select"
           label={
             Phoenix.HTML.raw(
-              "#{with_locale(@language, fn -> gettext("Tenant") end)}  <span class='text-red-600'>*</span>"
+              "#{with_locale(@language, fn -> gettext("Organisation") end)}  <span class='text-red-600'>*</span>"
             )
           }
           disabled={true}
-          options={Enum.map(@tenants, &{&1.name, &1.id})}
+          options={Enum.map(@organisations, &{&1.name, &1.id})}
         />
         <div class="hidden">
           <.input
@@ -108,16 +108,20 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
 
   defp assign_form(%{assigns: %{project: project}} = socket) do
     actor = socket.assigns.current_user
-    tenant = socket.assigns.tenant
+    organisation = socket.assigns.organisation
 
     form =
       if project do
-        AshPhoenix.Form.for_update(project, :update, as: "project", actor: actor, tenant: tenant)
+        AshPhoenix.Form.for_update(project, :update,
+          as: "project",
+          actor: actor,
+          tenant: organisation
+        )
       else
         AshPhoenix.Form.for_create(Omedis.Accounts.Project, :create,
           as: "project",
           actor: actor,
-          tenant: tenant
+          tenant: organisation
         )
       end
 

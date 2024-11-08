@@ -5,18 +5,23 @@ defmodule Omedis.Workers.InvitationEmailWorker do
   use OmedisWeb, :verified_routes
 
   alias Omedis.Accounts.Invitation
-  alias Omedis.Accounts.Tenant
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: args}) do
-    %{"actor_id" => actor_id, "tenant_id" => tenant_id, "id" => invitation_id} = args
+    %{"actor_id" => actor_id, "organisation_id" => organisation_id, "id" => invitation_id} = args
 
     with {:ok, actor} <- Ash.get(User, actor_id),
-         {:ok, tenant} <- Ash.get(Tenant, tenant_id, actor: actor),
+         {:ok, organisation} <- Ash.get(Organisation, organisation_id, actor: actor),
          {:ok, invitation} <-
-           Ash.get(Invitation, invitation_id, actor: actor, tenant: tenant, load: [:tenant]) do
-      url = static_url_fun().(~p"/tenants/#{tenant.slug}/invitations/#{invitation.id}")
+           Ash.get(Invitation, invitation_id,
+             actor: actor,
+             tenant: organisation,
+             load: [:organisation]
+           ) do
+      url =
+        static_url_fun().(~p"/organisations/#{organisation.slug}/invitations/#{invitation.id}")
 
       Omedis.Accounts.deliver_invitation_email(invitation, url)
     end

@@ -8,7 +8,11 @@ defmodule Omedis.Accounts.Changes.SendInvitationEmail do
     Ash.Changeset.after_transaction(changeset, fn
       _changeset, {:ok, result} ->
         {:ok, _job} =
-          %{"id" => result.id, "tenant_id" => result.tenant_id, "actor_id" => result.creator_id}
+          %{
+            "id" => result.id,
+            "organisation_id" => result.organisation_id,
+            "actor_id" => result.creator_id
+          }
           |> InvitationEmailWorker.new()
           |> Oban.insert()
 

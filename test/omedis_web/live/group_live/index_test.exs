@@ -7,39 +7,39 @@ defmodule OmedisWeb.GroupLive.IndexTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, another_user} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: owner.id})
-    {:ok, tenant_2} = create_tenant(%{owner_id: another_user.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, organisation_2} = create_organisation(%{owner_id: another_user.id})
 
     %{
       another_user: another_user,
       owner: owner,
-      tenant_2: tenant_2,
-      tenant: tenant
+      organisation_2: organisation_2,
+      organisation: organisation
     }
   end
 
-  describe "/tenants/:slug/groups" do
+  describe "/organisations/:slug/groups" do
     test "list groups with pagination", %{
       another_user: another_user,
       conn: conn,
       owner: owner,
-      tenant: tenant,
-      tenant_2: tenant_2
+      organisation: organisation,
+      organisation_2: organisation_2
     } do
       Enum.each(1..15, fn i ->
         {:ok, group} =
           create_group(%{
-            tenant_id: tenant.id,
+            organisation_id: organisation.id,
             user_id: owner.id,
             slug: "group-#{i}",
             name: "Group #{i}"
           })
 
-        create_group_user(%{user_id: owner.id, group_id: group.id})
+        create_group_membership(%{user_id: owner.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           group_id: group.id,
           read: true
         })
@@ -48,17 +48,17 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       Enum.each(16..30, fn i ->
         {:ok, group} =
           create_group(%{
-            tenant_id: tenant.id,
+            organisation_id: organisation.id,
             user_id: owner.id,
             slug: "group-#{i}",
             name: "Group #{i}"
           })
 
-        create_group_user(%{user_id: owner.id, group_id: group.id})
+        create_group_membership(%{user_id: owner.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           group_id: group.id,
           read: false
         })
@@ -67,17 +67,17 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       Enum.each(31..40, fn i ->
         {:ok, group} =
           create_group(%{
-            tenant_id: tenant_2.id,
+            organisation_id: organisation_2.id,
             user_id: another_user.id,
             slug: "group-#{i}",
             name: "Group #{i}"
           })
 
-        create_group_user(%{user_id: another_user.id, group_id: group.id})
+        create_group_membership(%{user_id: another_user.id, group_id: group.id})
 
         create_access_right(%{
           resource_name: "Group",
-          tenant_id: tenant_2.id,
+          organisation_id: organisation_2.id,
           group_id: group.id,
           read: false
         })
@@ -86,7 +86,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups")
+        |> live(~p"/organisations/#{organisation}/groups")
 
       assert html =~ "Listing Groups"
       assert html =~ "New Group"
@@ -113,16 +113,21 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       conn: conn,
       owner: owner
     } do
-      {:ok, tenant} = create_tenant()
+      {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
+        create_group(%{
+          organisation_id: organisation.id,
+          user_id: owner.id,
+          slug: "group-1",
+          name: "Group 1"
+        })
 
-      create_group_user(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
-        resource_name: "Tenant",
-        tenant_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: false,
@@ -131,7 +136,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: false,
@@ -141,7 +146,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups")
+        |> live(~p"/organisations/#{organisation}/groups")
 
       refute view |> element("#edit-group-#{group.id}") |> has_element?()
       refute view |> element("#delete-group-#{group.id}") |> has_element?()
@@ -152,16 +157,21 @@ defmodule OmedisWeb.GroupLive.IndexTest do
     test "authorized user can delete a group", %{
       conn: conn,
       owner: owner,
-      tenant: tenant
+      organisation: organisation
     } do
       {:ok, group} =
-        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
+        create_group(%{
+          organisation_id: organisation.id,
+          user_id: owner.id,
+          slug: "group-1",
+          name: "Group 1"
+        })
 
-      create_group_user(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: true,
@@ -171,7 +181,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups")
+        |> live(~p"/organisations/#{organisation}/groups")
 
       assert view
              |> element("#delete-group-#{group.id}")
@@ -191,16 +201,21 @@ defmodule OmedisWeb.GroupLive.IndexTest do
     test "authorized user can edit a group", %{
       conn: conn,
       owner: owner,
-      tenant: tenant
+      organisation: organisation
     } do
       {:ok, group} =
-        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
+        create_group(%{
+          organisation_id: organisation.id,
+          user_id: owner.id,
+          slug: "group-1",
+          name: "Group 1"
+        })
 
-      create_group_user(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: true,
@@ -210,7 +225,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups")
+        |> live(~p"/organisations/#{organisation}/groups")
 
       assert view
              |> element("#edit-group-#{group.id}")
@@ -224,7 +239,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
              |> form("#group-form", group: %{name: "New Group Name", slug: "new-group-name"})
              |> render_submit()
 
-      assert_patch(view, ~p"/tenants/#{tenant.slug}/groups")
+      assert_patch(view, ~p"/organisations/#{organisation}/groups")
 
       html = render(view)
       assert html =~ "Group updated successfully"
@@ -232,21 +247,26 @@ defmodule OmedisWeb.GroupLive.IndexTest do
     end
   end
 
-  describe "/tenants/:slug/groups/:slug/edit" do
+  describe "/organisations/:slug/groups/:slug/edit" do
     test "can't edit a group if not authorized", %{
       conn: conn,
       owner: owner
     } do
-      {:ok, tenant} = create_tenant()
+      {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(%{tenant_id: tenant.id, user_id: owner.id, slug: "group-1", name: "Group 1"})
+        create_group(%{
+          organisation_id: organisation.id,
+          user_id: owner.id,
+          slug: "group-1",
+          name: "Group 1"
+        })
 
-      create_group_user(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(%{user_id: owner.id, group_id: group.id})
 
       create_access_right(%{
-        resource_name: "Tenant",
-        tenant_id: tenant.id,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: false,
@@ -255,7 +275,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       create_access_right(%{
         resource_name: "Group",
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: false,
@@ -265,9 +285,9 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:error, {:redirect, %{to: path, flash: flash}}} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/tenants/#{tenant.slug}/groups/#{group.slug}/edit")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/edit")
 
-      assert path == ~p"/tenants/#{tenant.slug}/groups"
+      assert path == ~p"/organisations/#{organisation}/groups"
       assert flash["error"] == "You are not authorized to access this page"
     end
   end

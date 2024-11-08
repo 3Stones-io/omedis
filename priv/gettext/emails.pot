@@ -26,11 +26,6 @@ msgstr ""
 msgid "Please click on this link %{url} to create the account"
 msgstr ""
 
-#: lib/omedis/accounts/user_notifier.ex:36
-#, elixir-autogen, elixir-format
-msgid "Please register your new Omedis account for %{tenant_name}"
-msgstr ""
-
 #: lib/omedis/accounts/user_notifier.ex:38
 #, elixir-autogen, elixir-format
 msgid "This invitation is good till %{expires_at}"
@@ -38,5 +33,10 @@ msgstr ""
 
 #: lib/omedis/accounts/user_notifier.ex:28
 #, elixir-autogen, elixir-format
-msgid "Omedis | Invitation to join %{tenant_name}"
+msgid "Omedis | Invitation to join %{organisation_name}"
+msgstr ""
+
+#: lib/omedis/accounts/user_notifier.ex:36
+#, elixir-autogen, elixir-format
+msgid "Please register your new Omedis account for %{organisation_name}"
 msgstr ""

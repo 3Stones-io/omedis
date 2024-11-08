@@ -25,15 +25,15 @@ defmodule Omedis.Accounts.UserNotifier do
 
     deliver(
       invitation.email,
-      dgettext("emails", "Omedis | Invitation to join %{tenant_name}",
-        tenant_name: invitation.tenant.name
+      dgettext("emails", "Omedis | Invitation to join %{organisation_name}",
+        organisation_name: invitation.organisation.name
       ),
       """
       ==============================
 
       #{dgettext("emails", "Hello!")}
 
-      #{dgettext("emails", "Please register your new Omedis account for %{tenant_name}", tenant_name: invitation.tenant.name)}
+      #{dgettext("emails", "Please register your new Omedis account for %{organisation_name}", organisation_name: invitation.organisation.name)}
 
       #{dgettext("emails", "This invitation is good till %{expires_at}", expires_at: invitation.expires_at)}
 

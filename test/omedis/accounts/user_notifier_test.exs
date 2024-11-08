@@ -8,12 +8,12 @@ defmodule Omedis.Accounts.UserNotifierTest do
 
   setup do
     {:ok, user} = create_user()
-    {:ok, tenant} = create_tenant(%{owner_id: user.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
+    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
 
     {:ok, invitation} =
       create_invitation(%{
-        tenant_id: tenant.id,
+        organisation_id: organisation.id,
         creator_id: user.id,
         groups: [group.id]
       })
@@ -21,21 +21,21 @@ defmodule Omedis.Accounts.UserNotifierTest do
     create_access_right(%{
       resource_name: "Invitation",
       create: true,
-      tenant_id: tenant.id,
+      organisation_id: organisation.id,
       group_id: group.id
     })
 
     create_access_right(%{
-      resource_name: "Tenant",
+      resource_name: "organisation",
       create: true,
-      tenant_id: tenant.id,
+      organisation_id: organisation.id,
       group_id: group.id
     })
 
     %{
       group: group,
-      invitation: Ash.load!(invitation, :tenant, authorize?: false),
-      tenant: tenant,
+      invitation: Ash.load!(invitation, :organisation, authorize?: false),
+      organisation: organisation,
       user: user
     }
   end
@@ -44,13 +44,13 @@ defmodule Omedis.Accounts.UserNotifierTest do
     test "sends an invitation email",
          %{
            invitation: invitation,
-           tenant: tenant
+           organisation: organisation
          } do
       Omedis.Accounts.deliver_invitation_email(invitation, "INVITATION_URL")
 
       assert_email_sent(
         from: {"Omedis", "contact@omedis.com"},
-        subject: "Omedis | Invitation to join #{tenant.name}",
+        subject: "Omedis | Invitation to join #{organisation.name}",
         to: [invitation.email],
         text_body: ~r/INVITATION_URL/
       )
@@ -59,24 +59,24 @@ defmodule Omedis.Accounts.UserNotifierTest do
     test "sends an invitation email in the correct language",
          %{
            group: group,
-           tenant: tenant,
+           organisation: organisation,
            user: user
          } do
       {:ok, invitation} =
         create_invitation(%{
-          tenant_id: tenant.id,
+          organisation_id: organisation.id,
           creator_id: user.id,
           groups: [group.id],
           language: "fr"
         })
 
-      invitation = Ash.load!(invitation, :tenant, authorize?: false)
+      invitation = Ash.load!(invitation, :organisation, authorize?: false)
 
       Omedis.Accounts.deliver_invitation_email(invitation, "INVITATION_URL")
 
       assert_email_sent(
         from: {"Omedis", "contact@omedis.com"},
-        subject: "Omedis | Invitation à rejoindre #{tenant.name}",
+        subject: "Omedis | Invitation à rejoindre #{organisation.name}",
         to: [invitation.email],
         text_body: ~r/INVITATION_URL/,
         text_body: ~r/Veuillez enregistrer votre nouveau compte Omedis pour/
