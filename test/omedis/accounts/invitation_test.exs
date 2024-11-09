@@ -159,49 +159,31 @@ defmodule Omedis.Accounts.InvitationTest do
     end
   end
 
-  describe "by_id/2" do
-    setup %{organisation: organisation} do
+  describe "by_id/1" do
+    test "returns invitation if it has not expired", %{organisation: organisation} do
       {:ok, invitation} = create_invitation(%{organisation_id: organisation.id})
 
-      %{invitation: invitation}
+      assert {:ok, _invitation} = Invitation.by_id(invitation.id)
     end
 
-    test "organisation owner can access an invitation by id", %{
-      invitation: invitation,
+    test "returns an error if invitation has expired", %{
       organisation: organisation,
-      owner: organisation_owner
+      owner: owner
     } do
-      assert {:ok, invitation_from_db} =
-               Invitation.by_id(invitation.id,
-                 actor: organisation_owner,
-                 tenant: organisation
-               )
+      expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
 
-      assert invitation.id == invitation_from_db.id
+      {:ok, invitation} =
+        create_invitation(%{
+          organisation_id: organisation.id,
+          creator_id: owner.id,
+          expires_at: expired_at
+        })
+
+      assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(invitation.id)
     end
 
-    test "authorized user can access an invitation by id", %{
-      authorized_user: authorized_user,
-      invitation: invitation,
-      organisation: organisation
-    } do
-      assert {:ok, invitation_from_db} =
-               Invitation.by_id(invitation.id, actor: authorized_user, tenant: organisation)
-
-      assert invitation.id == invitation_from_db.id
-    end
-
-    test "unauthorized user cannot access an invitation by id", %{
-      access_right: access_right,
-      authorized_user: user,
-      invitation: invitation,
-      organisation: organisation
-    } do
-      # Remove access rights for the user
-      Ash.destroy!(access_right)
-
-      assert {:error, %Ash.Error.Query.NotFound{}} =
-               Invitation.by_id(invitation.id, actor: user, tenant: organisation)
+    test "returns an error if invitation does not exist" do
+      assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(Ecto.UUID.generate())
     end
   end
 

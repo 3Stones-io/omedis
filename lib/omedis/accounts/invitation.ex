@@ -15,7 +15,7 @@ defmodule Omedis.Accounts.Invitation do
 
   code_interface do
     domain Omedis.Accounts
-    define :by_id, get_by: [:id], action: :read
+    define :by_id, get_by: [:id]
     define :create
     define :destroy
     define :list_paginated
@@ -72,7 +72,7 @@ defmodule Omedis.Accounts.Invitation do
     end
 
     create :create do
-      accept [:email, :language, :creator_id, :organisation_id]
+      accept [:email, :language, :creator_id, :organisation_id, :expires_at]
 
       argument :groups, {:array, :uuid}, allow_nil?: false
 
@@ -87,6 +87,8 @@ defmodule Omedis.Accounts.Invitation do
 
       primary? true
     end
+
+    read :by_id
   end
 
   relationships do
@@ -119,7 +121,11 @@ defmodule Omedis.Accounts.Invitation do
       authorize_if Omedis.Accounts.CanAccessResource
     end
 
-    policy action_type(:read) do
+    policy action(:by_id) do
+      authorize_if Omedis.Accounts.InvitationNotExpiredFilter
+    end
+
+    policy action([:list_paginated, :read]) do
       authorize_if Omedis.Accounts.AccessFilter
     end
   end

@@ -837,10 +837,10 @@ defmodule OmedisWeb.GeneralComponents do
     """
   end
 
-  defp get_current_organisation_path(nil), do: "/organisations"
+  defp get_current_organisation_path(nil), do: ~p"/organisations"
 
   defp get_current_organisation_path(current_organisation) do
-    "/organisations/#{current_organisation}"
+    ~p"/organisations/#{current_organisation}"
   end
 
   defp organisations_link(assigns) do

@@ -81,8 +81,9 @@ defmodule OmedisWeb.Router do
       live "/organisations/:slug/activities/:id/log_entries", LogEntryLive.Index, :index
 
       live "/organisations/:slug/invitations/new", InvitationLive.Index, :new
-      live "/organisations/:slug/invitations/:id", InvitationLive.Show, :show
     end
+
+    live "/organisations/:slug/invitations/:id", InvitationLive.Show, :show
   end
 
   # Other scopes may use custom stacks.

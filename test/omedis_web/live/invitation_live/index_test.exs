@@ -9,6 +9,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
   setup do
     {:ok, owner} = create_user()
+
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
 
     {:ok, group} = create_group(%{organisation_id: organisation.id})
@@ -63,7 +64,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
     {:ok, unauthorized_user} = create_user()
     {:ok, group_2} = create_group()
-    create_group_membership(%{user_id: unauthorized_user.id, group_id: group_2.id})
+    {:ok, _} = create_group_membership(%{user_id: unauthorized_user.id, group_id: group_2.id})
 
     %{
       authorized_user: authorized_user,
