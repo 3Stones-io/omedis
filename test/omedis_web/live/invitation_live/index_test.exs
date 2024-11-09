@@ -265,17 +265,20 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
                |> log_in_user(owner)
                |> live(~p"/organisations/#{organisation}/invitations/new")
 
-      view
-      |> form("#invitation-form",
-        invitation: %{
-          email: "test@example.com",
-          language: "en",
-          groups: %{group.id => true}
-        }
-      )
-      |> render_submit()
+      html =
+        view
+        |> form("#invitation-form",
+          invitation: %{
+            email: "test@example.com",
+            language: "en",
+            groups: %{group.id => true}
+          }
+        )
+        |> render_submit()
 
-      assert_redirected(view, ~p"/organisations/#{organisation}")
+      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+
+      assert html =~ "Invitation created successfully"
 
       assert [invitation] =
                Invitation
@@ -300,17 +303,20 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
                |> log_in_user(authorized_user)
                |> live(~p"/organisations/#{organisation}/invitations/new")
 
-      view
-      |> form("#invitation-form",
-        invitation: %{
-          email: "test@example.com",
-          language: "en",
-          groups: %{group.id => true}
-        }
-      )
-      |> render_submit()
+      html =
+        view
+        |> form("#invitation-form",
+          invitation: %{
+            email: "test@example.com",
+            language: "en",
+            groups: %{group.id => true}
+          }
+        )
+        |> render_submit()
 
-      assert_redirected(view, ~p"/organisations/#{organisation}")
+      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+
+      assert html =~ "Invitation created successfully"
 
       assert [invitation] =
                Invitation
@@ -347,7 +353,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
                |> log_in_user(user)
                |> live(~p"/organisations/#{organisation}/invitations/new")
 
-      assert path == ~p"/organisations/#{organisation}"
+      assert path == ~p"/organisations/#{organisation}/invitations"
     end
   end
 end

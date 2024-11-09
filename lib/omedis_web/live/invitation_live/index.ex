@@ -62,8 +62,7 @@ defmodule OmedisWeb.InvitationLive.Index do
       )
       |> assign(:invitation, nil)
     else
-      # FIXME: Redirect to the invitations index page
-      push_navigate(socket, to: ~p"/organisations/#{socket.assigns.organisation}")
+      push_navigate(socket, to: ~p"/organisations/#{socket.assigns.organisation}/invitations")
     end
   end
 
@@ -133,7 +132,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           :if={@live_action == :new}
           id="invitation-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation}")}
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}/invitations")}
         >
           <.live_component
             module={OmedisWeb.InvitationLive.FormComponent}
@@ -143,7 +142,7 @@ defmodule OmedisWeb.InvitationLive.Index do
             organisation={@organisation}
             language={@language}
             current_user={@current_user}
-            patch={~p"/organisations/#{@organisation}"}
+            patch={~p"/organisations/#{@organisation}/invitations"}
           />
         </.modal>
 

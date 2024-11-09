@@ -43,7 +43,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Invitation created successfully"))
-         |> push_navigate(to: socket.assigns.patch)}
+         |> push_patch(to: socket.assigns.patch)}
 
       {:error, form} ->
         {:noreply, assign(socket, :form, form)}
