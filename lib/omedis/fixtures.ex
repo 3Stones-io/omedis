@@ -94,8 +94,12 @@ defmodule Omedis.Fixtures do
 
   def attrs_for(Accounts.Invitation) do
     %{
-      creator_id: fn -> create_user().id end,
+      creator_id: fn ->
+        {:ok, user} = create_user()
+        user.id
+      end,
       email: Faker.Internet.email(),
+      groups: [],
       language: "en",
       organisation_id: fn -> create_organisation().id end
     }

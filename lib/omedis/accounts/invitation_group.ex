@@ -11,6 +11,11 @@ defmodule Omedis.Accounts.InvitationGroup do
   postgres do
     table "invitation_groups"
     repo Omedis.Repo
+
+    references do
+      reference :invitation, on_delete: :delete
+      reference :group, on_delete: :delete
+    end
   end
 
   attributes do
@@ -19,7 +24,7 @@ defmodule Omedis.Accounts.InvitationGroup do
   end
 
   actions do
-    defaults [:read]
+    defaults [:read, :destroy]
 
     create :create do
       accept [:invitation_id, :group_id]

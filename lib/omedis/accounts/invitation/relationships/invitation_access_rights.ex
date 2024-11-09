@@ -1,6 +1,6 @@
 defmodule Omedis.Accounts.Invitation.Relationships.InvitationAccessRights do
   @moduledoc """
-  A relationship that allows us to access the invitation access rights for an invitation.
+  A relationship that allows us to access the invitation access rights.
   """
 
   use Ash.Resource.ManualRelationship

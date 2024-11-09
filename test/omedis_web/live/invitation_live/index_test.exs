@@ -1,23 +1,19 @@
 defmodule OmedisWeb.InvitationLive.IndexTest do
-  use OmedisWeb.ConnCase, async: false
+  use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
+
+  require Ash.Query
 
   alias Omedis.Accounts.Invitation
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, user_2} = create_user()
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
 
-    {:ok, organisation} =
-      create_organisation(%{
-        name: "Test Organisation",
-        slug: "test-organisation",
-        owner_id: owner.id
-      })
-
-    {:ok, group} = create_group()
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user_2.id})
+    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, authorized_user} = create_user()
+    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     # Create invitations (15 for owner, 5 for user_2)
     invitations =
@@ -26,7 +22,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
           create_invitation(%{
             email: "test#{i}@example.com",
             organisation_id: organisation.id,
-            creator_id: if(Enum.random([true, false]), do: owner.id, else: user_2.id),
+            creator_id: if(Enum.random([true, false]), do: owner.id, else: authorized_user.id),
             language: "en"
           })
 
@@ -38,6 +34,13 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         )
         |> Ash.update!()
       end
+
+    create_access_right(%{
+      group_id: group.id,
+      read: true,
+      resource_name: "Group",
+      organisation_id: organisation.id
+    })
 
     {:ok, _} =
       create_access_right(%{
@@ -53,16 +56,20 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         group_id: group.id,
         organisation_id: organisation.id,
         read: true,
-        resource_name: "Organisation",
-        write: true
+        resource_name: "Organisation"
       })
 
+    {:ok, unauthorized_user} = create_user()
+    {:ok, group_2} = create_group()
+    create_group_membership(%{user_id: unauthorized_user.id, group_id: group_2.id})
+
     %{
+      authorized_user: authorized_user,
       group: group,
       invitations: invitations,
       owner: owner,
       organisation: organisation,
-      user_2: user_2
+      unauthorized_user: unauthorized_user
     }
   end
 
@@ -104,7 +111,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     test "authorized user can see all invitations with pagination", %{
       conn: conn,
       organisation: organisation,
-      user_2: authorized_user
+      authorized_user: authorized_user
     } do
       {:ok, index_live, html} =
         conn
@@ -192,7 +199,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
     test "authorized user can delete invitations", %{
       conn: conn,
-      user_2: authorized_user,
+      authorized_user: authorized_user,
       organisation: organisation,
       invitations: invitations
     } do
@@ -243,6 +250,137 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       html = render(index_live)
       assert html =~ oldest_invitation.email
       refute html =~ newest_invitation.email
+    end
+  end
+
+  describe "/organisations/:slug/invitations/new" do
+    test "organisation owner can create an invitation", %{
+      conn: conn,
+      group: group,
+      owner: owner,
+      organisation: organisation
+    } do
+      assert {:ok, view, _html} =
+               conn
+               |> log_in_user(owner)
+               |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      html =
+        view
+        |> form("#invitation-form",
+          invitation: %{
+            email: "test@example.com",
+            language: "en",
+            groups: %{group.id => true}
+          }
+        )
+        |> render_submit()
+
+      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+
+      assert html =~ "Invitation created successfully"
+
+      assert [invitation] =
+               Invitation
+               |> Ash.Query.filter(email: "test@example.com")
+               |> Ash.read!(authorize?: false, load: [:groups])
+
+      assert invitation.email == "test@example.com"
+      assert invitation.language == "en"
+      assert invitation.creator_id == owner.id
+      assert invitation.organisation_id == organisation.id
+      assert Enum.map(invitation.groups, & &1.id) == [group.id]
+    end
+
+    test "authorized user can create an invitation", %{
+      conn: conn,
+      group: group,
+      authorized_user: authorized_user,
+      organisation: organisation
+    } do
+      assert {:ok, view, _html} =
+               conn
+               |> log_in_user(authorized_user)
+               |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      html =
+        view
+        |> form("#invitation-form",
+          invitation: %{
+            email: "test@example.com",
+            language: "en",
+            groups: %{group.id => true}
+          }
+        )
+        |> render_submit()
+
+      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+
+      assert html =~ "Invitation created successfully"
+
+      assert [invitation] =
+               Invitation
+               |> Ash.Query.filter(email: "test@example.com")
+               |> Ash.read!(authorize?: false, load: [:groups])
+
+      assert invitation.email == "test@example.com"
+      assert invitation.language == "en"
+      assert invitation.creator_id == authorized_user.id
+      assert invitation.organisation_id == organisation.id
+      assert Enum.map(invitation.groups, & &1.id) == [group.id]
+    end
+
+    test "unauthorized user cannot access new invitation page", %{
+      conn: conn,
+      unauthorized_user: user
+    } do
+      {:ok, organisation} = create_organisation()
+
+      {:ok, group} =
+        create_group(%{organisation_id: organisation.id, user_id: user.id})
+
+      create_group_membership(%{user_id: user.id, group_id: group.id})
+
+      create_access_right(%{
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
+        group_id: group.id,
+        read: true
+      })
+
+      assert {:error, {:live_redirect, %{to: path}}} =
+               conn
+               |> log_in_user(user)
+               |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      assert path == ~p"/organisations/#{organisation}/invitations"
+    end
+
+    test "shows validation errors while preserving group selection", %{
+      conn: conn,
+      group: group,
+      authorized_user: authorized_user,
+      organisation: organisation
+    } do
+      {:ok, view, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      html =
+        view
+        |> form("#invitation-form",
+          invitation: %{
+            email: "",
+            groups: %{group.id => true}
+          }
+        )
+        |> render_change()
+
+      assert html =~ "is required"
+
+      assert html =~
+               ~s(type="checkbox" id="invitation_groups_#{group.id}" name="invitation[groups][#{group.id}]" value="true" checked="checked")
     end
   end
 end

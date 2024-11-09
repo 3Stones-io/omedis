@@ -11,6 +11,89 @@ defmodule OmedisWeb.InvitationLive.Index do
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true
+  def mount(%{"slug" => slug}, _session, socket) do
+    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+
+    {:ok,
+     socket
+     |> assign(:organisation, organisation)
+     |> assign(:sort_order, :desc)
+     |> stream(:invitations, [])}
+  end
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  defp apply_action(socket, :index, params) do
+    sort_order =
+      params
+      |> Map.get("sort_order", "asc")
+      |> String.to_existing_atom()
+
+    socket
+    |> assign(:sort_order, Atom.to_string(sort_order))
+    |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
+      Invitation.list_paginated(
+        %{sort_order: sort_order},
+        page: [count: true, offset: offset],
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.organisation
+      )
+    end)
+  end
+
+  defp apply_action(socket, :new, _params) do
+    if Ash.can?({Invitation, :create}, socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       ) do
+      socket
+      |> assign(:invitation, nil)
+    else
+      push_navigate(socket, to: ~p"/organisations/#{socket.assigns.organisation}/invitations")
+    end
+  end
+
+  defp apply_action(socket, _, _params) do
+    socket
+    |> push_navigate(to: ~p"/organisations/#{socket.assigns.organisation}/invitations/new")
+  end
+
+  @impl true
+  def handle_event("delete_invitation", %{"id" => id}, socket) do
+    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.organisation]
+    invitation = Invitation.by_id!(id, opts)
+    :ok = Invitation.destroy!(invitation, opts)
+
+    {:noreply,
+     socket
+     |> put_flash(
+       :info,
+       with_locale(socket.assigns.language, fn -> gettext("Invitation deleted successfully") end)
+     )
+     |> stream_delete(:invitations, invitation)}
+  end
+
+  @impl true
+  def handle_event("sort_invitations", %{"current_sort_order" => current_sort_order}, socket) do
+    new_sort_order = if current_sort_order == "asc", do: "desc", else: "asc"
+    params = %{sort_order: String.to_atom(new_sort_order)}
+
+    {:noreply,
+     socket
+     |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
+       Invitation.list_paginated(
+         params,
+         page: [count: true, offset: offset],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       )
+     end)
+     |> assign(:sort_order, new_sort_order)}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <.side_and_topbar
@@ -32,7 +115,37 @@ defmodule OmedisWeb.InvitationLive.Index do
 
         <.header>
           <%= with_locale(@language, fn -> gettext("Listing Invitations") end) %>
+
+          <:actions>
+            <.link
+              :if={Ash.can?({Invitation, :create}, @current_user, tenant: @organisation)}
+              patch={~p"/organisations/#{@organisation}/invitations/new"}
+            >
+              <.button>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("New Invitation") %>
+                <% end) %>
+              </.button>
+            </.link>
+          </:actions>
         </.header>
+
+        <.modal
+          :if={@live_action == :new}
+          id="invitation-modal"
+          show
+          on_cancel={JS.patch(~p"/organisations/#{@organisation}/invitations")}
+        >
+          <.live_component
+            module={OmedisWeb.InvitationLive.FormComponent}
+            id={:new}
+            action={@live_action}
+            organisation={@organisation}
+            language={@language}
+            current_user={@current_user}
+            patch={~p"/organisations/#{@organisation}/invitations"}
+          />
+        </.modal>
 
         <div class="overflow-x-auto">
           <.table id="invitations" rows={@streams.invitations}>
@@ -105,76 +218,5 @@ defmodule OmedisWeb.InvitationLive.Index do
       </div>
     </.side_and_topbar>
     """
-  end
-
-  @impl true
-  def mount(%{"slug" => slug}, _session, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-
-    {:ok,
-     socket
-     |> assign(:organisation, organisation)
-     |> assign(:sort_order, :desc)
-     |> stream(:invitations, [])}
-  end
-
-  @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  @impl true
-  def handle_event("delete_invitation", %{"id" => id}, socket) do
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.organisation]
-    invitation = Invitation.by_id!(id, opts)
-    :ok = Invitation.destroy!(invitation, opts)
-
-    {:noreply,
-     socket
-     |> put_flash(
-       :info,
-       with_locale(socket.assigns.language, fn -> gettext("Invitation deleted successfully") end)
-     )
-     |> stream_delete(:invitations, invitation)}
-  end
-
-  @impl true
-  def handle_event("sort_invitations", %{"current_sort_order" => current_sort_order}, socket) do
-    new_sort_order = if current_sort_order == "asc", do: "desc", else: "asc"
-    params = %{sort_order: String.to_atom(new_sort_order)}
-
-    {:noreply,
-     socket
-     |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
-       Invitation.list_paginated(
-         params,
-         page: [count: true, offset: offset],
-         actor: socket.assigns.current_user,
-         tenant: socket.assigns.organisation
-       )
-     end)
-     |> assign(:sort_order, new_sort_order)}
-  end
-
-  defp apply_action(socket, :index, params) do
-    sort_order =
-      params
-      |> Map.get("sort_order", "asc")
-      |> String.to_existing_atom()
-
-    socket
-    |> assign(
-      :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Listing Invitations") end)
-    )
-    |> assign(:sort_order, Atom.to_string(sort_order))
-    |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
-      Invitation.list_paginated(
-        %{sort_order: sort_order},
-        page: [count: true, offset: offset],
-        actor: socket.assigns.current_user,
-        tenant: socket.assigns.organisation
-      )
-    end)
   end
 end

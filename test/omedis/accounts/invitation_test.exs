@@ -4,15 +4,25 @@ defmodule Omedis.Accounts.InvitationTest do
   import Omedis.Fixtures
 
   alias Omedis.Accounts.Invitation
+  alias Omedis.Accounts.InvitationGroup
 
   @params %{email: "test@example.com", language: "en"}
 
   setup do
     {:ok, owner} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+
     {:ok, authorized_user} = create_user()
     {:ok, group} = create_group(%{organisation_id: organisation.id})
     {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
+
+    create_access_right(%{
+      group_id: group.id,
+      read: true,
+      resource_name: "Group",
+      organisation_id: organisation.id,
+      write: true
+    })
 
     {:ok, access_right} =
       create_access_right(%{
@@ -23,26 +33,120 @@ defmodule Omedis.Accounts.InvitationTest do
         write: true
       })
 
+    create_access_right(%{
+      group_id: group.id,
+      read: true,
+      resource_name: "Organisation",
+      organisation_id: organisation.id,
+      write: true
+    })
+
+    {:ok, unauthorized_user} = create_user()
+    {:ok, group_2} = create_group()
+    {:ok, _} = create_group_membership(%{user_id: unauthorized_user.id, group_id: group_2.id})
+
     %{
       access_right: access_right,
       authorized_user: authorized_user,
       owner: owner,
       organisation: organisation,
-      group: group
+      group: group,
+      unauthorized_user: unauthorized_user
     }
   end
 
+  describe "create/1" do
+    test "organisation owner can create invitation", %{
+      group: group,
+      owner: owner,
+      organisation: organisation
+    } do
+      attrs = %{
+        email: "test@example.com",
+        language: "en",
+        creator_id: owner.id,
+        organisation_id: organisation.id,
+        groups: [group.id]
+      }
+
+      assert {:ok, invitation} = Invitation.create(attrs, actor: owner, tenant: organisation)
+      assert invitation.email == "test@example.com"
+      assert invitation.language == "en"
+      assert invitation.creator_id == owner.id
+      assert invitation.organisation_id == organisation.id
+
+      invitation_groups = Ash.read!(InvitationGroup, authorize?: false)
+      group_ids = Enum.map(invitation_groups, & &1.group_id)
+      assert group.id in group_ids
+    end
+
+    test "authorized user can create invitation", %{
+      organisation: organisation,
+      group: group,
+      authorized_user: user
+    } do
+      attrs = %{
+        email: "test@example.com",
+        language: "en",
+        creator_id: user.id,
+        organisation_id: organisation.id,
+        groups: [group.id]
+      }
+
+      assert {:ok, invitation} = Invitation.create(attrs, actor: user, tenant: organisation)
+      assert invitation.email == "test@example.com"
+
+      invitation_groups = Ash.read!(InvitationGroup, authorize?: false)
+      group_ids = Enum.map(invitation_groups, & &1.group_id)
+      assert group.id in group_ids
+    end
+
+    test "unauthorized user cannot create invitation", %{
+      organisation: organisation,
+      group: group,
+      unauthorized_user: user
+    } do
+      attrs = %{
+        email: "test@example.com",
+        language: "en",
+        creator_id: user.id,
+        organisation_id: organisation.id,
+        groups: [group.id]
+      }
+
+      assert {:error, %Ash.Error.Forbidden{}} =
+               Invitation.create(attrs, actor: user, tenant: organisation)
+    end
+
+    test "validates required attributes", %{
+      organisation: organisation,
+      owner: owner,
+      group: group
+    } do
+      attrs = %{
+        language: "en",
+        creator_id: owner.id,
+        organisation_id: organisation.id,
+        groups: [group.id]
+      }
+
+      assert {:error, %Ash.Error.Invalid{}} =
+               Invitation.create(attrs, actor: owner, tenant: organisation)
+    end
+  end
+
   describe "by_id/2" do
+    setup %{organisation: organisation} do
+      {:ok, invitation} = create_invitation(%{organisation_id: organisation.id})
+
+      %{invitation: invitation}
+    end
+
     test "organisation owner can access an invitation by id", %{
+      invitation: invitation,
       organisation: organisation,
       owner: organisation_owner
     } do
-      params =
-        Map.merge(@params, %{creator_id: organisation_owner.id, organisation_id: organisation.id})
-
-      {:ok, invitation} =
-        Invitation.create(params, actor: organisation_owner, tenant: organisation)
-
       assert {:ok, invitation_from_db} =
                Invitation.by_id(invitation.id,
                  actor: organisation_owner,
@@ -54,14 +158,9 @@ defmodule Omedis.Accounts.InvitationTest do
 
     test "authorized user can access an invitation by id", %{
       authorized_user: authorized_user,
+      invitation: invitation,
       organisation: organisation
     } do
-      params =
-        Map.merge(@params, %{creator_id: authorized_user.id, organisation_id: organisation.id})
-
-      {:ok, invitation} =
-        Invitation.create(params, actor: authorized_user, tenant: organisation)
-
       assert {:ok, invitation_from_db} =
                Invitation.by_id(invitation.id, actor: authorized_user, tenant: organisation)
 
@@ -71,11 +170,9 @@ defmodule Omedis.Accounts.InvitationTest do
     test "unauthorized user cannot access an invitation by id", %{
       access_right: access_right,
       authorized_user: user,
+      invitation: invitation,
       organisation: organisation
     } do
-      params = Map.merge(@params, %{creator_id: user.id, organisation_id: organisation.id})
-      {:ok, invitation} = Invitation.create(params, actor: user, tenant: organisation)
-
       # Remove access rights for the user
       Ash.destroy!(access_right)
 
@@ -85,40 +182,34 @@ defmodule Omedis.Accounts.InvitationTest do
   end
 
   describe "destroy/2" do
+    setup %{organisation: organisation} do
+      {:ok, invitation} = create_invitation(%{organisation_id: organisation.id})
+
+      %{invitation: invitation}
+    end
+
     test "organisation owner can destroy an invitation", %{
       organisation: organisation,
+      invitation: invitation,
       owner: organisation_owner
     } do
-      params =
-        Map.merge(@params, %{creator_id: organisation_owner.id, organisation_id: organisation.id})
-
-      {:ok, invitation} =
-        Invitation.create(params, actor: organisation_owner, tenant: organisation)
-
       assert :ok = Invitation.destroy(invitation, actor: organisation_owner, tenant: organisation)
     end
 
     test "authorized user can destroy an invitation", %{
       authorized_user: authorized_user,
+      invitation: invitation,
       organisation: organisation
     } do
-      params =
-        Map.merge(@params, %{creator_id: authorized_user.id, organisation_id: organisation.id})
-
-      {:ok, invitation} = Invitation.create(params, actor: authorized_user, tenant: organisation)
       assert :ok = Invitation.destroy(invitation, actor: authorized_user, tenant: organisation)
     end
 
     test "unauthorized user cannot destroy an invitation", %{
       access_right: access_right,
       authorized_user: authorized_user,
+      invitation: invitation,
       organisation: organisation
     } do
-      params =
-        Map.merge(@params, %{creator_id: authorized_user.id, organisation_id: organisation.id})
-
-      {:ok, invitation} = Invitation.create(params, actor: authorized_user, tenant: organisation)
-
       # Remove access rights for the user
       Ash.destroy!(access_right)
 
@@ -132,11 +223,7 @@ defmodule Omedis.Accounts.InvitationTest do
       organisation: organisation,
       owner: organisation_owner
     } do
-      creator_id = organisation_owner.id
-      params = Map.merge(@params, %{creator_id: creator_id, organisation_id: organisation.id})
-
-      {:ok, invitation} =
-        Invitation.create(params, actor: organisation_owner, tenant: organisation)
+      {:ok, invitation} = create_invitation(%{organisation_id: organisation.id})
 
       assert {:ok, %{results: results, count: 1}} =
                Invitation.list_paginated(
@@ -162,7 +249,7 @@ defmodule Omedis.Accounts.InvitationTest do
             organisation_id: organisation.id
           })
 
-        {:ok, _} = Invitation.create(params, actor: authorized_user, tenant: organisation)
+        {:ok, _} = create_invitation(params)
       end
 
       assert {:ok, %{results: results, count: 15}} =
@@ -231,7 +318,7 @@ defmodule Omedis.Accounts.InvitationTest do
             organisation_id: organisation.id
           })
 
-        {:ok, _} = Invitation.create(params, actor: authorized_user, tenant: organisation)
+        {:ok, _} = create_invitation(params)
       end
 
       # Remove access rights for the user

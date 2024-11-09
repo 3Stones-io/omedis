@@ -49,7 +49,7 @@ defmodule Omedis.Accounts.Invitation do
   end
 
   actions do
-    defaults [:destroy, :read]
+    defaults [:read, :destroy]
 
     read :list_paginated do
       argument :sort_order, :atom do
@@ -73,6 +73,15 @@ defmodule Omedis.Accounts.Invitation do
 
     create :create do
       accept [:email, :language, :creator_id, :organisation_id]
+
+      argument :groups, {:array, :uuid}, allow_nil?: false
+
+      change manage_relationship(:groups,
+               on_lookup: :relate,
+               on_no_match: :error,
+               on_match: :ignore,
+               on_missing: :unrelate
+             )
 
       primary? true
     end
