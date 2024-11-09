@@ -15,31 +15,34 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     {:ok, authorized_user} = create_user()
     {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
-    create_access_right(%{
-      resource_name: "Invitation",
-      create: true,
-      organisation_id: organisation.id,
-      group_id: group.id,
-      read: true
-    })
+    {:ok, _} =
+      create_access_right(%{
+        resource_name: "Invitation",
+        create: true,
+        organisation_id: organisation.id,
+        group_id: group.id,
+        read: true
+      })
 
-    create_access_right(%{
-      group_id: group.id,
-      read: true,
-      resource_name: "Organisation",
-      organisation_id: organisation.id,
-      write: true,
-      create: true
-    })
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
+        write: true,
+        create: true
+      })
 
-    create_access_right(%{
-      group_id: group.id,
-      read: true,
-      resource_name: "Group",
-      organisation_id: organisation.id,
-      write: true,
-      create: true
-    })
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
+        organisation_id: organisation.id,
+        write: true,
+        create: true
+      })
 
     {:ok, _} =
       create_access_right(%{
@@ -361,14 +364,15 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, group} =
         create_group(%{organisation_id: organisation.id, user_id: user.id})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
-        resource_name: "Organisation",
-        organisation_id: organisation.id,
-        group_id: group.id,
-        read: true
-      })
+      {:ok, _} =
+        create_access_right(%{
+          resource_name: "Organisation",
+          organisation_id: organisation.id,
+          group_id: group.id,
+          read: true
+        })
 
       assert {:error, {:live_redirect, %{to: path}}} =
                conn

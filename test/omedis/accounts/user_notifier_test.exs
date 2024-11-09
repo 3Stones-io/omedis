@@ -18,19 +18,21 @@ defmodule Omedis.Accounts.UserNotifierTest do
         groups: [group.id]
       })
 
-    create_access_right(%{
-      resource_name: "Invitation",
-      create: true,
-      organisation_id: organisation.id,
-      group_id: group.id
-    })
+    {:ok, _} =
+      create_access_right(%{
+        resource_name: "Invitation",
+        create: true,
+        organisation_id: organisation.id,
+        group_id: group.id
+      })
 
-    create_access_right(%{
-      resource_name: "organisation",
-      create: true,
-      organisation_id: organisation.id,
-      group_id: group.id
-    })
+    {:ok, _} =
+      create_access_right(%{
+        resource_name: "organisation",
+        create: true,
+        organisation_id: organisation.id,
+        group_id: group.id
+      })
 
     %{
       group: group,

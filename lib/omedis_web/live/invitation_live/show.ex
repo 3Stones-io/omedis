@@ -11,7 +11,7 @@ defmodule OmedisWeb.InvitationLive.Show do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  # Add user registration form
+  # TODO: Add user registration form
   def apply_action(socket, :show, %{"id" => _id}) do
     socket
   end
