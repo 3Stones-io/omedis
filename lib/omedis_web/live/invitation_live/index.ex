@@ -33,10 +33,6 @@ defmodule OmedisWeb.InvitationLive.Index do
       |> String.to_existing_atom()
 
     socket
-    |> assign(
-      :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Listing Invitations") end)
-    )
     |> assign(:sort_order, Atom.to_string(sort_order))
     |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
       Invitation.list_paginated(
@@ -53,13 +49,6 @@ defmodule OmedisWeb.InvitationLive.Index do
          tenant: socket.assigns.organisation
        ) do
       socket
-      |> assign(
-        :page_title,
-        with_locale(
-          socket.assigns.language,
-          fn -> gettext("New Invitation") end
-        )
-      )
       |> assign(:invitation, nil)
     else
       push_navigate(socket, to: ~p"/organisations/#{socket.assigns.organisation}/invitations")
@@ -125,7 +114,20 @@ defmodule OmedisWeb.InvitationLive.Index do
         />
 
         <.header>
-          <%= @page_title %>
+          <%= with_locale(@language, fn -> gettext("Listing Invitations") end) %>
+
+          <:actions>
+            <.link
+              :if={Ash.can?({Invitation, :create}, @current_user, tenant: @organisation)}
+              patch={~p"/organisations/#{@organisation}/invitations/new"}
+            >
+              <.button>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("New Invitation") %>
+                <% end) %>
+              </.button>
+            </.link>
+          </:actions>
         </.header>
 
         <.modal
@@ -137,7 +139,6 @@ defmodule OmedisWeb.InvitationLive.Index do
           <.live_component
             module={OmedisWeb.InvitationLive.FormComponent}
             id={:new}
-            title={@page_title}
             action={@live_action}
             organisation={@organisation}
             language={@language}

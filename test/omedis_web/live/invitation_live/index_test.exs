@@ -355,5 +355,32 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert path == ~p"/organisations/#{organisation}/invitations"
     end
+
+    test "shows validation errors while preserving group selection", %{
+      conn: conn,
+      group: group,
+      authorized_user: authorized_user,
+      organisation: organisation
+    } do
+      {:ok, view, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      html =
+        view
+        |> form("#invitation-form",
+          invitation: %{
+            email: "",
+            groups: %{group.id => true}
+          }
+        )
+        |> render_change()
+
+      assert html =~ "is required"
+
+      assert html =~
+               ~s(type="checkbox" id="invitation_groups_#{group.id}" name="invitation[groups][#{group.id}]" value="true" checked="checked")
+    end
   end
 end
