@@ -83,6 +83,8 @@ defmodule Omedis.Accounts.Invitation do
                on_missing: :unrelate
              )
 
+      change Omedis.Accounts.Changes.SendInvitationEmail
+
       primary? true
     end
   end

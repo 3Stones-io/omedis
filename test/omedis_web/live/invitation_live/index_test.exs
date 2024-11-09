@@ -15,32 +15,34 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     {:ok, authorized_user} = create_user()
     {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
-    # Create invitations (15 for owner, 5 for user_2)
-    invitations =
-      for i <- 1..20 do
-        {:ok, invitation} =
-          create_invitation(%{
-            email: "test#{i}@example.com",
-            organisation_id: organisation.id,
-            creator_id: if(Enum.random([true, false]), do: owner.id, else: authorized_user.id),
-            language: "en"
-          })
+    {:ok, _} =
+      create_access_right(%{
+        resource_name: "Invitation",
+        create: true,
+        organisation_id: organisation.id,
+        group_id: group.id,
+        read: true
+      })
 
-        invitation
-        |> Ash.Changeset.for_update(
-          :update,
-          %{inserted_at: Omedis.TestUtils.time_after(-i * 12_000)},
-          authorize?: false
-        )
-        |> Ash.update!()
-      end
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Organisation",
+        organisation_id: organisation.id,
+        write: true,
+        create: true
+      })
 
-    create_access_right(%{
-      group_id: group.id,
-      read: true,
-      resource_name: "Group",
-      organisation_id: organisation.id
-    })
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
+        organisation_id: organisation.id,
+        write: true,
+        create: true
+      })
 
     {:ok, _} =
       create_access_right(%{
@@ -66,7 +68,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     %{
       authorized_user: authorized_user,
       group: group,
-      invitations: invitations,
       owner: owner,
       organisation: organisation,
       unauthorized_user: unauthorized_user
@@ -74,6 +75,30 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
   end
 
   describe "/organisations/:slug/invitations" do
+    setup %{owner: owner, authorized_user: authorized_user, organisation: organisation} do
+      # Create invitations (15 for owner, 5 for user_2)
+      invitations =
+        for i <- 1..20 do
+          {:ok, invitation} =
+            create_invitation(%{
+              email: "test#{i}@example.com",
+              organisation_id: organisation.id,
+              creator_id: if(Enum.random([true, false]), do: owner.id, else: authorized_user.id),
+              language: "en"
+            })
+
+          invitation
+          |> Ash.Changeset.for_update(
+            :update,
+            %{inserted_at: Omedis.TestUtils.time_after(-i * 12_000)},
+            authorize?: false
+          )
+          |> Ash.update!()
+        end
+
+      %{invitations: invitations}
+    end
+
     test "organisation owner can see all invitations with pagination", %{
       conn: conn,
       owner: owner,
@@ -339,14 +364,15 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, group} =
         create_group(%{organisation_id: organisation.id, user_id: user.id})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
-        resource_name: "Organisation",
-        organisation_id: organisation.id,
-        group_id: group.id,
-        read: true
-      })
+      {:ok, _} =
+        create_access_right(%{
+          resource_name: "Organisation",
+          organisation_id: organisation.id,
+          group_id: group.id,
+          read: true
+        })
 
       assert {:error, {:live_redirect, %{to: path}}} =
                conn

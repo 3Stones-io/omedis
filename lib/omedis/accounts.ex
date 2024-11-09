@@ -17,4 +17,10 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.Token
     resource Omedis.Accounts.User
   end
+
+  defdelegate deliver_invitation_email(
+                invitation,
+                invitation_url
+              ),
+              to: Omedis.Accounts.UserNotifier
 end

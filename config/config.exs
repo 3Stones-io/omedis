@@ -40,6 +40,12 @@ config :omedis, :token_signing_secret, System.get_env("TOKEN_SIGNING_SECRET") ||
 # at the `config/runtime.exs`.
 config :omedis, Omedis.Mailer, adapter: Swoosh.Adapters.Local
 
+# Oban
+config :omedis, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [default: 10, invitation: 20],
+  repo: Omedis.Repo
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

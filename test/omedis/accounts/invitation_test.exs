@@ -5,6 +5,7 @@ defmodule Omedis.Accounts.InvitationTest do
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.InvitationGroup
+  alias Omedis.Workers.InvitationEmailWorker
 
   @params %{email: "test@example.com", language: "en"}
 
@@ -16,37 +17,37 @@ defmodule Omedis.Accounts.InvitationTest do
     {:ok, group} = create_group(%{organisation_id: organisation.id})
     {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
-    create_access_right(%{
-      group_id: group.id,
-      read: true,
-      resource_name: "Group",
-      organisation_id: organisation.id,
-      write: true
-    })
-
-    {:ok, access_right} =
+    {:ok, _} =
       create_access_right(%{
         group_id: group.id,
         read: true,
+        resource_name: "Group",
+        organisation_id: organisation.id
+      })
+
+    {:ok, invitation_access_right} =
+      create_access_right(%{
         resource_name: "Invitation",
         organisation_id: organisation.id,
+        group_id: group.id,
+        read: true,
         write: true
       })
 
-    create_access_right(%{
-      group_id: group.id,
-      read: true,
-      resource_name: "Organisation",
-      organisation_id: organisation.id,
-      write: true
-    })
+    {:ok, _} =
+      create_access_right(%{
+        group_id: group.id,
+        read: true,
+        resource_name: "Organisation",
+        organisation_id: organisation.id
+      })
 
     {:ok, unauthorized_user} = create_user()
     {:ok, group_2} = create_group()
     {:ok, _} = create_group_membership(%{user_id: unauthorized_user.id, group_id: group_2.id})
 
     %{
-      access_right: access_right,
+      access_right: invitation_access_right,
       authorized_user: authorized_user,
       owner: owner,
       organisation: organisation,
@@ -56,11 +57,12 @@ defmodule Omedis.Accounts.InvitationTest do
   end
 
   describe "create/1" do
-    test "organisation owner can create invitation", %{
-      group: group,
-      owner: owner,
-      organisation: organisation
-    } do
+    test "organisation owner can create invitation and queue a job to send an invitation email",
+         %{
+           group: group,
+           owner: owner,
+           organisation: organisation
+         } do
       attrs = %{
         email: "test@example.com",
         language: "en",
@@ -69,7 +71,19 @@ defmodule Omedis.Accounts.InvitationTest do
         groups: [group.id]
       }
 
-      assert {:ok, invitation} = Invitation.create(attrs, actor: owner, tenant: organisation)
+      assert {:ok, invitation} =
+               Invitation.create(attrs, actor: owner, tenant: organisation)
+
+      assert_enqueued(
+        worker: InvitationEmailWorker,
+        args: %{
+          actor_id: owner.id,
+          organisation_id: organisation.id,
+          id: invitation.id
+        },
+        queue: :invitation
+      )
+
       assert invitation.email == "test@example.com"
       assert invitation.language == "en"
       assert invitation.creator_id == owner.id
@@ -80,7 +94,7 @@ defmodule Omedis.Accounts.InvitationTest do
       assert group.id in group_ids
     end
 
-    test "authorized user can create invitation", %{
+    test "authorized user can create invitation and queue a job to send an invitation email", %{
       organisation: organisation,
       group: group,
       authorized_user: user
@@ -94,6 +108,13 @@ defmodule Omedis.Accounts.InvitationTest do
       }
 
       assert {:ok, invitation} = Invitation.create(attrs, actor: user, tenant: organisation)
+
+      assert_enqueued(
+        worker: InvitationEmailWorker,
+        args: %{actor_id: user.id, organisation_id: organisation.id, id: invitation.id},
+        queue: :invitation
+      )
+
       assert invitation.email == "test@example.com"
 
       invitation_groups = Ash.read!(InvitationGroup, authorize?: false)
@@ -101,11 +122,12 @@ defmodule Omedis.Accounts.InvitationTest do
       assert group.id in group_ids
     end
 
-    test "unauthorized user cannot create invitation", %{
-      organisation: organisation,
-      group: group,
-      unauthorized_user: user
-    } do
+    test "unauthorized user cannot create invitation and cannot queue a job to send an invitation email",
+         %{
+           organisation: organisation,
+           group: group,
+           unauthorized_user: user
+         } do
       attrs = %{
         email: "test@example.com",
         language: "en",
@@ -116,6 +138,8 @@ defmodule Omedis.Accounts.InvitationTest do
 
       assert {:error, %Ash.Error.Forbidden{}} =
                Invitation.create(attrs, actor: user, tenant: organisation)
+
+      refute_enqueued(worker: InvitationEmailWorker)
     end
 
     test "validates required attributes", %{

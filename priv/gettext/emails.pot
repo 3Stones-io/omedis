@@ -1,0 +1,22 @@
+## This file is a PO Template file.
+##
+## "msgid"s here are often extracted from source code.
+## Add new messages manually only if they're dynamic
+## messages that can't be statically extracted.
+##
+## Run "mix gettext.extract" to bring this file up to
+## date. Leave "msgstr"s empty as changing them here has no
+## effect: edit them in PO (.po) files instead.
+#
+msgid ""
+msgstr ""
+
+#: lib/omedis/accounts/user_notifier.ex:28
+#, elixir-autogen, elixir-format
+msgid "Omedis | Invitation to join %{organisation_name}"
+msgstr ""
+
+#: lib/omedis/accounts/user_notifier.ex:31
+#, elixir-autogen, elixir-format
+msgid "==============================\n\nHello!\n\nPlease register your new Omedis account for %{organisation_name}\n\nThis invitation is good till %{expires_at}\n\nPlease click on this link %{url} to create the account\n\nBest regards,\n\nOmedis.\n\n==============================\n"
+msgstr ""
