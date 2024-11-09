@@ -12,7 +12,7 @@ defmodule Omedis.Workers.InvitationEmailWorker do
   def perform(%Oban.Job{args: args}) do
     %{"actor_id" => actor_id, "organisation_id" => organisation_id, "id" => invitation_id} = args
 
-    with {:ok, actor} <- Ash.get(User, actor_id),
+    with {:ok, actor} <- Ash.get(User, actor_id, authorize?: false),
          {:ok, organisation} <- Ash.get(Organisation, organisation_id, actor: actor),
          {:ok, invitation} <-
            Ash.get(Invitation, invitation_id,
