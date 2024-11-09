@@ -122,7 +122,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
     end
 
-    test "invitee with an expired invitation shows not found page", %{
+    test "invitee with an expired invitation sees a not found page", %{
       conn: conn,
       expired_invitation: expired_invitation,
       organisation: organisation

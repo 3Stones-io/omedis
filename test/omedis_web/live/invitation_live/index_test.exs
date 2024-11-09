@@ -1,5 +1,5 @@
 defmodule OmedisWeb.InvitationLive.IndexTest do
-  use OmedisWeb.ConnCase, async: false
+  use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
 

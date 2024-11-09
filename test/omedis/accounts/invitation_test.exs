@@ -1,5 +1,5 @@
 defmodule Omedis.Accounts.InvitationTest do
-  use Omedis.DataCase, async: false
+  use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
 
