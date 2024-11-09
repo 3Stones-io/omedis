@@ -24,12 +24,11 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"invitation" => _params}, socket) do
-    # params = add_organisation_and_creator(params, socket)
+  def handle_event("validate", %{"invitation" => params}, socket) do
+    params = add_organisation_and_creator(params, socket)
+    form = Form.validate(socket.assigns.form, params)
 
-    # Find a way to perform the validation without clearing the form group input
-    # form = Form.validate(socket.assigns.form, params, errors: true)
-    {:noreply, socket}
+    {:noreply, assign(socket, :form, form)}
   end
 
   @impl true
@@ -43,7 +42,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Invitation created successfully"))
-         |> push_navigate(to: socket.assigns.patch)}
+         |> push_patch(to: socket.assigns.patch)}
 
       {:error, form} ->
         {:noreply, assign(socket, :form, form)}
@@ -102,15 +101,17 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
     })
   end
 
-  defp starts_with_group?(changeset, group) do
-    group in List.wrap(changeset.data.groups)
-  end
-
   @impl true
   def render(assigns) do
+    assigns =
+      assigns
+      |> assign(:checked_groups, Form.value(assigns.form, :groups) || [])
+
     ~H"""
     <div>
       <.header>
+        <%= with_locale(@language, fn -> gettext("New Invitation") end) %>
+
         <:subtitle>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Use this form to invite new members.") %>
@@ -165,8 +166,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
                 label={group.name}
                 name={@form.name <> "[groups][#{group.id}]"}
                 id={@form.id <> "_groups_#{group.id}"}
-                value={starts_with_group?(@form.source.source, group)}
-                checked={starts_with_group?(@form.source.source, group)}
+                checked={group.id in @checked_groups}
               />
             <% end %>
           </div>

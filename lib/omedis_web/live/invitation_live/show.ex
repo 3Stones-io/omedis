@@ -218,27 +218,19 @@ defmodule OmedisWeb.InvitationLive.Show do
   end
 
   defp apply_action(socket, :show, %{"id" => id}) do
-    invitation = Invitation.by_id!(%{id: id})
+    invitation = %Invitation{} = Invitation.by_id!(id)
 
-    case invitation do
-      [] ->
-        socket
-        |> put_flash(:error, gettext("Invitation is not valid"))
-        |> redirect(to: "/")
+    organisation = Organisation.by_id!(invitation.organisation_id, authorize?: false)
+    Gettext.put_locale(OmedisWeb.Gettext, invitation.language)
 
-      [%Invitation{} = invitation] ->
-        organisation = Organisation.by_id!(invitation.organisation_id, authorize?: false)
-        Gettext.put_locale(OmedisWeb.Gettext, invitation.language)
-
-        socket
-        |> assign(:invitation, invitation)
-        |> assign(:language, invitation.language)
-        |> assign(:organisation, organisation)
-        |> assign(:page_title, gettext("Complete Registration"))
-        |> assign(:action, "/auth/user/password/register/")
-        |> assign(:trigger_action, false)
-        |> assign_form()
-    end
+    socket
+    |> assign(:invitation, invitation)
+    |> assign(:language, invitation.language)
+    |> assign(:organisation, organisation)
+    |> assign(:page_title, gettext("Complete Registration"))
+    |> assign(:action, "/auth/user/password/register/")
+    |> assign(:trigger_action, false)
+    |> assign_form()
   end
 
   defp assign_form(socket) do

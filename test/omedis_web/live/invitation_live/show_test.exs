@@ -29,7 +29,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         resource_name: "Invitation",
         create: true,
         organisation_id: organisation.id,
-        group_id: group.id
+        group_id: group.id,
+        read: true
       })
 
     {:ok, _} =
@@ -121,16 +122,14 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
     end
 
-    test "invitee with an expired invitation is redirected", %{
+    test "invitee with an expired invitation shows not found page", %{
       conn: conn,
       expired_invitation: expired_invitation,
       organisation: organisation
     } do
-      assert {:error, {:redirect, %{to: path, flash: flash}}} =
-               live(conn, ~p"/organisations/#{organisation}/invitations/#{expired_invitation.id}")
-
-      assert path == "/"
-      assert flash["error"] == "Invitation is not valid"
+      assert_raise Ash.Error.Query.NotFound, fn ->
+        live(conn, ~p"/organisations/#{organisation}/invitations/#{expired_invitation.id}")
+      end
     end
   end
 end
