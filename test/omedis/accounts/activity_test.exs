@@ -8,40 +8,38 @@ defmodule Omedis.Accounts.ActivityTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
-    {:ok, project} = create_project(%{organisation_id: organisation.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, project} = create_project(organisation)
     {:ok, authorized_user} = create_user()
 
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} =
+      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "Activity",
-        organisation_id: organisation.id,
         write: true
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         write: true
       })
 
     {:ok, user} = create_user()
-    {:ok, group_2} = create_group()
-    {:ok, _} = create_group_membership(%{group_id: group_2.id, user_id: user.id})
+    {:ok, group_2} = create_group(organisation)
+    {:ok, _} = create_group_membership(organisation, %{group_id: group_2.id, user_id: user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group_2.id,
         read: true,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         write: true
       })
 
@@ -138,7 +136,7 @@ defmodule Omedis.Accounts.ActivityTest do
       project: project
     } do
       {:ok, activity} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
@@ -162,7 +160,7 @@ defmodule Omedis.Accounts.ActivityTest do
       project: project
     } do
       {:ok, activity} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
@@ -186,7 +184,7 @@ defmodule Omedis.Accounts.ActivityTest do
       project: project
     } do
       {:ok, activity} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
@@ -208,7 +206,7 @@ defmodule Omedis.Accounts.ActivityTest do
       project: project
     } do
       {:ok, activity} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
@@ -234,7 +232,7 @@ defmodule Omedis.Accounts.ActivityTest do
       project: project
     } do
       {:ok, activity} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
@@ -255,7 +253,7 @@ defmodule Omedis.Accounts.ActivityTest do
       project: project
     } do
       {:ok, activity} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
@@ -276,7 +274,7 @@ defmodule Omedis.Accounts.ActivityTest do
       project: project
     } do
       {:ok, activity} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
@@ -290,12 +288,11 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "list_paginated/1" do
-    setup %{group: group, project: project} do
+    setup %{group: group, organisation: organisation} do
       Enum.each(1..15, fn _ ->
         {:ok, _} =
-          create_activity(%{
-            group_id: group.id,
-            project_id: project.id
+          create_activity(organisation, %{
+            group_id: group.id
           })
       end)
 
@@ -352,9 +349,9 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "by_group_id_and_project_id/2" do
-    setup %{group: group, project: project} do
+    setup %{group: group, organisation: organisation, project: project} do
       {:ok, activity} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id
@@ -418,9 +415,9 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "move_up/2" do
-    setup %{group: group, project: project} do
+    setup %{group: group, organisation: organisation, project: project} do
       {:ok, activity1} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Activity 1",
           group_id: group.id,
           project_id: project.id,
@@ -429,7 +426,7 @@ defmodule Omedis.Accounts.ActivityTest do
         })
 
       {:ok, activity2} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Activity 2",
           group_id: group.id,
           project_id: project.id,
@@ -494,9 +491,9 @@ defmodule Omedis.Accounts.ActivityTest do
   end
 
   describe "move_down/2" do
-    setup %{group: group, project: project} do
+    setup %{group: group, organisation: organisation, project: project} do
       {:ok, activity2} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Activity 1",
           group_id: group.id,
           project_id: project.id,
@@ -505,7 +502,7 @@ defmodule Omedis.Accounts.ActivityTest do
         })
 
       {:ok, activity1} =
-        create_activity(%{
+        create_activity(organisation, %{
           name: "Activity 2",
           group_id: group.id,
           project_id: project.id,

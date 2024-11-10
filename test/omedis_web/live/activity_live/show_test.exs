@@ -6,78 +6,72 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
-    {:ok, project} = create_project(%{organisation_id: organisation.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, project} = create_project(organisation)
     {:ok, authorized_user} = create_user()
 
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} =
+      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "Activity",
-        organisation_id: organisation.id,
         write: true
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Group",
-        organisation_id: organisation.id
+        resource_name: "Group"
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Project",
-        organisation_id: organisation.id
+        resource_name: "Project"
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Organisation",
-        organisation_id: organisation.id
+        resource_name: "Organisation"
       })
 
     {:ok, activity} =
-      create_activity(%{
+      create_activity(organisation, %{
         group_id: group.id,
         project_id: project.id,
         name: "Test Activity"
       })
 
     {:ok, user} = create_user()
-    {:ok, group2} = create_group(%{organisation_id: organisation.id})
-    {:ok, _} = create_group_membership(%{group_id: group2.id, user_id: user.id})
+    {:ok, group2} = create_group(organisation)
+    {:ok, _} = create_group_membership(organisation, %{group_id: group2.id, user_id: user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group2.id,
         read: true,
-        resource_name: "Group",
-        organisation_id: organisation.id
+        resource_name: "Group"
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group2.id,
         read: true,
-        resource_name: "Project",
-        organisation_id: organisation.id
+        resource_name: "Project"
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group2.id,
         read: true,
-        resource_name: "Organisation",
-        organisation_id: organisation.id
+        resource_name: "Organisation"
       })
 
     %{
@@ -215,11 +209,10 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
       user: user
     } do
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group2.id,
           read: true,
           resource_name: "Activity",
-          organisation_id: organisation.id,
           update: false,
           write: false
         })

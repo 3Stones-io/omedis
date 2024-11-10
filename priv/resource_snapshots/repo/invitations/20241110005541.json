@@ -17,48 +17,28 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "resource_name",
+      "source": "email",
       "type": "text"
     },
     {
-      "allow_nil?": true,
-      "default": "false",
+      "allow_nil?": false,
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "read",
-      "type": "boolean"
+      "source": "expires_at",
+      "type": "utc_datetime"
     },
     {
-      "allow_nil?": true,
-      "default": "false",
+      "allow_nil?": false,
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "write",
-      "type": "boolean"
-    },
-    {
-      "allow_nil?": true,
-      "default": "false",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "update",
-      "type": "boolean"
-    },
-    {
-      "allow_nil?": true,
-      "default": "false",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "create",
-      "type": "boolean"
+      "source": "language",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -67,7 +47,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "created_at",
+      "source": "inserted_at",
       "type": "utc_datetime_usec"
     },
     {
@@ -81,7 +61,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -98,7 +78,36 @@
           "global": null,
           "strategy": null
         },
-        "name": "access_rights_organisation_id_fkey",
+        "name": "invitations_creator_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "users"
+      },
+      "size": null,
+      "source": "creator_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "invitations_organisation_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
@@ -127,15 +136,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "access_rights_group_id_fkey",
-        "on_delete": "delete",
+        "name": "invitations_user_id_fkey",
+        "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "groups"
+        "table": "users"
       },
       "size": null,
-      "source": "group_id",
+      "source": "user_id",
       "type": "uuid"
     }
   ],
@@ -144,14 +153,14 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "4DEE66BFE073268BD4A4B8488F67A9C66FCEC774C8F5A8E3A5753F946BAB07E0",
+  "hash": "193D7F1EF4E282409C2AE9668DB56CC4CED2361B5717DBDF6CDCB2F0F6A9A71D",
   "identities": [],
   "multitenancy": {
-    "attribute": null,
-    "global": null,
-    "strategy": null
+    "attribute": "organisation_id",
+    "global": true,
+    "strategy": "attribute"
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,
-  "table": "access_rights"
+  "table": "invitations"
 }

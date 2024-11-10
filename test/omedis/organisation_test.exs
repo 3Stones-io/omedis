@@ -6,8 +6,8 @@ defmodule Omedis.OrganisationTest do
   setup do
     {:ok, user} = create_user()
     {:ok, organisation} = create_organisation()
-    {:ok, group} = create_group()
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
     {:ok, user: user, organisation: organisation, group: group}
   end
@@ -18,11 +18,10 @@ defmodule Omedis.OrganisationTest do
       organisation: organisation,
       group: group
     } do
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Organisation",
-        organisation_id: organisation.id
+        resource_name: "Organisation"
       })
 
       {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
@@ -53,7 +52,7 @@ defmodule Omedis.OrganisationTest do
 
       assert {:ok, _} =
                Organisation
-               |> attrs_for()
+               |> attrs_for(nil)
                |> Map.merge(%{
                  name: "New Organisation",
                  owner_id: user_without_organisation.id,
@@ -78,11 +77,10 @@ defmodule Omedis.OrganisationTest do
 
       {:ok, organisation} = create_organisation()
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         create: true,
         group_id: group.id,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         read: true,
         update: false,
         write: false
@@ -90,10 +88,9 @@ defmodule Omedis.OrganisationTest do
 
       assert {:error, _} = Organisation.update(organisation, %{name: "Updated"}, actor: user)
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         update: false,
         write: true
       })
@@ -105,10 +102,9 @@ defmodule Omedis.OrganisationTest do
 
       {:ok, organisation} = create_organisation()
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         update: true,
         write: false
       })
@@ -128,22 +124,20 @@ defmodule Omedis.OrganisationTest do
 
       {:ok, organisation} = create_organisation()
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         create: true,
         group_id: group.id,
         read: true,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         update: false,
         write: false
       })
 
       assert {:error, _} = Organisation.destroy(organisation, actor: user)
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         update: false,
         write: true
       })
@@ -152,10 +146,9 @@ defmodule Omedis.OrganisationTest do
 
       {:ok, organisation} = create_organisation()
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         update: true,
         write: false
       })
@@ -170,9 +163,8 @@ defmodule Omedis.OrganisationTest do
       organisation: organisation,
       group: group
     } do
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
-        organisation_id: organisation.id,
         read: true,
         resource_name: "Organisation"
       })
@@ -199,9 +191,8 @@ defmodule Omedis.OrganisationTest do
       organisation: organisation,
       group: group
     } do
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
-        organisation_id: organisation.id,
         read: true,
         resource_name: "Organisation"
       })
@@ -245,9 +236,8 @@ defmodule Omedis.OrganisationTest do
         {:ok, organisation} =
           create_organisation(%{name: "Organisation #{i}", slug: "organisation-#{i}"})
 
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
-          organisation_id: organisation.id,
           read: true,
           resource_name: "Organisation"
         })

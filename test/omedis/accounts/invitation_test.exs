@@ -14,37 +14,38 @@ defmodule Omedis.Accounts.InvitationTest do
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
 
     {:ok, authorized_user} = create_user()
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, group} = create_group(organisation)
 
     {:ok, _} =
-      create_access_right(%{
+      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
+
+    {:ok, _} =
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Group",
-        organisation_id: organisation.id
+        resource_name: "Group"
       })
 
     {:ok, invitation_access_right} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Invitation",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: true
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Organisation",
-        organisation_id: organisation.id
+        resource_name: "Organisation"
       })
 
     {:ok, unauthorized_user} = create_user()
-    {:ok, group_2} = create_group()
-    {:ok, _} = create_group_membership(%{user_id: unauthorized_user.id, group_id: group_2.id})
+    {:ok, group_2} = create_group(organisation)
+
+    {:ok, _} =
+      create_group_membership(organisation, %{user_id: unauthorized_user.id, group_id: group_2.id})
 
     %{
       access_right: invitation_access_right,
@@ -67,7 +68,6 @@ defmodule Omedis.Accounts.InvitationTest do
         email: "test@example.com",
         language: "en",
         creator_id: owner.id,
-        organisation_id: organisation.id,
         groups: [group.id]
       }
 
@@ -78,7 +78,6 @@ defmodule Omedis.Accounts.InvitationTest do
         worker: InvitationEmailWorker,
         args: %{
           actor_id: owner.id,
-          organisation_id: organisation.id,
           id: invitation.id
         },
         queue: :invitation
@@ -89,7 +88,7 @@ defmodule Omedis.Accounts.InvitationTest do
       assert invitation.creator_id == owner.id
       assert invitation.organisation_id == organisation.id
 
-      invitation_groups = Ash.read!(InvitationGroup, authorize?: false)
+      invitation_groups = Ash.read!(InvitationGroup, authorize?: false, tenant: organisation)
       group_ids = Enum.map(invitation_groups, & &1.group_id)
       assert group.id in group_ids
     end
@@ -103,7 +102,6 @@ defmodule Omedis.Accounts.InvitationTest do
         email: "test@example.com",
         language: "en",
         creator_id: user.id,
-        organisation_id: organisation.id,
         groups: [group.id]
       }
 
@@ -111,13 +109,13 @@ defmodule Omedis.Accounts.InvitationTest do
 
       assert_enqueued(
         worker: InvitationEmailWorker,
-        args: %{actor_id: user.id, organisation_id: organisation.id, id: invitation.id},
+        args: %{actor_id: user.id, id: invitation.id},
         queue: :invitation
       )
 
       assert invitation.email == "test@example.com"
 
-      invitation_groups = Ash.read!(InvitationGroup, authorize?: false)
+      invitation_groups = Ash.read!(InvitationGroup, authorize?: false, tenant: organisation)
       group_ids = Enum.map(invitation_groups, & &1.group_id)
       assert group.id in group_ids
     end
@@ -132,7 +130,6 @@ defmodule Omedis.Accounts.InvitationTest do
         email: "test@example.com",
         language: "en",
         creator_id: user.id,
-        organisation_id: organisation.id,
         groups: [group.id]
       }
 
@@ -150,7 +147,6 @@ defmodule Omedis.Accounts.InvitationTest do
       attrs = %{
         language: "en",
         creator_id: owner.id,
-        organisation_id: organisation.id,
         groups: [group.id]
       }
 
@@ -161,7 +157,7 @@ defmodule Omedis.Accounts.InvitationTest do
 
   describe "by_id/1" do
     test "returns invitation if it has not expired", %{organisation: organisation} do
-      {:ok, invitation} = create_invitation(%{organisation_id: organisation.id})
+      {:ok, invitation} = create_invitation(organisation)
 
       assert {:ok, _invitation} = Invitation.by_id(invitation.id)
     end
@@ -173,8 +169,7 @@ defmodule Omedis.Accounts.InvitationTest do
       expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
 
       {:ok, invitation} =
-        create_invitation(%{
-          organisation_id: organisation.id,
+        create_invitation(organisation, %{
           creator_id: owner.id,
           expires_at: expired_at
         })
@@ -189,7 +184,7 @@ defmodule Omedis.Accounts.InvitationTest do
 
   describe "destroy/2" do
     setup %{organisation: organisation} do
-      {:ok, invitation} = create_invitation(%{organisation_id: organisation.id})
+      {:ok, invitation} = create_invitation(organisation)
 
       %{invitation: invitation}
     end
@@ -229,7 +224,7 @@ defmodule Omedis.Accounts.InvitationTest do
       organisation: organisation,
       owner: organisation_owner
     } do
-      {:ok, invitation} = create_invitation(%{organisation_id: organisation.id})
+      {:ok, invitation} = create_invitation(organisation)
 
       assert {:ok, %{results: results, count: 1}} =
                Invitation.list_paginated(
@@ -251,11 +246,10 @@ defmodule Omedis.Accounts.InvitationTest do
         params =
           Map.merge(@params, %{
             creator_id: creator_id,
-            email: "test#{i}@example.com",
-            organisation_id: organisation.id
+            email: "test#{i}@example.com"
           })
 
-        {:ok, _} = create_invitation(params)
+        {:ok, _} = create_invitation(organisation, params)
       end
 
       assert {:ok, %{results: results, count: 15}} =
@@ -285,9 +279,8 @@ defmodule Omedis.Accounts.InvitationTest do
       invitations =
         for i <- 1..3 do
           {:ok, invitation} =
-            create_invitation(%{
-              creator_id: organisation_owner.id,
-              organisation_id: organisation.id
+            create_invitation(organisation, %{
+              creator_id: organisation_owner.id
             })
 
           invitation
@@ -320,15 +313,14 @@ defmodule Omedis.Accounts.InvitationTest do
         params =
           Map.merge(@params, %{
             creator_id: creator_id,
-            email: "test#{i}@example.com",
-            organisation_id: organisation.id
+            email: "test#{i}@example.com"
           })
 
-        {:ok, _} = create_invitation(params)
+        {:ok, _} = create_invitation(organisation, params)
       end
 
       # Remove access rights for the user
-      Ash.destroy!(access_right)
+      Ash.destroy!(access_right, tenant: organisation)
 
       assert {:ok, %{results: [], count: 0}} =
                Invitation.list_paginated(

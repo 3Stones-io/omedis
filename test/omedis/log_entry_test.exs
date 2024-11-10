@@ -6,18 +6,17 @@ defmodule Omedis.LogEntryTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
-    {:ok, project} = create_project(%{organisation_id: organisation.id})
-    {:ok, activity} = create_activity(%{group_id: group.id, project_id: project.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, project} = create_project(organisation)
+    {:ok, activity} = create_activity(organisation, %{group_id: group.id, project_id: project.id})
     {:ok, user} = create_user()
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
+    {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "LogEntry",
-        organisation_id: organisation.id,
         write: true
       })
 
@@ -37,16 +36,14 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, log_entry_1} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
@@ -66,16 +63,14 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, _} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
@@ -101,7 +96,7 @@ defmodule Omedis.LogEntryTest do
       activity: activity,
       user: user
     } do
-      assert {:error, %Ash.Error.Forbidden{}} =
+      assert {:error, %Ash.Error.Invalid{}} =
                LogEntry.by_activity(%{activity_id: activity.id}, actor: user)
     end
   end
@@ -113,16 +108,14 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, log_entry_1} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id,
           created_at: DateTime.add(DateTime.utc_now(), -2, :day)
         })
@@ -144,9 +137,8 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, _} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
@@ -170,16 +162,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, another_organisation} = create_organisation()
 
       {:ok, log_entry_1} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
-        create_log_entry(%{
+        create_log_entry(another_organisation, %{
           activity_id: activity.id,
-          organisation_id: another_organisation.id,
           user_id: user.id
         })
 
@@ -199,9 +189,8 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, _} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
@@ -222,16 +211,14 @@ defmodule Omedis.LogEntryTest do
       activity: activity
     } do
       {:ok, log_entry_1} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _log_entry_2} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id,
           created_at: DateTime.add(DateTime.utc_now(), -2, :day)
         })
@@ -252,9 +239,8 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, _} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
@@ -277,7 +263,6 @@ defmodule Omedis.LogEntryTest do
     } do
       attrs = %{
         activity_id: activity.id,
-        organisation_id: organisation.id,
         user_id: owner.id
       }
 
@@ -294,7 +279,6 @@ defmodule Omedis.LogEntryTest do
     } do
       attrs = %{
         activity_id: activity.id,
-        organisation_id: organisation.id,
         user_id: user.id
       }
 
@@ -312,7 +296,6 @@ defmodule Omedis.LogEntryTest do
 
       attrs = %{
         activity_id: activity.id,
-        organisation_id: organisation.id,
         user_id: unauthorized_user.id
       }
 
@@ -328,16 +311,14 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, log_entry_1} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
@@ -355,16 +336,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, another_user} = create_user()
 
       {:ok, log_entry_1} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, log_entry_2} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: another_user.id
         })
 
@@ -382,16 +361,14 @@ defmodule Omedis.LogEntryTest do
       {:ok, unauthorized_user} = create_user()
 
       {:ok, _} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id
         })
 
       {:ok, _} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: unauthorized_user.id
         })
 
@@ -406,9 +383,8 @@ defmodule Omedis.LogEntryTest do
       owner: owner
     } do
       {:ok, log_entry} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: owner.id,
           comment: "Original comment"
         })
@@ -427,9 +403,8 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, log_entry} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id,
           comment: "Original comment"
         })
@@ -448,9 +423,8 @@ defmodule Omedis.LogEntryTest do
       user: user
     } do
       {:ok, log_entry} =
-        create_log_entry(%{
+        create_log_entry(organisation, %{
           activity_id: activity.id,
-          organisation_id: organisation.id,
           user_id: user.id,
           comment: "Original comment"
         })

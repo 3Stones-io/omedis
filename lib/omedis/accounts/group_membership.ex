@@ -19,6 +19,7 @@ defmodule Omedis.Accounts.GroupMembership do
 
     references do
       reference :group, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :user, on_delete: :delete
     end
   end
@@ -34,6 +35,8 @@ defmodule Omedis.Accounts.GroupMembership do
     has_many :access_rights, Omedis.Accounts.AccessRight do
       manual Omedis.Accounts.GroupMembership.Relationships.GroupMembershipAccessRights
     end
+
+    belongs_to :organisation, Omedis.Accounts.Organisation
   end
 
   actions do
@@ -64,5 +67,10 @@ defmodule Omedis.Accounts.GroupMembership do
 
   attributes do
     uuid_primary_key :id
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 end

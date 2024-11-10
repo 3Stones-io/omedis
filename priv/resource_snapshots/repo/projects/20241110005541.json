@@ -25,35 +25,6 @@
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "projects_organisation_id_fkey",
-        "on_delete": "delete",
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "organisations"
-      },
-      "size": null,
-      "source": "organisation_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
       "references": null,
       "size": null,
       "source": "position",
@@ -78,6 +49,35 @@
       "size": null,
       "source": "updated_at",
       "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "projects_organisation_id_fkey",
+        "on_delete": "delete",
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "organisations"
+      },
+      "size": null,
+      "source": "organisation_id",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -85,7 +85,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "512A99FD7612CC57D5FE8D384DB6701CA433BDEF162919C875AD36DAA1F4EB99",
+  "hash": "9F87388C9D6A491F182C2380AB82817C2BFE412B1ED4D5273676A6A979EDBA85",
   "identities": [
     {
       "all_tenants?": false,
@@ -95,10 +95,6 @@
         {
           "type": "atom",
           "value": "name"
-        },
-        {
-          "type": "atom",
-          "value": "organisation_id"
         }
       ],
       "name": "unique_name",
@@ -113,10 +109,6 @@
         {
           "type": "atom",
           "value": "position"
-        },
-        {
-          "type": "atom",
-          "value": "organisation_id"
         }
       ],
       "name": "unique_position",
@@ -125,9 +117,9 @@
     }
   ],
   "multitenancy": {
-    "attribute": null,
-    "global": null,
-    "strategy": null
+    "attribute": "organisation_id",
+    "global": false,
+    "strategy": "attribute"
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,

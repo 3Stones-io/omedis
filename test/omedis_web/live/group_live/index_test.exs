@@ -28,18 +28,16 @@ defmodule OmedisWeb.GroupLive.IndexTest do
     } do
       Enum.each(1..15, fn i ->
         {:ok, group} =
-          create_group(%{
-            organisation_id: organisation.id,
+          create_group(organisation, %{
             user_id: owner.id,
             slug: "group-#{i}",
             name: "Group #{i}"
           })
 
-        create_group_membership(%{user_id: owner.id, group_id: group.id})
+        create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
-        create_access_right(%{
+        create_access_right(organisation, %{
           resource_name: "Group",
-          organisation_id: organisation.id,
           group_id: group.id,
           read: true
         })
@@ -47,18 +45,16 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       Enum.each(16..30, fn i ->
         {:ok, group} =
-          create_group(%{
-            organisation_id: organisation.id,
+          create_group(organisation, %{
             user_id: owner.id,
             slug: "group-#{i}",
             name: "Group #{i}"
           })
 
-        create_group_membership(%{user_id: owner.id, group_id: group.id})
+        create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
-        create_access_right(%{
+        create_access_right(organisation, %{
           resource_name: "Group",
-          organisation_id: organisation.id,
           group_id: group.id,
           read: false
         })
@@ -66,18 +62,16 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       Enum.each(31..40, fn i ->
         {:ok, group} =
-          create_group(%{
-            organisation_id: organisation_2.id,
+          create_group(organisation_2, %{
             user_id: another_user.id,
             slug: "group-#{i}",
             name: "Group #{i}"
           })
 
-        create_group_membership(%{user_id: another_user.id, group_id: group.id})
+        create_group_membership(organisation, %{user_id: another_user.id, group_id: group.id})
 
-        create_access_right(%{
+        create_access_right(organisation_2, %{
           resource_name: "Group",
-          organisation_id: organisation_2.id,
           group_id: group.id,
           read: false
         })
@@ -116,27 +110,24 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(%{
-          organisation_id: organisation.id,
+        create_group(organisation, %{
           user_id: owner.id,
           slug: "group-1",
           name: "Group 1"
         })
 
-      create_group_membership(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: false,
         update: false
       })
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: false,
@@ -160,18 +151,16 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       organisation: organisation
     } do
       {:ok, group} =
-        create_group(%{
-          organisation_id: organisation.id,
+        create_group(organisation, %{
           user_id: owner.id,
           slug: "group-1",
           name: "Group 1"
         })
 
-      create_group_membership(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: true,
@@ -204,18 +193,16 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       organisation: organisation
     } do
       {:ok, group} =
-        create_group(%{
-          organisation_id: organisation.id,
+        create_group(organisation, %{
           user_id: owner.id,
           slug: "group-1",
           name: "Group 1"
         })
 
-      create_group_membership(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: true,
@@ -255,27 +242,24 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(%{
-          organisation_id: organisation.id,
+        create_group(organisation, %{
           user_id: owner.id,
           slug: "group-1",
           name: "Group 1"
         })
 
-      create_group_membership(%{user_id: owner.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: false,
         update: false
       })
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true,
         write: false,

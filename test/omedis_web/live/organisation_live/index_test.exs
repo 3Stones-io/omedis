@@ -11,13 +11,19 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       {:ok, user_1} = create_user()
       {:ok, user_2} = create_user()
 
+      # Create organisations
+      {:ok, organisation} = create_organisation()
+
       # Create groups
-      {:ok, group_1} = create_group()
-      {:ok, group_2} = create_group()
+      {:ok, group_1} = create_group(organisation)
+      {:ok, group_2} = create_group(organisation)
 
       # Associate users with groups
-      {:ok, _} = create_group_membership(%{group_id: group_1.id, user_id: user_1.id})
-      {:ok, _} = create_group_membership(%{group_id: group_2.id, user_id: user_2.id})
+      {:ok, _} =
+        create_group_membership(organisation, %{group_id: group_1.id, user_id: user_1.id})
+
+      {:ok, _} =
+        create_group_membership(organisation, %{group_id: group_2.id, user_id: user_2.id})
 
       # Create organisations (15 for user_1, 5 for user_2)
       organisations =
@@ -34,9 +40,8 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       # Set up access rights for user_1 (15 organisations)
       Enum.each(1..15, fn i ->
         {:ok, _} =
-          create_access_right(%{
+          create_access_right(Enum.at(organisations, i - 1), %{
             group_id: group_1.id,
-            organisation_id: Enum.at(organisations, i - 1).id,
             read: true,
             resource_name: "Organisation"
           })
@@ -45,9 +50,8 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       # Set up access rights for user_2 (5 organisations)
       Enum.each(16..20, fn i ->
         {:ok, _} =
-          create_access_right(%{
+          create_access_right(Enum.at(organisations, i - 1), %{
             group_id: group_2.id,
-            organisation_id: Enum.at(organisations, i - 1).id,
             read: true,
             resource_name: "Organisation"
           })
@@ -200,7 +204,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
 
       attrs =
         Organisation
-        |> attrs_for()
+        |> attrs_for(nil)
         |> Enum.reject(fn {_k, v} -> is_function(v) end)
         |> Enum.into(%{})
         |> Map.put(:name, "Test Organisation")
@@ -223,8 +227,8 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       {:ok, organisation} =
         create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
 
-      {:ok, group} = create_group()
-      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
+      {:ok, group} = create_group(organisation)
+      {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
       {:ok, organisation: organisation, group: group}
     end
@@ -235,11 +239,10 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       organisation: organisation
     } do
       {:ok, _access_right} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           read: true,
           resource_name: "Organisation",
-          organisation_id: organisation.id,
           update: false,
           write: false
         })
@@ -262,7 +265,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
 
       attrs =
         Organisation
-        |> attrs_for()
+        |> attrs_for(nil)
         |> Enum.reject(fn {_k, v} -> is_function(v) end)
         |> Enum.into(%{})
         |> Map.put(:name, "Updated Organisation")

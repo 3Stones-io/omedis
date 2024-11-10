@@ -9,14 +9,13 @@ defmodule Omedis.Accounts.GroupTest do
     {:ok, user} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: user.id})
     {:ok, authorized_user} = create_user()
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
-    create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, group} = create_group(organisation)
+    create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
 
-    create_access_right(%{
+    create_access_right(organisation, %{
       group_id: group.id,
       read: true,
       resource_name: "Group",
-      organisation_id: organisation.id,
       write: true
     })
 
@@ -30,7 +29,6 @@ defmodule Omedis.Accounts.GroupTest do
                Group.create!(
                  %{
                    name: "Test Group",
-                   organisation_id: organisation.id,
                    user_id: user.id,
                    slug: "test-group"
                  },
@@ -51,7 +49,6 @@ defmodule Omedis.Accounts.GroupTest do
                Group.create!(
                  %{
                    name: "Test Group",
-                   organisation_id: organisation.id,
                    user_id: authorized_user.id,
                    slug: "test-group"
                  },
@@ -69,7 +66,7 @@ defmodule Omedis.Accounts.GroupTest do
 
       assert_raise Ash.Error.Forbidden, fn ->
         Group.create!(
-          %{name: "Test Group", organisation_id: organisation.id, user_id: user.id},
+          %{name: "Test Group", user_id: user.id},
           actor: user,
           tenant: organisation
         )
@@ -82,13 +79,12 @@ defmodule Omedis.Accounts.GroupTest do
       user: user,
       organisation: organisation
     } do
-      {:ok, group} = create_group(%{organisation_id: organisation.id, user_id: user.id})
+      {:ok, group} = create_group(organisation, %{user_id: user.id})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         write: true,
         update: true
@@ -106,7 +102,7 @@ defmodule Omedis.Accounts.GroupTest do
       organisation: organisation
     } do
       {:ok, group} =
-        create_group(%{organisation_id: organisation.id, user_id: authorized_user.id})
+        create_group(organisation, %{user_id: authorized_user.id})
 
       assert %Group{} =
                updated_group =
@@ -122,13 +118,12 @@ defmodule Omedis.Accounts.GroupTest do
       user: user
     } do
       {:ok, organisation} = create_organisation()
-      {:ok, group} = create_group(%{organisation_id: organisation.id, user_id: user.id})
+      {:ok, group} = create_group(organisation, %{user_id: user.id})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         write: false,
         update: false
@@ -142,13 +137,12 @@ defmodule Omedis.Accounts.GroupTest do
 
   describe "destroy/2" do
     test "organisation owner can delete a group", %{user: user, organisation: organisation} do
-      {:ok, group} = create_group(%{organisation_id: organisation.id, user_id: user.id})
+      {:ok, group} = create_group(organisation, %{user_id: user.id})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         write: true,
         update: true
@@ -163,7 +157,7 @@ defmodule Omedis.Accounts.GroupTest do
       organisation: organisation
     } do
       {:ok, group} =
-        create_group(%{organisation_id: organisation.id, user_id: authorized_user.id})
+        create_group(organisation, %{user_id: authorized_user.id})
 
       assert :ok =
                Group.destroy(group, actor: authorized_user, tenant: organisation)
@@ -175,13 +169,12 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(%{organisation_id: organisation.id, user_id: user.id, slug: "test-group"})
+        create_group(organisation, %{user_id: user.id, slug: "test-group"})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         write: false,
         update: false
@@ -199,13 +192,12 @@ defmodule Omedis.Accounts.GroupTest do
       organisation: organisation
     } do
       {:ok, group} =
-        create_group(%{organisation_id: organisation.id, user_id: user.id, slug: "test-group"})
+        create_group(organisation, %{user_id: user.id, slug: "test-group"})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true
       })
@@ -220,11 +212,10 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       invalid_id = Ecto.UUID.generate()
 
-      create_group_membership(%{user_id: user.id, group_id: invalid_id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: invalid_id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: invalid_id,
         read: true
       })
@@ -238,13 +229,12 @@ defmodule Omedis.Accounts.GroupTest do
       {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(%{organisation_id: organisation.id, user_id: user.id, slug: "test-group"})
+        create_group(organisation, %{user_id: user.id, slug: "test-group"})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: false
       })
@@ -262,17 +252,15 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       Enum.each(1..15, fn i ->
         {:ok, group} =
-          create_group(%{
-            organisation_id: organisation.id,
+          create_group(organisation, %{
             user_id: user.id,
             slug: "test-group-#{i}"
           })
 
-        create_group_membership(%{user_id: user.id, group_id: group.id})
+        create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-        create_access_right(%{
+        create_access_right(organisation, %{
           resource_name: "Group",
-          organisation_id: organisation.id,
           group_id: group.id,
           read: true
         })
@@ -295,17 +283,15 @@ defmodule Omedis.Accounts.GroupTest do
 
       Enum.each(1..15, fn i ->
         {:ok, group} =
-          create_group(%{
-            organisation_id: organisation.id,
+          create_group(organisation, %{
             user_id: user.id,
             slug: "test-group-#{i}"
           })
 
-        create_group_membership(%{user_id: user.id, group_id: group.id})
+        create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-        create_access_right(%{
+        create_access_right(organisation, %{
           resource_name: "Group",
-          organisation_id: organisation.id,
           group_id: group.id,
           read: false
         })
@@ -324,21 +310,13 @@ defmodule Omedis.Accounts.GroupTest do
       user: user,
       organisation: organisation
     } do
-      {:ok, group} =
-        create_group(%{
-          organisation_id: organisation.id,
-          user_id: user.id,
-          slug: "test-group-slug"
-        })
+      {:ok, group} = create_group(organisation, %{user_id: user.id, slug: "test-group-slug"})
+      {:ok, group2} = create_group(organisation, %{user_id: user.id})
 
-      {:ok, group2} =
-        create_group(%{organisation_id: organisation.id, user_id: user.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group2.id})
 
-      create_group_membership(%{user_id: user.id, group_id: group2.id})
-
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true
       })
@@ -355,11 +333,10 @@ defmodule Omedis.Accounts.GroupTest do
     } do
       invalid_slug = "invalid-slug"
 
-      create_group_membership(%{user_id: user.id, group_id: invalid_slug})
+      create_group_membership(organisation, %{user_id: user.id, group_id: invalid_slug})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: invalid_slug,
         read: true
       })
@@ -372,18 +349,12 @@ defmodule Omedis.Accounts.GroupTest do
     test "returns an error if actor doesn't have read access", %{user: user} do
       {:ok, organisation} = create_organisation()
 
-      {:ok, group} =
-        create_group(%{
-          organisation_id: organisation.id,
-          user_id: user.id,
-          slug: "test-group-slug"
-        })
+      {:ok, group} = create_group(organisation, %{user_id: user.id, slug: "test-group-slug"})
 
-      create_group_membership(%{user_id: user.id, group_id: group.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Group",
-        organisation_id: organisation.id,
         group_id: group.id,
         read: false
       })

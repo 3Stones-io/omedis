@@ -9,28 +9,25 @@ defmodule Omedis.Accounts.UserNotifierTest do
   setup do
     {:ok, user} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: user.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, group} = create_group(organisation)
 
     {:ok, invitation} =
-      create_invitation(%{
-        organisation_id: organisation.id,
+      create_invitation(organisation, %{
         creator_id: user.id,
         groups: [group.id]
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Invitation",
         create: true,
-        organisation_id: organisation.id,
         group_id: group.id
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "organisation",
         create: true,
-        organisation_id: organisation.id,
         group_id: group.id
       })
 
@@ -65,8 +62,7 @@ defmodule Omedis.Accounts.UserNotifierTest do
            user: user
          } do
       {:ok, invitation} =
-        create_invitation(%{
-          organisation_id: organisation.id,
+        create_invitation(organisation, %{
           creator_id: user.id,
           groups: [group.id],
           language: "fr"

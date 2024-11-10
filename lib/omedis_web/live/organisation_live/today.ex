@@ -418,7 +418,6 @@ defmodule OmedisWeb.OrganisationLive.Today do
       LogEntry.create(
         %{
           activity_id: activity_id,
-          organisation_id: organisation.id,
           user_id: user.id,
           start_at: Time.utc_now()
         },

@@ -16,6 +16,11 @@ defmodule Omedis.Accounts.AccessRight do
     end
   end
 
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -44,7 +49,6 @@ defmodule Omedis.Accounts.AccessRight do
         :write,
         :update,
         :create,
-        :organisation_id,
         :group_id
       ]
 

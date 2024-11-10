@@ -21,38 +21,34 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
-    {:ok, _} = create_group_membership(%{user_id: owner.id, group_id: group.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, _} = create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         resource_name: "Invitation",
         create: true,
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "organisation",
-        organisation_id: organisation.id,
         write: true
       })
 
     {:ok, valid_invitation} =
-      create_invitation(%{
-        organisation_id: organisation.id,
+      create_invitation(organisation, %{
         creator_id: owner.id
       })
 
     expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
 
     {:ok, expired_invitation} =
-      create_invitation(%{
-        organisation_id: organisation.id,
+      create_invitation(organisation, %{
         creator_id: owner.id,
         expires_at: expired_at
       })
@@ -109,8 +105,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       owner: owner
     } do
       {:ok, invitation} =
-        create_invitation(%{
-          organisation_id: organisation.id,
+        create_invitation(organisation, %{
           creator_id: owner.id,
           language: "fr"
         })

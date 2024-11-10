@@ -15,6 +15,7 @@ defmodule Omedis.Accounts.InvitationGroup do
     references do
       reference :invitation, on_delete: :delete
       reference :group, on_delete: :delete
+      reference :organisation, on_delete: :delete
     end
   end
 
@@ -43,11 +44,18 @@ defmodule Omedis.Accounts.InvitationGroup do
       allow_nil? false
       primary_key? true
     end
+
+    belongs_to :organisation, Omedis.Accounts.Organisation
   end
 
   policies do
     policy do
       authorize_if always()
     end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 end

@@ -5,18 +5,18 @@ defmodule Omedis.Accounts.Changes.SetDefaultActivity do
   alias Omedis.Accounts.Activity
 
   @impl true
-  def change(changeset, _opts, _context) do
-    Ash.Changeset.before_action(changeset, &check_and_update_default_activity/1)
+  def change(changeset, _opts, %{tenant: organisation} = _context) do
+    Ash.Changeset.before_action(changeset, &check_and_update_default_activity(&1, organisation))
   end
 
-  def check_and_update_default_activity(changeset) do
+  def check_and_update_default_activity(changeset, organisation) do
     group_id = Ash.Changeset.get_attribute(changeset, :group_id)
     is_default = Ash.Changeset.get_attribute(changeset, :is_default)
 
     if is_default do
       Activity
       |> Ash.Query.filter(group_id: group_id, is_default: true)
-      |> Ash.read_one!(authorize?: false)
+      |> Ash.read_one!(authorize?: false, tenant: organisation)
       |> maybe_update_previous_default(changeset)
     else
       changeset

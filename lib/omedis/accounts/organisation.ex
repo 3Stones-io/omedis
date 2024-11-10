@@ -21,8 +21,8 @@ defmodule Omedis.Accounts.Organisation do
 
   @derive {Phoenix.Param, key: :slug}
 
-  defimpl Ash.ToTenant, for: Omedis.Accounts.Organisation do
-    def to_tenant(%{id: id}, _), do: "org_#{id}"
+  defimpl Ash.ToTenant do
+    def to_tenant(%{id: id}, _resource), do: id
   end
 
   postgres do
