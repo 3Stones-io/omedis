@@ -28,7 +28,7 @@ defmodule Omedis.Accounts.CanAccessResource do
     Ash.exists?(
       filter(
         AccessRight,
-        resource_name == ^resource_name and organisation_id == ^organisation.id and
+        resource_name == ^resource_name and
           (write == true or ^action == true) and
           exists(group.group_memberships, user_id == ^actor.id)
       ),

@@ -965,6 +965,29 @@ msgstr "Afficher l'activité"
 msgid "This is an activity record from your database."
 msgstr "Ceci est un enregistrement de projet de votre base de données."
 
+#: lib/omedis_web/live/invitation_live/index.ex:159
+#, elixir-autogen, elixir-format
+msgid "Accepted"
+msgstr "Accepté"
+
+#: lib/omedis_web/live/activity_live/index.ex:29
+#: lib/omedis_web/live/activity_live/show.ex:25
+#: lib/omedis_web/live/group_live/show.ex:35
+#: lib/omedis_web/live/log_entry_live/index.ex:28
+#, elixir-autogen, elixir-format
+msgid "Activities"
+msgstr "Activités"
+
+#: lib/omedis_web/live/activity_live/show.ex:34
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Activity"
+msgstr "Nouvelle activité"
+
+#: lib/omedis_web/live/activity_live/form_component.ex:192
+#, elixir-autogen, elixir-format
+msgid "Activity saved successfully"
+msgstr "Activité enregistrée avec succès"
+
 #: lib/omedis_web/live/invitation_live/index.ex:199
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this invitation?"
