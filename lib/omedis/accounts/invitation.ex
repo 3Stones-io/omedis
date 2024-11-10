@@ -11,6 +11,10 @@ defmodule Omedis.Accounts.Invitation do
   postgres do
     table "invitations"
     repo Omedis.Repo
+
+    references do
+      reference :organisation, on_delete: :delete
+    end
   end
 
   code_interface do
@@ -19,6 +23,12 @@ defmodule Omedis.Accounts.Invitation do
     define :create
     define :destroy
     define :list_paginated
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+    global? true
   end
 
   attributes do
@@ -66,13 +76,13 @@ defmodule Omedis.Accounts.Invitation do
     end
 
     update :update do
-      accept [:email, :language, :creator_id, :organisation_id, :inserted_at]
+      accept [:email, :language, :creator_id, :inserted_at]
 
       primary? true
     end
 
     create :create do
-      accept [:email, :language, :creator_id, :organisation_id, :expires_at]
+      accept [:email, :language, :creator_id, :expires_at]
 
       argument :groups, {:array, :uuid}, allow_nil?: false
 
@@ -97,10 +107,7 @@ defmodule Omedis.Accounts.Invitation do
       attribute_writable? true
     end
 
-    belongs_to :organisation, Omedis.Accounts.Organisation do
-      allow_nil? false
-      attribute_writable? true
-    end
+    belongs_to :organisation, Omedis.Accounts.Organisation
 
     belongs_to :user, Omedis.Accounts.User do
       allow_nil? true

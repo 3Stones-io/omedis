@@ -30,7 +30,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   identities do
-    identity :unique_slug_per_organisation, [:slug, :organisation_id]
+    identity :unique_slug_per_organisation, :slug
   end
 
   code_interface do
@@ -47,7 +47,6 @@ defmodule Omedis.Accounts.Group do
     create :create do
       accept [
         :name,
-        :organisation_id,
         :user_id,
         :slug
       ]
@@ -119,10 +118,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   relationships do
-    belongs_to :organisation, Omedis.Accounts.Organisation do
-      allow_nil? true
-      attribute_writable? true
-    end
+    belongs_to :organisation, Omedis.Accounts.Organisation
 
     belongs_to :user, User do
       allow_nil? true
@@ -148,5 +144,10 @@ defmodule Omedis.Accounts.Group do
     policy action_type([:read]) do
       authorize_if Omedis.Accounts.AccessFilter
     end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 end

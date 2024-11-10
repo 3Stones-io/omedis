@@ -37,8 +37,8 @@ defmodule Omedis.Accounts.Project do
   end
 
   identities do
-    identity :unique_name, [:name, :organisation_id]
-    identity :unique_position, [:position, :organisation_id]
+    identity :unique_name, :name
+    identity :unique_position, :position
   end
 
   actions do
@@ -55,7 +55,6 @@ defmodule Omedis.Accounts.Project do
     update :update do
       accept [
         :name,
-        :organisation_id,
         :position
       ]
 
@@ -86,7 +85,6 @@ defmodule Omedis.Accounts.Project do
 
   validations do
     validate present(:name)
-    validate present(:organisation_id)
 
     validate present(:position)
   end
@@ -95,8 +93,6 @@ defmodule Omedis.Accounts.Project do
     uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :organisation_id, :uuid, allow_nil?: false, public?: true
-
     attribute :position, :string, allow_nil?: false, public?: true
 
     create_timestamp :created_at
@@ -118,10 +114,7 @@ defmodule Omedis.Accounts.Project do
   end
 
   relationships do
-    belongs_to :organisation, Omedis.Accounts.Organisation do
-      allow_nil? true
-      attribute_writable? true
-    end
+    belongs_to :organisation, Omedis.Accounts.Organisation
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
       manual Omedis.Accounts.Project.Relationships.ProjectAccessRights
@@ -140,5 +133,10 @@ defmodule Omedis.Accounts.Project do
     policy do
       authorize_if always()
     end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 end

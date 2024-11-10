@@ -231,7 +231,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         )
       end
 
-    color_code = Activity.select_unused_color_code(socket.assigns.organisation.id)
+    color_code = Activity.select_unused_color_code(socket.assigns.organisation)
 
     assign(socket,
       form: to_form(form),

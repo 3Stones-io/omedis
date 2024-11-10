@@ -44,12 +44,12 @@
         "match_type": null,
         "match_with": null,
         "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
+          "attribute": "organisation_id",
+          "global": true,
+          "strategy": "attribute"
         },
         "name": "invitation_groups_invitation_id_fkey",
-        "on_delete": null,
+        "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
@@ -73,12 +73,12 @@
         "match_type": null,
         "match_with": null,
         "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
+          "attribute": "organisation_id",
+          "global": false,
+          "strategy": "attribute"
         },
         "name": "invitation_groups_group_id_fkey",
-        "on_delete": null,
+        "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
@@ -87,19 +87,48 @@
       "size": null,
       "source": "group_id",
       "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "invitation_groups_organisation_id_fkey",
+        "on_delete": "delete",
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "organisations"
+      },
+      "size": null,
+      "source": "organisation_id",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": false,
-  "hash": "D9E94EBC8E9C3CEC4BEE8E9823D86743F138856BCC81FF9A80E0765C8ECE7120",
+  "has_create_action": true,
+  "hash": "F0928E1EE2D54611DC20960A7F4379E2EBB1EA829E9F02197181E3AE791C3A20",
   "identities": [],
   "multitenancy": {
-    "attribute": null,
-    "global": null,
-    "strategy": null
+    "attribute": "organisation_id",
+    "global": false,
+    "strategy": "attribute"
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,

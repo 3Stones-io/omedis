@@ -6,18 +6,18 @@ defmodule Omedis.GroupMembershipTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, group} = create_group(organisation)
     {:ok, user} = create_user()
     {:ok, authorized_user} = create_user()
 
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} =
+      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "GroupMembership",
-        organisation_id: organisation.id,
         write: true
       })
 

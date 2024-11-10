@@ -6,14 +6,13 @@ defmodule OmedisWeb.GroupLive.ShowTest do
   setup do
     {:ok, user} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: user.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         resource_name: "Group",
-        organisation_id: organisation.id,
         read: true,
         write: true
       })
@@ -46,28 +45,26 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       organisation: organisation
     } do
       {:ok, authorized_user} = create_user()
-      {:ok, group} = create_group(%{name: "Test Group", organisation_id: organisation.id})
+      {:ok, group} = create_group(organisation, %{name: "Test Group"})
 
       {:ok, _} =
-        create_group_membership(%{
+        create_group_membership(organisation, %{
           group_id: group.id,
           user_id: authorized_user.id
         })
 
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           resource_name: "Organisation",
-          organisation_id: organisation.id,
           read: true,
           write: true
         })
 
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           resource_name: "Group",
-          organisation_id: organisation.id,
           read: true,
           write: true
         })
@@ -85,14 +82,13 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       user: user
     } do
       {:ok, organisation} = create_organisation()
-      {:ok, group} = create_group(%{organisation_id: organisation.id})
-      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
+      {:ok, group} = create_group(organisation)
+      {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           resource_name: "Group",
-          organisation_id: organisation.id,
           read: false,
           write: false
         })

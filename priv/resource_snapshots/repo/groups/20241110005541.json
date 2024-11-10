@@ -14,36 +14,47 @@
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
-      "primary_key?": true,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "group_memberships_group_id_fkey",
-        "on_delete": "delete",
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "groups"
-      },
+      "primary_key?": false,
+      "references": null,
       "size": null,
-      "source": "group_id",
-      "type": "uuid"
+      "source": "name",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "slug",
+      "type": "citext"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "created_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "updated_at",
+      "type": "utc_datetime_usec"
     },
     {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
-      "primary_key?": true,
+      "primary_key?": false,
       "references": {
         "deferrable": false,
         "destination_attribute": "id",
@@ -57,7 +68,36 @@
           "global": null,
           "strategy": null
         },
-        "name": "group_memberships_user_id_fkey",
+        "name": "groups_organisation_id_fkey",
+        "on_delete": "delete",
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "organisations"
+      },
+      "size": null,
+      "source": "organisation_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "groups_user_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
@@ -74,33 +114,29 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "7D189113A0B065DBCA5CB527313A3521A36B9BE5A60F9B3B81BACBC9E8046D0A",
+  "hash": "C33BCA3E0A51FFB8BD8E843E3652099509449A469B61C95FA7AC8C41D217FDFC",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "group_memberships_unique_group_membership_index",
+      "index_name": "groups_unique_slug_per_organisation_index",
       "keys": [
         {
           "type": "atom",
-          "value": "group_id"
-        },
-        {
-          "type": "atom",
-          "value": "user_id"
+          "value": "slug"
         }
       ],
-      "name": "unique_group_membership",
+      "name": "unique_slug_per_organisation",
       "nils_distinct?": true,
       "where": null
     }
   ],
   "multitenancy": {
-    "attribute": null,
-    "global": null,
-    "strategy": null
+    "attribute": "organisation_id",
+    "global": false,
+    "strategy": "attribute"
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,
-  "table": "group_memberships"
+  "table": "groups"
 }

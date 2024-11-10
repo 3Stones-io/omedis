@@ -11,8 +11,8 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     {:ok, organisation} =
       create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
 
-    {:ok, group} = create_group()
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: user.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
     {:ok, organisation: organisation, group: group}
   end
@@ -24,9 +24,8 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       organisation: organisation
     } do
       {:ok, _access_right} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
-          organisation_id: organisation.id,
           read: true,
           resource_name: "Organisation"
         })
@@ -63,9 +62,8 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       organisation: organisation
     } do
       {:ok, access_right} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
-          organisation_id: organisation.id,
           read: true,
           resource_name: "Organisation",
           update: false,
@@ -112,7 +110,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       attrs =
         Organisation
-        |> attrs_for()
+        |> attrs_for(nil)
         |> Enum.reject(fn {_k, v} -> is_function(v) end)
         |> Enum.into(%{})
         |> Map.put(:name, "Updated Organisation")

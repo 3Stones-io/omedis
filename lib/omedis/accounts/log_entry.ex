@@ -88,7 +88,6 @@ defmodule Omedis.Accounts.LogEntry do
         :comment,
         :start_at,
         :end_at,
-        :organisation_id,
         :activity_id,
         :user_id
       ]
@@ -101,7 +100,6 @@ defmodule Omedis.Accounts.LogEntry do
         :comment,
         :start_at,
         :end_at,
-        :organisation_id,
         :activity_id,
         :user_id
       ]
@@ -119,7 +117,6 @@ defmodule Omedis.Accounts.LogEntry do
     uuid_primary_key :id
 
     attribute :comment, :string, allow_nil?: true, public?: true
-    attribute :organisation_id, :uuid, allow_nil?: false, public?: true
     attribute :activity_id, :uuid, allow_nil?: false, public?: true
     attribute :user_id, :uuid, allow_nil?: false, public?: true
 
@@ -136,10 +133,7 @@ defmodule Omedis.Accounts.LogEntry do
       attribute_writable? true
     end
 
-    belongs_to :organisation, Omedis.Accounts.Organisation do
-      allow_nil? true
-      attribute_writable? true
-    end
+    belongs_to :organisation, Omedis.Accounts.Organisation
 
     belongs_to :user, Omedis.Accounts.User do
       allow_nil? true
@@ -159,5 +153,10 @@ defmodule Omedis.Accounts.LogEntry do
     policy action_type([:create, :update]) do
       authorize_if CanAccessResource
     end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 end

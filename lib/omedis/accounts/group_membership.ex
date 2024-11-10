@@ -8,9 +8,9 @@ defmodule Omedis.Accounts.GroupMembership do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.AccessFilter
   alias Omedis.Accounts.CanAccessResource
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupMembershipAccessFilter
   alias Omedis.Accounts.User
 
   postgres do
@@ -19,6 +19,7 @@ defmodule Omedis.Accounts.GroupMembership do
 
     references do
       reference :group, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :user, on_delete: :delete
     end
   end
@@ -34,6 +35,8 @@ defmodule Omedis.Accounts.GroupMembership do
     has_many :access_rights, Omedis.Accounts.AccessRight do
       manual Omedis.Accounts.GroupMembership.Relationships.GroupMembershipAccessRights
     end
+
+    belongs_to :organisation, Omedis.Accounts.Organisation
   end
 
   actions do
@@ -54,7 +57,7 @@ defmodule Omedis.Accounts.GroupMembership do
 
   policies do
     policy action_type(:read) do
-      authorize_if GroupMembershipAccessFilter
+      authorize_if AccessFilter
     end
 
     policy action_type([:create, :destroy]) do
@@ -64,5 +67,10 @@ defmodule Omedis.Accounts.GroupMembership do
 
   attributes do
     uuid_primary_key :id
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 end

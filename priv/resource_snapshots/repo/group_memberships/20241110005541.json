@@ -11,20 +11,10 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "comment",
-      "type": "text"
-    },
-    {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
-      "primary_key?": false,
+      "primary_key?": true,
       "references": {
         "deferrable": false,
         "destination_attribute": "id",
@@ -34,26 +24,26 @@
         "match_type": null,
         "match_with": null,
         "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
+          "attribute": "organisation_id",
+          "global": false,
+          "strategy": "attribute"
         },
-        "name": "log_entries_organisation_id_fkey",
+        "name": "group_memberships_group_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "organisations"
+        "table": "groups"
       },
       "size": null,
-      "source": "organisation_id",
+      "source": "group_id",
       "type": "uuid"
     },
     {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
-      "primary_key?": false,
+      "primary_key?": true,
       "references": {
         "deferrable": false,
         "destination_attribute": "id",
@@ -67,36 +57,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "log_entries_activity_id_fkey",
-        "on_delete": "delete",
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "activities"
-      },
-      "size": null,
-      "source": "activity_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "log_entries_user_id_fkey",
+        "name": "group_memberships_user_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
@@ -108,44 +69,33 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
-      "references": null,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "group_memberships_organisation_id_fkey",
+        "on_delete": "delete",
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "organisations"
+      },
       "size": null,
-      "source": "start_at",
-      "type": "time"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "end_at",
-      "type": "time"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "created_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "updated_at",
-      "type": "utc_datetime_usec"
+      "source": "organisation_id",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -153,14 +103,33 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "3BDB472E27CA9D724A74398D453E423A0C88227ECB9CBAEF09508D9662F94409",
-  "identities": [],
+  "hash": "7CED3B2ED2ACC7EC87E2BC0BF152D9B2E3394B260C9D8C54C089AA03B954CEBE",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "group_memberships_unique_group_membership_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "group_id"
+        },
+        {
+          "type": "atom",
+          "value": "user_id"
+        }
+      ],
+      "name": "unique_group_membership",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
-    "attribute": null,
-    "global": null,
-    "strategy": null
+    "attribute": "organisation_id",
+    "global": false,
+    "strategy": "attribute"
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,
-  "table": "log_entries"
+  "table": "group_memberships"
 }

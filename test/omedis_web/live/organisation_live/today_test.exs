@@ -6,49 +6,50 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
-    {:ok, project} = create_project(%{organisation_id: organisation.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, project} = create_project(organisation)
 
     {:ok, activity} =
-      create_activity(%{group_id: group.id, is_default: true, project_id: project.id})
+      create_activity(organisation, %{
+        group_id: group.id,
+        is_default: true,
+        project_id: project.id
+      })
 
     {:ok, authorized_user} =
       create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
 
     {:ok, user} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
 
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} =
+      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Organisation",
-        organisation_id: organisation.id
+        resource_name: "Organisation"
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Project",
-        organisation_id: organisation.id
+        resource_name: "Project"
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Group",
-        organisation_id: organisation.id
+        resource_name: "Group"
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Activity",
-        organisation_id: organisation.id
+        resource_name: "Activity"
       })
 
     %{
@@ -74,11 +75,10 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       organisation: organisation
     } do
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: organisation.id,
           write: true
         })
 
@@ -114,11 +114,10 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       organisation: organisation
     } do
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: organisation.id,
           write: true
         })
 
@@ -159,19 +158,26 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       organisation: organisation
     } do
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: organisation.id,
           write: true
         })
 
       {:ok, activity_1} =
-        create_activity(%{group_id: group.id, project_id: project.id, name: "Activity 1"})
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Activity 1"
+        })
 
       {:ok, activity_2} =
-        create_activity(%{group_id: group.id, project_id: project.id, name: "Activity 2"})
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Activity 2"
+        })
 
       {:ok, lv, _html} =
         conn
@@ -221,11 +227,10 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       organisation: organisation
     } do
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: organisation.id,
           write: true
         })
 
@@ -261,11 +266,10 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       organisation: organisation
     } do
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: organisation.id,
           write: true
         })
 
@@ -306,19 +310,26 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       organisation: organisation
     } do
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group.id,
           read: true,
           resource_name: "LogEntry",
-          organisation_id: organisation.id,
           write: true
         })
 
       {:ok, activity_1} =
-        create_activity(%{group_id: group.id, project_id: project.id, name: "Activity 1"})
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Activity 1"
+        })
 
       {:ok, activity_2} =
-        create_activity(%{group_id: group.id, project_id: project.id, name: "Activity 2"})
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Activity 2"
+        })
 
       {:ok, lv, _html} =
         conn
@@ -367,39 +378,40 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       organisation: organisation,
       user: unauthorized_user
     } do
-      {:ok, group2} = create_group(%{organisation_id: organisation.id})
-      {:ok, _} = create_group_membership(%{group_id: group2.id, user_id: unauthorized_user.id})
+      {:ok, group2} = create_group(organisation)
 
       {:ok, _} =
-        create_access_right(%{
+        create_group_membership(organisation, %{
           group_id: group2.id,
-          read: true,
-          resource_name: "Organisation",
-          organisation_id: organisation.id
+          user_id: unauthorized_user.id
         })
 
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group2.id,
           read: true,
-          resource_name: "Project",
-          organisation_id: organisation.id
+          resource_name: "Organisation"
         })
 
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group2.id,
           read: true,
-          resource_name: "Group",
-          organisation_id: organisation.id
+          resource_name: "Project"
         })
 
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           group_id: group2.id,
           read: true,
-          resource_name: "Activity",
-          organisation_id: organisation.id
+          resource_name: "Group"
+        })
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: group2.id,
+          read: true,
+          resource_name: "Activity"
         })
 
       {:ok, lv, _html} =

@@ -62,6 +62,7 @@ msgstr "BIC"
 #: lib/omedis_web/live/edit_profile.ex:200
 #: lib/omedis_web/live/edit_profile.ex:208
 #: lib/omedis_web/live/edit_profile.ex:214
+#: lib/omedis_web/live/invitation_live/show.ex:114
 #: lib/omedis_web/live/register_live.ex:288
 #, elixir-autogen, elixir-format
 msgid "Birthdate"
@@ -154,6 +155,8 @@ msgstr "Bearbeiten Sie Ihre Profildetails"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:132
 #: lib/omedis_web/live/invitation_live/index.ex:152
+#: lib/omedis_web/live/invitation_live/show.ex:53
+#: lib/omedis_web/live/invitation_live/show.ex:56
 #: lib/omedis_web/live/login_live.ex:100
 #: lib/omedis_web/live/login_live.ex:107
 #: lib/omedis_web/live/login_live.ex:115
@@ -194,6 +197,8 @@ msgstr "Fax"
 #: lib/omedis_web/live/edit_profile.ex:132
 #: lib/omedis_web/live/edit_profile.ex:140
 #: lib/omedis_web/live/edit_profile.ex:146
+#: lib/omedis_web/live/invitation_live/show.ex:65
+#: lib/omedis_web/live/invitation_live/show.ex:67
 #: lib/omedis_web/live/register_live.ex:235
 #: lib/omedis_web/live/register_live.ex:237
 #, elixir-autogen, elixir-format
@@ -202,6 +207,7 @@ msgstr "Vorname"
 
 #: lib/omedis_web/live/edit_profile.ex:177
 #: lib/omedis_web/live/edit_profile.ex:191
+#: lib/omedis_web/live/invitation_live/show.ex:100
 #: lib/omedis_web/live/register_live.ex:273
 #, elixir-autogen, elixir-format
 msgid "Gender"
@@ -228,6 +234,8 @@ msgstr "Sprache"
 #: lib/omedis_web/live/edit_profile.ex:155
 #: lib/omedis_web/live/edit_profile.ex:162
 #: lib/omedis_web/live/edit_profile.ex:168
+#: lib/omedis_web/live/invitation_live/show.ex:76
+#: lib/omedis_web/live/invitation_live/show.ex:78
 #: lib/omedis_web/live/register_live.ex:247
 #: lib/omedis_web/live/register_live.ex:249
 #, elixir-autogen, elixir-format
@@ -265,6 +273,8 @@ msgstr "Name"
 msgid "Owner"
 msgstr "Besitzer"
 
+#: lib/omedis_web/live/invitation_live/show.ex:87
+#: lib/omedis_web/live/invitation_live/show.ex:90
 #: lib/omedis_web/live/login_live.ex:124
 #: lib/omedis_web/live/login_live.ex:132
 #: lib/omedis_web/live/login_live.ex:139
@@ -348,6 +358,7 @@ msgid "Projects"
 msgstr "Projekte"
 
 #: lib/omedis_web/components/general_components.ex:510
+#: lib/omedis_web/live/invitation_live/show.ex:24
 #: lib/omedis_web/live/register_live.ex:143
 #, elixir-autogen, elixir-format
 msgid "Register"
@@ -378,6 +389,7 @@ msgstr "Speichern..."
 msgid "Select Gender"
 msgstr "Geschlecht auswählen"
 
+#: lib/omedis_web/live/invitation_live/show.ex:105
 #: lib/omedis_web/live/register_live.ex:278
 #, elixir-autogen, elixir-format
 msgid "Select Your Gender"
@@ -402,6 +414,7 @@ msgstr "Anzeigen"
 msgid "Sign in"
 msgstr "Anmelden"
 
+#: lib/omedis_web/live/invitation_live/show.ex:166
 #: lib/omedis_web/live/register_live.ex:48
 #: lib/omedis_web/live/register_live.ex:352
 #, elixir-autogen, elixir-format
@@ -413,6 +426,7 @@ msgstr "Registrieren"
 msgid "Signing in..."
 msgstr "Anmelden..."
 
+#: lib/omedis_web/live/invitation_live/show.ex:167
 #: lib/omedis_web/live/register_live.ex:353
 #, elixir-autogen, elixir-format
 msgid "Signing up..."
@@ -494,6 +508,7 @@ msgstr "UID BFS Nummer"
 msgid "Update Profile"
 msgstr "Profil aktualisieren"
 
+#: lib/omedis_web/live/invitation_live/show.ex:29
 #: lib/omedis_web/live/register_live.ex:148
 #, elixir-autogen, elixir-format
 msgid "Use a permanent address where you can receive mail."
@@ -544,6 +559,7 @@ msgstr "ZSR Nummer"
 msgid "close"
 msgstr "schließen"
 
+#: lib/omedis_web/live/invitation_live/show.ex:88
 #: lib/omedis_web/live/login_live.ex:134
 #: lib/omedis_web/live/register_live.ex:260
 #, elixir-autogen, elixir-format
@@ -571,6 +587,7 @@ msgstr "Löschen"
 msgid "Edit Group"
 msgstr "Gruppe bearbeiten"
 
+#: lib/omedis_web/live/invitation_live/show.ex:103
 #: lib/omedis_web/live/register_live.ex:276
 #, elixir-autogen, elixir-format
 msgid "Female"
@@ -606,6 +623,7 @@ msgstr "Gruppen auflisten"
 msgid "Login"
 msgstr "Anmelden"
 
+#: lib/omedis_web/live/invitation_live/show.ex:102
 #: lib/omedis_web/live/register_live.ex:275
 #, elixir-autogen, elixir-format
 msgid "Male"
@@ -642,12 +660,16 @@ msgstr "Gruppe und Projekt auswählen"
 msgid "Use this form to manage group records in your database."
 msgstr "Verwenden Sie dieses Formular, um Gruppendatensätze in Ihrer Datenbank zu verwalten."
 
+#: lib/omedis_web/live/invitation_live/show.ex:144
+#: lib/omedis_web/live/invitation_live/show.ex:157
 #: lib/omedis_web/live/register_live.ex:319
 #: lib/omedis_web/live/register_live.ex:333
 #, elixir-autogen, elixir-format
 msgid "Daily End Time"
 msgstr "Tägliche Endzeit"
 
+#: lib/omedis_web/live/invitation_live/show.ex:122
+#: lib/omedis_web/live/invitation_live/show.ex:135
 #: lib/omedis_web/live/register_live.ex:296
 #: lib/omedis_web/live/register_live.ex:310
 #, elixir-autogen, elixir-format
@@ -775,7 +797,7 @@ msgstr "Zurück zu den Projekten"
 #: lib/omedis_web/live/group_live/index.ex:33
 #, elixir-autogen, elixir-format
 msgid "Back"
-msgstr ""
+msgstr "Zurück"
 
 #: lib/omedis_web/live/activity_live/index.ex:24
 #: lib/omedis_web/live/activity_live/show.ex:20
@@ -810,7 +832,7 @@ msgstr "Zurück zu den Organisationen"
 #: lib/omedis_web/components/general_components.ex:875
 #, elixir-autogen, elixir-format
 msgid "Create first organisation"
-msgstr ""
+msgstr "Erste Organisation erstellen"
 
 #: lib/omedis_web/live/edit_profile.ex:223
 #: lib/omedis_web/live/edit_profile.ex:239
@@ -895,8 +917,8 @@ msgstr "Organisation anzeigen"
 msgid "You are not authorized to delete this group"
 msgstr "Sie sind nicht berechtigt, diese Gruppe zu löschen"
 
-#: lib/omedis_web/live/organisation_live/today.ex:431
-#: lib/omedis_web/live/organisation_live/today.ex:443
+#: lib/omedis_web/live/organisation_live/today.ex:430
+#: lib/omedis_web/live/organisation_live/today.ex:442
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to perform this action"
 msgstr "Sie sind nicht berechtigt, diese Aktion auszuführen"
@@ -1039,3 +1061,8 @@ msgstr "Ausstehend"
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Status"
+
+#: lib/omedis_web/live/invitation_live/show.ex:230
+#, elixir-autogen, elixir-format
+msgid "Complete Registration"
+msgstr "Registrierung abschließen"

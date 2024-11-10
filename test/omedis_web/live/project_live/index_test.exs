@@ -8,38 +8,38 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
   setup do
     {:ok, owner} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, group} = create_group(organisation)
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
 
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _} =
+      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        organisation_id: organisation.id,
         write: true
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Organisation",
-        organisation_id: organisation.id
+        resource_name: "Organisation"
       })
 
-    {:ok, another_group} = create_group(%{organisation_id: organisation.id})
-    {:ok, _} = create_group_membership(%{group_id: another_group.id, user_id: user.id})
+    {:ok, another_group} = create_group(organisation)
 
     {:ok, _} =
-      create_access_right(%{
+      create_group_membership(organisation, %{group_id: another_group.id, user_id: user.id})
+
+    {:ok, _} =
+      create_access_right(organisation, %{
         group_id: another_group.id,
         read: true,
-        resource_name: "Organisation",
-        organisation_id: organisation.id
+        resource_name: "Organisation"
       })
 
     %{
@@ -58,7 +58,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       organisation: organisation
     } do
       {:ok, _} =
-        create_project(%{organisation_id: organisation.id, name: "Test Project"})
+        create_project(organisation, %{name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -74,7 +74,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       authorized_user: authorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: organisation.id, name: "Test Project"})
+        create_project(organisation, %{name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -90,7 +90,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       user: unauthorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: organisation.id, name: "Test Project"})
+        create_project(organisation, %{name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -106,7 +106,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       user: unauthorized_user
     } do
       {:ok, _} =
-        create_project(%{organisation_id: organisation.id, name: "Test Project"})
+        create_project(organisation, %{name: "Test Project"})
 
       {:ok, _, html} =
         conn
@@ -122,7 +122,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       user: unauthorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: organisation.id, name: "Test Project"})
+        create_project(organisation, %{name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
@@ -206,7 +206,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       organisation: organisation
     } do
       {:ok, project} =
-        create_project(%{organisation_id: organisation.id, name: "Test Project"})
+        create_project(organisation, %{name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
@@ -232,7 +232,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       authorized_user: authorized_user
     } do
       {:ok, project} =
-        create_project(%{organisation_id: organisation.id, name: "Test Project"})
+        create_project(organisation, %{name: "Test Project"})
 
       {:ok, index_live, _} =
         conn
@@ -257,8 +257,7 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       organisation: organisation,
       user: unauthorized_user
     } do
-      {:ok, project} =
-        create_project(%{organisation_id: organisation.id, name: "Test Project"})
+      {:ok, project} = create_project(organisation, %{name: "Test Project"})
 
       {:error, {:live_redirect, %{to: redirect_path, flash: flash}}} =
         conn

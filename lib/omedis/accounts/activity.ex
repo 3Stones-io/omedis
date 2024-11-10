@@ -29,6 +29,7 @@ defmodule Omedis.Accounts.Activity do
 
     references do
       reference :group, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :project, on_delete: :delete
     end
   end
@@ -43,7 +44,7 @@ defmodule Omedis.Accounts.Activity do
     end
 
     policy action_type(:read) do
-      authorize_if Omedis.Accounts.ActivityAccessFilter
+      authorize_if Omedis.Accounts.AccessFilter
     end
   end
 
@@ -225,16 +226,15 @@ defmodule Omedis.Accounts.Activity do
     end
   end
 
-  def get_color_code_for_a_group(group_id) do
+  def get_color_code_for_an_organisation(organisation) do
     __MODULE__
-    |> Ash.Query.filter(group_id: group_id)
     |> Ash.Query.select([:color_code])
-    |> Ash.read!(authorize?: false)
+    |> Ash.read!(authorize?: false, tenant: organisation)
     |> Enum.map(& &1.color_code)
   end
 
-  def select_unused_color_code(group_id) do
-    existing_color_codes = get_color_code_for_a_group(group_id)
+  def select_unused_color_code(organisation) do
+    existing_color_codes = get_color_code_for_an_organisation(organisation)
 
     unused_color_code =
       @github_issue_color_codes
@@ -245,6 +245,11 @@ defmodule Omedis.Accounts.Activity do
       nil -> Enum.random(@github_issue_color_codes)
       color_code -> color_code
     end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 
   relationships do
@@ -265,5 +270,7 @@ defmodule Omedis.Accounts.Activity do
     has_many :access_rights, Omedis.Accounts.AccessRight do
       manual Omedis.Accounts.Activity.Relationships.ActivityAccessRights
     end
+
+    belongs_to :organisation, Omedis.Accounts.Organisation
   end
 end

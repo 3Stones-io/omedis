@@ -12,59 +12,58 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
 
-    {:ok, group} = create_group(%{organisation_id: organisation.id})
+    {:ok, group} = create_group(organisation)
     {:ok, authorized_user} = create_user()
-    {:ok, _} = create_group_membership(%{group_id: group.id, user_id: authorized_user.id})
 
     {:ok, _} =
-      create_access_right(%{
+      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
+
+    {:ok, _} =
+      create_access_right(organisation, %{
         resource_name: "Invitation",
         create: true,
-        organisation_id: organisation.id,
         group_id: group.id,
         read: true
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "Organisation",
-        organisation_id: organisation.id,
         write: true,
         create: true
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        organisation_id: organisation.id,
         write: true,
         create: true
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
-        organisation_id: organisation.id,
         read: true,
         write: true,
         resource_name: "Invitation"
       })
 
     {:ok, _} =
-      create_access_right(%{
+      create_access_right(organisation, %{
         group_id: group.id,
-        organisation_id: organisation.id,
         read: true,
         resource_name: "Organisation"
       })
 
     {:ok, unauthorized_user} = create_user()
-    {:ok, group_2} = create_group()
-    {:ok, _} = create_group_membership(%{user_id: unauthorized_user.id, group_id: group_2.id})
+    {:ok, group_2} = create_group(organisation)
+
+    {:ok, _} =
+      create_group_membership(organisation, %{user_id: unauthorized_user.id, group_id: group_2.id})
 
     %{
       authorized_user: authorized_user,
@@ -81,9 +80,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       invitations =
         for i <- 1..20 do
           {:ok, invitation} =
-            create_invitation(%{
+            create_invitation(organisation, %{
               email: "test#{i}@example.com",
-              organisation_id: organisation.id,
               creator_id: if(Enum.random([true, false]), do: owner.id, else: authorized_user.id),
               language: "en"
             })
@@ -173,13 +171,14 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation
     } do
       {:ok, unauthorized_user} = create_user()
-      {:ok, group} = create_group()
-      {:ok, _} = create_group_membership(%{group_id: group.id, user_id: unauthorized_user.id})
+      {:ok, group} = create_group(organisation)
 
       {:ok, _} =
-        create_access_right(%{
+        create_group_membership(organisation, %{group_id: group.id, user_id: unauthorized_user.id})
+
+      {:ok, _} =
+        create_access_right(organisation, %{
           group_id: group.id,
-          organisation_id: organisation.id,
           read: true,
           resource_name: "Organisation"
         })
@@ -309,7 +308,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert [invitation] =
                Invitation
                |> Ash.Query.filter(email: "test@example.com")
-               |> Ash.read!(authorize?: false, load: [:groups])
+               |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
 
       assert invitation.email == "test@example.com"
       assert invitation.language == "en"
@@ -347,7 +346,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert [invitation] =
                Invitation
                |> Ash.Query.filter(email: "test@example.com")
-               |> Ash.read!(authorize?: false, load: [:groups])
+               |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
 
       assert invitation.email == "test@example.com"
       assert invitation.language == "en"
@@ -363,14 +362,13 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(%{organisation_id: organisation.id, user_id: user.id})
+        create_group(organisation, %{user_id: user.id})
 
-      {:ok, _} = create_group_membership(%{user_id: user.id, group_id: group.id})
+      {:ok, _} = create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
       {:ok, _} =
-        create_access_right(%{
+        create_access_right(organisation, %{
           resource_name: "Organisation",
-          organisation_id: organisation.id,
           group_id: group.id,
           read: true
         })
