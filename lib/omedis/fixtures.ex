@@ -158,7 +158,7 @@ defmodule Omedis.Fixtures do
   def attrs_for(Accounts.Project, _organisation) do
     %{
       name: Faker.Lorem.sentence(),
-      position: (System.os_time(:second) + :rand.uniform(1000)) |> to_string()
+      position: (System.os_time(:second) + :rand.uniform(999_999_999)) |> to_string()
     }
   end
 
