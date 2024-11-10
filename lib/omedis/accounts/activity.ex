@@ -44,7 +44,7 @@ defmodule Omedis.Accounts.Activity do
     end
 
     policy action_type(:read) do
-      authorize_if Omedis.Accounts.ActivityAccessFilter
+      authorize_if Omedis.Accounts.AccessFilter
     end
   end
 

@@ -8,9 +8,9 @@ defmodule Omedis.Accounts.GroupMembership do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.AccessFilter
   alias Omedis.Accounts.CanAccessResource
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupMembershipAccessFilter
   alias Omedis.Accounts.User
 
   postgres do
@@ -57,7 +57,7 @@ defmodule Omedis.Accounts.GroupMembership do
 
   policies do
     policy action_type(:read) do
-      authorize_if GroupMembershipAccessFilter
+      authorize_if AccessFilter
     end
 
     policy action_type([:create, :destroy]) do
