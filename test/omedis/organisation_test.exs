@@ -42,6 +42,12 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "create/1" do
+    require Ash.Query
+
+    alias Omedis.Accounts.AccessRight
+    alias Omedis.Accounts.Group
+    alias Omedis.Accounts.GroupMembership
+
     test "is only allowed for users without an organisation", %{user: user} do
       assert {:error, _} =
                Organisation.create(%{name: "New Organisation", slug: "new-organisation"},
@@ -63,6 +69,102 @@ defmodule Omedis.OrganisationTest do
 
     test "returns an error when attributes are invalid", %{user: user} do
       assert {:error, _} = Organisation.create(%{name: "Invalid Organisation"}, actor: user)
+    end
+
+    test "creates administrators group and adds organisation owner to it", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [admins_group]} =
+               Group
+               |> Ash.Query.filter(slug: "administrators", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert {:ok, [group_membership]} =
+               GroupMembership
+               |> Ash.Query.filter(user_id: user.id, group_id: admins_group.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert group_membership.user_id == user.id
+      assert group_membership.group_id == admins_group.id
+    end
+
+    test "creates administrators group with full access rights to all resources", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [admins_group]} =
+               Group
+               |> Ash.Query.filter(slug: "administrators", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert {:ok, [admins_group_rights]} =
+               AccessRight
+               |> Ash.Query.filter(group_id: admins_group.id, resource_name: "*")
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert admins_group_rights.create == true
+      assert admins_group_rights.read == true
+      assert admins_group_rights.update == true
+      assert admins_group_rights.write == true
+    end
+
+    test "creates employees group with read-only access rights to all resources", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [employees_group]} =
+               Group
+               |> Ash.Query.filter(slug: "employees", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert {:ok, [employees_group_rights]} =
+               AccessRight
+               |> Ash.Query.filter(group_id: employees_group.id, resource_name: "*")
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert employees_group_rights.read == true
+      assert employees_group_rights.write == false
+      assert employees_group_rights.update == false
+      assert employees_group_rights.create == false
+    end
+
+    test "creates employees group with create-only create access to LogEntry resource", %{
+      user: user
+    } do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [employees_group]} =
+               Group
+               |> Ash.Query.filter(slug: "employees", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert {:ok, [employees_group_rights]} =
+               AccessRight
+               |> Ash.Query.filter(group_id: employees_group.id, resource_name: "LogEntry")
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert employees_group_rights.create == true
+      assert employees_group_rights.read == true
+      assert employees_group_rights.update == false
+      assert employees_group_rights.write == false
     end
   end
 
