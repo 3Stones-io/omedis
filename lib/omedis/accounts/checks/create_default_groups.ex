@@ -16,7 +16,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
   def change(changeset, _, _) do
     Ash.Changeset.after_action(changeset, fn _changeset, record ->
       organisation = Ash.load!(record, :owner)
-      opts = [actor: organisation.owner, tenant: organisation]
+      opts = [actor: organisation.owner, authorize?: false, tenant: organisation]
 
       [administrators_group, employees_group] = create_default_groups(organisation, opts)
       create_admin_access_rights(administrators_group, opts)
