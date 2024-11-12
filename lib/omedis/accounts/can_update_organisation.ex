@@ -24,7 +24,8 @@ defmodule Omedis.Accounts.CanUpdateOrganisation do
     Ash.exists?(
       filter(
         AccessRight,
-        (write || update) && exists(group.group_memberships, user_id == ^actor.id)
+        resource_name == "Organisation" and
+          (write || update) && exists(group.group_memberships, user_id == ^actor.id)
       ),
       tenant: organisation
     )
