@@ -12,7 +12,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
 
   alias Omedis.Accounts
 
-  @select_resources [
+  @admin_full_access_resources [
     "AccessRight",
     "Activity",
     "Group",
@@ -25,21 +25,41 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
     "Token"
   ]
 
-  @impl true
-  def change(changeset, _, _) do
-    Ash.Changeset.after_action(changeset, fn _changeset, record ->
-      organisation = Ash.load!(record, :owner)
-      opts = [actor: organisation.owner, tenant: organisation]
+  @admin_read_only_resources ["User"]
 
-      [administrators_group, users_group] = create_default_groups(organisation, opts)
+  @user_read_only_resources [
+    "AccessRight",
+    "Activity",
+    "Group",
+    "GroupMembership",
+    "Invitation",
+    "InvitationGroup",
+    "Organisation",
+    "Project",
+    "Token",
+    "User"
+  ]
+
+  @user_create_resources ["LogEntry"]
+
+  @impl true
+  def change(changeset, _, %{actor: nil}), do: changeset
+
+  def change(changeset, _, context) do
+    actor = Map.get(context, :actor)
+
+    Ash.Changeset.after_action(changeset, fn _changeset, organisation ->
+      opts = [actor: actor, tenant: organisation]
+      administrators_group = create_admins_group(organisation, opts)
+      users_group = create_users_group(organisation, opts)
       create_admin_access_rights(administrators_group, opts)
-      create_employee_access_rights(users_group, opts)
+      create_user_access_rights(users_group, opts)
 
       {:ok, organisation}
     end)
   end
 
-  defp create_default_groups(organisation, opts) do
+  defp create_admins_group(organisation, opts) do
     {:ok, administrators_group} =
       Accounts.Group.create(
         %{
@@ -59,6 +79,10 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
         opts
       )
 
+    administrators_group
+  end
+
+  defp create_users_group(organisation, opts) do
     {:ok, users_group} =
       Accounts.Group.create(
         %{
@@ -69,11 +93,11 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
         opts
       )
 
-    [administrators_group, users_group]
+    users_group
   end
 
   defp create_admin_access_rights(group, opts) do
-    Enum.each(@select_resources, fn resource_name ->
+    for resource_name <- @admin_full_access_resources do
       {:ok, _} =
         Accounts.AccessRight.create(
           %{
@@ -86,30 +110,9 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
           },
           opts
         )
-    end)
+    end
 
-    # # Create more fine-grained access rights for the User resource
-    {:ok, _} =
-      Accounts.AccessRight.create(
-        %{
-          create: false,
-          group_id: group.id,
-          read: true,
-          resource_name: "User",
-          update: false,
-          write: false
-        },
-        opts
-      )
-  end
-
-  defp create_employee_access_rights(group, opts) do
-    resources =
-      @select_resources
-      |> Kernel.++(["User"])
-      |> Kernel.--(["LogEntry"])
-
-    Enum.each(resources, fn resource_name ->
+    for resource_name <- @admin_read_only_resources do
       {:ok, _} =
         Accounts.AccessRight.create(
           %{
@@ -122,20 +125,38 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
           },
           opts
         )
-    end)
+    end
+  end
 
-    # Create more fine-grained access right for the LogEntry resource
-    {:ok, _} =
-      Accounts.AccessRight.create(
-        %{
-          create: true,
-          group_id: group.id,
-          read: true,
-          resource_name: "LogEntry",
-          update: false,
-          write: false
-        },
-        opts
-      )
+  defp create_user_access_rights(group, opts) do
+    for resource_name <- @user_read_only_resources do
+      {:ok, _} =
+        Accounts.AccessRight.create(
+          %{
+            create: false,
+            group_id: group.id,
+            read: true,
+            resource_name: resource_name,
+            update: false,
+            write: false
+          },
+          opts
+        )
+    end
+
+    for resource_name <- @user_create_resources do
+      {:ok, _} =
+        Accounts.AccessRight.create(
+          %{
+            create: true,
+            group_id: group.id,
+            read: true,
+            resource_name: resource_name,
+            update: false,
+            write: false
+          },
+          opts
+        )
+    end
   end
 end
