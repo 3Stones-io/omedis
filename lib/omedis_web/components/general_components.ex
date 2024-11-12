@@ -9,6 +9,8 @@ defmodule OmedisWeb.GeneralComponents do
 
   import Gettext, only: [with_locale: 2]
 
+  alias Phoenix.LiveView.JS
+
   def breadcrumb(assigns) do
     ~H"""
     <div class="lg:hidden -mt-10 mb-3 -mx-6 lg:-mx-8">
@@ -135,6 +137,7 @@ defmodule OmedisWeb.GeneralComponents do
         language={@language}
         organisations_count={@organisations_count}
       />
+
       <.desktop_sidebar
         current_organisation={@current_organisation}
         current_user={@current_user}
@@ -148,7 +151,7 @@ defmodule OmedisWeb.GeneralComponents do
 
   def mobile_sidebar(assigns) do
     ~H"""
-    <div class=" h-[100vh] flex flex-col gap-4 " style="z-index: 1000">
+    <div class="grow h-[100vh] flex flex-col gap-4">
       <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
         <.link navigate="/" class="flex h-16 shrink-0 items-center">
           <img
@@ -401,10 +404,17 @@ defmodule OmedisWeb.GeneralComponents do
 
   defp topbar(assigns) do
     ~H"""
-    <div class=" lg:pl-72">
-      <div class="sticky top-0   flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-        <div x-data="{ open: false }" @click="open = !open">
-          <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden">
+    <div class="lg:pl-72">
+      <div class="sticky top-0 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div class="lg:hidden">
+          <button
+            type="button"
+            class="-m-2.5 p-2.5 text-gray-700"
+            phx-click={
+              JS.show(to: "#mobile-sidebar", transition: "slide-right")
+              |> JS.add_class("z-[1000]", to: "#mobile-sidebar")
+            }
+          >
             <span class="sr-only">Open sidebar</span>
             <svg
               class="h-6 w-6"
@@ -423,28 +433,26 @@ defmodule OmedisWeb.GeneralComponents do
           </button>
 
           <div
-            x-show="open"
-            class=" absolute  top-0 w-[100vw] h-[100vh] flex gap-4 items-start border-none  bg-white left-0 "
+            id="mobile-sidebar"
+            class="hidden absolute top-0 w-[100%] h-[100vh] border-none bg-white left-0"
           >
-            <div class="fixed inset-0  bg-black/20 " aria-hidden="true"></div>
-            <div
-              @click.outside="open = false"
-              @keydown.escape.window="open = false"
-              x-show="open"
-              x-transition
-              x-cloak
-              class="w-[75%]   h-[100vh] "
-            >
+            <div class="flex gap-4">
               <.mobile_sidebar
                 current_organisation={@current_organisation}
                 current_user={@current_user}
                 organisations_count={@organisations_count}
                 language={@language}
               />
-            </div>
-
-            <div class="p-4 text-black" @click="open = false" x-show="open" x-transition x-cloak>
-              <.close_icon />
+              <button
+                type="button"
+                class="p-4 text-black self-start"
+                phx-click={
+                  JS.hide(to: "#mobile-sidebar", transition: "slide-right")
+                  |> JS.remove_class("z-[1000]", to: "#mobile-sidebar")
+                }
+              >
+                <.close_icon />
+              </button>
             </div>
           </div>
         </div>
@@ -482,16 +490,15 @@ defmodule OmedisWeb.GeneralComponents do
 
               <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true"></div>
 
-              <div class="relative" x-data="{ open: false }" @click="open = !open">
+              <div class="relative">
                 <button
                   type="button"
                   class="-m-1.5 flex items-center p-1.5"
                   id="user-menu-button"
                   aria-expanded="false"
                   aria-haspopup="true"
+                  phx-click={JS.toggle(to: "#user-menu", in: "fade-in-scale", out: "fade-out-scale")}
                 >
-                  <span class="sr-only">Open user menu</span>
-
                   <span class="hidden lg:flex lg:items-center">
                     <span class="ml-4 text-sm font-medium leading-6 text-gray-900" aria-hidden="true">
                       <%= if @current_user do %>
@@ -790,16 +797,13 @@ defmodule OmedisWeb.GeneralComponents do
   defp dropdown_items(assigns) do
     ~H"""
     <div
-      class="absolute right-0 z-10 mt-2.5  origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+      class="absolute right-0 z-10 mt-2.5  origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none hidden"
       role="menu"
-      @click.outside="open = false"
-      @keydown.escape.window="open = false"
-      x-show="open"
-      x-transition
-      x-cloak
       aria-orientation="vertical"
       aria-labelledby="user-menu-button"
       tabindex="-1"
+      id="user-menu"
+      phx-click-away={JS.hide(to: "#user-menu", transition: "fade-out-scale")}
     >
       <div :if={@current_user} class="flex  p-2 flex-col gap-2">
         <.link navigate="/edit_profile">
