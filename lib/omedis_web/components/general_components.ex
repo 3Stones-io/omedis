@@ -411,7 +411,7 @@ defmodule OmedisWeb.GeneralComponents do
             type="button"
             class="-m-2.5 p-2.5 text-gray-700"
             phx-click={
-              JS.show(to: "#mobile-sidebar", transition: "slide-right")
+              JS.show(to: "#mobile-sidebar", transition: "fade-in-scale")
               |> JS.add_class("z-[1000]", to: "#mobile-sidebar")
             }
           >
