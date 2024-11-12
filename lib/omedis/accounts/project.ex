@@ -36,11 +36,6 @@ defmodule Omedis.Accounts.Project do
     define :list_paginated
   end
 
-  identities do
-    identity :unique_name, :name
-    identity :unique_position, :position
-  end
-
   actions do
     create :create do
       accept [
@@ -83,20 +78,29 @@ defmodule Omedis.Accounts.Project do
     end
   end
 
+  policies do
+    policy action_type([:create, :update]) do
+      authorize_if CanAccessResource
+    end
+
+    policy action_type(:read) do
+      authorize_if AccessFilter
+    end
+
+    policy do
+      authorize_if always()
+    end
+  end
+
   validations do
     validate present(:name)
 
     validate present(:position)
   end
 
-  attributes do
-    uuid_primary_key :id
-
-    attribute :name, :string, allow_nil?: false, public?: true
-    attribute :position, :string, allow_nil?: false, public?: true
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 
   def get_max_position_by_organisation_id(organisation_id, opts \\ []) do
@@ -113,6 +117,16 @@ defmodule Omedis.Accounts.Project do
     end
   end
 
+  attributes do
+    uuid_primary_key :id
+
+    attribute :name, :string, allow_nil?: false, public?: true
+    attribute :position, :string, allow_nil?: false, public?: true
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
   relationships do
     belongs_to :organisation, Omedis.Accounts.Organisation
 
@@ -121,22 +135,8 @@ defmodule Omedis.Accounts.Project do
     end
   end
 
-  policies do
-    policy action_type([:create, :update]) do
-      authorize_if CanAccessResource
-    end
-
-    policy action_type(:read) do
-      authorize_if AccessFilter
-    end
-
-    policy do
-      authorize_if always()
-    end
-  end
-
-  multitenancy do
-    strategy :attribute
-    attribute :organisation_id
+  identities do
+    identity :unique_name, :name
+    identity :unique_position, :position
   end
 end

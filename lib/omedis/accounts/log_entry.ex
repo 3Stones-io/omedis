@@ -113,6 +113,21 @@ defmodule Omedis.Accounts.LogEntry do
     end
   end
 
+  policies do
+    policy action_type(:read) do
+      authorize_if AccessFilter
+    end
+
+    policy action_type([:create, :update]) do
+      authorize_if CanAccessResource
+    end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -143,20 +158,5 @@ defmodule Omedis.Accounts.LogEntry do
     has_many :access_rights, Omedis.Accounts.AccessRight do
       manual Omedis.Accounts.LogEntry.Relationships.LogEntryAccessRights
     end
-  end
-
-  policies do
-    policy action_type(:read) do
-      authorize_if AccessFilter
-    end
-
-    policy action_type([:create, :update]) do
-      authorize_if CanAccessResource
-    end
-  end
-
-  multitenancy do
-    strategy :attribute
-    attribute :organisation_id
   end
 end

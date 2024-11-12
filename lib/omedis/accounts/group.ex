@@ -29,10 +29,6 @@ defmodule Omedis.Accounts.Group do
     plural_name :groups
   end
 
-  identities do
-    identity :unique_slug_per_organisation, :slug
-  end
-
   code_interface do
     domain Omedis.Accounts
     define :create
@@ -93,18 +89,23 @@ defmodule Omedis.Accounts.Group do
     end
   end
 
+  policies do
+    policy action_type([:create, :update, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action_type([:read]) do
+      authorize_if Omedis.Accounts.AccessFilter
+    end
+  end
+
   validations do
     validate present(:name)
   end
 
-  def slug_exists?(slug, organisation_id) do
-    __MODULE__
-    |> Ash.Query.filter(slug: slug, organisation_id: organisation_id)
-    |> Ash.read_one!(authorize?: false)
-    |> case do
-      nil -> false
-      _ -> true
-    end
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 
   attributes do
@@ -136,18 +137,17 @@ defmodule Omedis.Accounts.Group do
     end
   end
 
-  policies do
-    policy action_type([:create, :update, :destroy]) do
-      authorize_if Omedis.Accounts.CanAccessResource
-    end
-
-    policy action_type([:read]) do
-      authorize_if Omedis.Accounts.AccessFilter
-    end
+  identities do
+    identity :unique_slug_per_organisation, :slug
   end
 
-  multitenancy do
-    strategy :attribute
-    attribute :organisation_id
+  def slug_exists?(slug, organisation_id) do
+    __MODULE__
+    |> Ash.Query.filter(slug: slug, organisation_id: organisation_id)
+    |> Ash.read_one!(authorize?: false)
+    |> case do
+      nil -> false
+      _ -> true
+    end
   end
 end

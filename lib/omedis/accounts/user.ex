@@ -13,25 +13,41 @@ defmodule Omedis.Accounts.User do
   alias Omedis.Accounts.Organisation
   alias Omedis.Validations
 
-  attributes do
-    uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false, public?: true
-    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-    attribute :first_name, :string, allow_nil?: false, public?: true
-    attribute :last_name, :string, allow_nil?: false, public?: true
-    attribute :gender, :string, allow_nil?: true, public?: true
-    attribute :birthdate, :date, allow_nil?: false, public?: true
-    attribute :current_organisation_id, :uuid, allow_nil?: true, public?: false
-    attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
-    attribute :daily_start_at, :time, allow_nil?: true, public?: true
-    attribute :daily_end_at, :time, allow_nil?: true, public?: true
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
+  postgres do
+    table "users"
+    repo Omedis.Repo
   end
 
-  validations do
-    validate {Validations.Language, attribute: :lang}
+  authentication do
+    strategies do
+      password :password do
+        identity_field :email
+
+        sign_in_tokens_enabled? true
+        confirmation_required?(false)
+
+        register_action_accept([
+          :current_organisation_id,
+          :email,
+          :first_name,
+          :last_name,
+          :gender,
+          :birthdate,
+          :lang,
+          :daily_start_at,
+          :daily_end_at
+        ])
+      end
+    end
+
+    tokens do
+      enabled? true
+      token_resource Omedis.Accounts.Token
+
+      signing_secret fn _, _ ->
+        Application.fetch_env(:omedis, :token_signing_secret)
+      end
+    end
   end
 
   code_interface do
@@ -42,10 +58,6 @@ defmodule Omedis.Accounts.User do
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_email, get_by: [:email], action: :read
-  end
-
-  calculations do
-    calculate :as_string, :string, expr(first_name <> " " <> last_name)
   end
 
   actions do
@@ -91,44 +103,6 @@ defmodule Omedis.Accounts.User do
     end
   end
 
-  relationships do
-    many_to_many :groups, Group do
-      through GroupMembership
-    end
-  end
-
-  authentication do
-    strategies do
-      password :password do
-        identity_field :email
-
-        sign_in_tokens_enabled? true
-        confirmation_required?(false)
-
-        register_action_accept([
-          :current_organisation_id,
-          :email,
-          :first_name,
-          :last_name,
-          :gender,
-          :birthdate,
-          :lang,
-          :daily_start_at,
-          :daily_end_at
-        ])
-      end
-    end
-
-    tokens do
-      enabled? true
-      token_resource Omedis.Accounts.Token
-
-      signing_secret fn _, _ ->
-        Application.fetch_env(:omedis, :token_signing_secret)
-      end
-    end
-  end
-
   preparations do
     prepare build(
               load: [
@@ -137,9 +111,35 @@ defmodule Omedis.Accounts.User do
             )
   end
 
-  postgres do
-    table "users"
-    repo Omedis.Repo
+  validations do
+    validate {Validations.Language, attribute: :lang}
+  end
+
+  attributes do
+    uuid_primary_key :id
+    attribute :email, :ci_string, allow_nil?: false, public?: true
+    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
+    attribute :first_name, :string, allow_nil?: false, public?: true
+    attribute :last_name, :string, allow_nil?: false, public?: true
+    attribute :gender, :string, allow_nil?: true, public?: true
+    attribute :birthdate, :date, allow_nil?: false, public?: true
+    attribute :current_organisation_id, :uuid, allow_nil?: true, public?: false
+    attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
+    attribute :daily_start_at, :time, allow_nil?: true, public?: true
+    attribute :daily_end_at, :time, allow_nil?: true, public?: true
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    many_to_many :groups, Group do
+      through GroupMembership
+    end
+  end
+
+  calculations do
+    calculate :as_string, :string, expr(first_name <> " " <> last_name)
   end
 
   identities do

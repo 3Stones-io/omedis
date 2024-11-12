@@ -38,10 +38,6 @@ defmodule Omedis.Accounts.Organisation do
     plural_name :organisations
   end
 
-  identities do
-    identity :unique_slug, [:slug]
-  end
-
   code_interface do
     domain Omedis.Accounts
     define :read
@@ -150,6 +146,42 @@ defmodule Omedis.Accounts.Organisation do
     end
   end
 
+  policies do
+    policy action_type(:read) do
+      authorize_if OrganisationsAccessFilter
+    end
+
+    policy action_type(:create) do
+      authorize_if CanCreateOrganisation
+    end
+
+    policy action_type([:destroy, :update]) do
+      authorize_if CanUpdateOrganisation
+    end
+  end
+
+  preparations do
+    prepare build(
+              load: [
+                :owner
+              ]
+            )
+  end
+
+  validations do
+    validate {Validations.Timezone, attribute: :timezone}
+  end
+
+  def slug_exists?(slug) do
+    __MODULE__
+    |> Ash.Query.filter(slug: slug)
+    |> Ash.read_one!(authorize?: false)
+    |> case do
+      nil -> false
+      _ -> true
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -224,28 +256,6 @@ defmodule Omedis.Accounts.Organisation do
     update_timestamp :updated_at
   end
 
-  validations do
-    validate {Validations.Timezone, attribute: :timezone}
-  end
-
-  def slug_exists?(slug) do
-    __MODULE__
-    |> Ash.Query.filter(slug: slug)
-    |> Ash.read_one!(authorize?: false)
-    |> case do
-      nil -> false
-      _ -> true
-    end
-  end
-
-  preparations do
-    prepare build(
-              load: [
-                :owner
-              ]
-            )
-  end
-
   relationships do
     has_many :access_rights, Omedis.Accounts.AccessRight
 
@@ -258,17 +268,7 @@ defmodule Omedis.Accounts.Organisation do
     has_many :projects, Project
   end
 
-  policies do
-    policy action_type(:read) do
-      authorize_if OrganisationsAccessFilter
-    end
-
-    policy action_type(:create) do
-      authorize_if CanCreateOrganisation
-    end
-
-    policy action_type([:destroy, :update]) do
-      authorize_if CanUpdateOrganisation
-    end
+  identities do
+    identity :unique_slug, [:slug]
   end
 end

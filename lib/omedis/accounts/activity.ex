@@ -38,16 +38,6 @@ defmodule Omedis.Accounts.Activity do
     plural_name :activities
   end
 
-  policies do
-    policy action_type([:create, :update, :destroy]) do
-      authorize_if Omedis.Accounts.CanAccessResource
-    end
-
-    policy action_type(:read) do
-      authorize_if Omedis.Accounts.AccessFilter
-    end
-  end
-
   code_interface do
     domain Omedis.Accounts
     define :read
@@ -57,13 +47,6 @@ defmodule Omedis.Accounts.Activity do
     define :by_id, get_by: [:id], action: :read
     define :list_paginated
     define :by_group_id_and_project_id
-  end
-
-  identities do
-    identity :unique_color_code_position, [:color_code, :group_id]
-
-    identity :unique_position, [:position, :group_id]
-    identity :unique_slug, [:slug, :group_id], eager_check?: true
   end
 
   actions do
@@ -155,6 +138,16 @@ defmodule Omedis.Accounts.Activity do
     end
   end
 
+  policies do
+    policy action_type([:create, :update, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action_type(:read) do
+      authorize_if Omedis.Accounts.AccessFilter
+    end
+  end
+
   validations do
     validate present(:name)
 
@@ -162,6 +155,11 @@ defmodule Omedis.Accounts.Activity do
       message: "Color code must be a valid hex color code eg. #FF0000"
 
     validate present(:color_code)
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 
   attributes do
@@ -182,6 +180,35 @@ defmodule Omedis.Accounts.Activity do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :group, Omedis.Accounts.Group do
+      allow_nil? false
+      attribute_writable? true
+    end
+
+    belongs_to :project, Omedis.Accounts.Project do
+      allow_nil? false
+      attribute_writable? true
+    end
+
+    has_many :log_entries, Omedis.Accounts.LogEntry do
+      domain Omedis.Accounts
+    end
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Activity.Relationships.ActivityAccessRights
+    end
+
+    belongs_to :organisation, Omedis.Accounts.Organisation
+  end
+
+  identities do
+    identity :unique_color_code_position, [:color_code, :group_id]
+
+    identity :unique_position, [:position, :group_id]
+    identity :unique_slug, [:slug, :group_id], eager_check?: true
   end
 
   def move_up(activity, opts \\ []) do
@@ -245,32 +272,5 @@ defmodule Omedis.Accounts.Activity do
       nil -> Enum.random(@github_issue_color_codes)
       color_code -> color_code
     end
-  end
-
-  multitenancy do
-    strategy :attribute
-    attribute :organisation_id
-  end
-
-  relationships do
-    belongs_to :group, Omedis.Accounts.Group do
-      allow_nil? false
-      attribute_writable? true
-    end
-
-    belongs_to :project, Omedis.Accounts.Project do
-      allow_nil? false
-      attribute_writable? true
-    end
-
-    has_many :log_entries, Omedis.Accounts.LogEntry do
-      domain Omedis.Accounts
-    end
-
-    has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.Activity.Relationships.ActivityAccessRights
-    end
-
-    belongs_to :organisation, Omedis.Accounts.Organisation
   end
 end
