@@ -3,6 +3,18 @@ defmodule Omedis.OrganisationTest do
 
   alias Omedis.Accounts.Organisation
 
+  @default_resources [
+    "AccessRight",
+    "Activity",
+    "Group",
+    "GroupMembership",
+    "Invitation",
+    "InvitationGroup",
+    "Organisation",
+    "Project",
+    "Token"
+  ]
+
   setup do
     {:ok, user} = create_user()
     {:ok, organisation} = create_organisation()
@@ -93,7 +105,9 @@ defmodule Omedis.OrganisationTest do
       assert group_membership.group_id == admins_group.id
     end
 
-    test "creates administrators group with full access rights to all resources", %{user: user} do
+    test "creates administrators group with full access rights to select resources", %{user: user} do
+      select_resources = @default_resources ++ ["LogEntry"]
+
       params =
         Organisation
         |> attrs_for(nil)
@@ -106,18 +120,33 @@ defmodule Omedis.OrganisationTest do
                |> Ash.Query.filter(slug: "administrators", organisation_id: organisation.id)
                |> Ash.read(actor: user, tenant: organisation)
 
-      assert {:ok, [admins_group_rights]} =
+      Enum.each(select_resources, fn resource_name ->
+        assert {:ok, [access_right]} =
+                 AccessRight
+                 |> Ash.Query.filter(group_id: admins_group.id, resource_name: resource_name)
+                 |> Ash.read(actor: user, tenant: organisation)
+
+        assert access_right.create == true
+        assert access_right.read == true
+        assert access_right.update == true
+        assert access_right.write == true
+      end)
+
+      # Special case for User resource which has read-only access
+      assert {:ok, [user_access_right]} =
                AccessRight
-               |> Ash.Query.filter(group_id: admins_group.id, resource_name: "*")
+               |> Ash.Query.filter(group_id: admins_group.id, resource_name: "User")
                |> Ash.read(actor: user, tenant: organisation)
 
-      assert admins_group_rights.create == true
-      assert admins_group_rights.read == true
-      assert admins_group_rights.update == true
-      assert admins_group_rights.write == true
+      assert user_access_right.create == false
+      assert user_access_right.read == true
+      assert user_access_right.update == false
+      assert user_access_right.write == false
     end
 
-    test "creates employees group with read-only access rights to all resources", %{user: user} do
+    test "creates users group with read-only access rights to select resources", %{user: user} do
+      select_resources = @default_resources ++ ["User"]
+
       params =
         Organisation
         |> attrs_for(nil)
@@ -125,23 +154,25 @@ defmodule Omedis.OrganisationTest do
 
       assert {:ok, organisation} = Organisation.create(params, actor: user)
 
-      assert {:ok, [employees_group]} =
+      assert {:ok, [users_group]} =
                Group
-               |> Ash.Query.filter(slug: "employees", organisation_id: organisation.id)
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
                |> Ash.read(actor: user, tenant: organisation)
 
-      assert {:ok, [employees_group_rights]} =
-               AccessRight
-               |> Ash.Query.filter(group_id: employees_group.id, resource_name: "*")
-               |> Ash.read(actor: user, tenant: organisation)
+      Enum.each(select_resources, fn resource_name ->
+        assert {:ok, [access_right]} =
+                 AccessRight
+                 |> Ash.Query.filter(group_id: users_group.id, resource_name: resource_name)
+                 |> Ash.read(actor: user, tenant: organisation)
 
-      assert employees_group_rights.read == true
-      assert employees_group_rights.write == false
-      assert employees_group_rights.update == false
-      assert employees_group_rights.create == false
+        assert access_right.create == false
+        assert access_right.read == true
+        assert access_right.update == false
+        assert access_right.write == false
+      end)
     end
 
-    test "creates employees group with create-only create access to LogEntry resource", %{
+    test "creates users group with create-only create access to LogEntry resource", %{
       user: user
     } do
       params =
@@ -151,20 +182,20 @@ defmodule Omedis.OrganisationTest do
 
       assert {:ok, organisation} = Organisation.create(params, actor: user)
 
-      assert {:ok, [employees_group]} =
+      assert {:ok, [users_group]} =
                Group
-               |> Ash.Query.filter(slug: "employees", organisation_id: organisation.id)
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
                |> Ash.read(actor: user, tenant: organisation)
 
-      assert {:ok, [employees_group_rights]} =
+      assert {:ok, [users_group_rights]} =
                AccessRight
-               |> Ash.Query.filter(group_id: employees_group.id, resource_name: "LogEntry")
+               |> Ash.Query.filter(group_id: users_group.id, resource_name: "LogEntry")
                |> Ash.read(actor: user, tenant: organisation)
 
-      assert employees_group_rights.create == true
-      assert employees_group_rights.read == true
-      assert employees_group_rights.update == false
-      assert employees_group_rights.write == false
+      assert users_group_rights.create == true
+      assert users_group_rights.read == true
+      assert users_group_rights.update == false
+      assert users_group_rights.write == false
     end
   end
 
