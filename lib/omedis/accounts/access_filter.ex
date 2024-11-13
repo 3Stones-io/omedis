@@ -4,8 +4,6 @@ defmodule Omedis.Accounts.AccessFilter do
   """
   use Ash.Policy.FilterCheck
 
-  require Ash.Query
-
   def describe(_) do
     "Filtering resources based on user access rights"
   end
@@ -14,26 +12,13 @@ defmodule Omedis.Accounts.AccessFilter do
   def filter(_actor, %{subject: %{tenant: nil}}, _options), do: expr(false)
 
   def filter(actor, %{subject: %{tenant: organisation}}, _options) do
-    actor_is_admin = check_if_actor_is_admin(actor, organisation)
-
-    if actor_is_admin do
-      expr(true)
-    else
-      expr(
-        exists(
-          access_rights,
-          organisation_id == ^organisation.id and
-            read == true and
-            exists(group.group_memberships, user_id == ^actor.id)
-        )
+    expr(
+      exists(
+        access_rights,
+        organisation_id == ^organisation.id and
+          read == true and
+          exists(group.group_memberships, user_id == ^actor.id)
       )
-    end
-  end
-
-  defp check_if_actor_is_admin(actor, organisation) do
-    Omedis.Accounts.AccessRight
-    |> Ash.Query.filter(resource_name: "*")
-    |> Ash.Query.filter(exists(group.group_memberships, user_id == ^actor.id))
-    |> Ash.exists?(actor: actor, tenant: organisation)
+    )
   end
 end
