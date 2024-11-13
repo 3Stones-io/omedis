@@ -17,18 +17,48 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "name",
+      "source": "resource_name",
       "type": "text"
     },
     {
-      "allow_nil?": false,
-      "default": "nil",
+      "allow_nil?": true,
+      "default": "false",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "position",
-      "type": "text"
+      "source": "read",
+      "type": "boolean"
+    },
+    {
+      "allow_nil?": true,
+      "default": "false",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "write",
+      "type": "boolean"
+    },
+    {
+      "allow_nil?": true,
+      "default": "false",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "update",
+      "type": "boolean"
+    },
+    {
+      "allow_nil?": true,
+      "default": "false",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "create",
+      "type": "boolean"
     },
     {
       "allow_nil?": false,
@@ -51,7 +81,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -68,7 +98,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "projects_organisation_id_fkey",
+        "name": "access_rights_organisation_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
@@ -78,6 +108,35 @@
       "size": null,
       "source": "organisation_id",
       "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": "organisation_id",
+          "global": false,
+          "strategy": "attribute"
+        },
+        "name": "access_rights_group_id_fkey",
+        "on_delete": "delete",
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "groups"
+      },
+      "size": null,
+      "source": "group_id",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -85,37 +144,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "9F87388C9D6A491F182C2380AB82817C2BFE412B1ED4D5273676A6A979EDBA85",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "projects_unique_name_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "name"
-        }
-      ],
-      "name": "unique_name",
-      "nils_distinct?": true,
-      "where": null
-    },
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "projects_unique_position_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "position"
-        }
-      ],
-      "name": "unique_position",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "hash": "C7D8421075B9737D18EBF4228017EFB8626A38D2FD95F3357F999D32B996DFCB",
+  "identities": [],
   "multitenancy": {
     "attribute": "organisation_id",
     "global": false,
@@ -123,5 +153,5 @@
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,
-  "table": "projects"
+  "table": "access_rights"
 }
