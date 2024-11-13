@@ -27,8 +27,6 @@ defmodule Omedis.Accounts.Event do
     domain Omedis.Accounts
     define :by_activity
     define :by_activity_today
-    define :by_organisation
-    define :by_organisation_today
     define :create
     define :read
     define :update
@@ -59,29 +57,6 @@ defmodule Omedis.Accounts.Event do
 
       filter expr(
                activity_id == ^arg(:activity_id) and
-                 fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
-             )
-    end
-
-    read :by_organisation do
-      argument :organisation_id, :uuid do
-        allow_nil? false
-      end
-
-      prepare build(load: [:dtstamp, :uid, :duration_minutes])
-
-      filter expr(organisation_id == ^arg(:organisation_id))
-    end
-
-    read :by_organisation_today do
-      argument :organisation_id, :uuid do
-        allow_nil? false
-      end
-
-      prepare build(load: [:dtstamp, :uid, :duration_minutes])
-
-      filter expr(
-               organisation_id == ^arg(:organisation_id) and
                  fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
              )
     end
