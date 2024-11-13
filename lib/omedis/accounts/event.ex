@@ -27,7 +27,6 @@ defmodule Omedis.Accounts.Event do
     domain Omedis.Accounts
     define :by_activity
     define :by_activity_today
-    define :by_id, get_by: [:id], action: :read
     define :by_organisation
     define :by_organisation_today
     define :create
