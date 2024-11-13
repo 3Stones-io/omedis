@@ -255,7 +255,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
     end
 
     test "edits the organisation when user has access", %{conn: conn, user: user} do
-      {:ok, organisation} = create_organisation(%{owner_id: user.id})
+      {:ok, organisation} = create_organisation(%{owner_id: user.id}, actor: user)
 
       {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation}/edit")
 

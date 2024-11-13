@@ -8,7 +8,7 @@ defmodule Omedis.Workers.InvitationEmailWorkerTest do
 
   setup do
     {:ok, user} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    {:ok, organisation} = create_organisation(%{owner_id: user.id}, actor: user)
     {:ok, group} = create_group(organisation)
 
     {:ok, invitation} =
