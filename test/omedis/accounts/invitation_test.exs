@@ -193,19 +193,6 @@ defmodule Omedis.Accounts.InvitationTest do
       invitation: invitation,
       owner: organisation_owner
     } do
-      # require Ash.Query
-
-      # Omedis.Accounts.AccessRight
-      # |> Ash.Query.filter(
-      #   resource_name: "Invitation",
-      #   update: true,
-      #   write: true,
-      #   create: true,
-      #   read: true
-      # )
-      # |> Ash.read!(actor: organisation_owner, tenant: organisation)
-      # |> IO.inspect(label: "[202]", limit: :infinity, pretty: true)
-
       assert :ok = Invitation.destroy(invitation, actor: organisation_owner, tenant: organisation)
     end
 
