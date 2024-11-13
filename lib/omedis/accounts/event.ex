@@ -82,15 +82,24 @@ defmodule Omedis.Accounts.Event do
 
     create :create do
       accept [
-        :created_at,
-        :summary,
-        :dtstart,
-        :dtend,
         :activity_id,
+        :dtend,
+        :dtstart,
+        :summary,
         :user_id
       ]
 
       primary? true
+
+      change fn changeset, _ ->
+        case changeset.context do
+          %{created_at: created_at} ->
+            Ash.Changeset.change_attribute(changeset, :created_at, created_at)
+
+          _ ->
+            changeset
+        end
+      end
     end
 
     read :read do
@@ -100,10 +109,10 @@ defmodule Omedis.Accounts.Event do
 
     update :update do
       accept [
-        :summary,
-        :dtstart,
-        :dtend,
         :activity_id,
+        :dtend,
+        :dtstart,
+        :summary,
         :user_id
       ]
 

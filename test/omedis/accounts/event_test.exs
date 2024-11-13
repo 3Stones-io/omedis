@@ -114,11 +114,14 @@ defmodule Omedis.EventTest do
         })
 
       {:ok, _event_2} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id,
-          created_at: DateTime.add(DateTime.utc_now(), -2, :day)
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: user.id
+          },
+          context: %{created_at: DateTime.add(DateTime.utc_now(), -2, :day)}
+        )
 
       {:ok, result} =
         Event.by_activity_today(
@@ -217,11 +220,14 @@ defmodule Omedis.EventTest do
         })
 
       {:ok, _event_2} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id,
-          created_at: DateTime.add(DateTime.utc_now(), -2, :day)
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: user.id
+          },
+          context: %{created_at: DateTime.add(DateTime.utc_now(), -2, :day)}
+        )
 
       {:ok, result} =
         Event.by_organisation_today(%{organisation_id: organisation.id},

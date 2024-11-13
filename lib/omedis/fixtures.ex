@@ -21,8 +21,8 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.Activity, organisation, attrs)
   end
 
-  def create_event(organisation, attrs \\ %{}) do
-    fixture(Accounts.Event, organisation, attrs)
+  def create_event(organisation, attrs \\ %{}, opts \\ []) do
+    fixture(Accounts.Event, organisation, attrs, opts)
   end
 
   def create_log_entry(organisation, attrs \\ %{}) do
@@ -193,10 +193,16 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  defp fixture(module, organisation, attrs) do
+  defp fixture(module, organisation, attrs, opts \\ []) do
     attrs = set_attrs(module, organisation, attrs)
 
-    Ash.create(module, attrs, authorize?: false, tenant: organisation)
+    case opts[:context] do
+      nil ->
+        Ash.create(module, attrs, authorize?: false, tenant: organisation)
+
+      context ->
+        Ash.create(module, attrs, context: context, authorize?: false, tenant: organisation)
+    end
   end
 
   defp set_attrs(module, organisation, attrs) do
