@@ -15,10 +15,10 @@ defmodule OmedisWeb.GroupLive.Show do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/", false},
-            {gettext("Organisations"), ~p"/organisations", false},
+            {pgettext("navigation", "Home"), ~p"/", false},
+            {pgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {pgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, "", true}
           ]}
           language={@language}
@@ -32,7 +32,7 @@ defmodule OmedisWeb.GroupLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Activities") %>
+                  <%= pgettext("navigation", "Activities") %>
                 <% end) %>
               </.button>
             </.link>
@@ -40,13 +40,17 @@ defmodule OmedisWeb.GroupLive.Show do
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> gettext("Name") end)}><%= @group.name %></:item>
-          <:item title={with_locale(@language, fn -> gettext("Slug") end)}><%= @group.slug %></:item>
+          <:item title={with_locale(@language, fn -> pgettext("form", "Name") end)}>
+            <%= @group.name %>
+          </:item>
+          <:item title={with_locale(@language, fn -> pgettext("form", "Slug") end)}>
+            <%= @group.slug %>
+          </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups"}>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Back to groups") %>
+            <%= pgettext("navigation", "Back to groups") %>
           <% end) %>
         </.back>
 
@@ -95,8 +99,8 @@ defmodule OmedisWeb.GroupLive.Show do
   end
 
   defp page_title(:show, language),
-    do: with_locale(language, fn -> gettext("Show Organisation") end)
+    do: with_locale(language, fn -> pgettext("page_title", "Show Organisation") end)
 
   defp page_title(:edit, language),
-    do: with_locale(language, fn -> gettext("Edit Organisation") end)
+    do: with_locale(language, fn -> pgettext("page_title", "Edit Organisation") end)
 end

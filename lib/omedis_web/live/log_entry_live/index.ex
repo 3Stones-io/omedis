@@ -20,16 +20,16 @@ defmodule OmedisWeb.LogEntryLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/", false},
-            {gettext("Organisations"), ~p"/organisations", false},
+            {pgettext("navigation", "Home"), ~p"/", false},
+            {pgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {pgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {gettext("Activities"), ~p"/organisations/#{@organisation}/groups/#{@group}/activities",
-             false},
+            {pgettext("navigation", "Activities"),
+             ~p"/organisations/#{@organisation}/groups/#{@group}/activities", false},
             {@activity.name,
              ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity.id}", false},
-            {"Log Entries", "", true}
+            {pgettext("navigation", "Log Entries"), "", true}
           ]}
           language={@language}
         />
@@ -37,22 +37,31 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <.header>
           <span>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Listing Log entries for") %>
+              <%= pgettext("page_title", "Listing Log entries for") %>
             <% end) %>
           </span>
           <%= @activity.name %>
         </.header>
 
         <.table id="log_entries" rows={@streams.log_entries}>
-          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Comment") end)}>
+          <:col
+            :let={{_id, log_entry}}
+            label={with_locale(@language, fn -> pgettext("table", "Comment") end)}
+          >
             <%= log_entry.comment %>
           </:col>
 
-          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Start at") end)}>
+          <:col
+            :let={{_id, log_entry}}
+            label={with_locale(@language, fn -> pgettext("table", "Start at") end)}
+          >
             <%= log_entry.start_at %>
           </:col>
 
-          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("End at") end)}>
+          <:col
+            :let={{_id, log_entry}}
+            label={with_locale(@language, fn -> pgettext("table", "End at") end)}
+          >
             <%= log_entry.end_at %>
           </:col>
         </.table>
@@ -94,7 +103,12 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
   defp apply_action(socket, :index, params) do
     socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn ->
+        pgettext("page_title", "Log entries")
+      end)
+    )
     |> assign(:log_entry, nil)
     |> PaginationUtils.list_paginated(params, :log_entries, fn offset ->
       LogEntry.by_activity(%{activity_id: params["id"]},

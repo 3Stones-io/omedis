@@ -41,7 +41,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Invitation created successfully"))
+         |> put_flash(:info, pgettext("invitation", "Invitation created successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, form} ->
@@ -110,11 +110,11 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= with_locale(@language, fn -> gettext("New Invitation") end) %>
+        <%= with_locale(@language, fn -> pgettext("page_title", "New Invitation") end) %>
 
         <:subtitle>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Use this form to invite new members.") %>
+            <%= pgettext("page_title", "Use this form to invite new members.") %>
           <% end) %>
         </:subtitle>
       </.header>
@@ -129,12 +129,12 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         <.input
           field={@form[:email]}
           type="email"
-          label={with_locale(@language, fn -> gettext("Email") end)}
+          label={with_locale(@language, fn -> pgettext("form", "Email") end)}
         />
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            <%= with_locale(@language, fn -> gettext("Language") end) %>
+            <%= with_locale(@language, fn -> pgettext("form", "Language") end) %>
           </label>
           <div class="flex space-x-4">
             <%= for {_language, code} <- @supported_languages do %>
@@ -156,7 +156,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            <%= gettext("Groups") %>
+            <%= pgettext("organisation", "Groups") %>
           </label>
 
           <div class="space-y-2">
@@ -172,8 +172,10 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
           </div>
         </div>
         <:actions>
-          <.button phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}>
-            <%= with_locale(@language, fn -> gettext("Send Invitation") end) %>
+          <.button phx-disable-with={
+            with_locale(@language, fn -> pgettext("action", "Saving...") end)
+          }>
+            <%= with_locale(@language, fn -> pgettext("action", "Send Invitation") end) %>
           </.button>
         </:actions>
       </.simple_form>

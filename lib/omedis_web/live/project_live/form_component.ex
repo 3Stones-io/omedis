@@ -9,7 +9,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
         <%= @title %>
         <:subtitle>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Use this form to manage project records in your database.") %>
+            <%= pgettext("page_title", "Use this form to manage project records in your database.") %>
           <% end) %>
         </:subtitle>
       </.header>
@@ -24,7 +24,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
         <.input
           field={@form[:name]}
           type="text"
-          label={with_locale(@language, fn -> gettext("Name") end)}
+          label={with_locale(@language, fn -> pgettext("form", "Name") end)}
         />
         <input type="hidden" name="project[organisation_id]" value={@organisation.id} />
         <.input
@@ -32,7 +32,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
           type="select"
           label={
             Phoenix.HTML.raw(
-              "#{with_locale(@language, fn -> gettext("Organisation") end)}  <span class='text-red-600'>*</span>"
+              "#{with_locale(@language, fn -> pgettext("form", "Organisation") end)}  <span class='text-red-600'>*</span>"
             )
           }
           disabled={true}
@@ -44,16 +44,18 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
             value={@next_position}
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> gettext("Position") end)}  <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> pgettext("form", "Position") end)}  <span class='text-red-600'>*</span>"
               )
             }
           />
         </div>
 
         <:actions>
-          <.button phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}>
+          <.button phx-disable-with={
+            with_locale(@language, fn -> pgettext("action", "Saving...") end)
+          }>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Save Project") %>
+              <%= pgettext("action", "Save Project") %>
             <% end) %>
           </.button>
         </:actions>
@@ -85,7 +87,9 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
           socket
           |> put_flash(
             :info,
-            with_locale(socket.assigns.language, fn -> gettext("Project saved.") end)
+            with_locale(socket.assigns.language, fn ->
+              pgettext("flash_message", "Project saved.")
+            end)
           )
           |> push_patch(to: socket.assigns.patch)
 
@@ -98,7 +102,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
          |> put_flash(
            :error,
            with_locale(socket.assigns.language, fn ->
-             gettext("Please correct the errors below.")
+             pgettext("flash_message", "Please correct the errors below.")
            end)
          )}
     end

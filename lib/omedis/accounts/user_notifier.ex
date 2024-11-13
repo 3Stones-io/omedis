@@ -25,11 +25,12 @@ defmodule Omedis.Accounts.UserNotifier do
 
     deliver(
       invitation.email,
-      dgettext("emails", "Omedis | Invitation to join %{organisation_name}",
+      dpgettext("emails", "email subject", "Omedis | Invitation to join %{organisation_name}",
         organisation_name: invitation.organisation.name
       ),
-      dgettext(
+      dpgettext(
         "emails",
+        "email body",
         """
         ==============================
 

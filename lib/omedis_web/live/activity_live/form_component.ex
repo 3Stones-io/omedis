@@ -63,7 +63,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         <div class="flex gap-5">
           <p>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Enter custom color") %>
+              <%= pgettext("activity_form", "Enter custom color") %>
             <% end) %>
           </p>
           <div
@@ -78,7 +78,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           >
             <span class="sr-only">
               <%= with_locale(@language, fn -> %>
-                <%= gettext("Enable or disable custom color input") %>
+                <%= pgettext("activity_form", "Enable or disable custom color input") %>
               <% end) %>
             </span>
 
@@ -133,10 +133,10 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
               end
             }
             disabled={@form.source.source.valid? == false}
-            phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}
+            phx-disable-with={with_locale(@language, fn -> pgettext("form", "Saving...") end)}
           >
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Save Activity") %>
+              <%= pgettext("activity_form", "Save Activity") %>
             <% end) %>
           </.button>
         </:actions>
@@ -189,7 +189,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           |> put_flash(
             :info,
             with_locale(socket.assigns.language, fn ->
-              gettext("Activity saved successfully")
+              pgettext("flash_message", "Activity saved successfully")
             end)
           )
           |> push_patch(to: socket.assigns.patch)
@@ -203,7 +203,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
          |> put_flash(
            :error,
            with_locale(socket.assigns.language, fn ->
-             gettext("Please correct the errors below")
+             pgettext("flash_message", "Please correct the errors below")
            end)
          )}
     end

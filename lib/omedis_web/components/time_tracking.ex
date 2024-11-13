@@ -57,7 +57,7 @@ defmodule OmedisWeb.TimeTracking do
     <div class="w-[100%] h-[30vh] flex justify-center items-center">
       <%= with_locale(@language, fn -> %>
         <p>
-          <%= gettext("No activities are defined yet.") %>
+          <%= pgettext("activity", "No activities are defined yet.") %>
         </p>
       <% end) %>
     </div>
@@ -365,7 +365,7 @@ defmodule OmedisWeb.TimeTracking do
         <form phx-change="select_group" phx-submit="select_group" class="w-[48%] form-control">
           <p>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Select Group") %>
+              <%= pgettext("form", "Select Group") %>
             <% end) %>
           </p>
 
@@ -386,7 +386,7 @@ defmodule OmedisWeb.TimeTracking do
         <form phx-change="select_project" phx-submit="select_project" class=" w-[48%] form-control">
           <p>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Select Project") %>
+              <%= pgettext("form", "Select Project") %>
             <% end) %>
           </p>
           <select

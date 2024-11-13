@@ -21,7 +21,7 @@ defmodule OmedisWeb.AuthController do
     |> assign(:errors, reason)
     |> put_flash(
       :error,
-      gettext("Username or password is incorrect")
+      pgettext("error", "Username or password is incorrect")
     )
     |> redirect(to: "/login")
   end
@@ -35,7 +35,7 @@ defmodule OmedisWeb.AuthController do
     |> assign(:errors, reason)
     |> put_flash(
       :error,
-      gettext("Something went wrong. Try again.")
+      pgettext("error", "Something went wrong. Try again.")
     )
     |> redirect(to: "/register")
   end

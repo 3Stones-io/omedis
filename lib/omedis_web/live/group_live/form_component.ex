@@ -12,7 +12,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
         <%= @title %>
         <:subtitle>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Use this form to manage group records in your database.") %>
+            <%= pgettext("page_title", "Use this form to manage group records in your database.") %>
           <% end) %>
         </:subtitle>
       </.header>
@@ -28,12 +28,12 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           <.input
             field={@form[:name]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Name") end)}
+            label={with_locale(@language, fn -> pgettext("form", "Name") end)}
           />
           <.input
             field={@form[:slug]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Slug") end)}
+            label={with_locale(@language, fn -> pgettext("form", "Slug") end)}
           />
           <input type="hidden" name="group[organisation_id]" value={@organisation.id} />
           <input type="hidden" name="group[user_id]" value={@current_user.id} />
@@ -42,19 +42,21 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           <.input
             field={@form[:name]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Name") end)}
+            label={with_locale(@language, fn -> pgettext("form", "Name") end)}
           />
           <.input
             field={@form[:slug]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Slug") end)}
+            label={with_locale(@language, fn -> pgettext("form", "Slug") end)}
           />
         <% end %>
 
         <:actions>
-          <.button phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}>
+          <.button phx-disable-with={
+            with_locale(@language, fn -> pgettext("action", "Saving...") end)
+          }>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Save Group") %>
+              <%= pgettext("action", "Save Group") %>
             <% end) %>
           </.button>
         </:actions>

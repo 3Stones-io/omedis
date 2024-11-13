@@ -21,19 +21,19 @@ defmodule OmedisWeb.ActivityLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/", false},
-            {gettext("Organisations"), ~p"/organisations", false},
+            {pgettext("navigation", "Home"), ~p"/", false},
+            {pgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {pgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {gettext("Activities"), "", true}
+            {pgettext("navigation", "Activities"), "", true}
           ]}
           language={@language}
         />
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Listing Activities") %>
+            <%= pgettext("page_title", "Listing Activities") %>
           <% end) %>
 
           <:actions>
@@ -43,7 +43,7 @@ defmodule OmedisWeb.ActivityLive.Index do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("New Activity") %>
+                  <%= pgettext("activity_list", "New Activity") %>
                 <% end) %>
               </.button>
             </.link>
@@ -59,13 +59,19 @@ defmodule OmedisWeb.ActivityLive.Index do
             end
           }
         >
-          <:col :let={{_id, activity}} label={with_locale(@language, fn -> gettext("Name") end)}>
+          <:col
+            :let={{_id, activity}}
+            label={with_locale(@language, fn -> pgettext("table_header", "Name") end)}
+          >
             <.custom_color_button color={activity.color_code}>
               <%= activity.name %>
             </.custom_color_button>
           </:col>
 
-          <:col :let={{_id, activity}} label={with_locale(@language, fn -> gettext("Position") end)}>
+          <:col
+            :let={{_id, activity}}
+            label={with_locale(@language, fn -> pgettext("table_header", "Position") end)}
+          >
             <div
               :if={Ash.can?({activity, :update}, @current_user, tenant: @organisation)}
               class="position flex items-center"
@@ -96,7 +102,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           <:col :let={{_id, activity}}>
             <%= if activity.is_default do %>
               <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                <%= with_locale(@language, fn -> gettext("Default") end) %>
+                <%= with_locale(@language, fn -> pgettext("status", "Default") end) %>
               </span>
             <% end %>
           </:col>
@@ -107,7 +113,7 @@ defmodule OmedisWeb.ActivityLive.Index do
                 ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}"
               }>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Show") %>
+                  <%= pgettext("actions", "Show") %>
                 <% end) %>
               </.link>
             </div>
@@ -117,7 +123,7 @@ defmodule OmedisWeb.ActivityLive.Index do
               patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}/edit"}
             >
               <%= with_locale(@language, fn -> %>
-                <%= gettext("Edit") %>
+                <%= pgettext("actions", "Edit") %>
               <% end) %>
             </.link>
           </:action>
@@ -218,12 +224,15 @@ defmodule OmedisWeb.ActivityLive.Index do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("Edit Activity") end)
+        with_locale(socket.assigns.language, fn -> pgettext("page_title", "Edit Activity") end)
       )
       |> assign(:activity, activity)
     else
       socket
-      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> put_flash(
+        :error,
+        pgettext("flash_message", "You are not authorized to access this page")
+      )
       |> push_navigate(
         to: ~p"/organisations/#{organisation}/groups/#{socket.assigns.group}/activities"
       )
@@ -238,12 +247,15 @@ defmodule OmedisWeb.ActivityLive.Index do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("New Activity") end)
+        with_locale(socket.assigns.language, fn -> pgettext("page_title", "New Activity") end)
       )
       |> assign(:activity, nil)
     else
       socket
-      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> put_flash(
+        :error,
+        pgettext("flash_message", "You are not authorized to access this page")
+      )
       |> push_navigate(
         to: ~p"/organisations/#{organisation}/groups/#{socket.assigns.group}/activities"
       )
@@ -254,7 +266,7 @@ defmodule OmedisWeb.ActivityLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Listing Activities") end)
+      with_locale(socket.assigns.language, fn -> pgettext("page_title", "Listing Activities") end)
     )
     |> assign(:activity, nil)
     |> assign(:params, params)

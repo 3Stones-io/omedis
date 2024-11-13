@@ -11,12 +11,14 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis/accounts/user_notifier.ex:28
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Omedis | Invitation to join %{organisation_name}"
-msgstr "Omedis | Invito a unire a %{organisation_name}"
-
 #: lib/omedis/accounts/user_notifier.ex:31
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
+msgctxt "email body"
 msgid "==============================\n\nHello!\n\nPlease register your new Omedis account for %{organisation_name}\n\nThis invitation is good till %{expires_at}\n\nPlease click on this link %{url} to create the account\n\nBest regards,\n\nOmedis.\n\n==============================\n"
 msgstr "==============================\n\nCiao!\n\nPer favore, registra il tuo nuovo account Omedis per %{organisation_name}\n\nQuesto invito è valido fino al %{expires_at}\n\nPer favore, clicca su questo link %{url} per creare l'account\n\nCordiali saluti,\n\nOmedis.\n\n==============================\n"
+
+#: lib/omedis/accounts/user_notifier.ex:28
+#, elixir-autogen, elixir-format, fuzzy
+msgctxt "email subject"
+msgid "Omedis | Invitation to join %{organisation_name}"
+msgstr "Omedis | Invito a unire a %{organisation_name}"
