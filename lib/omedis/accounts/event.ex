@@ -46,6 +46,7 @@ defmodule Omedis.Accounts.Event do
                  countable: :by_default
 
       prepare build(sort: :created_at)
+      prepare build(load: [:dtstamp, :uid, :duration_minutes])
 
       filter expr(activity_id == ^arg(:activity_id))
     end
@@ -54,6 +55,8 @@ defmodule Omedis.Accounts.Event do
       argument :activity_id, :uuid do
         allow_nil? false
       end
+
+      prepare build(load: [:dtstamp, :uid, :duration_minutes])
 
       filter expr(
                activity_id == ^arg(:activity_id) and
@@ -66,6 +69,8 @@ defmodule Omedis.Accounts.Event do
         allow_nil? false
       end
 
+      prepare build(load: [:dtstamp, :uid, :duration_minutes])
+
       filter expr(organisation_id == ^arg(:organisation_id))
     end
 
@@ -73,6 +78,8 @@ defmodule Omedis.Accounts.Event do
       argument :organisation_id, :uuid do
         allow_nil? false
       end
+
+      prepare build(load: [:dtstamp, :uid, :duration_minutes])
 
       filter expr(
                organisation_id == ^arg(:organisation_id) and
