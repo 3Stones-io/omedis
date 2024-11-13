@@ -166,7 +166,7 @@ defmodule Omedis.Accounts.Event do
   end
 
   calculations do
-    calculate :dtstamp, :time, expr(updated_at)
+    calculate :dtstamp, :utc_datetime_usec, expr(updated_at)
     calculate :uid, :string, expr(id)
 
     calculate :duration_minutes,

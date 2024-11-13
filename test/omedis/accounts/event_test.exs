@@ -397,14 +397,14 @@ defmodule Omedis.EventTest do
 
       {:ok, [event_1_from_db, event_2_from_db]} = Event.read(actor: user, tenant: organisation)
 
-      time_now = Time.utc_now() |> Time.truncate(:second)
+      date_time_now = DateTime.utc_now() |> DateTime.truncate(:second)
 
       assert event_1_from_db.id == event_1.id
       assert event_2_from_db.id == event_2.id
       assert event_1_from_db.uid == event_1.id
       assert event_2_from_db.uid == event_2.id
-      assert event_1_from_db.dtstamp == time_now
-      assert event_2_from_db.dtstamp == time_now
+      assert DateTime.truncate(event_1_from_db.dtstamp, :second) == date_time_now
+      assert DateTime.truncate(event_2_from_db.dtstamp, :second) == date_time_now
       assert event_1_from_db.duration_minutes == 60
       assert event_2_from_db.duration_minutes == nil
     end
