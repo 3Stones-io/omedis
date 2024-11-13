@@ -49,7 +49,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
     actor = Map.get(context, :actor)
 
     Ash.Changeset.after_action(changeset, fn _changeset, organisation ->
-      opts = [actor: actor, tenant: organisation]
+      opts = [actor: actor, authorize?: false, tenant: organisation]
       administrators_group = create_admins_group(organisation, opts)
       users_group = create_users_group(organisation, opts)
       create_admin_access_rights(administrators_group, opts)

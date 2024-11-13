@@ -7,7 +7,7 @@ defmodule Omedis.Accounts.GroupTest do
 
   setup do
     {:ok, user} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    {:ok, organisation} = create_organisation(%{owner_id: user.id}, actor: user)
     {:ok, authorized_user} = create_user()
     {:ok, group} = create_group(organisation)
     create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
