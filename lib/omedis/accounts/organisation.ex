@@ -174,16 +174,6 @@ defmodule Omedis.Accounts.Organisation do
     validate {Validations.Timezone, attribute: :timezone}
   end
 
-  def slug_exists?(slug) do
-    __MODULE__
-    |> Ash.Query.filter(slug: slug)
-    |> Ash.read_one!(authorize?: false)
-    |> case do
-      nil -> false
-      _ -> true
-    end
-  end
-
   attributes do
     uuid_primary_key :id
 

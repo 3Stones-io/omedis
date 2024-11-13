@@ -8,9 +8,9 @@ defmodule Omedis.Accounts.User do
     extensions: [AshAuthentication],
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupMembership
-  alias Omedis.Accounts.Organisation
   alias Omedis.Validations
 
   postgres do
@@ -79,11 +79,7 @@ defmodule Omedis.Accounts.User do
 
       primary? true
 
-      change fn changeset, _context ->
-        Ash.Changeset.before_action(changeset, fn changeset ->
-          maybe_add_organisation_defaults_to_changeset(changeset)
-        end)
-      end
+      change MaybeAddOrganisationDefaults
     end
 
     update :update do
@@ -144,28 +140,5 @@ defmodule Omedis.Accounts.User do
 
   identities do
     identity :unique_email, [:email]
-  end
-
-  defp maybe_add_organisation_defaults_to_changeset(changeset) do
-    organisation_id = Ash.Changeset.get_attribute(changeset, :current_organisation_id)
-
-    if organisation_id do
-      organisation = Organisation.by_id!(organisation_id, authorize?: false)
-
-      changeset_attributes =
-        changeset.attributes
-        |> Map.drop([:id, :created_at, :updated_at, :current_organisation_id])
-        |> Map.merge(
-          %{
-            daily_start_at: organisation.default_daily_start_at,
-            daily_end_at: organisation.default_daily_end_at
-          },
-          fn _key, v1, _v2 -> v1 end
-        )
-
-      Ash.Changeset.change_attributes(changeset, changeset_attributes)
-    else
-      changeset
-    end
   end
 end

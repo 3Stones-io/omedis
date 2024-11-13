@@ -140,14 +140,4 @@ defmodule Omedis.Accounts.Group do
   identities do
     identity :unique_slug_per_organisation, :slug
   end
-
-  def slug_exists?(slug, organisation_id) do
-    __MODULE__
-    |> Ash.Query.filter(slug: slug, organisation_id: organisation_id)
-    |> Ash.read_one!(authorize?: false)
-    |> case do
-      nil -> false
-      _ -> true
-    end
-  end
 end

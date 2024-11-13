@@ -1,6 +1,8 @@
 defmodule OmedisWeb.OrganisationLive.FormComponent do
   use OmedisWeb, :live_component
+
   alias AshPhoenix.Form
+  alias Omedis.Accounts
   alias Omedis.Accounts.Organisation
 
   @impl true
@@ -301,16 +303,18 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
   defp generate_unique_slug(base_slug) do
     new_slug = "#{base_slug}#{:rand.uniform(99)}"
 
-    case Organisation.slug_exists?(new_slug) do
-      true -> generate_unique_slug(base_slug)
-      false -> Slug.slugify(new_slug)
+    if Accounts.slug_exists?(Organisation, [slug: new_slug], authorize?: false) do
+      generate_unique_slug(base_slug)
+    else
+      Slug.slugify(new_slug)
     end
   end
 
   defp update_slug(slug) do
-    case Organisation.slug_exists?(slug) do
-      true -> generate_unique_slug(slug)
-      false -> Slug.slugify(slug)
+    if Accounts.slug_exists?(Organisation, [slug: slug], authorize?: false) do
+      generate_unique_slug(slug)
+    else
+      Slug.slugify(slug)
     end
   end
 
