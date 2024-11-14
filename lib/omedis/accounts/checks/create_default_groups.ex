@@ -3,7 +3,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
   Creates the following default groups when a new organisation is created.
 
   - `Administrators` group with full access to select resources.
-  - `Users` group with just create and read access to `LogEntry` resource, and read-only access to other select resources.
+  - `Users` group with just create and read access to `Event` resource, and read-only access to other select resources.
 
   The organisation owner is automatically added to the `Administrators` group.
   """
@@ -15,12 +15,11 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
   @admin_full_access_resources [
     "AccessRight",
     "Activity",
+    "Event",
     "Group",
     "GroupMembership",
-    "Event",
     "Invitation",
     "InvitationGroup",
-    "LogEntry",
     "Organisation",
     "Project",
     "Token"
@@ -33,7 +32,6 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
     "Activity",
     "Group",
     "GroupMembership",
-    "Event",
     "Invitation",
     "InvitationGroup",
     "Organisation",
@@ -42,7 +40,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
     "User"
   ]
 
-  @user_create_resources ["LogEntry"]
+  @user_create_resources ["Event"]
 
   @impl true
   def change(changeset, _, %{actor: nil}), do: changeset

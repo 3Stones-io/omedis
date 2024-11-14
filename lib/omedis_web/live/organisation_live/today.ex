@@ -1,8 +1,8 @@
 defmodule OmedisWeb.OrganisationLive.Today do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Activity
+  alias Omedis.Accounts.Event
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.LogEntry
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
 
@@ -42,7 +42,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
           activities={@activities}
           start_at={@start_at}
           end_at={@end_at}
-          log_entries={@log_entries}
+          events={@events}
           language={@language}
           current_time={@current_time}
         />
@@ -65,21 +65,18 @@ defmodule OmedisWeb.OrganisationLive.Today do
     group = Group.by_id!(id, tenant: organisation, actor: current_user)
     project = Project.by_id!(project_id, tenant: organisation, actor: current_user)
 
-    {min_start_in_entries, max_end_in_entries} =
-      get_time_range(
-        LogEntry.by_organisation_today!(%{organisation_id: organisation.id},
-          actor: current_user,
-          tenant: organisation
-        )
-      )
+    {:ok, %{results: events}} =
+      Event.list_paginated_today(actor: current_user, tenant: organisation)
+
+    {min_start_in_events, max_end_in_events} = get_time_range(events)
 
     start_at =
-      get_start_time_to_use(min_start_in_entries, current_user.daily_start_at)
+      get_start_time_to_use(min_start_in_events, current_user.daily_start_at)
       |> format_timezone(organisation.timezone)
       |> round_down_start_at()
 
     end_at =
-      get_end_time_to_use(max_end_in_entries, current_user.daily_end_at)
+      get_end_time_to_use(max_end_in_events, current_user.daily_end_at)
       |> format_timezone(organisation.timezone)
       |> round_up_end_at()
 
@@ -87,7 +84,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
     activities = activities(group.id, project.id, actor: current_user, tenant: organisation)
 
-    log_entries = format_entries(activities, organisation)
+    events = format_events(activities, organisation)
 
     current_time = Time.utc_now() |> format_timezone(organisation.timezone)
 
@@ -102,7 +99,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
      |> assign(:projects, projects_for_an_organisation(organisation, current_user))
      |> assign(:group, group)
      |> assign(:project, project)
-     |> assign(:log_entries, log_entries)
+     |> assign(:events, events)
      |> assign_active_activity(activities)
      |> assign(:activities, activities)}
   end
@@ -116,7 +113,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     {:noreply,
      socket
      |> push_navigate(
-       to: "/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
+       to: ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
      )}
   end
 
@@ -138,23 +135,23 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
   defp assign_active_activity(socket, activities) do
     opts = [actor: socket.assigns.current_user, tenant: socket.assigns.organisation]
-    entries = get_active_entry(activities, opts)
+    events = get_active_event(activities, opts)
 
-    if Enum.empty?(entries) do
+    if Enum.empty?(events) do
       assign(socket, :active_activity_id, nil)
     else
-      activity_id = List.first(entries).activity_id
+      activity_id = List.first(events).activity_id
       assign(socket, :active_activity_id, activity_id)
     end
   end
 
-  defp get_active_entry(activities, opts) do
+  defp get_active_event(activities, opts) do
     activities
     |> Stream.map(fn activity ->
-      {:ok, log_entries} =
-        LogEntry.by_activity_today(%{activity_id: activity.id}, opts)
+      {:ok, events} =
+        Event.by_activity_today(%{activity_id: activity.id}, opts)
 
-      Enum.filter(log_entries, &is_nil(&1.end_at))
+      Enum.filter(events, &is_nil(&1.dtend))
     end)
     |> Stream.filter(&(!Enum.empty?(&1)))
     |> Enum.to_list()
@@ -169,23 +166,20 @@ defmodule OmedisWeb.OrganisationLive.Today do
     project = socket.assigns.project
 
     activities = activities(group.id, project.id, actor: current_user, tenant: organisation)
-    log_entries = format_entries(activities, organisation)
+    formatted_events = format_events(activities, organisation)
 
-    {min_start_in_entries, max_end_in_entries} =
-      get_time_range(
-        LogEntry.by_organisation_today!(%{organisation_id: organisation.id},
-          actor: current_user,
-          tenant: organisation
-        )
-      )
+    {:ok, %{results: events}} =
+      Event.list_paginated_today(actor: current_user, tenant: organisation)
+
+    {min_start_in_events, max_end_in_events} = get_time_range(events)
 
     start_at =
-      get_start_time_to_use(min_start_in_entries, current_user.daily_start_at)
+      get_start_time_to_use(min_start_in_events, current_user.daily_start_at)
       |> format_timezone(organisation.timezone)
       |> round_down_start_at()
 
     end_at =
-      get_end_time_to_use(max_end_in_entries, current_user.daily_end_at)
+      get_end_time_to_use(max_end_in_events, current_user.daily_end_at)
       |> format_timezone(organisation.timezone)
       |> round_up_end_at()
 
@@ -194,7 +188,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     {:noreply,
      socket
      |> assign(:activities, activities)
-     |> assign(:log_entries, log_entries)
+     |> assign(:events, formatted_events)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
      |> assign(:current_time, current_time)}
@@ -208,9 +202,9 @@ defmodule OmedisWeb.OrganisationLive.Today do
     daily_start_at
   end
 
-  defp get_start_time_to_use(min_start_in_entries, daily_start_at) do
-    if Time.compare(min_start_in_entries, daily_start_at) == :lt do
-      min_start_in_entries
+  defp get_start_time_to_use(min_start_in_events, daily_start_at) do
+    if Time.compare(min_start_in_events, daily_start_at) == :lt do
+      min_start_in_events
     else
       daily_start_at
     end
@@ -220,43 +214,43 @@ defmodule OmedisWeb.OrganisationLive.Today do
     daily_end_at
   end
 
-  defp get_end_time_to_use(max_end_in_entries, daily_end_at) do
-    if Time.compare(max_end_in_entries, daily_end_at) == :gt do
-      max_end_in_entries
+  defp get_end_time_to_use(max_end_in_events, daily_end_at) do
+    if Time.compare(max_end_in_events, daily_end_at) == :gt do
+      max_end_in_events
     else
       daily_end_at
     end
   end
 
-  defp format_entries(activities, organisation) do
+  defp format_events(activities, organisation) do
     activities
     |> Enum.map(fn activity ->
-      activity.log_entries
+      activity.events
     end)
     |> List.flatten()
-    |> Enum.filter(fn entry ->
-      entry.created_at |> DateTime.to_date() == Date.utc_today()
+    |> Enum.filter(fn event ->
+      event.created_at |> DateTime.to_date() == Date.utc_today()
     end)
-    |> Enum.sort_by(fn %{start_at: start_at, end_at: end_at} -> {start_at, end_at} end)
+    |> Enum.sort_by(fn %{dtstart: dtstart, dtend: dtend} -> {dtstart, dtend} end)
     |> Enum.map(fn x ->
       %{
         id: x.id,
-        start_at: x.start_at |> format_timezone(organisation.timezone),
-        end_at: get_end_time_in_entry(x.end_at) |> format_timezone(organisation.timezone),
+        dtstart: x.dtstart |> format_timezone(organisation.timezone),
+        dtend: get_end_time_in_event(x.dtend) |> format_timezone(organisation.timezone),
         activity_id: x.activity_id,
         color_code:
           Enum.find(activities, fn activity ->
-            activity.log_entries |> Enum.find(fn entry -> entry.start_at == x.start_at end)
+            activity.events |> Enum.find(fn event -> event.dtstart == x.dtstart end)
           end).color_code
       }
     end)
   end
 
-  defp get_end_time_in_entry(nil) do
+  defp get_end_time_in_event(nil) do
     Time.utc_now()
   end
 
-  defp get_end_time_in_entry(end_time) do
+  defp get_end_time_in_event(end_time) do
     end_time
   end
 
@@ -273,19 +267,19 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp get_time_range(log_entries) do
-    log_entries =
-      log_entries
+  defp get_time_range(events) do
+    events =
+      events
       |> Enum.map(fn x ->
         %{
-          start_at: x.start_at,
-          end_at: get_end_time_in_entry(x.end_at)
+          start_at: x.dtstart,
+          end_at: get_end_time_in_event(x.dtend)
         }
       end)
 
-    Enum.reduce(log_entries, {nil, nil}, fn entry, {min_start, max_end} ->
-      start_at = entry.start_at
-      end_at = entry.end_at
+    Enum.reduce(events, {nil, nil}, fn event, {min_start, max_end} ->
+      start_at = event.start_at
+      end_at = event.end_at
 
       min_start = get_min_start(min_start, start_at)
 
@@ -339,7 +333,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
        :activities,
        activities(group_id, project_id, actor: current_user, tenant: organisation)
      )
-     |> create_or_stop_log_entry(
+     |> create_or_stop_event(
        activity_id,
        organisation,
        current_user
@@ -364,66 +358,65 @@ defmodule OmedisWeb.OrganisationLive.Today do
      )}
   end
 
-  defp create_or_stop_log_entry(socket, activity_id, organisation, user)
+  defp create_or_stop_event(socket, activity_id, organisation, user)
        when is_binary(activity_id) do
-    {:ok, log_entries} =
-      LogEntry.by_activity_today(%{activity_id: activity_id},
+    {:ok, events} =
+      Event.by_activity_today(%{activity_id: activity_id},
         actor: user,
         tenant: organisation
       )
 
-    case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
+    case Enum.find(events, fn event -> event.dtend == nil end) do
       nil ->
-        stop_any_active_log_entry(socket, organisation, user)
-        create_log_entry(socket, activity_id)
+        stop_any_active_event(socket, organisation, user)
+        create_event(socket, activity_id)
 
-      log_entry ->
-        create_or_stop_log_entry(socket, log_entry, activity_id,
+      event ->
+        create_or_stop_event(socket, event, activity_id,
           actor: user,
           tenant: organisation
         )
     end
   end
 
-  defp create_or_stop_log_entry(socket, log_entry, activity_id, opts) do
-    if log_entry.activity_id == activity_id do
-      stop_log_entry(socket, log_entry, opts)
+  defp create_or_stop_event(socket, event, activity_id, opts) do
+    if event.activity_id == activity_id do
+      stop_event(socket, event, opts)
     else
-      stop_log_entry(socket, log_entry, opts)
-      create_log_entry(socket, activity_id)
+      stop_event(socket, event, opts)
+      create_event(socket, activity_id)
     end
   end
 
-  defp stop_any_active_log_entry(socket, organisation, user) do
-    {:ok, log_entries} =
-      LogEntry.by_organisation(%{organisation_id: organisation.id},
-        actor: user,
-        tenant: organisation
-      )
+  defp stop_any_active_event(socket, organisation, user) do
+    {:ok, %{results: events}} = Event.list_paginated(actor: user, tenant: organisation)
 
-    case Enum.find(log_entries, fn log_entry -> log_entry.end_at == nil end) do
+    case Enum.find(events, fn event -> event.dtend == nil end) do
       nil ->
         socket
 
-      log_entry ->
-        stop_log_entry(socket, log_entry, actor: user, tenant: organisation)
+      event ->
+        stop_event(socket, event, actor: user, tenant: organisation)
     end
   end
 
-  defp create_log_entry(socket, activity_id) do
+  defp create_event(socket, activity_id) do
     organisation = socket.assigns.organisation
     user = socket.assigns.current_user
+    {:ok, activity} = Activity.by_id(activity_id, actor: user, tenant: organisation)
 
-    if Ash.can?({LogEntry, :create}, user, tenant: organisation) do
-      LogEntry.create(
-        %{
-          activity_id: activity_id,
-          user_id: user.id,
-          start_at: Time.utc_now()
-        },
-        actor: user,
-        tenant: organisation
-      )
+    if Ash.can?({Event, :create}, user, tenant: organisation) do
+      {:ok, _event} =
+        Event.create(
+          %{
+            activity_id: activity_id,
+            dtstart: DateTime.utc_now(),
+            summary: activity.name,
+            user_id: user.id
+          },
+          actor: user,
+          tenant: organisation
+        )
 
       assign(socket, :active_activity_id, activity_id)
     else
@@ -431,11 +424,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  def stop_log_entry(socket, log_entry, opts) do
-    if Ash.can?({log_entry, :update}, socket.assigns.current_user,
+  def stop_event(socket, event, opts) do
+    if Ash.can?({event, :update}, socket.assigns.current_user,
          tenant: socket.assigns.organisation
        ) do
-      LogEntry.update(log_entry, %{end_at: Time.utc_now()}, opts)
+      {:ok, _event} = Event.update(event, %{dtend: DateTime.utc_now()}, opts)
 
       assign(socket, :active_activity_id, nil)
     else

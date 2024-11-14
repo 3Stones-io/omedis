@@ -1,4 +1,4 @@
-defmodule OmedisWeb.LogEntryLive.IndexTest do
+defmodule OmedisWeb.EventLive.IndexTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
@@ -33,7 +33,7 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "LogEntry",
+        resource_name: "Event",
         write: true
       })
 
@@ -55,8 +55,8 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
     }
   end
 
-  describe "/organisations/:slug/activities/:id/log_entries" do
-    test "organisation owner can see all log entries", %{
+  describe "/organisations/:slug/activities/:id/events" do
+    test "organisation owner can see all events", %{
       activity: activity,
       conn: conn,
       organisation: organisation,
@@ -64,29 +64,29 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       user: user
     } do
       {:ok, _} =
-        create_log_entry(organisation, %{
+        create_event(organisation, %{
           activity_id: activity.id,
           user_id: user.id,
-          comment: "User's log entry"
+          summary: "User's event"
         })
 
       {:ok, _} =
-        create_log_entry(organisation, %{
+        create_event(organisation, %{
           activity_id: activity.id,
           user_id: owner.id,
-          comment: "Owner's log entry"
+          summary: "Owner's event"
         })
 
       {:ok, _lv, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/log_entries")
+        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/events")
 
-      assert html =~ "User&#39;s log entry"
-      assert html =~ "Owner&#39;s log entry"
+      assert html =~ "User&#39;s event"
+      assert html =~ "Owner&#39;s event"
     end
 
-    test "authorized user can see all log entries", %{
+    test "authorized user can see all events", %{
       authorized_user: authorized_user,
       conn: conn,
       activity: activity,
@@ -94,29 +94,29 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
       user: user
     } do
       {:ok, _} =
-        create_log_entry(organisation, %{
+        create_event(organisation, %{
           activity_id: activity.id,
           user_id: authorized_user.id,
-          comment: "Test comment 1"
+          summary: "Test summary 1"
         })
 
       {:ok, _} =
-        create_log_entry(organisation, %{
+        create_event(organisation, %{
           activity_id: activity.id,
           user_id: user.id,
-          comment: "Test comment 2"
+          summary: "Test summary 2"
         })
 
       {:ok, _lv, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/log_entries")
+        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/events")
 
-      assert html =~ "Test comment 1"
-      assert html =~ "Test comment 2"
+      assert html =~ "Test summary 1"
+      assert html =~ "Test summary 2"
     end
 
-    test "unauthorized user cannot see log entries", %{conn: conn, user: user} do
+    test "unauthorized user cannot see events", %{conn: conn, user: user} do
       {:ok, organisation} = create_organisation()
       {:ok, group} = create_group(organisation)
       {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
@@ -140,18 +140,18 @@ defmodule OmedisWeb.LogEntryLive.IndexTest do
         })
 
       {:ok, _} =
-        create_log_entry(organisation, %{
+        create_event(organisation, %{
           activity_id: activity.id,
           user_id: user.id,
-          comment: "Test comment"
+          summary: "Test summary"
         })
 
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/log_entries")
+        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/events")
 
-      refute html =~ "Test comment"
+      refute html =~ "Test summary"
     end
   end
 end

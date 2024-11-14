@@ -1,7 +1,7 @@
-defmodule OmedisWeb.LogEntryLive.Index do
+defmodule OmedisWeb.EventLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Activity
-  alias Omedis.Accounts.LogEntry
+  alias Omedis.Accounts.Event
   alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
@@ -29,7 +29,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
              false},
             {@activity.name,
              ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity.id}", false},
-            {"Log Entries", "", true}
+            {"Events", "", true}
           ]}
           language={@language}
         />
@@ -37,29 +37,29 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <.header>
           <span>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Listing Log entries for") %>
+              <%= gettext("Listing Events for") %>
             <% end) %>
           </span>
           <%= @activity.name %>
         </.header>
 
-        <.table id="log_entries" rows={@streams.log_entries}>
-          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Comment") end)}>
-            <%= log_entry.comment %>
+        <.table id="events" rows={@streams.events}>
+          <:col :let={{_id, event}} label={with_locale(@language, fn -> gettext("Comment") end)}>
+            <%= event.summary %>
           </:col>
 
-          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("Start at") end)}>
-            <%= log_entry.start_at %>
+          <:col :let={{_id, event}} label={with_locale(@language, fn -> gettext("Start at") end)}>
+            <%= event.dtstart %>
           </:col>
 
-          <:col :let={{_id, log_entry}} label={with_locale(@language, fn -> gettext("End at") end)}>
-            <%= log_entry.end_at %>
+          <:col :let={{_id, event}} label={with_locale(@language, fn -> gettext("End at") end)}>
+            <%= event.dtend %>
           </:col>
         </.table>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/organisations/#{@organisation}/activities/#{@activity.id}/log_entries"}
+          resource_path={~p"/organisations/#{@organisation}/activities/#{@activity.id}/events"}
           total_pages={@total_pages}
         />
       </div>
@@ -72,7 +72,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
     {:ok,
      socket
      |> assign(:language, language)
-     |> stream(:log_entries, [])}
+     |> stream(:events, [])}
   end
 
   @impl true
@@ -94,10 +94,10 @@ defmodule OmedisWeb.LogEntryLive.Index do
 
   defp apply_action(socket, :index, params) do
     socket
-    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Log entries") end))
-    |> assign(:log_entry, nil)
-    |> PaginationUtils.list_paginated(params, :log_entries, fn offset ->
-      LogEntry.by_activity(%{activity_id: params["id"]},
+    |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("Events") end))
+    |> assign(:event, nil)
+    |> PaginationUtils.list_paginated(params, :events, fn offset ->
+      Event.by_activity(%{activity_id: params["id"]},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
         tenant: socket.assigns.organisation
