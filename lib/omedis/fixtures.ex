@@ -21,6 +21,10 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.Activity, organisation, attrs)
   end
 
+  def create_event(organisation, attrs \\ %{}, opts \\ []) do
+    fixture(Accounts.Event, organisation, attrs, opts)
+  end
+
   def create_log_entry(organisation, attrs \\ %{}) do
     fixture(Accounts.LogEntry, organisation, attrs)
   end
@@ -101,6 +105,22 @@ defmodule Omedis.Fixtures do
     }
   end
 
+  def attrs_for(Accounts.Event, organisation) do
+    %{
+      activity_id: fn ->
+        {:ok, activity} = create_activity(organisation)
+        activity.id
+      end,
+      dtend: DateTime.add(DateTime.utc_now(), 60, :minute),
+      dtstart: DateTime.utc_now(),
+      summary: Faker.Lorem.word(),
+      user_id: fn ->
+        {:ok, user} = create_user()
+        user.id
+      end
+    }
+  end
+
   def attrs_for(Accounts.LogEntry, organisation) do
     %{
       end_at: ~T[18:00:00],
@@ -174,10 +194,11 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  defp fixture(module, organisation, attrs) do
+  defp fixture(module, organisation, attrs, opts \\ []) do
     attrs = set_attrs(module, organisation, attrs)
+    opts = opts ++ [authorize?: false, tenant: organisation]
 
-    Ash.create(module, attrs, authorize?: false, tenant: organisation)
+    Ash.create(module, attrs, opts)
   end
 
   defp set_attrs(module, organisation, attrs) do
