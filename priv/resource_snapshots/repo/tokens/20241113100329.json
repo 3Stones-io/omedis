@@ -71,7 +71,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -105,7 +105,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "73B2092D6A0913123E90471C227039CF85EC1A5519DD3E927B521BBDFCB43C87",
+  "hash": "6E5CE9815F37B0A8BFAB4752C5E944D2FC61C37E1C94C98A0B9B1403A46D1EFC",
   "identities": [],
   "multitenancy": {
     "attribute": "organisation_id",

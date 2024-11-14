@@ -41,10 +41,11 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.Project, organisation, attrs)
   end
 
-  def create_organisation(attrs \\ %{}) do
+  def create_organisation(attrs \\ %{}, opts \\ []) do
     attrs = set_attrs(Accounts.Organisation, nil, attrs)
+    opts = Keyword.put(opts, :authorize?, false)
 
-    Ash.create(Accounts.Organisation, attrs, authorize?: false)
+    Ash.create(Accounts.Organisation, attrs, opts)
   end
 
   def create_user(attrs \\ %{}) do
