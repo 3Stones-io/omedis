@@ -16,10 +16,6 @@ defmodule Omedis.Accounts.CanUpdateOrganisation do
   def match?(nil, _context, _opts), do: false
   def match?(_actor, %{subject: %{data: nil}}, _opts), do: false
 
-  def match?(actor, %{subject: %{data: organisation}}, _opts)
-      when actor.id == organisation.owner_id,
-      do: true
-
   def match?(actor, %{subject: %{data: organisation}}, _opts) do
     Ash.exists?(
       filter(

@@ -11,11 +11,6 @@ defmodule Omedis.Accounts.AccessFilter do
   def filter(nil, _context, _options), do: expr(false)
   def filter(_actor, %{subject: %{tenant: nil}}, _options), do: expr(false)
 
-  def filter(actor, %{subject: %{tenant: organisation}}, _options)
-      when actor.id == organisation.owner_id do
-    expr(true)
-  end
-
   def filter(actor, %{subject: %{tenant: organisation}}, _options) do
     expr(
       exists(

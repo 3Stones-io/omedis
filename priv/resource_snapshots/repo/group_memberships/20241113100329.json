@@ -14,57 +14,7 @@
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "email",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "expires_at",
-      "type": "utc_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "language",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "inserted_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "updated_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
+      "primary_key?": true,
       "references": {
         "deferrable": false,
         "destination_attribute": "id",
@@ -74,26 +24,26 @@
         "match_type": null,
         "match_with": null,
         "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
+          "attribute": "organisation_id",
+          "global": false,
+          "strategy": "attribute"
         },
-        "name": "invitations_creator_id_fkey",
-        "on_delete": null,
+        "name": "group_memberships_group_id_fkey",
+        "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "groups"
       },
       "size": null,
-      "source": "creator_id",
+      "source": "group_id",
       "type": "uuid"
     },
     {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
-      "primary_key?": false,
+      "primary_key?": true,
       "references": {
         "deferrable": false,
         "destination_attribute": "id",
@@ -107,15 +57,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "invitations_organisation_id_fkey",
+        "name": "group_memberships_user_id_fkey",
         "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "organisations"
+        "table": "users"
       },
       "size": null,
-      "source": "organisation_id",
+      "source": "user_id",
       "type": "uuid"
     },
     {
@@ -136,15 +86,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "invitations_user_id_fkey",
-        "on_delete": null,
+        "name": "group_memberships_organisation_id_fkey",
+        "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "organisations"
       },
       "size": null,
-      "source": "user_id",
+      "source": "organisation_id",
       "type": "uuid"
     }
   ],
@@ -153,14 +103,33 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "193D7F1EF4E282409C2AE9668DB56CC4CED2361B5717DBDF6CDCB2F0F6A9A71D",
-  "identities": [],
+  "hash": "6D70154C875257795DEED7CE2F2FDDEDFEC3609C8F5F84249F6A40EDC5BD57D2",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "group_memberships_unique_group_membership_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "group_id"
+        },
+        {
+          "type": "atom",
+          "value": "user_id"
+        }
+      ],
+      "name": "unique_group_membership",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": "organisation_id",
-    "global": true,
+    "global": false,
     "strategy": "attribute"
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,
-  "table": "invitations"
+  "table": "group_memberships"
 }

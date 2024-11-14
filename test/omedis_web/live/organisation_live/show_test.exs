@@ -9,7 +9,10 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
   setup %{user: user} do
     {:ok, organisation} =
-      create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
+      create_organisation(
+        %{name: "Test Organisation", slug: "test-organisation", owner_id: user.id},
+        actor: user
+      )
 
     {:ok, group} = create_group(organisation)
     {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
@@ -57,10 +60,12 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     end
 
     test "shows edit button when user has write or update access", %{
-      conn: conn,
       group: group,
       organisation: organisation
     } do
+      {:ok, user} = create_user()
+      {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
+
       {:ok, access_right} =
         create_access_right(organisation, %{
           group_id: group.id,
@@ -70,7 +75,12 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
           write: false
         })
 
+      conn =
+        build_conn()
+        |> log_in_user(user)
+
       {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
+
       refute html =~ "Edit organisation"
 
       Ash.update!(access_right, %{write: true, update: false})
@@ -84,16 +94,19 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       assert html =~ "Edit organisation"
     end
 
-    test "shows edit button for organisation owner without access rights", %{
+    test "shows edit button for organisation owner", %{
       conn: conn,
       user: user
     } do
       {:ok, owned_organisation} =
-        create_organisation(%{
-          name: "Owned Organisation",
-          slug: "owned-organisation",
-          owner_id: user.id
-        })
+        create_organisation(
+          %{
+            name: "Owned Organisation",
+            slug: "owned-organisation",
+            owner_id: user.id
+          },
+          actor: user
+        )
 
       {:ok, show_live, html} = live(conn, ~p"/organisations/#{owned_organisation}")
 

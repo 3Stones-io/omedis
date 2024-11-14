@@ -3,6 +3,36 @@ defmodule Omedis.OrganisationTest do
 
   alias Omedis.Accounts.Organisation
 
+  @admin_full_access_resources [
+    "AccessRight",
+    "Activity",
+    "Group",
+    "GroupMembership",
+    "Invitation",
+    "InvitationGroup",
+    "LogEntry",
+    "Organisation",
+    "Project",
+    "Token"
+  ]
+
+  @admin_read_only_resources ["User"]
+
+  @user_read_only_resources [
+    "AccessRight",
+    "Activity",
+    "Group",
+    "GroupMembership",
+    "Invitation",
+    "InvitationGroup",
+    "Organisation",
+    "Project",
+    "Token",
+    "User"
+  ]
+
+  @user_create_resources ["LogEntry"]
+
   setup do
     {:ok, user} = create_user()
     {:ok, organisation} = create_organisation()
@@ -42,6 +72,12 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "create/1" do
+    require Ash.Query
+
+    alias Omedis.Accounts.AccessRight
+    alias Omedis.Accounts.Group
+    alias Omedis.Accounts.GroupMembership
+
     test "is only allowed for users without an organisation", %{user: user} do
       assert {:error, _} =
                Organisation.create(%{name: "New Organisation", slug: "new-organisation"},
@@ -64,11 +100,126 @@ defmodule Omedis.OrganisationTest do
     test "returns an error when attributes are invalid", %{user: user} do
       assert {:error, _} = Organisation.create(%{name: "Invalid Organisation"}, actor: user)
     end
+
+    test "creates administrators group and adds organisation owner to it", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [admins_group]} =
+               Group
+               |> Ash.Query.filter(slug: "administrators", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert {:ok, [group_membership]} =
+               GroupMembership
+               |> Ash.Query.filter(user_id: user.id, group_id: admins_group.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert group_membership.user_id == user.id
+      assert group_membership.group_id == admins_group.id
+    end
+
+    test "creates administrators group with full access rights to select resources", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [admins_group]} =
+               Group
+               |> Ash.Query.filter(slug: "administrators", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      Enum.each(@admin_full_access_resources, fn resource_name ->
+        assert {:ok, [access_right]} =
+                 AccessRight
+                 |> Ash.Query.filter(group_id: admins_group.id, resource_name: resource_name)
+                 |> Ash.read(actor: user, tenant: organisation)
+
+        assert access_right.create == true
+        assert access_right.read == true
+        assert access_right.update == true
+        assert access_right.write == true
+      end)
+
+      # Special case for resources with read-only access
+      Enum.each(@admin_read_only_resources, fn resource_name ->
+        assert {:ok, [user_access_right]} =
+                 AccessRight
+                 |> Ash.Query.filter(group_id: admins_group.id, resource_name: resource_name)
+                 |> Ash.read(actor: user, tenant: organisation)
+
+        assert user_access_right.create == false
+        assert user_access_right.read == true
+        assert user_access_right.update == false
+        assert user_access_right.write == false
+      end)
+    end
+
+    test "creates users group with read-only access rights to select resources", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [users_group]} =
+               Group
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      Enum.each(@user_read_only_resources, fn resource_name ->
+        assert {:ok, [access_right]} =
+                 AccessRight
+                 |> Ash.Query.filter(group_id: users_group.id, resource_name: resource_name)
+                 |> Ash.read(actor: user, tenant: organisation)
+
+        assert access_right.create == false
+        assert access_right.read == true
+        assert access_right.update == false
+        assert access_right.write == false
+      end)
+    end
+
+    test "creates users group with create-only create access to select resources", %{
+      user: user
+    } do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [users_group]} =
+               Group
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      Enum.each(@user_create_resources, fn resource_name ->
+        assert {:ok, [users_group_rights]} =
+                 AccessRight
+                 |> Ash.Query.filter(group_id: users_group.id, resource_name: resource_name)
+                 |> Ash.read(actor: user, tenant: organisation)
+
+        assert users_group_rights.create == true
+        assert users_group_rights.read == true
+        assert users_group_rights.update == false
+        assert users_group_rights.write == false
+      end)
+    end
   end
 
   describe "update/2" do
     test "requires write or update access", %{user: user, group: group} do
-      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
+      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id}, actor: user)
 
       assert {:ok, updated_organisation} =
                Organisation.update(owned_organisation, %{name: "Updated"}, actor: user)
@@ -117,8 +268,8 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "destroy/1" do
-    test "requires ownership or write/update access", %{user: user, group: group} do
-      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
+    test "requires write/update access", %{user: user, group: group} do
+      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id}, actor: user)
 
       assert :ok = Organisation.destroy(owned_organisation, actor: user)
 
