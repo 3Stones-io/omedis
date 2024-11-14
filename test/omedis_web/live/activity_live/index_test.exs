@@ -7,7 +7,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
     {:ok, group} = create_group(organisation)
     {:ok, project} = create_project(organisation)
     {:ok, authorized_user} = create_user()
