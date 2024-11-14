@@ -197,15 +197,6 @@ defmodule Omedis.Fixtures do
     attrs = set_attrs(module, organisation, attrs)
     opts = opts ++ [authorize?: false, tenant: organisation]
 
-    opts =
-      case opts[:context] do
-        nil ->
-          opts
-
-        context ->
-          Keyword.put(opts, :context, context)
-      end
-
     Ash.create(module, attrs, opts)
   end
 
