@@ -31,12 +31,12 @@ defmodule OmedisWeb.ActivityLive.Show do
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= pgettext("page_title", "Activity") %>
+            <%= pgettext("activity_page_title", "Activity") %>
           <% end) %>
 
           <:subtitle>
             <%= with_locale(@language, fn -> %>
-              <%= pgettext("page_title", "This is an activity record from your database.") %>
+              <%= pgettext("activity_page_title", "This is an activity record from your database.") %>
             <% end) %>
           </:subtitle>
 
@@ -49,7 +49,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("actions", "Edit activity") %>
+                  <%= pgettext("activity_action", "Edit activity") %>
                 <% end) %>
               </.button>
             </.link>
@@ -60,7 +60,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("actions", "View Log entries") %>
+                  <%= pgettext("navigation", "View Log entries") %>
                 <% end) %>
               </.button>
             </.link>
@@ -68,14 +68,17 @@ defmodule OmedisWeb.ActivityLive.Show do
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> pgettext("table_header", "Name") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("activity_attribute", "Name") end)}>
             <%= @activity.name %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("table_header", "Color code") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("activity_attribute", "Color code") end)
+          }>
             <%= @activity.color_code %>
           </:item>
-          <:item title={with_locale(@language, fn -> pgettext("table_header", "Position") end)}>
+
+          <:item title={with_locale(@language, fn -> pgettext("activity_attribute", "Position") end)}>
             <%= @activity.position %>
           </:item>
         </.list>
@@ -156,10 +159,10 @@ defmodule OmedisWeb.ActivityLive.Show do
   end
 
   defp page_title(:show, language),
-    do: with_locale(language, fn -> pgettext("page_title", "Show Activity") end)
+    do: with_locale(language, fn -> pgettext("activity_page_title", "Show Activity") end)
 
   defp page_title(:edit, language),
-    do: with_locale(language, fn -> pgettext("page_title", "Edit Activity") end)
+    do: with_locale(language, fn -> pgettext("activity_page_title", "Edit Activity") end)
 
   defp apply_action(socket, :edit) do
     actor = socket.assigns.current_user
@@ -172,7 +175,7 @@ defmodule OmedisWeb.ActivityLive.Show do
       socket
       |> put_flash(
         :error,
-        pgettext("flash_message", "You are not authorized to access this page")
+        pgettext("authorization_error", "You are not authorized to access this page")
       )
       |> push_navigate(
         to:

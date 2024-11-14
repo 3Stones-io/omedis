@@ -389,7 +389,7 @@ defmodule OmedisWeb.GeneralComponents do
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                <%= pgettext("user", "Your Profile") %>
+                <%= pgettext("navigation", "Your Profile") %>
               </a>
             </li>
           </ul>
@@ -499,7 +499,7 @@ defmodule OmedisWeb.GeneralComponents do
                       <% else %>
                         <.link navigate="/login" class="text-blue-500">
                           <%= with_locale(@language, fn -> %>
-                            <%= pgettext("action", "Login") %>
+                            <%= pgettext("navigation", "Login") %>
                           <% end) %>
                         </.link>
                         <span>
@@ -507,7 +507,7 @@ defmodule OmedisWeb.GeneralComponents do
                         </span>
                         <.link navigate="/register" class="text-blue-500">
                           <%= with_locale(@language, fn -> %>
-                            <%= pgettext("action", "Register") %>
+                            <%= pgettext("navigation", "Register") %>
                           <% end) %>
                         </.link>
                       <% end %>
@@ -777,7 +777,7 @@ defmodule OmedisWeb.GeneralComponents do
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                <%= pgettext("user", "Your Profile") %>
+                <%= pgettext("navigation", "Your Profile") %>
               </a>
             </li>
           </ul>
@@ -803,10 +803,10 @@ defmodule OmedisWeb.GeneralComponents do
     >
       <div :if={@current_user} class="flex  p-2 flex-col gap-2">
         <.link navigate="/edit_profile">
-          <%= with_locale(@language, fn -> pgettext("action", "Edit Profile") end) %>
+          <%= with_locale(@language, fn -> pgettext("navigation", "Edit Profile") end) %>
         </.link>
         <.link navigate="/auth/user/sign-out">
-          <%= with_locale(@language, fn -> pgettext("action", "Sign out") end) %>
+          <%= with_locale(@language, fn -> pgettext("navigation", "Sign out") end) %>
         </.link>
       </div>
 

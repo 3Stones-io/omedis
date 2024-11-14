@@ -40,10 +40,10 @@ defmodule OmedisWeb.GroupLive.Show do
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> pgettext("form", "Name") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("group_attribute", "Name") end)}>
             <%= @group.name %>
           </:item>
-          <:item title={with_locale(@language, fn -> pgettext("form", "Slug") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("group_attribute", "Slug") end)}>
             <%= @group.slug %>
           </:item>
         </.list>
@@ -99,8 +99,8 @@ defmodule OmedisWeb.GroupLive.Show do
   end
 
   defp page_title(:show, language),
-    do: with_locale(language, fn -> pgettext("page_title", "Show Organisation") end)
+    do: with_locale(language, fn -> pgettext("group_page_title", "Show Group") end)
 
   defp page_title(:edit, language),
-    do: with_locale(language, fn -> pgettext("page_title", "Edit Organisation") end)
+    do: with_locale(language, fn -> pgettext("group_page_title", "Edit Group") end)
 end

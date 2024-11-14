@@ -32,28 +32,28 @@ defmodule OmedisWeb.OrganisationLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("action", "Edit organisation") %>
+                  <%= pgettext("navigation", "Edit organisation") %>
                 <% end) %>
               </.button>
             </.link>
             <.link patch={~p"/organisations/#{@organisation}/invitations"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("action", "Invitations") %>
+                  <%= pgettext("navigation", "Invitations") %>
                 <% end) %>
               </.button>
             </.link>
             <.link patch={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("action", "Projects") %>
+                  <%= pgettext("navigation", "Projects") %>
                 <% end) %>
               </.button>
             </.link>
             <.link patch={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("action", "Groups") %>
+                  <%= pgettext("navigation", "Groups") %>
                 <% end) %>
               </.button>
             </.link>
@@ -61,7 +61,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
             <.link patch={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("action", "Today") %>
+                  <%= pgettext("navigation", "Today") %>
                 <% end) %>
               </.button>
             </.link>
@@ -69,110 +69,144 @@ defmodule OmedisWeb.OrganisationLive.Show do
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> pgettext("form", "Slug") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Slug") end)}>
             <%= @organisation.slug %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Name") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Name") end)}>
             <%= @organisation.name %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Owner") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Owner") end)}>
             <%= @organisation.owner.as_string %>
           </:item>
-          <:item title={with_locale(@language, fn -> pgettext("form", "Timezone") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Timezone") end)
+          }>
             <%= @organisation.timezone %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Additional info") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Additional info") end)
+          }>
             <%= @organisation.additional_info %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Street") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Street") end)
+          }>
             <%= @organisation.street %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Street2") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Street2") end)
+          }>
             <%= @organisation.street2 %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Po box") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Po box") end)
+          }>
             <%= @organisation.po_box %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Zip code") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Zip code") end)
+          }>
             <%= @organisation.zip_code %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "City") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "City") end)}>
             <%= @organisation.city %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Canton") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Canton") end)
+          }>
             <%= @organisation.canton %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Country") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Country") end)
+          }>
             <%= @organisation.country %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Description") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Description") end)
+          }>
             <%= @organisation.description %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Phone") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Phone") end)}>
             <%= @organisation.phone %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Fax") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Fax") end)}>
             <%= @organisation.fax %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Email") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Email") end)}>
             <%= @organisation.email %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Website") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Website") end)
+          }>
             <%= @organisation.website %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Zsr Number") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Zsr Number") end)
+          }>
             <%= @organisation.zsr_number %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Ean gln") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Ean gln") end)
+          }>
             <%= @organisation.ean_gln %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Uid Bfs Number") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Uid Bfs Number") end)
+          }>
             <%= @organisation.uid_bfs_number %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Trade register no") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Trade register no") end)
+          }>
             <%= @organisation.trade_register_no %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Bur number") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Bur number") end)
+          }>
             <%= @organisation.bur_number %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Account number") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Account number") end)
+          }>
             <%= @organisation.account_number %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Iban") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Iban") end)}>
             <%= @organisation.iban %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Bic") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Bic") end)}>
             <%= @organisation.bic %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Bank") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("organisation_attribute", "Bank") end)}>
             <%= @organisation.bank %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("form", "Account holder") end)}>
+          <:item title={
+            with_locale(@language, fn -> pgettext("organisation_attribute", "Account holder") end)
+          }>
             <%= @organisation.account_holder %>
           </:item>
         </.list>
@@ -230,16 +264,19 @@ defmodule OmedisWeb.OrganisationLive.Show do
       assign(socket, :page_title, page_title(:edit, socket.assigns.language))
     else
       socket
-      |> put_flash(:error, pgettext("auth", "You are not authorized to access this page"))
+      |> put_flash(
+        :error,
+        pgettext("authorisation_error", "You are not authorized to access this page")
+      )
       |> push_navigate(to: ~p"/organisations/#{socket.assigns.organisation}")
     end
   end
 
   defp page_title(:show, language) do
-    with_locale(language, fn -> pgettext("page_title", "Show Organisation") end)
+    with_locale(language, fn -> pgettext("organisation_page_title", "Show Organisation") end)
   end
 
   defp page_title(:edit, language) do
-    with_locale(language, fn -> pgettext("page_title", "Edit Organisation") end)
+    with_locale(language, fn -> pgettext("organisation_page_title", "Edit Organisation") end)
   end
 end

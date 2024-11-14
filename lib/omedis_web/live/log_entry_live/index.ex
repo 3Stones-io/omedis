@@ -37,7 +37,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <.header>
           <span>
             <%= with_locale(@language, fn -> %>
-              <%= pgettext("page_title", "Listing Log entries for") %>
+              <%= pgettext("log_entries_page_title", "Listing Log entries for") %>
             <% end) %>
           </span>
           <%= @activity.name %>
@@ -46,21 +46,21 @@ defmodule OmedisWeb.LogEntryLive.Index do
         <.table id="log_entries" rows={@streams.log_entries}>
           <:col
             :let={{_id, log_entry}}
-            label={with_locale(@language, fn -> pgettext("table", "Comment") end)}
+            label={with_locale(@language, fn -> pgettext("log_entries_table", "Comment") end)}
           >
             <%= log_entry.comment %>
           </:col>
 
           <:col
             :let={{_id, log_entry}}
-            label={with_locale(@language, fn -> pgettext("table", "Start at") end)}
+            label={with_locale(@language, fn -> pgettext("log_entries_table", "Start at") end)}
           >
             <%= log_entry.start_at %>
           </:col>
 
           <:col
             :let={{_id, log_entry}}
-            label={with_locale(@language, fn -> pgettext("table", "End at") end)}
+            label={with_locale(@language, fn -> pgettext("log_entries_table", "End at") end)}
           >
             <%= log_entry.end_at %>
           </:col>
@@ -106,7 +106,7 @@ defmodule OmedisWeb.LogEntryLive.Index do
     |> assign(
       :page_title,
       with_locale(socket.assigns.language, fn ->
-        pgettext("page_title", "Log entries")
+        pgettext("log_entries_page_title", "Log entries")
       end)
     )
     |> assign(:log_entry, nil)

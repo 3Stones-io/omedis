@@ -133,7 +133,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
               end
             }
             disabled={@form.source.source.valid? == false}
-            phx-disable-with={with_locale(@language, fn -> pgettext("form", "Saving...") end)}
+            phx-disable-with={with_locale(@language, fn -> pgettext("form_action", "Saving...") end)}
           >
             <%= with_locale(@language, fn -> %>
               <%= pgettext("activity_form", "Save Activity") %>
@@ -189,7 +189,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           |> put_flash(
             :info,
             with_locale(socket.assigns.language, fn ->
-              pgettext("flash_message", "Activity saved successfully")
+              pgettext("activity_status", "Activity saved successfully")
             end)
           )
           |> push_patch(to: socket.assigns.patch)
@@ -203,7 +203,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
          |> put_flash(
            :error,
            with_locale(socket.assigns.language, fn ->
-             pgettext("flash_message", "Please correct the errors below")
+             pgettext("activity_status", "Please correct the errors below")
            end)
          )}
     end

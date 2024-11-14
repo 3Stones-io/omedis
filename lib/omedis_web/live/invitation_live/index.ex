@@ -116,7 +116,9 @@ defmodule OmedisWeb.InvitationLive.Index do
         />
 
         <.header>
-          <%= with_locale(@language, fn -> pgettext("page_title", "Listing Invitations") end) %>
+          <%= with_locale(@language, fn ->
+            pgettext("invitation_page_title", "Listing Invitations")
+          end) %>
 
           <:actions>
             <.link
@@ -125,7 +127,7 @@ defmodule OmedisWeb.InvitationLive.Index do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("action", "New Invitation") %>
+                  <%= pgettext("navigation", "New Invitation") %>
                 <% end) %>
               </.button>
             </.link>
@@ -153,29 +155,29 @@ defmodule OmedisWeb.InvitationLive.Index do
           <.table id="invitations" rows={@streams.invitations}>
             <:col
               :let={{_id, invitation}}
-              label={with_locale(@language, fn -> pgettext("table", "Email") end)}
+              label={with_locale(@language, fn -> pgettext("invitation_table", "Email") end)}
             >
               <%= invitation.email %>
             </:col>
 
             <:col
               :let={{_id, invitation}}
-              label={with_locale(@language, fn -> pgettext("table", "Status") end)}
+              label={with_locale(@language, fn -> pgettext("invitation_table", "Status") end)}
             >
               <%= if invitation.user_id do %>
                 <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                  <%= with_locale(@language, fn -> pgettext("status", "Accepted") end) %>
+                  <%= with_locale(@language, fn -> pgettext("invitation_status", "Accepted") end) %>
                 </span>
               <% else %>
                 <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-600/20">
-                  <%= with_locale(@language, fn -> pgettext("status", "Pending") end) %>
+                  <%= with_locale(@language, fn -> pgettext("invitation_status", "Pending") end) %>
                 </span>
               <% end %>
             </:col>
 
             <:col
               :let={{_id, invitation}}
-              label={with_locale(@language, fn -> pgettext("table", "Invited At") end)}
+              label={with_locale(@language, fn -> pgettext("invitation_table", "Invited At") end)}
               sort_by={(@sort_order == "asc" && "↓") || "↑"}
               col_click={
                 JS.push("sort_invitations",
@@ -190,7 +192,7 @@ defmodule OmedisWeb.InvitationLive.Index do
 
             <:col
               :let={{_id, invitation}}
-              label={with_locale(@language, fn -> pgettext("table", "Expires At") end)}
+              label={with_locale(@language, fn -> pgettext("invitation_table", "Expires At") end)}
             >
               <%= Calendar.strftime(invitation.expires_at, "%Y-%m-%d %H:%M:%S") %>
             </:col>
@@ -204,12 +206,15 @@ defmodule OmedisWeb.InvitationLive.Index do
                 }
                 data-confirm={
                   with_locale(@language, fn ->
-                    pgettext("confirmation", "Are you sure you want to delete this invitation?")
+                    pgettext(
+                      "invitation_confirmation",
+                      "Are you sure you want to delete this invitation?"
+                    )
                   end)
                 }
                 class="text-red-600 hover:text-red-900"
               >
-                <%= with_locale(@language, fn -> pgettext("action", "Delete") end) %>
+                <%= with_locale(@language, fn -> pgettext("invitation_action", "Delete") end) %>
               </.link>
             </:action>
           </.table>

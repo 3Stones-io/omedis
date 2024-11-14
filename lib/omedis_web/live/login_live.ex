@@ -97,14 +97,14 @@ defmodule OmedisWeb.LoginLive do
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">
                   <%= with_locale(@language, fn -> %>
-                    <%= pgettext("form", "Email") %>
+                    <%= pgettext("login_form", "Email") %>
                   <% end) %>
                 </label>
                 <div phx-feedback-for={f[:email].name} class="mt-2">
                   <%= text_input(f, :email,
                     class:
                       "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                    placeholder: with_locale(@language, fn -> pgettext("form", "Email") end),
+                    placeholder: with_locale(@language, fn -> pgettext("login_form", "Email") end),
                     value: f[:email].value,
                     required: true,
                     autocomplete: :email,
@@ -112,7 +112,7 @@ defmodule OmedisWeb.LoginLive do
                   ) %>
                   <.error :for={msg <- get_field_errors(f[:email], :email)}>
                     <%= with_locale(@language, fn -> %>
-                      <%= pgettext("form", "Email") <> " " <> msg %>
+                      <%= pgettext("login_form", "Email") <> " " <> msg %>
                     <% end) %>
                   </.error>
                 </div>
@@ -121,7 +121,7 @@ defmodule OmedisWeb.LoginLive do
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">
                   <%= with_locale(@language, fn -> %>
-                    <%= pgettext("form", "Password") %>
+                    <%= pgettext("login_form", "Password") %>
                   <% end) %>
                 </label>
 
@@ -129,23 +129,24 @@ defmodule OmedisWeb.LoginLive do
                   <%= password_input(f, :password,
                     class:
                       "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                    placeholder: with_locale(@language, fn -> pgettext("form", "Password") end),
+                    placeholder: with_locale(@language, fn -> pgettext("login_form", "Password") end),
                     value: f[:password].value,
-                    autocomplete: pgettext("form", "new password"),
+                    autocomplete: pgettext("login_form", "new password"),
                     "phx-debounce": "blur"
                   ) %>
                   <.error :for={msg <- get_field_errors(f[:password], :password)}>
                     <%= with_locale(@language, fn -> %>
-                      <%= pgettext("form", "Password") <> " " <> msg %>
+                      <%= pgettext("login_form", "Password") <> " " <> msg %>
                     <% end) %>
                   </.error>
                 </div>
               </div>
 
               <div class="mt-6 flex items-center justify-end gap-x-6">
-                <%= submit(with_locale(@language, fn -> pgettext("action", "Signing in...") end),
+                <%= submit(
+                  with_locale(@language, fn -> pgettext("login_action", "Signing in...") end),
                   phx_disable_with:
-                    with_locale(@language, fn -> pgettext("action", "Signing in...") end),
+                    with_locale(@language, fn -> pgettext("login_action", "Signing in...") end),
                   class:
                     "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 ) %>

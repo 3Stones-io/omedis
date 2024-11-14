@@ -110,11 +110,11 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= with_locale(@language, fn -> pgettext("page_title", "New Invitation") end) %>
+        <%= with_locale(@language, fn -> pgettext("invitation_page_title", "New Invitation") end) %>
 
         <:subtitle>
           <%= with_locale(@language, fn -> %>
-            <%= pgettext("page_title", "Use this form to invite new members.") %>
+            <%= pgettext("invitation_page_subtitle", "Use this form to invite new members.") %>
           <% end) %>
         </:subtitle>
       </.header>
@@ -129,12 +129,12 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         <.input
           field={@form[:email]}
           type="email"
-          label={with_locale(@language, fn -> pgettext("form", "Email") end)}
+          label={with_locale(@language, fn -> pgettext("invitation_form", "Email") end)}
         />
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            <%= with_locale(@language, fn -> pgettext("form", "Language") end) %>
+            <%= with_locale(@language, fn -> pgettext("invitation_form", "Language") end) %>
           </label>
           <div class="flex space-x-4">
             <%= for {_language, code} <- @supported_languages do %>
@@ -156,7 +156,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            <%= pgettext("organisation", "Groups") %>
+            <%= pgettext("invitation_form", "Groups") %>
           </label>
 
           <div class="space-y-2">
@@ -173,9 +173,9 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         </div>
         <:actions>
           <.button phx-disable-with={
-            with_locale(@language, fn -> pgettext("action", "Saving...") end)
+            with_locale(@language, fn -> pgettext("invitation_action", "Saving...") end)
           }>
-            <%= with_locale(@language, fn -> pgettext("action", "Send Invitation") end) %>
+            <%= with_locale(@language, fn -> pgettext("invitation_action", "Send Invitation") end) %>
           </.button>
         </:actions>
       </.simple_form>

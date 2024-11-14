@@ -26,11 +26,11 @@ defmodule OmedisWeb.ProjectLive.Show do
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= pgettext("page_title", "Project") %>
+            <%= pgettext("project_page_title", "Project") %>
           <% end) %>
           <:subtitle>
             <%= with_locale(@language, fn -> %>
-              <%= pgettext("page_title", "This is a project record from your database.") %>
+              <%= pgettext("project_page_title", "This is a project record from your database.") %>
             <% end) %>
           </:subtitle>
 
@@ -41,7 +41,7 @@ defmodule OmedisWeb.ProjectLive.Show do
             >
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("actions", "Edit project") %>
+                  <%= pgettext("navigation", "Edit project") %>
                 <% end) %>
               </.button>
             </.link>
@@ -49,11 +49,11 @@ defmodule OmedisWeb.ProjectLive.Show do
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> pgettext("table_header", "Name") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("project_attribute", "Name") end)}>
             <%= @project.name %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> pgettext("table_header", "Position") end)}>
+          <:item title={with_locale(@language, fn -> pgettext("project_attribute", "Position") end)}>
             <%= @project.position %>
           </:item>
         </.list>
@@ -128,7 +128,7 @@ defmodule OmedisWeb.ProjectLive.Show do
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->
-          pgettext("flash_message", "You are not authorized to access this page")
+          pgettext("authorisation_error", "You are not authorized to access this page")
         end)
       )
     end
@@ -137,8 +137,8 @@ defmodule OmedisWeb.ProjectLive.Show do
   defp maybe_check_and_enforce_edit_access(socket, _), do: socket
 
   defp page_title(:show, language),
-    do: with_locale(language, fn -> pgettext("project", "Project") end)
+    do: with_locale(language, fn -> pgettext("project_page_title", "Project") end)
 
   defp page_title(:edit, language),
-    do: with_locale(language, fn -> pgettext("project", "Edit Project") end)
+    do: with_locale(language, fn -> pgettext("project_page_title", "Edit Project") end)
 end

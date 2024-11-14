@@ -50,10 +50,12 @@ defmodule OmedisWeb.InvitationLive.Show do
                   <.input
                     type="email"
                     field={f[:email]}
-                    placeholder={with_locale(@language, fn -> pgettext("form", "Email") end)}
+                    placeholder={
+                      with_locale(@language, fn -> pgettext("invitation_form", "Email") end)
+                    }
                     autocomplete="email"
                     required
-                    label={with_locale(@language, fn -> pgettext("form", "Email") end)}
+                    label={with_locale(@language, fn -> pgettext("invitation_form", "Email") end)}
                     value={@invitation.email}
                   />
                 </div>
@@ -62,9 +64,13 @@ defmodule OmedisWeb.InvitationLive.Show do
                   <.input
                     type="text"
                     field={f[:first_name]}
-                    placeholder={with_locale(@language, fn -> pgettext("form", "First Name") end)}
+                    placeholder={
+                      with_locale(@language, fn -> pgettext("invitation_form", "First Name") end)
+                    }
                     required
-                    label={with_locale(@language, fn -> pgettext("form", "First Name") end)}
+                    label={
+                      with_locale(@language, fn -> pgettext("invitation_form", "First Name") end)
+                    }
                     phx-debounce="blur"
                   />
                 </div>
@@ -73,9 +79,11 @@ defmodule OmedisWeb.InvitationLive.Show do
                   <.input
                     type="text"
                     field={f[:last_name]}
-                    placeholder={with_locale(@language, fn -> pgettext("form", "Last Name") end)}
+                    placeholder={
+                      with_locale(@language, fn -> pgettext("invitation_form", "Last Name") end)
+                    }
                     required
-                    label={with_locale(@language, fn -> pgettext("form", "Last Name") end)}
+                    label={with_locale(@language, fn -> pgettext("invitation_form", "Last Name") end)}
                     phx-debounce="blur"
                   />
                 </div>
@@ -84,10 +92,12 @@ defmodule OmedisWeb.InvitationLive.Show do
                   <.input
                     type="password"
                     field={f[:password]}
-                    placeholder={with_locale(@language, fn -> pgettext("form", "Password") end)}
-                    autocomplete={pgettext("form", "new password")}
+                    placeholder={
+                      with_locale(@language, fn -> pgettext("invitation_form", "Password") end)
+                    }
+                    autocomplete={pgettext("invitation_form", "new password")}
                     required
-                    label={with_locale(@language, fn -> pgettext("form", "Password") end)}
+                    label={with_locale(@language, fn -> pgettext("invitation_form", "Password") end)}
                     phx-debounce="blur"
                   />
                 </div>
@@ -97,12 +107,16 @@ defmodule OmedisWeb.InvitationLive.Show do
                     type="select"
                     field={f[:gender]}
                     required
-                    label={with_locale(@language, fn -> pgettext("form", "Gender") end)}
+                    label={with_locale(@language, fn -> pgettext("invitation_form", "Gender") end)}
                     options={[
-                      with_locale(@language, fn -> pgettext("form", "Male") end),
-                      with_locale(@language, fn -> pgettext("form", "Female") end)
+                      with_locale(@language, fn -> pgettext("invitation_form", "Male") end),
+                      with_locale(@language, fn -> pgettext("invitation_form", "Female") end)
                     ]}
-                    prompt={with_locale(@language, fn -> pgettext("form", "Select Your Gender") end)}
+                    prompt={
+                      with_locale(@language, fn ->
+                        pgettext("invitation_form", "Select Your Gender")
+                      end)
+                    }
                   />
                 </div>
 
@@ -111,7 +125,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                     type="date"
                     field={f[:birthdate]}
                     required
-                    label={with_locale(@language, fn -> pgettext("form", "Birthdate") end)}
+                    label={with_locale(@language, fn -> pgettext("invitation_form", "Birthdate") end)}
                     phx-debounce="blur"
                   />
                 </div>
@@ -119,7 +133,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn -> %>
-                      <%= pgettext("form", "Daily Start Time") %>
+                      <%= pgettext("invitation_form", "Daily Start Time") %>
                     <% end) %>
                   </label>
 
@@ -132,7 +146,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
                       <%= with_locale(@language, fn -> %>
-                        <%= pgettext("form", "Daily Start Time") <> " " <> msg %>
+                        <%= pgettext("invitation_form", "Daily Start Time") <> " " <> msg %>
                       <% end) %>
                     </.error>
                   </div>
@@ -141,7 +155,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn -> %>
-                      <%= pgettext("form", "Daily End Time") %>
+                      <%= pgettext("invitation_form", "Daily End Time") %>
                     <% end) %>
                   </label>
 
@@ -154,7 +168,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
                       <%= with_locale(@language, fn -> %>
-                        <%= pgettext("form", "Daily End Time") <> " " <> msg %>
+                        <%= pgettext("invitation_form", "Daily End Time") <> " " <> msg %>
                       <% end) %>
                     </.error>
                   </div>
@@ -163,9 +177,9 @@ defmodule OmedisWeb.InvitationLive.Show do
             </div>
 
             <div class="mt-6 flex items-center justify-end gap-x-6">
-              <%= submit(with_locale(@language, fn -> pgettext("action", "Sign up") end),
+              <%= submit(with_locale(@language, fn -> pgettext("invitation_action", "Sign up") end),
                 phx_disable_with:
-                  with_locale(@language, fn -> pgettext("action", "Signing up...") end),
+                  with_locale(@language, fn -> pgettext("invitation_action", "Signing up...") end),
                 class:
                   "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               ) %>
