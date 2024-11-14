@@ -269,6 +269,276 @@ defmodule Omedis.EventTest do
     end
   end
 
+  describe "list_paginated/1" do
+    test "returns paginated events for organisation owner", %{
+      activity: activity,
+      organisation: organisation,
+      owner: owner
+    } do
+      Enum.each(1..15, fn _ ->
+        {:ok, _} =
+          create_event(organisation, %{
+            activity_id: activity.id,
+            user_id: owner.id
+          })
+      end)
+
+      # Fetch first page of paginated events
+      assert {:ok, %{results: results, count: count}} =
+               Event.list_paginated(
+                 page: [limit: 10, offset: 0],
+                 actor: owner,
+                 tenant: organisation
+               )
+
+      assert length(results) == 10
+      assert count == 15
+
+      # Fetch second page of paginated events
+      assert {:ok, %{results: results}} =
+               Event.list_paginated(
+                 page: [limit: 10, offset: 10],
+                 actor: owner,
+                 tenant: organisation
+               )
+
+      assert length(results) == 5
+    end
+
+    test "returns paginated events for authorized user", %{
+      activity: activity,
+      organisation: organisation,
+      user: authorized_user
+    } do
+      Enum.each(1..15, fn _ ->
+        {:ok, _} =
+          create_event(organisation, %{
+            activity_id: activity.id,
+            user_id: authorized_user.id
+          })
+      end)
+
+      # Fetch paginated events
+      assert {:ok, %{results: results, count: count}} =
+               Event.list_paginated(
+                 page: [limit: 10, offset: 0],
+                 actor: authorized_user,
+                 tenant: organisation
+               )
+
+      assert length(results) == 10
+      assert count == 15
+    end
+
+    test "sorts events by created_at attribute", %{
+      activity: activity,
+      organisation: organisation,
+      owner: owner
+    } do
+      for i <- 1..3 do
+        {:ok, event} =
+          create_event(
+            organisation,
+            %{
+              activity_id: activity.id,
+              user_id: owner.id
+            },
+            context: %{created_at: Omedis.TestUtils.time_after(-i * 12_000)}
+          )
+
+        event
+      end
+
+      assert {:ok, %{results: events}} =
+               Event.list_paginated(
+                 page: [limit: 10, offset: 0],
+                 actor: owner,
+                 tenant: organisation
+               )
+
+      created_at_timestamps = Enum.map(events, & &1.created_at)
+      assert created_at_timestamps == Enum.sort(created_at_timestamps, {:asc, DateTime})
+    end
+
+    test "returns an empty list for unauthorized user", %{
+      activity: activity,
+      organisation: organisation,
+      user: authorized_user
+    } do
+      {:ok, _} =
+        create_event(organisation, %{
+          activity_id: activity.id,
+          user_id: authorized_user.id
+        })
+
+      {:ok, unauthorized_user} = create_user()
+
+      assert {:ok, %{results: [], count: 0}} =
+               Event.list_paginated(
+                 page: [limit: 10, offset: 0],
+                 actor: unauthorized_user,
+                 tenant: organisation
+               )
+    end
+
+    test "returns an error if actor is not provided", %{
+      organisation: organisation
+    } do
+      assert {:error, %Ash.Error.Forbidden{}} =
+               Event.list_paginated(
+                 page: [limit: 10, offset: 0],
+                 tenant: organisation
+               )
+    end
+  end
+
+  describe "list_paginated_today/1" do
+    test "returns today's paginated events for organisation owner", %{
+      activity: activity,
+      organisation: organisation,
+      owner: owner
+    } do
+      Enum.each(1..5, fn _ ->
+        {:ok, _today_event} =
+          create_event(organisation, %{
+            activity_id: activity.id,
+            user_id: owner.id
+          })
+      end)
+
+      {:ok, past_event} =
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: owner.id
+          },
+          context: %{created_at: DateTime.add(DateTime.utc_now(), -2, :day)}
+        )
+
+      assert {:ok, %{results: results, count: count}} =
+               Event.list_paginated_today(
+                 page: [limit: 10, offset: 0],
+                 actor: owner,
+                 tenant: organisation
+               )
+
+      assert length(results) == 5
+      assert count == 5
+
+      refute Enum.any?(results, fn event ->
+               DateTime.diff(event.created_at, DateTime.utc_now(), :day) > 0
+             end)
+
+      refute Enum.any?(results, fn event ->
+               event.id == past_event.id
+             end)
+    end
+
+    test "returns today's paginated events for authorized user", %{
+      activity: activity,
+      organisation: organisation,
+      user: authorized_user
+    } do
+      Enum.each(1..5, fn _ ->
+        {:ok, _today_event} =
+          create_event(organisation, %{
+            activity_id: activity.id,
+            user_id: authorized_user.id
+          })
+      end)
+
+      {:ok, past_event} =
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: authorized_user.id
+          },
+          context: %{created_at: DateTime.add(DateTime.utc_now(), -2, :day)}
+        )
+
+      assert {:ok, %{results: results, count: count}} =
+               Event.list_paginated_today(
+                 page: [limit: 10, offset: 0],
+                 actor: authorized_user,
+                 tenant: organisation
+               )
+
+      assert length(results) == 5
+      assert count == 5
+
+      refute Enum.any?(results, fn event ->
+               DateTime.diff(event.created_at, DateTime.utc_now(), :day) > 0
+             end)
+
+      refute Enum.any?(results, fn event ->
+               event.id == past_event.id
+             end)
+    end
+
+    test "sorts today's events by created_at attribute", %{
+      activity: activity,
+      organisation: organisation,
+      owner: owner
+    } do
+      for i <- 1..3 do
+        {:ok, event} =
+          create_event(
+            organisation,
+            %{
+              activity_id: activity.id,
+              user_id: owner.id
+            },
+            context: %{created_at: Omedis.TestUtils.time_after(-i * 3600)}
+          )
+
+        event
+      end
+
+      assert {:ok, %{results: results}} =
+               Event.list_paginated_today(
+                 page: [limit: 10, offset: 0],
+                 actor: owner,
+                 tenant: organisation
+               )
+
+      created_at_timestamps = Enum.map(results, & &1.created_at)
+      assert created_at_timestamps == Enum.sort(created_at_timestamps, {:asc, DateTime})
+    end
+
+    test "returns an empty list for unauthorized user", %{
+      activity: activity,
+      organisation: organisation,
+      user: authorized_user
+    } do
+      {:ok, _} =
+        create_event(organisation, %{
+          activity_id: activity.id,
+          user_id: authorized_user.id
+        })
+
+      {:ok, unauthorized_user} = create_user()
+
+      assert {:ok, %{results: [], count: 0}} =
+               Event.list_paginated_today(
+                 page: [limit: 10, offset: 0],
+                 actor: unauthorized_user,
+                 tenant: organisation
+               )
+    end
+
+    test "returns an error if actor is not provided", %{
+      organisation: organisation
+    } do
+      assert {:error, %Ash.Error.Forbidden{}} =
+               Event.list_paginated_today(
+                 page: [limit: 10, offset: 0],
+                 tenant: organisation
+               )
+    end
+  end
+
   describe "read/1" do
     test "organisation owner can read all events", %{
       activity: activity,

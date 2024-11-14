@@ -78,7 +78,7 @@ defmodule OmedisWeb.Router do
       live "/organisations/:slug", OrganisationLive.Show, :show
       live "/organisations/:slug/show/edit", OrganisationLive.Show, :edit
 
-      live "/organisations/:slug/activities/:id/log_entries", LogEntryLive.Index, :index
+      live "/organisations/:slug/activities/:id/events", EventLive.Index, :index
 
       live "/organisations/:slug/invitations/new", InvitationLive.Index, :new
     end

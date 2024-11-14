@@ -106,7 +106,7 @@ defmodule Omedis.Accounts.Activity do
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit),
                  countable: :by_default
 
-      prepare build(load: [:log_entries], sort: [position: :asc])
+      prepare build(load: [:events], sort: [position: :asc])
 
       filter expr(group_id == ^arg(:group_id))
     end
@@ -120,7 +120,7 @@ defmodule Omedis.Accounts.Activity do
         allow_nil? false
       end
 
-      prepare build(load: [:log_entries])
+      prepare build(load: [:events])
 
       filter expr(group_id == ^arg(:group_id) and project_id == ^arg(:project_id))
     end
@@ -181,7 +181,7 @@ defmodule Omedis.Accounts.Activity do
       attribute_writable? true
     end
 
-    has_many :log_entries, Omedis.Accounts.LogEntry do
+    has_many :events, Omedis.Accounts.Event do
       domain Omedis.Accounts
     end
 

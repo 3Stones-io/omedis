@@ -28,6 +28,8 @@ defmodule Omedis.Accounts.Event do
     define :by_activity
     define :by_activity_today
     define :create
+    define :list_paginated
+    define :list_paginated_today
     define :read
     define :update
   end
@@ -81,6 +83,26 @@ defmodule Omedis.Accounts.Event do
                activity_id == ^arg(:activity_id) and
                  fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
              )
+    end
+
+    read :list_paginated do
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 countable: :by_default
+
+      prepare build(sort: :created_at)
+      prepare build(load: [:dtstamp, :uid, :duration_minutes])
+    end
+
+    read :list_paginated_today do
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 countable: :by_default
+
+      prepare build(sort: :created_at)
+      prepare build(load: [:dtstamp, :uid, :duration_minutes])
+
+      filter expr(fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at))
     end
 
     read :read do

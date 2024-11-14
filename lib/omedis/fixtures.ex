@@ -25,10 +25,6 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.Event, organisation, attrs, opts)
   end
 
-  def create_log_entry(organisation, attrs \\ %{}) do
-    fixture(Accounts.LogEntry, organisation, attrs)
-  end
-
   def create_invitation(organisation, attrs \\ %{}) do
     fixture(Accounts.Invitation, organisation, attrs)
   end
@@ -114,21 +110,6 @@ defmodule Omedis.Fixtures do
       dtend: DateTime.add(DateTime.utc_now(), 60, :minute),
       dtstart: DateTime.utc_now(),
       summary: Faker.Lorem.word(),
-      user_id: fn ->
-        {:ok, user} = create_user()
-        user.id
-      end
-    }
-  end
-
-  def attrs_for(Accounts.LogEntry, organisation) do
-    %{
-      end_at: ~T[18:00:00],
-      activity_id: fn ->
-        {:ok, activity} = create_activity(organisation)
-        activity.id
-      end,
-      start_at: ~T[08:00:00],
       user_id: fn ->
         {:ok, user} = create_user()
         user.id

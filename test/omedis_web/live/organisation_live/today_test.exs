@@ -64,9 +64,9 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
   end
 
   describe "/organisations/:slug/today" do
-    alias Omedis.Accounts.LogEntry
+    alias Omedis.Accounts.Event
 
-    test "organisation owner can create a new log entry", %{
+    test "organisation owner can create a new event", %{
       conn: conn,
       group: group,
       activity: activity,
@@ -78,7 +78,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         create_access_right(organisation, %{
           group_id: group.id,
           read: true,
-          resource_name: "LogEntry",
+          resource_name: "Event",
           write: true
         })
 
@@ -93,19 +93,19 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> element("#activity-#{activity.id}")
              |> render_click() =~ "active-activity-#{activity.id}"
 
-      {:ok, [log_entry]} =
-        LogEntry.by_activity_today(
+      {:ok, [event]} =
+        Event.by_activity_today(
           %{activity_id: activity.id},
           actor: owner,
           tenant: organisation
         )
 
-      assert log_entry.activity_id == activity.id
-      assert log_entry.user_id == owner.id
-      assert log_entry.organisation_id == organisation.id
+      assert event.activity_id == activity.id
+      assert event.user_id == owner.id
+      assert event.organisation_id == organisation.id
     end
 
-    test "organisation owner can stop active log entry when selecting same activity again", %{
+    test "organisation owner can stop active event when selecting same activity again", %{
       conn: conn,
       group: group,
       activity: activity,
@@ -117,7 +117,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         create_access_right(organisation, %{
           group_id: group.id,
           read: true,
-          resource_name: "LogEntry",
+          resource_name: "Event",
           write: true
         })
 
@@ -128,7 +128,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
           ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
         )
 
-      # Create a log entry
+      # Create a event
       assert lv
              |> element("#activity-#{activity.id}")
              |> render_click() =~ "active-activity-#{activity.id}"
@@ -138,19 +138,19 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> element("#activity-#{activity.id}")
              |> render_click() =~ "active-activity-#{activity.id}"
 
-      # Verify log entry was stopped (end_at was set)
-      {:ok, [log_entry]} =
-        LogEntry.by_activity_today(
+      # Verify event was stopped (end_at was set)
+      {:ok, [event]} =
+        Event.by_activity_today(
           %{activity_id: activity.id},
           actor: owner,
           tenant: organisation
         )
 
-      assert log_entry.activity_id == activity.id
-      assert not is_nil(log_entry.end_at)
+      assert event.activity_id == activity.id
+      assert not is_nil(event.dtend)
     end
 
-    test "organisation owner can switch active log entry by selecting different activity", %{
+    test "organisation owner can switch active event by selecting different activity", %{
       conn: conn,
       group: group,
       owner: owner,
@@ -161,7 +161,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         create_access_right(organisation, %{
           group_id: group.id,
           read: true,
-          resource_name: "LogEntry",
+          resource_name: "Event",
           write: true
         })
 
@@ -186,7 +186,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
           ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
         )
 
-      # Start log entry for the first activity
+      # Start event for the first activity
       assert lv
              |> element("#activity-#{activity_1.id}")
              |> render_click() =~ "active-activity-#{activity_1.id}"
@@ -196,29 +196,29 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> element("#activity-#{activity_2.id}")
              |> render_click() =~ "active-activity-#{activity_2.id}"
 
-      # Verify first log entry was stopped
-      {:ok, [entry_1]} =
-        LogEntry.by_activity_today(
+      # Verify first event was stopped
+      {:ok, [event_1]} =
+        Event.by_activity_today(
           %{activity_id: activity_1.id},
           actor: owner,
           tenant: organisation
         )
 
-      assert not is_nil(entry_1.end_at)
+      assert not is_nil(event_1.dtend)
 
-      # Verify second log entry is active
-      {:ok, entries_2} =
-        LogEntry.by_activity_today(
+      # Verify second event is active
+      {:ok, events_2} =
+        Event.by_activity_today(
           %{activity_id: activity_2.id},
           actor: owner,
           tenant: organisation
         )
 
-      entry_2 = List.last(entries_2)
-      assert is_nil(entry_2.end_at)
+      event_2 = List.last(events_2)
+      assert is_nil(event_2.dtend)
     end
 
-    test "authorized user can create a new log entry", %{
+    test "authorized user can create a new event", %{
       authorized_user: authorized_user,
       conn: conn,
       group: group,
@@ -230,7 +230,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         create_access_right(organisation, %{
           group_id: group.id,
           read: true,
-          resource_name: "LogEntry",
+          resource_name: "Event",
           write: true
         })
 
@@ -245,19 +245,19 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> element("#activity-#{activity.id}")
              |> render_click() =~ "active-activity-#{activity.id}"
 
-      {:ok, [log_entry]} =
-        LogEntry.by_activity_today(
+      {:ok, [event]} =
+        Event.by_activity_today(
           %{activity_id: activity.id},
           actor: authorized_user,
           tenant: organisation
         )
 
-      assert log_entry.activity_id == activity.id
-      assert log_entry.user_id == authorized_user.id
-      assert log_entry.organisation_id == organisation.id
+      assert event.activity_id == activity.id
+      assert event.user_id == authorized_user.id
+      assert event.organisation_id == organisation.id
     end
 
-    test "authorized user can stop active log entry when selecting same activity again", %{
+    test "authorized user can stop active event when selecting same activity again", %{
       authorized_user: authorized_user,
       conn: conn,
       group: group,
@@ -269,7 +269,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         create_access_right(organisation, %{
           group_id: group.id,
           read: true,
-          resource_name: "LogEntry",
+          resource_name: "Event",
           write: true
         })
 
@@ -280,7 +280,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
           ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
         )
 
-      # Create a log entry
+      # Create a event
       assert lv
              |> element("#activity-#{activity.id}")
              |> render_click() =~ "active-activity-#{activity.id}"
@@ -290,19 +290,19 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> element("#activity-#{activity.id}")
              |> render_click() =~ "active-activity-#{activity.id}"
 
-      # Verify log entry was stopped (end_at was set)
-      {:ok, [log_entry]} =
-        LogEntry.by_activity_today(
+      # Verify event was stopped (end_at was set)
+      {:ok, [event]} =
+        Event.by_activity_today(
           %{activity_id: activity.id},
           actor: authorized_user,
           tenant: organisation
         )
 
-      assert log_entry.activity_id == activity.id
-      assert not is_nil(log_entry.end_at)
+      assert event.activity_id == activity.id
+      assert not is_nil(event.dtend)
     end
 
-    test "authorized user can switch active log entry by selecting different activity", %{
+    test "authorized user can switch active event by selecting different activity", %{
       authorized_user: authorized_user,
       conn: conn,
       group: group,
@@ -313,7 +313,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         create_access_right(organisation, %{
           group_id: group.id,
           read: true,
-          resource_name: "LogEntry",
+          resource_name: "Event",
           write: true
         })
 
@@ -338,7 +338,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
           ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
         )
 
-      # Start log entry for the first activity
+      # Start event for the first activity
       assert lv
              |> element("#activity-#{activity_1.id}")
              |> render_click() =~ "active-activity-#{activity_1.id}"
@@ -348,29 +348,29 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> element("#activity-#{activity_2.id}")
              |> render_click() =~ "active-activity-#{activity_2.id}"
 
-      # Verify first log entry was stopped
-      {:ok, [entry_1]} =
-        LogEntry.by_activity_today(
+      # Verify first event was stopped
+      {:ok, [event_1]} =
+        Event.by_activity_today(
           %{activity_id: activity_1.id},
           actor: authorized_user,
           tenant: organisation
         )
 
-      assert not is_nil(entry_1.end_at)
+      assert not is_nil(event_1.dtend)
 
-      # Verify second log entry is active
-      {:ok, entries_2} =
-        LogEntry.by_activity_today(
+      # Verify second event is active
+      {:ok, events_2} =
+        Event.by_activity_today(
           %{activity_id: activity_2.id},
           actor: authorized_user,
           tenant: organisation
         )
 
-      entry_2 = List.last(entries_2)
-      assert is_nil(entry_2.end_at)
+      event_2 = List.last(events_2)
+      assert is_nil(event_2.dtend)
     end
 
-    test "unauthorized user cannot create log entries", %{
+    test "unauthorized user cannot create events", %{
       conn: conn,
       group: group,
       activity: activity,
@@ -426,7 +426,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> render_click() =~ "active-activity-#{activity.id}"
 
       assert {:ok, []} =
-               LogEntry.by_activity_today(
+               Event.by_activity_today(
                  %{activity_id: activity.id},
                  actor: unauthorized_user,
                  tenant: organisation

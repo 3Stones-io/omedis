@@ -92,7 +92,7 @@ msgstr "Stadt"
 msgid "Color code"
 msgstr "Farbcode"
 
-#: lib/omedis_web/live/log_entry_live/index.ex:47
+#: lib/omedis_web/live/event_live/index.ex:47
 #, elixir-autogen, elixir-format
 msgid "Comment"
 msgstr "Kommentar"
@@ -173,7 +173,7 @@ msgstr "E-Mail"
 msgid "Enable or disable custom color input"
 msgstr "Benutzerdefinierte Farbeingabe aktivieren oder deaktivieren"
 
-#: lib/omedis_web/live/log_entry_live/index.ex:55
+#: lib/omedis_web/live/event_live/index.ex:55
 #, elixir-autogen, elixir-format
 msgid "End at"
 msgstr "Ende um"
@@ -246,11 +246,6 @@ msgstr "Nachname"
 #, elixir-autogen, elixir-format
 msgid "Listing Projects"
 msgstr "Auflistung von Projekten"
-
-#: lib/omedis_web/live/log_entry_live/index.ex:97
-#, elixir-autogen, elixir-format
-msgid "Log entries"
-msgstr "Protokolleinträge"
 
 #: lib/omedis_web/live/activity_live/index.ex:62
 #: lib/omedis_web/live/activity_live/show.ex:71
@@ -344,10 +339,10 @@ msgstr "Projekt"
 msgid "Project saved."
 msgstr "Projekt gespeichert."
 
-#: lib/omedis_web/components/general_components.ex:259
-#: lib/omedis_web/components/general_components.ex:362
-#: lib/omedis_web/components/general_components.ex:647
-#: lib/omedis_web/components/general_components.ex:750
+#: lib/omedis_web/components/general_components.ex:262
+#: lib/omedis_web/components/general_components.ex:365
+#: lib/omedis_web/components/general_components.ex:654
+#: lib/omedis_web/components/general_components.ex:757
 #: lib/omedis_web/live/organisation_live/show.ex:49
 #: lib/omedis_web/live/project_live/index.ex:26
 #: lib/omedis_web/live/project_live/index.ex:173
@@ -357,7 +352,7 @@ msgstr "Projekt gespeichert."
 msgid "Projects"
 msgstr "Projekte"
 
-#: lib/omedis_web/components/general_components.ex:510
+#: lib/omedis_web/components/general_components.ex:517
 #: lib/omedis_web/live/invitation_live/show.ex:24
 #: lib/omedis_web/live/register_live.ex:143
 #, elixir-autogen, elixir-format
@@ -447,7 +442,7 @@ msgstr "Slug"
 msgid "Something went wrong!"
 msgstr "Etwas ist schief gelaufen!"
 
-#: lib/omedis_web/live/log_entry_live/index.ex:51
+#: lib/omedis_web/live/event_live/index.ex:51
 #, elixir-autogen, elixir-format
 msgid "Start at"
 msgstr "Beginnen bei"
@@ -524,11 +519,6 @@ msgstr "Verwenden Sie dieses Formular, um Projektdatensätze in Ihrer Datenbank 
 msgid "Use your credentials to sign in"
 msgstr "Verwenden Sie Ihre Anmeldedaten, um sich anzumelden."
 
-#: lib/omedis_web/live/activity_live/show.ex:63
-#, elixir-autogen, elixir-format
-msgid "View Log entries"
-msgstr "Protokolleinträge anzeigen"
-
 #: lib/omedis_web/components/core_components.ex:163
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
@@ -598,14 +588,14 @@ msgstr "Weiblich"
 msgid "Group deleted"
 msgstr "Gruppe gelöscht"
 
-#: lib/omedis_web/components/general_components.ex:349
-#: lib/omedis_web/components/general_components.ex:737
+#: lib/omedis_web/components/general_components.ex:352
+#: lib/omedis_web/components/general_components.ex:744
 #: lib/omedis_web/live/activity_live/index.ex:27
 #: lib/omedis_web/live/activity_live/show.ex:23
+#: lib/omedis_web/live/event_live/index.ex:26
 #: lib/omedis_web/live/group_live/index.ex:26
 #: lib/omedis_web/live/group_live/show.ex:21
 #: lib/omedis_web/live/invitation_live/form_component.ex:159
-#: lib/omedis_web/live/log_entry_live/index.ex:26
 #: lib/omedis_web/live/organisation_live/show.ex:56
 #: lib/omedis_web/live/organisation_live/today.ex:24
 #, elixir-autogen, elixir-format
@@ -618,7 +608,7 @@ msgstr "Gruppen"
 msgid "Listing Groups"
 msgstr "Gruppen auflisten"
 
-#: lib/omedis_web/components/general_components.ex:502
+#: lib/omedis_web/components/general_components.ex:509
 #, elixir-autogen, elixir-format
 msgid "Login"
 msgstr "Anmelden"
@@ -722,49 +712,49 @@ msgstr "Seite anzeigen"
 msgid "of"
 msgstr "von"
 
-#: lib/omedis_web/components/general_components.ex:458
+#: lib/omedis_web/components/general_components.ex:466
 #, elixir-autogen, elixir-format
 msgid "Search..."
 msgstr "Suchen..."
 
-#: lib/omedis_web/components/general_components.ex:281
-#: lib/omedis_web/components/general_components.ex:669
+#: lib/omedis_web/components/general_components.ex:284
+#: lib/omedis_web/components/general_components.ex:676
 #, elixir-autogen, elixir-format
 msgid "Calendar"
 msgstr "Kalender"
 
-#: lib/omedis_web/components/general_components.ex:184
-#: lib/omedis_web/components/general_components.ex:574
+#: lib/omedis_web/components/general_components.ex:187
+#: lib/omedis_web/components/general_components.ex:581
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr "Instrumententafel"
 
-#: lib/omedis_web/components/general_components.ex:303
-#: lib/omedis_web/components/general_components.ex:691
+#: lib/omedis_web/components/general_components.ex:306
+#: lib/omedis_web/components/general_components.ex:698
 #, elixir-autogen, elixir-format
 msgid "Documents"
 msgstr "Dokumente"
 
-#: lib/omedis_web/components/general_components.ex:330
-#: lib/omedis_web/components/general_components.ex:718
+#: lib/omedis_web/components/general_components.ex:333
+#: lib/omedis_web/components/general_components.ex:725
 #, elixir-autogen, elixir-format
 msgid "Reports"
 msgstr "Berichte"
 
-#: lib/omedis_web/components/general_components.ex:392
-#: lib/omedis_web/components/general_components.ex:780
+#: lib/omedis_web/components/general_components.ex:395
+#: lib/omedis_web/components/general_components.ex:787
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: lib/omedis_web/components/general_components.ex:237
-#: lib/omedis_web/components/general_components.ex:625
+#: lib/omedis_web/components/general_components.ex:240
+#: lib/omedis_web/components/general_components.ex:632
 #, elixir-autogen, elixir-format
 msgid "Team"
 msgstr "Mannschaft"
 
-#: lib/omedis_web/components/general_components.ex:214
-#: lib/omedis_web/components/general_components.ex:603
+#: lib/omedis_web/components/general_components.ex:217
+#: lib/omedis_web/components/general_components.ex:610
 #, elixir-autogen, elixir-format
 msgid "Today's Time Tracker"
 msgstr "Die heutige Zeiterfassung"
@@ -774,12 +764,12 @@ msgstr "Die heutige Zeiterfassung"
 msgid "Username or password is incorrect"
 msgstr "Benutzername oder Passwort ist falsch"
 
-#: lib/omedis_web/components/general_components.ex:806
+#: lib/omedis_web/components/general_components.ex:810
 #, elixir-autogen, elixir-format
 msgid "Edit Profile"
 msgstr "Profil bearbeiten"
 
-#: lib/omedis_web/components/general_components.ex:809
+#: lib/omedis_web/components/general_components.ex:813
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Abmelden"
@@ -801,10 +791,10 @@ msgstr "Zurück"
 
 #: lib/omedis_web/live/activity_live/index.ex:24
 #: lib/omedis_web/live/activity_live/show.ex:20
+#: lib/omedis_web/live/event_live/index.ex:23
 #: lib/omedis_web/live/group_live/index.ex:23
 #: lib/omedis_web/live/group_live/show.ex:18
 #: lib/omedis_web/live/invitation_live/index.ex:108
-#: lib/omedis_web/live/log_entry_live/index.ex:23
 #: lib/omedis_web/live/organisation_live/index.ex:21
 #: lib/omedis_web/live/organisation_live/show.ex:17
 #: lib/omedis_web/live/organisation_live/today.ex:21
@@ -814,22 +804,17 @@ msgstr "Zurück"
 msgid "Home"
 msgstr "Startseite"
 
-#: lib/omedis_web/components/general_components.ex:27
+#: lib/omedis_web/components/general_components.ex:29
 #, elixir-autogen, elixir-format
 msgid "Navigation Breadcrumb"
 msgstr "Navigations-Breadcrumb"
-
-#: lib/omedis_web/live/log_entry_live/index.ex:40
-#, elixir-autogen, elixir-format
-msgid "Listing Log entries for"
-msgstr "Auflistung von Protokollkategorien"
 
 #: lib/omedis_web/live/organisation_live/show.ex:182
 #, elixir-autogen, elixir-format
 msgid "Back to organisations"
 msgstr "Zurück zu den Organisationen"
 
-#: lib/omedis_web/components/general_components.ex:875
+#: lib/omedis_web/components/general_components.ex:879
 #, elixir-autogen, elixir-format
 msgid "Create first organisation"
 msgstr "Erste Organisation erstellen"
@@ -874,13 +859,13 @@ msgstr "Organisation"
 msgid "Organisation saved."
 msgstr "Organisation gespeichert."
 
-#: lib/omedis_web/components/general_components.ex:878
+#: lib/omedis_web/components/general_components.ex:882
 #: lib/omedis_web/live/activity_live/index.ex:25
 #: lib/omedis_web/live/activity_live/show.ex:21
+#: lib/omedis_web/live/event_live/index.ex:24
 #: lib/omedis_web/live/group_live/index.ex:24
 #: lib/omedis_web/live/group_live/show.ex:19
 #: lib/omedis_web/live/invitation_live/index.ex:109
-#: lib/omedis_web/live/log_entry_live/index.ex:24
 #: lib/omedis_web/live/organisation_live/index.ex:22
 #: lib/omedis_web/live/organisation_live/show.ex:18
 #: lib/omedis_web/live/organisation_live/today.ex:22
@@ -917,8 +902,8 @@ msgstr "Organisation anzeigen"
 msgid "You are not authorized to delete this group"
 msgstr "Sie sind nicht berechtigt, diese Gruppe zu löschen"
 
-#: lib/omedis_web/live/organisation_live/today.ex:430
-#: lib/omedis_web/live/organisation_live/today.ex:442
+#: lib/omedis_web/live/organisation_live/today.ex:423
+#: lib/omedis_web/live/organisation_live/today.ex:435
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to perform this action"
 msgstr "Sie sind nicht berechtigt, diese Aktion auszuführen"
@@ -972,8 +957,8 @@ msgstr "Akzeptiert"
 
 #: lib/omedis_web/live/activity_live/index.ex:29
 #: lib/omedis_web/live/activity_live/show.ex:25
+#: lib/omedis_web/live/event_live/index.ex:28
 #: lib/omedis_web/live/group_live/show.ex:35
-#: lib/omedis_web/live/log_entry_live/index.ex:28
 #, elixir-autogen, elixir-format
 msgid "Activities"
 msgstr "Aktivitäten"
@@ -1066,3 +1051,18 @@ msgstr "Status"
 #, elixir-autogen, elixir-format
 msgid "Complete Registration"
 msgstr "Registrierung abschließen"
+
+#: lib/omedis_web/live/event_live/index.ex:97
+#, elixir-autogen, elixir-format
+msgid "Events"
+msgstr "Veranstaltungen"
+
+#: lib/omedis_web/live/event_live/index.ex:40
+#, elixir-autogen, elixir-format
+msgid "Listing Events for"
+msgstr "Veranstaltungen auflisten für"
+
+#: lib/omedis_web/live/activity_live/show.ex:63
+#, elixir-autogen, elixir-format
+msgid "View Events"
+msgstr "Veranstaltungen anzeigen"

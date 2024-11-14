@@ -6,12 +6,12 @@ defmodule Omedis.OrganisationTest do
   @admin_full_access_resources [
     "AccessRight",
     "Activity",
+    "Event",
     "Group",
     "GroupMembership",
     "Event",
     "Invitation",
     "InvitationGroup",
-    "LogEntry",
     "Organisation",
     "Project",
     "Token"
@@ -24,7 +24,6 @@ defmodule Omedis.OrganisationTest do
     "Activity",
     "Group",
     "GroupMembership",
-    "Event",
     "Invitation",
     "InvitationGroup",
     "Organisation",
@@ -33,7 +32,7 @@ defmodule Omedis.OrganisationTest do
     "User"
   ]
 
-  @user_create_resources ["LogEntry"]
+  @user_create_resources ["Event"]
 
   setup do
     {:ok, user} = create_user()
