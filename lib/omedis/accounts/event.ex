@@ -134,6 +134,12 @@ defmodule Omedis.Accounts.Event do
     end
   end
 
+  validations do
+    validate compare(:dtend, greater_than: :dtstart),
+      where: [attribute_does_not_equal(:dtend, nil)],
+      message: "end date must be greater than the start date"
+  end
+
   multitenancy do
     strategy :attribute
     attribute :organisation_id
@@ -160,12 +166,6 @@ defmodule Omedis.Accounts.Event do
     has_many :access_rights, Omedis.Accounts.AccessRight do
       manual Omedis.Accounts.Event.Relationships.EventAccessRights
     end
-  end
-
-  validations do
-    validate compare(:dtend, greater_than: :dtstart),
-      where: [attribute_does_not_equal(:dtend, nil)],
-      message: "end date must be greater than the start date"
   end
 
   calculations do

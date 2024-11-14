@@ -9,6 +9,7 @@ defmodule Omedis.OrganisationTest do
     "Event",
     "Group",
     "GroupMembership",
+    "Event",
     "Invitation",
     "InvitationGroup",
     "Organisation",

@@ -1,6 +1,8 @@
 defmodule OmedisWeb.OrganisationLive.FormComponent do
   use OmedisWeb, :live_component
+
   alias AshPhoenix.Form
+  alias Omedis.Accounts
   alias Omedis.Accounts.Organisation
 
   @impl true
@@ -265,7 +267,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
         if new_name == "" || new_name == nil do
           organisation_params
         else
-          Map.put(organisation_params, "slug", update_slug(Slug.slugify(new_name)))
+          Map.put(organisation_params, "slug", update_slug(Slug.slugify(new_name), socket))
         end
       else
         organisation_params
@@ -298,19 +300,27 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
     end
   end
 
-  defp generate_unique_slug(base_slug) do
+  defp generate_unique_slug(base_slug, socket) do
     new_slug = "#{base_slug}#{:rand.uniform(99)}"
 
-    case Organisation.slug_exists?(new_slug) do
-      true -> generate_unique_slug(base_slug)
-      false -> Slug.slugify(new_slug)
+    if Accounts.slug_exists?(Organisation, [slug: new_slug],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       ) do
+      generate_unique_slug(base_slug, socket)
+    else
+      Slug.slugify(new_slug)
     end
   end
 
-  defp update_slug(slug) do
-    case Organisation.slug_exists?(slug) do
-      true -> generate_unique_slug(slug)
-      false -> Slug.slugify(slug)
+  defp update_slug(slug, socket) do
+    if Accounts.slug_exists?(Organisation, [slug: slug],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       ) do
+      generate_unique_slug(slug, socket)
+    else
+      Slug.slugify(slug)
     end
   end
 

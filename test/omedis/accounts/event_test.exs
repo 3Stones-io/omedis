@@ -29,7 +29,7 @@ defmodule Omedis.EventTest do
     }
   end
 
-  describe "by_activity/1" do
+  describe "by_activity/2" do
     test "returns events for a specific activity", %{
       activity: activity,
       organisation: organisation,
@@ -101,7 +101,7 @@ defmodule Omedis.EventTest do
     end
   end
 
-  describe "by_activity_today/1" do
+  describe "by_activity_today/2" do
     test "returns events for a specific activity created today", %{
       activity: activity,
       organisation: organisation,
@@ -156,7 +156,7 @@ defmodule Omedis.EventTest do
     end
   end
 
-  describe "create/1" do
+  describe "create/2" do
     test "organisation owner can create an event", %{
       activity: activity,
       organisation: organisation,
@@ -622,7 +622,7 @@ defmodule Omedis.EventTest do
     end
   end
 
-  describe "update/1" do
+  describe "update/2" do
     test "organisation owner can update an event", %{
       activity: activity,
       organisation: organisation,

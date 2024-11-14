@@ -19,11 +19,6 @@ defmodule Omedis.Accounts.InvitationGroup do
     end
   end
 
-  attributes do
-    uuid_primary_key :id
-    timestamps()
-  end
-
   actions do
     defaults [:read, :destroy]
 
@@ -32,6 +27,22 @@ defmodule Omedis.Accounts.InvitationGroup do
 
       primary? true
     end
+  end
+
+  policies do
+    policy do
+      authorize_if always()
+    end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+  end
+
+  attributes do
+    uuid_primary_key :id
+    timestamps()
   end
 
   relationships do
@@ -46,16 +57,5 @@ defmodule Omedis.Accounts.InvitationGroup do
     end
 
     belongs_to :organisation, Omedis.Accounts.Organisation
-  end
-
-  policies do
-    policy do
-      authorize_if always()
-    end
-  end
-
-  multitenancy do
-    strategy :attribute
-    attribute :organisation_id
   end
 end
