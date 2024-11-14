@@ -36,11 +36,6 @@ defmodule Omedis.Accounts.Project do
     define :list_paginated
   end
 
-  identities do
-    identity :unique_name, :name
-    identity :unique_position, :position
-  end
-
   actions do
     create :create do
       accept [
@@ -83,44 +78,6 @@ defmodule Omedis.Accounts.Project do
     end
   end
 
-  validations do
-    validate present(:name)
-
-    validate present(:position)
-  end
-
-  attributes do
-    uuid_primary_key :id
-
-    attribute :name, :string, allow_nil?: false, public?: true
-    attribute :position, :string, allow_nil?: false, public?: true
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
-  end
-
-  def get_max_position_by_organisation_id(organisation_id, opts \\ []) do
-    __MODULE__
-    |> Ash.Query.filter(organisation_id: organisation_id)
-    |> Ash.Query.sort(position: :desc)
-    |> Ash.Query.limit(1)
-    |> Ash.Query.select([:position])
-    |> Ash.read!(opts)
-    |> Enum.at(0)
-    |> case do
-      nil -> 0
-      record -> record.position |> String.to_integer()
-    end
-  end
-
-  relationships do
-    belongs_to :organisation, Omedis.Accounts.Organisation
-
-    has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.Project.Relationships.ProjectAccessRights
-    end
-  end
-
   policies do
     policy action_type([:create, :update]) do
       authorize_if CanAccessResource
@@ -135,8 +92,37 @@ defmodule Omedis.Accounts.Project do
     end
   end
 
+  validations do
+    validate present(:name)
+
+    validate present(:position)
+  end
+
   multitenancy do
     strategy :attribute
     attribute :organisation_id
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :name, :string, allow_nil?: false, public?: true
+    attribute :position, :string, allow_nil?: false, public?: true
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :organisation, Omedis.Accounts.Organisation
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Project.Relationships.ProjectAccessRights
+    end
+  end
+
+  identities do
+    identity :unique_name, :name
+    identity :unique_position, :position
   end
 end
