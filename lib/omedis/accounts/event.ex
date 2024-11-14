@@ -33,6 +33,28 @@ defmodule Omedis.Accounts.Event do
   end
 
   actions do
+    create :create do
+      accept [
+        :activity_id,
+        :dtend,
+        :dtstart,
+        :summary,
+        :user_id
+      ]
+
+      primary? true
+
+      change fn changeset, _ ->
+        case changeset.context do
+          %{created_at: created_at} ->
+            Ash.Changeset.change_attribute(changeset, :created_at, created_at)
+
+          _ ->
+            changeset
+        end
+      end
+    end
+
     read :by_activity do
       argument :activity_id, :uuid do
         allow_nil? false
@@ -59,28 +81,6 @@ defmodule Omedis.Accounts.Event do
                activity_id == ^arg(:activity_id) and
                  fragment("date_trunc('day', ?) = date_trunc('day', now())", created_at)
              )
-    end
-
-    create :create do
-      accept [
-        :activity_id,
-        :dtend,
-        :dtstart,
-        :summary,
-        :user_id
-      ]
-
-      primary? true
-
-      change fn changeset, _ ->
-        case changeset.context do
-          %{created_at: created_at} ->
-            Ash.Changeset.change_attribute(changeset, :created_at, created_at)
-
-          _ ->
-            changeset
-        end
-      end
     end
 
     read :read do
