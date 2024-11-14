@@ -234,12 +234,12 @@ defmodule Omedis.AccountsTest do
   end
 
   describe "slug_exists?/3" do
-    test "checks if a slug exists for a resource", %{organisation: organisation} do
-      assert Accounts.slug_exists?(Organisation, [slug: organisation.slug], authorize?: false)
+    test "checks if a slug exists for a resource", %{organisation: organisation, owner: owner} do
+      assert Accounts.slug_exists?(Organisation, [slug: organisation.slug], actor: owner)
     end
 
-    test "returns false if a slug does not exist for a resource" do
-      refute Accounts.slug_exists?(Organisation, [slug: "non-existent-slug"], authorize?: false)
+    test "returns false if a slug does not exist for a resource", %{owner: owner} do
+      refute Accounts.slug_exists?(Organisation, [slug: "non-existent-slug"], actor: owner)
     end
   end
 end

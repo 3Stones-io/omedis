@@ -267,7 +267,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
         if new_name == "" || new_name == nil do
           organisation_params
         else
-          Map.put(organisation_params, "slug", update_slug(Slug.slugify(new_name)))
+          Map.put(organisation_params, "slug", update_slug(Slug.slugify(new_name), socket))
         end
       else
         organisation_params
@@ -300,19 +300,25 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
     end
   end
 
-  defp generate_unique_slug(base_slug) do
+  defp generate_unique_slug(base_slug, socket) do
     new_slug = "#{base_slug}#{:rand.uniform(99)}"
 
-    if Accounts.slug_exists?(Organisation, [slug: new_slug], authorize?: false) do
-      generate_unique_slug(base_slug)
+    if Accounts.slug_exists?(Organisation, [slug: new_slug],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       ) do
+      generate_unique_slug(base_slug, socket)
     else
       Slug.slugify(new_slug)
     end
   end
 
-  defp update_slug(slug) do
-    if Accounts.slug_exists?(Organisation, [slug: slug], authorize?: false) do
-      generate_unique_slug(slug)
+  defp update_slug(slug, socket) do
+    if Accounts.slug_exists?(Organisation, [slug: slug],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       ) do
+      generate_unique_slug(slug, socket)
     else
       Slug.slugify(slug)
     end

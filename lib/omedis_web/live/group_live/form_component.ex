@@ -85,7 +85,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           Map.put(
             group_params,
             "slug",
-            update_slug(Slug.slugify(new_name), socket.assigns.organisation.id)
+            update_slug(Slug.slugify(new_name), socket)
           )
         end
       else
@@ -116,23 +116,30 @@ defmodule OmedisWeb.GroupLive.FormComponent do
     end
   end
 
-  defp update_slug(slug, organisation_id) do
-    case Accounts.slug_exists?(Group, [slug: slug, organisation_id: organisation_id],
-           authorize?: false
-         ) do
-      true -> generate_unique_slug(slug, organisation_id)
-      false -> Slug.slugify(slug)
+  defp update_slug(slug, socket) do
+    if Accounts.slug_exists?(Group, [slug: slug, organisation_id: socket.assigns.organisation.id],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       ) do
+      generate_unique_slug(slug, socket)
+    else
+      Slug.slugify(slug)
     end
   end
 
-  defp generate_unique_slug(base_slug, organisation_id) do
+  defp generate_unique_slug(base_slug, socket) do
     new_slug = "#{base_slug}#{:rand.uniform(99)}"
 
-    case Accounts.slug_exists?(Group, [slug: new_slug, organisation_id: organisation_id],
-           authorize?: false
-         ) do
-      true -> generate_unique_slug(base_slug, organisation_id)
-      false -> Slug.slugify(new_slug)
+    if Accounts.slug_exists?(
+         Group,
+         [slug: new_slug, organisation_id: socket.assigns.organisation.id],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation,
+         authorize?: false
+       ) do
+      generate_unique_slug(base_slug, socket)
+    else
+      Slug.slugify(new_slug)
     end
   end
 
