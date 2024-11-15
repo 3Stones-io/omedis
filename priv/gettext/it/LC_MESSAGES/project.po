@@ -1,0 +1,153 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/omedis_web/live/project_live/index.ex:236
+#: lib/omedis_web/live/project_live/show.ex:125
+#, elixir-autogen, elixir-format
+msgctxt "authorisation_error"
+msgid "You are not authorized to access this page"
+msgstr "Non sei autorizzato ad accedere a questa pagina"
+
+#: lib/omedis_web/live/project_live/show.ex:56
+#, elixir-autogen, elixir-format
+msgctxt "navigation"
+msgid "Back to projects"
+msgstr "Torna ai progetti"
+
+#: lib/omedis_web/live/project_live/index.ex:80
+#, elixir-autogen, elixir-format
+msgctxt "navigation"
+msgid "Edit"
+msgstr "Modifica"
+
+#: lib/omedis_web/live/project_live/index.ex:72
+#, elixir-autogen, elixir-format
+msgctxt "navigation"
+msgid "Show"
+msgstr "Mostra"
+
+#: lib/omedis_web/live/project_live/form_component.ex:61
+#, elixir-autogen, elixir-format
+msgctxt "project_action"
+msgid "Save Project"
+msgstr "Salva progetto"
+
+#: lib/omedis_web/live/project_live/form_component.ex:59
+#, elixir-autogen, elixir-format
+msgctxt "project_action"
+msgid "Saving..."
+msgstr "Salvataggio in corso..."
+
+#: lib/omedis_web/live/project_live/show.ex:46
+#, elixir-autogen, elixir-format
+msgctxt "project_attribute"
+msgid "Name"
+msgstr "Nome"
+
+#: lib/omedis_web/live/project_live/show.ex:50
+#, elixir-autogen, elixir-format
+msgctxt "project_attribute"
+msgid "Position"
+msgstr "Posizione"
+
+#: lib/omedis_web/live/project_live/form_component.ex:31
+#, elixir-autogen, elixir-format
+msgctxt "project_form"
+msgid "Name"
+msgstr "Nome"
+
+#: lib/omedis_web/live/project_live/form_component.ex:39
+#, elixir-autogen, elixir-format
+msgctxt "project_form"
+msgid "Organisation"
+msgstr "Organizzazione"
+
+#: lib/omedis_web/live/project_live/form_component.ex:51
+#, elixir-autogen, elixir-format
+msgctxt "project_form"
+msgid "Position"
+msgstr "Posizione"
+
+#: lib/omedis_web/live/project_live/index.ex:172
+#, elixir-autogen, elixir-format
+msgctxt "project_list"
+msgid "Projects"
+msgstr "Progetti"
+
+#: lib/omedis_web/live/project_live/index.ex:214
+#: lib/omedis_web/live/project_live/show.ex:137
+#, elixir-autogen, elixir-format
+msgctxt "project_page_title"
+msgid "Edit Project"
+msgstr "Modifica progetto"
+
+#: lib/omedis_web/live/project_live/index.ex:33
+#, elixir-autogen, elixir-format
+msgctxt "project_page_title"
+msgid "Listing Projects"
+msgstr "Elenco progetti"
+
+#: lib/omedis_web/live/project_live/index.ex:198
+#, elixir-autogen, elixir-format
+msgctxt "project_page_title"
+msgid "New Project"
+msgstr "Nuovo progetto"
+
+#: lib/omedis_web/live/project_live/show.ex:28
+#: lib/omedis_web/live/project_live/show.ex:134
+#, elixir-autogen, elixir-format
+msgctxt "project_page_title"
+msgid "Project"
+msgstr "Progetto"
+
+#: lib/omedis_web/live/project_live/index.ex:229
+#, elixir-autogen, elixir-format
+msgctxt "project_page_title"
+msgid "Projects"
+msgstr "Progetti"
+
+#: lib/omedis_web/live/project_live/show.ex:30
+#, elixir-autogen, elixir-format
+msgctxt "project_page_title"
+msgid "This is a project record from your database."
+msgstr "Questo è un record di progetto dal tuo database."
+
+#: lib/omedis_web/live/project_live/form_component.ex:12
+#, elixir-autogen, elixir-format
+msgctxt "project_page_title"
+msgid "Use this form to manage project records in your database."
+msgstr "Usa questo modulo per gestire i record dei progetti nel tuo database."
+
+#: lib/omedis_web/live/project_live/form_component.ex:107
+#, elixir-autogen, elixir-format
+msgctxt "project_status"
+msgid "Please correct the errors below."
+msgstr "Correggi gli errori sottostanti."
+
+#: lib/omedis_web/live/project_live/form_component.ex:93
+#, elixir-autogen, elixir-format
+msgctxt "project_status"
+msgid "Project saved."
+msgstr "Progetto salvato."
+
+#: lib/omedis_web/live/project_live/index.ex:57
+#, elixir-autogen, elixir-format
+msgctxt "project_table"
+msgid "Name"
+msgstr "Nome"
+
+#: lib/omedis_web/live/project_live/index.ex:64
+#, elixir-autogen, elixir-format
+msgctxt "project_table"
+msgid "Position"
+msgstr "Posizione"

@@ -1,0 +1,142 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/omedis_web/live/edit_profile.ex:272
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_action"
+msgid "Save Profile"
+msgstr "Salva Profilo"
+
+#: lib/omedis_web/live/edit_profile.ex:274
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_action"
+msgid "Saving..."
+msgstr "Salvataggio in corso..."
+
+#: lib/omedis_web/live/edit_profile.ex:199
+#: lib/omedis_web/live/edit_profile.ex:207
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Birthdate"
+msgstr "Data di nascita"
+
+#: lib/omedis_web/live/edit_profile.ex:213
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Birthdate %{msg}"
+msgstr "Data di nascita %{msg}"
+
+#: lib/omedis_web/live/edit_profile.ex:221
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Current Organisation"
+msgstr "Organizzazione attuale"
+
+#: lib/omedis_web/live/edit_profile.ex:239
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Current Organisation %{msg}"
+msgstr "Organizzazione attuale %{msg}"
+
+#: lib/omedis_web/live/edit_profile.ex:132
+#: lib/omedis_web/live/edit_profile.ex:140
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "First Name"
+msgstr "Nome"
+
+#: lib/omedis_web/live/edit_profile.ex:146
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "First Name %{msg}"
+msgstr "Nome %{msg}"
+
+#: lib/omedis_web/live/edit_profile.ex:175
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Gender"
+msgstr "Genere"
+
+#: lib/omedis_web/live/edit_profile.ex:191
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Gender %{msg}"
+msgstr "Genere %{msg}"
+
+#: lib/omedis_web/live/edit_profile.ex:247
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Language"
+msgstr "Lingua"
+
+#: lib/omedis_web/live/edit_profile.ex:262
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Language %{msg}"
+msgstr "Lingua %{msg}"
+
+#: lib/omedis_web/live/edit_profile.ex:154
+#: lib/omedis_web/live/edit_profile.ex:161
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Last Name"
+msgstr "Cognome"
+
+#: lib/omedis_web/live/edit_profile.ex:167
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Last Name %{msg}"
+msgstr "Cognome %{msg}"
+
+#: lib/omedis_web/live/edit_profile.ex:182
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Select Gender"
+msgstr "Seleziona Genere"
+
+#: lib/omedis_web/live/edit_profile.ex:228
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Select Organisation"
+msgstr "Seleziona Organizzazione"
+
+#: lib/omedis_web/live/edit_profile.ex:254
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_form"
+msgid "Select Your Language"
+msgstr "Seleziona la tua Lingua"
+
+#: lib/omedis_web/live/edit_profile.ex:127
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_page_title"
+msgid "Edit your profile details"
+msgstr "Modifica i dettagli del tuo profilo"
+
+#: lib/omedis_web/live/edit_profile.ex:80
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_status"
+msgid "Profile update failed"
+msgstr "Aggiornamento profilo fallito"
+
+#: lib/omedis_web/live/edit_profile.ex:65
+#, elixir-autogen, elixir-format
+msgctxt "profile_edit_status"
+msgid "Profile updated successfully"
+msgstr "Profilo aggiornato con successo"
+
+#: lib/omedis_web/live/edit_profile.ex:40
+#: lib/omedis_web/live/edit_profile.ex:124
+#, elixir-autogen, elixir-format
+msgctxt "user_profile"
+msgid "Update Profile"
+msgstr "Aggiorna Profilo"

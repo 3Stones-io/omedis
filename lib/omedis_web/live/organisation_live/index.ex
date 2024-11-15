@@ -18,15 +18,17 @@ defmodule OmedisWeb.OrganisationLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {pgettext("navigation", "Home"), ~p"/", false},
-            {pgettext("navigation", "Organisations"), ~p"/organisations", true}
+            {with_locale(@language, fn -> dpgettext("navigation", "navigation", "Home") end), ~p"/",
+             false},
+            {with_locale(@language, fn -> dpgettext("navigation", "navigation", "Organisations") end),
+             ~p"/organisations", true}
           ]}
           language={@language}
         />
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= pgettext("organisation_page_title", "Listing Organisations") %>
+            <%= dpgettext("organisation", "organisation_page_title", "Listing Organisations") %>
           <% end) %>
           <:actions>
             <.link
@@ -35,7 +37,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("navigation", "New Organisation") %>
+                  <%= dpgettext("organisation", "organisation_page_title", "New Organisation") %>
                 <% end) %>
               </.button>
             </.link>
@@ -50,7 +52,11 @@ defmodule OmedisWeb.OrganisationLive.Index do
           >
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> pgettext("organisation_table", "Name") end)}
+              label={
+                with_locale(@language, fn ->
+                  dpgettext("organisation", "organisation_table", "Name")
+                end)
+              }
             >
               <%= organisation.name %>
               <%= if not is_nil(organisation.additional_info) and organisation.additional_info != "" do %>
@@ -60,7 +66,11 @@ defmodule OmedisWeb.OrganisationLive.Index do
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> pgettext("organisation_table", "Street") end)}
+              label={
+                with_locale(@language, fn ->
+                  dpgettext("organisation", "organisation_table", "Street")
+                end)
+              }
             >
               <%= organisation.street %>
               <%= if not is_nil(organisation.street2) do %>
@@ -75,25 +85,41 @@ defmodule OmedisWeb.OrganisationLive.Index do
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> pgettext("organisation_table", "Zip code") end)}
+              label={
+                with_locale(@language, fn ->
+                  dpgettext("organisation", "organisation_table", "Zip code")
+                end)
+              }
             >
               <%= organisation.zip_code %>
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> pgettext("organisation_table", "City") end)}
+              label={
+                with_locale(@language, fn ->
+                  dpgettext("organisation", "organisation_table", "City")
+                end)
+              }
             >
               <%= organisation.city %>
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> pgettext("organisation_table", "Canton") end)}
+              label={
+                with_locale(@language, fn ->
+                  dpgettext("organisation", "organisation_table", "Canton")
+                end)
+              }
             >
               <%= organisation.canton %>
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> pgettext("organisation_table", "Country") end)}
+              label={
+                with_locale(@language, fn ->
+                  dpgettext("organisation", "organisation_table", "Country")
+                end)
+              }
             >
               <%= organisation.country %>
             </:col>
@@ -101,13 +127,13 @@ defmodule OmedisWeb.OrganisationLive.Index do
               <div class="sr-only">
                 <.link navigate={~p"/organisations/#{organisation}"}>
                   <%= with_locale(@language, fn -> %>
-                    <%= pgettext("organisation_actions", "Show") %>
+                    <%= dpgettext("organisation", "organisation_actions", "Show") %>
                   <% end) %>
                 </.link>
               </div>
               <.link patch={~p"/organisations/#{organisation}/edit"}>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("organisation_actions", "Edit") %>
+                  <%= dpgettext("organisation", "organisation_actions", "Edit") %>
                 <% end) %>
               </.link>
             </:action>
@@ -162,7 +188,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
       |> assign(
         :page_title,
         with_locale(socket.assigns.language, fn ->
-          pgettext("organisation_page_title", "Edit Organisation")
+          dpgettext("organisation", "organisation_page_title", "Edit Organisation")
         end)
       )
       |> assign(:organisation, organisation)
@@ -170,7 +196,11 @@ defmodule OmedisWeb.OrganisationLive.Index do
       socket
       |> put_flash(
         :error,
-        pgettext("authorisation_error", "You are not authorized to access this page")
+        dpgettext(
+          "organisation",
+          "authorisation_error",
+          "You are not authorized to access this page"
+        )
       )
       |> push_navigate(to: ~p"/organisations")
     end
@@ -182,7 +212,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
       |> assign(
         :page_title,
         with_locale(socket.assigns.language, fn ->
-          pgettext("organisation_page_title", "New Organisation")
+          dpgettext("organisation", "organisation_page_title", "New Organisation")
         end)
       )
       |> assign(:organisation, nil)
@@ -190,7 +220,11 @@ defmodule OmedisWeb.OrganisationLive.Index do
       socket
       |> put_flash(
         :error,
-        pgettext("authorisation_error", "You are not authorized to access this page")
+        dpgettext(
+          "organisation",
+          "authorisation_error",
+          "You are not authorized to access this page"
+        )
       )
       |> push_navigate(to: ~p"/organisations")
     end
@@ -201,7 +235,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
     |> assign(
       :page_title,
       with_locale(socket.assigns.language, fn ->
-        pgettext("organisation_page_title", "Listing Organisations")
+        dpgettext("organisation", "organisation_page_title", "Listing Organisations")
       end)
     )
     |> assign(:organisation, nil)

@@ -1,0 +1,26 @@
+## This file is a PO Template file.
+##
+## "msgid"s here are often extracted from source code.
+## Add new messages manually only if they're dynamic
+## messages that can't be statically extracted.
+##
+## Run "mix gettext.extract" to bring this file up to
+## date. Leave "msgstr"s empty as changing them here has no
+## effect: edit them in PO (.po) files instead.
+#
+msgid ""
+msgstr ""
+
+#: lib/omedis_web/components/general_components.ex:160
+#: lib/omedis_web/components/general_components.ex:555
+#, elixir-autogen, elixir-format
+msgctxt "aria"
+msgid "Company logo"
+msgstr ""
+
+#: lib/omedis_web/components/general_components.ex:164
+#: lib/omedis_web/components/general_components.ex:558
+#, elixir-autogen, elixir-format
+msgctxt "aria"
+msgid "Main navigation"
+msgstr ""

@@ -1,0 +1,26 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n>1);\n"
+
+#: lib/omedis_web/components/general_components.ex:160
+#: lib/omedis_web/components/general_components.ex:555
+#, elixir-autogen, elixir-format
+msgctxt "aria"
+msgid "Company logo"
+msgstr "Logo de l'entreprise"
+
+#: lib/omedis_web/components/general_components.ex:164
+#: lib/omedis_web/components/general_components.ex:558
+#, elixir-autogen, elixir-format
+msgctxt "aria"
+msgid "Main navigation"
+msgstr "Navigation principale"

@@ -15,10 +15,11 @@ defmodule OmedisWeb.GroupLive.Show do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {pgettext("navigation", "Home"), ~p"/", false},
-            {pgettext("navigation", "Organisations"), ~p"/organisations", false},
+            {dpgettext("navigation", "navigation", "Home"), ~p"/", false},
+            {dpgettext("navigation", "navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {pgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {dpgettext("navigation", "navigation", "Groups"),
+             ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, "", true}
           ]}
           language={@language}
@@ -32,7 +33,7 @@ defmodule OmedisWeb.GroupLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("navigation", "Activities") %>
+                  <%= dpgettext("navigation", "navigation", "Activities") %>
                 <% end) %>
               </.button>
             </.link>
@@ -40,17 +41,21 @@ defmodule OmedisWeb.GroupLive.Show do
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> pgettext("group_attribute", "Name") end)}>
+          <:item title={
+            with_locale(@language, fn -> dpgettext("group", "group_attribute", "Name") end)
+          }>
             <%= @group.name %>
           </:item>
-          <:item title={with_locale(@language, fn -> pgettext("group_attribute", "Slug") end)}>
+          <:item title={
+            with_locale(@language, fn -> dpgettext("group", "group_attribute", "Slug") end)
+          }>
             <%= @group.slug %>
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups"}>
           <%= with_locale(@language, fn -> %>
-            <%= pgettext("navigation", "Back to groups") %>
+            <%= dpgettext("navigation", "navigation", "Back to groups") %>
           <% end) %>
         </.back>
 
@@ -99,8 +104,8 @@ defmodule OmedisWeb.GroupLive.Show do
   end
 
   defp page_title(:show, language),
-    do: with_locale(language, fn -> pgettext("group_page_title", "Show Group") end)
+    do: with_locale(language, fn -> dpgettext("group", "group_page_title", "Show Group") end)
 
   defp page_title(:edit, language),
-    do: with_locale(language, fn -> pgettext("group_page_title", "Edit Group") end)
+    do: with_locale(language, fn -> dpgettext("group", "group_page_title", "Edit Group") end)
 end

@@ -1,0 +1,42 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n>1);\n"
+
+#: lib/omedis_web/live/event_live/index.ex:109
+#, elixir-autogen, elixir-format
+msgctxt "events_page_title"
+msgid "Events"
+msgstr "Événements"
+
+#: lib/omedis_web/live/event_live/index.ex:41
+#, elixir-autogen, elixir-format
+msgctxt "events_page_title"
+msgid "Listing Events for"
+msgstr "Liste des événements pour"
+
+#: lib/omedis_web/live/event_live/index.ex:50
+#, elixir-autogen, elixir-format
+msgctxt "events_table"
+msgid "Comment"
+msgstr "Commentaire"
+
+#: lib/omedis_web/live/event_live/index.ex:64
+#, elixir-autogen, elixir-format
+msgctxt "events_table"
+msgid "End at"
+msgstr "Se termine à"
+
+#: lib/omedis_web/live/event_live/index.ex:57
+#, elixir-autogen, elixir-format
+msgctxt "events_table"
+msgid "Start at"
+msgstr "Commence à"

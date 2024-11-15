@@ -18,12 +18,13 @@ defmodule OmedisWeb.OrganisationLive.Today do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {pgettext("navigation", "Home"), ~p"/", false},
-            {pgettext("navigation", "Organisations"), ~p"/organisations", false},
+            {dpgettext("navigation", "navigation", "Home"), ~p"/", false},
+            {dpgettext("navigation", "navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {pgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {dpgettext("navigation", "navigation", "Groups"),
+             ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {pgettext("navigation", "Today"), "", true}
+            {dpgettext("navigation", "navigation", "Today"), "", true}
           ]}
           language={@language}
         />
@@ -34,7 +35,9 @@ defmodule OmedisWeb.OrganisationLive.Today do
           project={@project}
           language={@language}
           projects={@projects}
-          header_text={pgettext("today_select_group_and_project", "Select group and project")}
+          header_text={
+            dpgettext("organisation", "today_select_group_and_project", "Select group and project")
+          }
         />
 
         <.dashboard_component
@@ -423,7 +426,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
       put_flash(
         socket,
         :error,
-        pgettext("authorisation_error", "You are not authorized to perform this action")
+        dpgettext(
+          "organisation",
+          "authorisation_error",
+          "You are not authorized to perform this action"
+        )
       )
     end
   end
@@ -439,7 +446,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
       put_flash(
         socket,
         :error,
-        pgettext("authorisation_error", "You are not authorized to perform this action")
+        dpgettext(
+          "organisation",
+          "authorisation_error",
+          "You are not authorized to perform this action"
+        )
       )
     end
   end

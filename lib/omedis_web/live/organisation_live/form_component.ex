@@ -27,7 +27,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             type="text"
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> pgettext("organisation_form", "Name") end)} <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Name") end)} <span class='text-red-600'>*</span>"
               )
             }
           />
@@ -39,7 +39,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             type="text"
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> pgettext("organisation_form", "Slug") end)} <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Slug") end)} <span class='text-red-600'>*</span>"
               )
             }
           />
@@ -50,7 +50,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             type="text"
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> pgettext("organisation_form", "Street") end)} <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Street") end)} <span class='text-red-600'>*</span>"
               )
             }
           />
@@ -60,21 +60,35 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:street2]}
             type="text"
-            label={pgettext("organisation_form", "Street2")}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Street2")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:zip_code]}
             type="text"
-            label={pgettext("organisation_form", "Zip code")}
-          /><.input field={@form[:city]} type="text" label={pgettext("organisation_form", "City")} />
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Zip code")
+              end)
+            }
+          /><.input
+            field={@form[:city]}
+            type="text"
+            label={
+              with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "City") end)
+            }
+          />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:country]}
             type="text"
-            label={pgettext("organisation_form", "Country")}
+            label={dpgettext("organisation", "organisation_form", "Country")}
           />
         </div>
 
@@ -83,7 +97,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:default_daily_start_at]}
             type="time"
-            label={with_locale(@language, fn -> pgettext("organisation_form", "Daily Start At") end)}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Daily Start At")
+              end)
+            }
             value={
               (@organisation && input_value(@form, :default_daily_start_at)) ||
                 @current_user.daily_start_at
@@ -94,7 +112,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:default_daily_end_at]}
             type="time"
-            label={with_locale(@language, fn -> pgettext("organisation_form", "Daily End At") end)}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Daily End At")
+              end)
+            }
             value={
               (@organisation && input_value(@form, :default_daily_end_at)) ||
                 @current_user.daily_end_at
@@ -105,26 +127,64 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:additional_info]}
             type="text"
-            label={with_locale(@language, fn -> pgettext("organisation_form", "Additional Info") end)}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Additional Info")
+              end)
+            }
           />
         </div>
 
         <div class="space-y-3">
-          <.input field={@form[:po_box]} type="text" label={pgettext("organisation_form", "Po Box")} />
+          <.input
+            field={@form[:po_box]}
+            type="text"
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Po Box")
+              end)
+            }
+          />
         </div>
 
         <div class="space-y-3">
-          <.input field={@form[:canton]} type="text" label={pgettext("organisation_form", "Canton")} />
+          <.input
+            field={@form[:canton]}
+            type="text"
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Canton")
+              end)
+            }
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:phone]} type="text" label={pgettext("organisation_form", "Phone")} />
+          <.input
+            field={@form[:phone]}
+            type="text"
+            label={
+              with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Phone") end)
+            }
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:fax]} type="text" label={pgettext("organisation_form", "Fax")} />
+          <.input
+            field={@form[:fax]}
+            type="text"
+            label={
+              with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Fax") end)
+            }
+          />
         </div>
 
         <div class="space-y-3">
-          <.input field={@form[:email]} type="text" label={pgettext("organisation_form", "Email")} />
+          <.input
+            field={@form[:email]}
+            type="text"
+            label={
+              with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Email") end)
+            }
+          />
           <.error :for={msg <- get_field_errors(f[:email], :email)}>
             <%= "Email" <> " " <> msg %>
           </.error>
@@ -134,14 +194,22 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:website]}
             type="text"
-            label={pgettext("organisation_form", "Website")}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Website")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:zsr_number]}
             type="text"
-            label={pgettext("organisation_form", "Zsr Number")}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Zsr Number")
+              end)
+            }
           />
           <.error :for={msg <- get_field_errors(f[:zsr_number], :zsr_number)}>
             <%= "Zsr_number" <> " " <> msg %>
@@ -151,7 +219,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:ean_gln]}
             type="text"
-            label={pgettext("organisation_form", "Ean Gln")}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Ean Gln")
+              end)
+            }
           />
         </div>
 
@@ -159,37 +231,73 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:uid_bfs_number]}
             type="text"
-            label={pgettext("organisation_form", "Uid Bfs Number")}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Uid Bfs Number")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:trade_register_no]}
             type="text"
-            label={pgettext("organisation_form", "Trade Register No")}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Trade Register No")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:bank]} type="text" label={pgettext("organisation_form", "Bank")} />
+          <.input
+            field={@form[:bank]}
+            type="text"
+            label={
+              with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Bank") end)
+            }
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:iban]} type="text" label={pgettext("organisation_form", "Iban")} />
+          <.input
+            field={@form[:iban]}
+            type="text"
+            label={
+              with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Iban") end)
+            }
+          />
         </div>
         <div class="space-y-3">
-          <.input field={@form[:bic]} type="text" label={pgettext("organisation_form", "Bic")} />
+          <.input
+            field={@form[:bic]}
+            type="text"
+            label={
+              with_locale(@language, fn -> dpgettext("organisation", "organisation_form", "Bic") end)
+            }
+          />
         </div>
 
         <div class="space-y-3">
           <.input
             field={@form[:account_number]}
             type="text"
-            label={pgettext("organisation_form", "Account Number")}
+            label={
+              with_locale(@language, fn ->
+                dpgettext("organisation", "organisation_form", "Account Number")
+              end)
+            }
           />
         </div>
 
         <:actions>
-          <.button phx-disable-with={pgettext("organisation_form_action", "Saving...")}>
-            <%= pgettext("organisation_form_action", "Save Organisation") %>
+          <.button phx-disable-with={
+            with_locale(@language, fn ->
+              dpgettext("organisation", "organisation_form_action", "Saving...")
+            end)
+          }>
+            <%= with_locale(@language, fn ->
+              dpgettext("organisation", "organisation_form_action", "Save Organisation")
+            end) %>
           </.button>
         </:actions>
       </.simple_form>
@@ -237,7 +345,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           |> put_flash(
             :info,
             with_locale(socket.assigns.language, fn ->
-              pgettext("organisation_status", "Organisation saved.")
+              dpgettext("organisation", "organisation_status", "Organisation saved.")
             end)
           )
           |> push_navigate(to: path_for(socket.assigns.action, organisation))

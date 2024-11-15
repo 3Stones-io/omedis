@@ -71,7 +71,7 @@ defmodule OmedisWeb.InvitationLive.Index do
      |> put_flash(
        :info,
        with_locale(socket.assigns.language, fn ->
-         pgettext("flash_message", "Invitation deleted successfully")
+         dpgettext("invitation", "invitation_status", "Invitation deleted successfully")
        end)
      )
      |> stream_delete(:invitations, invitation)}
@@ -107,17 +107,17 @@ defmodule OmedisWeb.InvitationLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {pgettext("navigation", "Home"), ~p"/", false},
-            {pgettext("navigation", "Organisations"), ~p"/organisations", false},
+            {dpgettext("navigation", "navigation", "Home"), ~p"/", false},
+            {dpgettext("navigation", "navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {pgettext("navigation", "Invitations"), "", true}
+            {dpgettext("navigation", "navigation", "Invitations"), "", true}
           ]}
           language={@language}
         />
 
         <.header>
           <%= with_locale(@language, fn ->
-            pgettext("invitation_page_title", "Listing Invitations")
+            dpgettext("invitation", "invitation_page_title", "Listing Invitations")
           end) %>
 
           <:actions>
@@ -127,7 +127,7 @@ defmodule OmedisWeb.InvitationLive.Index do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("navigation", "New Invitation") %>
+                  <%= dpgettext("invitation", "navigation", "New Invitation") %>
                 <% end) %>
               </.button>
             </.link>
@@ -155,29 +155,41 @@ defmodule OmedisWeb.InvitationLive.Index do
           <.table id="invitations" rows={@streams.invitations}>
             <:col
               :let={{_id, invitation}}
-              label={with_locale(@language, fn -> pgettext("invitation_table", "Email") end)}
+              label={
+                with_locale(@language, fn -> dpgettext("invitation", "invitation_table", "Email") end)
+              }
             >
               <%= invitation.email %>
             </:col>
 
             <:col
               :let={{_id, invitation}}
-              label={with_locale(@language, fn -> pgettext("invitation_table", "Status") end)}
+              label={
+                with_locale(@language, fn -> dpgettext("invitation", "invitation_table", "Status") end)
+              }
             >
               <%= if invitation.user_id do %>
                 <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                  <%= with_locale(@language, fn -> pgettext("invitation_status", "Accepted") end) %>
+                  <%= with_locale(@language, fn ->
+                    dpgettext("invitation", "invitation_status", "Accepted")
+                  end) %>
                 </span>
               <% else %>
                 <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-600/20">
-                  <%= with_locale(@language, fn -> pgettext("invitation_status", "Pending") end) %>
+                  <%= with_locale(@language, fn ->
+                    dpgettext("invitation", "invitation_status", "Pending")
+                  end) %>
                 </span>
               <% end %>
             </:col>
 
             <:col
               :let={{_id, invitation}}
-              label={with_locale(@language, fn -> pgettext("invitation_table", "Invited At") end)}
+              label={
+                with_locale(@language, fn ->
+                  dpgettext("invitation", "invitation_table", "Invited At")
+                end)
+              }
               sort_by={(@sort_order == "asc" && "↓") || "↑"}
               col_click={
                 JS.push("sort_invitations",
@@ -192,7 +204,11 @@ defmodule OmedisWeb.InvitationLive.Index do
 
             <:col
               :let={{_id, invitation}}
-              label={with_locale(@language, fn -> pgettext("invitation_table", "Expires At") end)}
+              label={
+                with_locale(@language, fn ->
+                  dpgettext("invitation", "invitation_table", "Expires At")
+                end)
+              }
             >
               <%= Calendar.strftime(invitation.expires_at, "%Y-%m-%d %H:%M:%S") %>
             </:col>
@@ -206,7 +222,8 @@ defmodule OmedisWeb.InvitationLive.Index do
                 }
                 data-confirm={
                   with_locale(@language, fn ->
-                    pgettext(
+                    dpgettext(
+                      "invitation",
                       "invitation_confirmation",
                       "Are you sure you want to delete this invitation?"
                     )
@@ -214,7 +231,9 @@ defmodule OmedisWeb.InvitationLive.Index do
                 }
                 class="text-red-600 hover:text-red-900"
               >
-                <%= with_locale(@language, fn -> pgettext("invitation_action", "Delete") end) %>
+                <%= with_locale(@language, fn ->
+                  dpgettext("invitation", "invitation_action", "Delete")
+                end) %>
               </.link>
             </:action>
           </.table>

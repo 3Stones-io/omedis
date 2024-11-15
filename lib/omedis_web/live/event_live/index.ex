@@ -20,16 +20,17 @@ defmodule OmedisWeb.EventLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {pgettext("navigation", "Home"), ~p"/", false},
-            {pgettext("navigation", "Organisations"), ~p"/organisations", false},
+            {dpgettext("navigation", "navigation", "Home"), ~p"/", false},
+            {dpgettext("navigation", "navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {pgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {dpgettext("navigation", "navigation", "Groups"),
+             ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {pgettext("navigation", "Activities"),
+            {dpgettext("navigation", "navigation", "Activities"),
              ~p"/organisations/#{@organisation}/groups/#{@group}/activities", false},
             {@activity.name,
              ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity.id}", false},
-            {pgettext("navigation", "Events"), "", true}
+            {dpgettext("navigation", "navigation", "Events"), "", true}
           ]}
           language={@language}
         />
@@ -37,7 +38,7 @@ defmodule OmedisWeb.EventLive.Index do
         <.header>
           <span>
             <%= with_locale(@language, fn -> %>
-              <%= pgettext("log_entries_page_title", "Listing Events for") %>
+              <%= dpgettext("event", "events_page_title", "Listing Events for") %>
             <% end) %>
           </span>
           <%= @activity.name %>
@@ -46,21 +47,21 @@ defmodule OmedisWeb.EventLive.Index do
         <.table id="events" rows={@streams.events}>
           <:col
             :let={{_id, event}}
-            label={with_locale(@language, fn -> pgettext("events_table", "Comment") end)}
+            label={with_locale(@language, fn -> dpgettext("event", "events_table", "Comment") end)}
           >
             <%= event.summary %>
           </:col>
 
           <:col
             :let={{_id, event}}
-            label={with_locale(@language, fn -> pgettext("events_table", "Start at") end)}
+            label={with_locale(@language, fn -> dpgettext("event", "events_table", "Start at") end)}
           >
             <%= event.dtstart %>
           </:col>
 
           <:col
             :let={{_id, event}}
-            label={with_locale(@language, fn -> pgettext("events_table", "End at") end)}
+            label={with_locale(@language, fn -> dpgettext("event", "events_table", "End at") end)}
           >
             <%= event.dtend %>
           </:col>
@@ -105,7 +106,9 @@ defmodule OmedisWeb.EventLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn -> pgettext("events_page_title", "Events") end)
+      with_locale(socket.assigns.language, fn ->
+        dpgettext("event", "events_page_title", "Events")
+      end)
     )
     |> assign(:event, nil)
     |> PaginationUtils.list_paginated(params, :events, fn offset ->

@@ -65,7 +65,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         <div class="flex gap-5">
           <p>
             <%= with_locale(@language, fn -> %>
-              <%= pgettext("activity_form", "Enter custom color") %>
+              <%= dpgettext("activity", "activity_form", "Enter custom color") %>
             <% end) %>
           </p>
           <div
@@ -80,7 +80,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           >
             <span class="sr-only">
               <%= with_locale(@language, fn -> %>
-                <%= pgettext("activity_form", "Enable or disable custom color input") %>
+                <%= dpgettext("activity", "activity_form", "Enable or disable custom color input") %>
               <% end) %>
             </span>
 
@@ -135,10 +135,12 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
               end
             }
             disabled={@form.source.source.valid? == false}
-            phx-disable-with={with_locale(@language, fn -> pgettext("form_action", "Saving...") end)}
+            phx-disable-with={
+              with_locale(@language, fn -> dpgettext("activity", "form_action", "Saving...") end)
+            }
           >
             <%= with_locale(@language, fn -> %>
-              <%= pgettext("activity_form", "Save Activity") %>
+              <%= dpgettext("activity", "activity_form", "Save Activity") %>
             <% end) %>
           </.button>
         </:actions>
@@ -191,7 +193,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           |> put_flash(
             :info,
             with_locale(socket.assigns.language, fn ->
-              pgettext("activity_status", "Activity saved successfully")
+              dpgettext("activity", "activity_status", "Activity saved successfully")
             end)
           )
           |> push_patch(to: socket.assigns.patch)
@@ -205,7 +207,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
          |> put_flash(
            :error,
            with_locale(socket.assigns.language, fn ->
-             pgettext("activity_status", "Please correct the errors below")
+             dpgettext("activity", "activity_status", "Please correct the errors below")
            end)
          )}
     end

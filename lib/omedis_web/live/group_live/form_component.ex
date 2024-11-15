@@ -13,7 +13,8 @@ defmodule OmedisWeb.GroupLive.FormComponent do
         <%= @title %>
         <:subtitle>
           <%= with_locale(@language, fn -> %>
-            <%= pgettext(
+            <%= dpgettext(
+              "group",
               "group_page_title",
               "Use this form to manage group records in your database."
             ) %>
@@ -32,12 +33,12 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           <.input
             field={@form[:name]}
             type="text"
-            label={with_locale(@language, fn -> pgettext("group_form", "Name") end)}
+            label={with_locale(@language, fn -> dpgettext("group", "group_form", "Name") end)}
           />
           <.input
             field={@form[:slug]}
             type="text"
-            label={with_locale(@language, fn -> pgettext("group_form", "Slug") end)}
+            label={with_locale(@language, fn -> dpgettext("group", "group_form", "Slug") end)}
           />
           <input type="hidden" name="group[organisation_id]" value={@organisation.id} />
           <input type="hidden" name="group[user_id]" value={@current_user.id} />
@@ -46,21 +47,21 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           <.input
             field={@form[:name]}
             type="text"
-            label={with_locale(@language, fn -> pgettext("group_form", "Name") end)}
+            label={with_locale(@language, fn -> dpgettext("group", "group_form", "Name") end)}
           />
           <.input
             field={@form[:slug]}
             type="text"
-            label={with_locale(@language, fn -> pgettext("group_form", "Slug") end)}
+            label={with_locale(@language, fn -> dpgettext("group", "group_form", "Slug") end)}
           />
         <% end %>
 
         <:actions>
           <.button phx-disable-with={
-            with_locale(@language, fn -> pgettext("group_action", "Saving...") end)
+            with_locale(@language, fn -> dpgettext("group", "group_action", "Saving...") end)
           }>
             <%= with_locale(@language, fn -> %>
-              <%= pgettext("group_action", "Save Group") %>
+              <%= dpgettext("group", "group_action", "Save Group") %>
             <% end) %>
           </.button>
         </:actions>
