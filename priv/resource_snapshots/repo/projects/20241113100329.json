@@ -17,7 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
+      "source": "name",
       "type": "text"
     },
     {
@@ -27,17 +27,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "expires_at",
-      "type": "utc_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "language",
+      "source": "position",
       "type": "text"
     },
     {
@@ -47,7 +37,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "inserted_at",
+      "source": "created_at",
       "type": "utc_datetime_usec"
     },
     {
@@ -59,64 +49,6 @@
       "size": null,
       "source": "updated_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "invitations_creator_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "creator_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "invitations_organisation_id_fkey",
-        "on_delete": "delete",
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "organisations"
-      },
-      "size": null,
-      "source": "organisation_id",
-      "type": "uuid"
     },
     {
       "allow_nil?": true,
@@ -136,15 +68,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "invitations_user_id_fkey",
-        "on_delete": null,
+        "name": "projects_organisation_id_fkey",
+        "on_delete": "delete",
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "organisations"
       },
       "size": null,
-      "source": "user_id",
+      "source": "organisation_id",
       "type": "uuid"
     }
   ],
@@ -153,14 +85,43 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "193D7F1EF4E282409C2AE9668DB56CC4CED2361B5717DBDF6CDCB2F0F6A9A71D",
-  "identities": [],
+  "hash": "2485AEFD099882FA0BC18EC92EBDE98E8852A45988E54FAE66DEBCD507C7F403",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "projects_unique_name_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "name"
+        }
+      ],
+      "name": "unique_name",
+      "nils_distinct?": true,
+      "where": null
+    },
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "projects_unique_position_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "position"
+        }
+      ],
+      "name": "unique_position",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": "organisation_id",
-    "global": true,
+    "global": false,
     "strategy": "attribute"
   },
   "repo": "Elixir.Omedis.Repo",
   "schema": null,
-  "table": "invitations"
+  "table": "projects"
 }

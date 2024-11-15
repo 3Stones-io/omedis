@@ -55,12 +55,12 @@ defmodule OmedisWeb.ActivityLive.Show do
             </.link>
 
             <.link
-              navigate={~p"/organisations/#{@organisation}/activities/#{@activity}/log_entries"}
+              navigate={~p"/organisations/#{@organisation}/activities/#{@activity}/events"}
               phx-click={JS.push_focus()}
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= pgettext("navigation", "View Log entries") %>
+                  <%= pgettext("navigation", "View Events") %>
                 <% end) %>
               </.button>
             </.link>

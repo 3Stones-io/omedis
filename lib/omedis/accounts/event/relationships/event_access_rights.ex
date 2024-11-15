@@ -1,6 +1,6 @@
-defmodule Omedis.Accounts.LogEntry.Relationships.LogEntryAccessRights do
+defmodule Omedis.Accounts.Event.Relationships.EventAccessRights do
   @moduledoc """
-  A relationship that allows us to access the log entry access rights for a log entry.
+  A relationship that allows us to access the event access rights for an event.
   """
 
   use Ash.Resource.ManualRelationship
@@ -9,12 +9,12 @@ defmodule Omedis.Accounts.LogEntry.Relationships.LogEntryAccessRights do
   alias Omedis.Accounts.Relationships.ResourceAccessRights
 
   def load(resources, opts, context) do
-    ResourceAccessRights.load("LogEntry", resources, opts, context)
+    ResourceAccessRights.load("Event", resources, opts, context)
   end
 
   def ash_postgres_join(query, opts, current_binding, as_binding, type, destination_query) do
     ResourceAccessRights.ash_postgres_join(
-      "LogEntry",
+      "Event",
       query,
       opts,
       current_binding,
@@ -26,7 +26,7 @@ defmodule Omedis.Accounts.LogEntry.Relationships.LogEntryAccessRights do
 
   def ash_postgres_subquery(opts, current_binding, as_binding, destination_query) do
     ResourceAccessRights.ash_postgres_subquery(
-      "LogEntry",
+      "Event",
       opts,
       current_binding,
       as_binding,

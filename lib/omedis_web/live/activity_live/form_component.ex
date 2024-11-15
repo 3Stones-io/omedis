@@ -1,5 +1,7 @@
 defmodule OmedisWeb.ActivityLive.FormComponent do
   use OmedisWeb, :live_component
+
+  alias Omedis.Accounts
   alias Omedis.Accounts.Activity
 
   @impl true
@@ -231,7 +233,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         )
       end
 
-    color_code = Activity.select_unused_color_code(socket.assigns.organisation)
+    color_code = Accounts.select_unused_color_code(socket.assigns.organisation)
 
     assign(socket,
       form: to_form(form),

@@ -25,39 +25,6 @@ defmodule Omedis.Accounts.Invitation do
     define :list_paginated
   end
 
-  multitenancy do
-    strategy :attribute
-    attribute :organisation_id
-    global? true
-  end
-
-  attributes do
-    uuid_primary_key :id
-
-    attribute :email, :string, allow_nil?: false
-
-    attribute :expires_at, :utc_datetime,
-      allow_nil?: false,
-      default: fn -> DateTime.add(DateTime.utc_now(), 60 * 60 * 24 * 7, :second) end
-
-    attribute :language, :string, allow_nil?: false
-
-    attribute :inserted_at, :utc_datetime_usec do
-      writable? true
-      default &DateTime.utc_now/0
-      match_other_defaults? true
-      allow_nil? false
-    end
-
-    attribute :updated_at, :utc_datetime_usec do
-      writable? false
-      default &DateTime.utc_now/0
-      update_default &DateTime.utc_now/0
-      match_other_defaults? true
-      allow_nil? false
-    end
-  end
-
   actions do
     defaults [:read, :destroy]
 
@@ -101,6 +68,53 @@ defmodule Omedis.Accounts.Invitation do
     read :by_id
   end
 
+  policies do
+    policy action_type([:create, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action(:by_id) do
+      authorize_if Omedis.Accounts.InvitationNotExpiredFilter
+    end
+
+    policy action([:list_paginated, :read]) do
+      authorize_if Omedis.Accounts.AccessFilter
+    end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+    global? true
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :email, :string, allow_nil?: false
+
+    attribute :expires_at, :utc_datetime,
+      allow_nil?: false,
+      default: fn -> DateTime.add(DateTime.utc_now(), 60 * 60 * 24 * 7, :second) end
+
+    attribute :language, :string, allow_nil?: false
+
+    attribute :inserted_at, :utc_datetime_usec do
+      writable? true
+      default &DateTime.utc_now/0
+      match_other_defaults? true
+      allow_nil? false
+    end
+
+    attribute :updated_at, :utc_datetime_usec do
+      writable? false
+      default &DateTime.utc_now/0
+      update_default &DateTime.utc_now/0
+      match_other_defaults? true
+      allow_nil? false
+    end
+  end
+
   relationships do
     belongs_to :creator, Omedis.Accounts.User do
       allow_nil? false
@@ -120,20 +134,6 @@ defmodule Omedis.Accounts.Invitation do
 
     many_to_many :groups, Omedis.Accounts.Group do
       through Omedis.Accounts.InvitationGroup
-    end
-  end
-
-  policies do
-    policy action_type([:create, :destroy]) do
-      authorize_if Omedis.Accounts.CanAccessResource
-    end
-
-    policy action(:by_id) do
-      authorize_if Omedis.Accounts.InvitationNotExpiredFilter
-    end
-
-    policy action([:list_paginated, :read]) do
-      authorize_if Omedis.Accounts.AccessFilter
     end
   end
 end

@@ -1,5 +1,7 @@
 defmodule OmedisWeb.ActivityLive.Index do
   use OmedisWeb, :live_view
+
+  alias Omedis.Accounts
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Organisation
@@ -307,7 +309,7 @@ defmodule OmedisWeb.ActivityLive.Index do
            tenant: socket.assigns.organisation
          ) do
       {:ok, activity} ->
-        Activity.move_up(activity,
+        Accounts.move_activity_up(activity,
           actor: socket.assigns.current_user,
           tenant: socket.assigns.organisation
         )
@@ -325,7 +327,7 @@ defmodule OmedisWeb.ActivityLive.Index do
            tenant: socket.assigns.organisation
          ) do
       {:ok, activity} ->
-        Activity.move_down(activity,
+        Accounts.move_activity_down(activity,
           actor: socket.assigns.current_user,
           tenant: socket.assigns.organisation
         )

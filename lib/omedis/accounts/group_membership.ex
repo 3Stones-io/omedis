@@ -24,8 +24,39 @@ defmodule Omedis.Accounts.GroupMembership do
     end
   end
 
-  identities do
-    identity :unique_group_membership, [:group_id, :user_id]
+  code_interface do
+    define :create
+    define :read
+    define :destroy
+  end
+
+  actions do
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [:group_id, :user_id]
+
+      primary? true
+    end
+  end
+
+  policies do
+    policy action_type(:read) do
+      authorize_if AccessFilter
+    end
+
+    policy action_type([:create, :destroy]) do
+      authorize_if CanAccessResource
+    end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+  end
+
+  attributes do
+    uuid_primary_key :id
   end
 
   relationships do
@@ -39,38 +70,7 @@ defmodule Omedis.Accounts.GroupMembership do
     belongs_to :organisation, Omedis.Accounts.Organisation
   end
 
-  actions do
-    defaults [:read, :destroy]
-
-    create :create do
-      accept [:group_id, :user_id]
-
-      primary? true
-    end
-  end
-
-  code_interface do
-    define :create
-    define :read
-    define :destroy
-  end
-
-  policies do
-    policy action_type(:read) do
-      authorize_if AccessFilter
-    end
-
-    policy action_type([:create, :destroy]) do
-      authorize_if CanAccessResource
-    end
-  end
-
-  attributes do
-    uuid_primary_key :id
-  end
-
-  multitenancy do
-    strategy :attribute
-    attribute :organisation_id
+  identities do
+    identity :unique_group_membership, [:group_id, :user_id]
   end
 end

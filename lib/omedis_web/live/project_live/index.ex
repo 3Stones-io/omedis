@@ -1,6 +1,7 @@
 defmodule OmedisWeb.ProjectLive.Index do
   use OmedisWeb, :live_view
 
+  alias Omedis.Accounts
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
   alias OmedisWeb.PaginationComponent
@@ -126,7 +127,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     organisation = Organisation.by_slug!(slug, actor: actor)
 
     next_position =
-      Project.get_max_position_by_organisation_id(organisation.id,
+      Accounts.get_max_position_by_organisation_id(organisation.id,
         actor: actor,
         tenant: organisation
       ) + 1
@@ -146,7 +147,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     organisation = Organisation.by_slug!(params["slug"], actor: actor)
 
     next_position =
-      Project.get_max_position_by_organisation_id(organisation.id,
+      Accounts.get_max_position_by_organisation_id(organisation.id,
         actor: actor,
         tenant: organisation
       ) + 1

@@ -14,7 +14,7 @@ defmodule OmedisWeb.TimeTracking do
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
   attr :current_time, :any, required: true
-  attr :log_entries, :list, required: true
+  attr :events, :list, required: true
   attr :language, :any, required: true
   attr :active_activity_id, :string, required: true
 
@@ -24,12 +24,12 @@ defmodule OmedisWeb.TimeTracking do
   ## Example
 
       <.dashboard_component
-        activities={[%{name: "Work", color_code: "#FF0000", log_entries: [...]}, ...]}
+        activities={[%{name: "Work", color_code: "#FF0000", events: [...]}, ...]}
         starts_a={~T[08:00:00]}
         ends_a={~T[18:00:00]}
         current_time={~T[13:30:00]}
         language="en"
-        log_entries={[%{start_at: ~T[09:00:00], end_at: ~T[12:00:00], color_code: "#FF0000"}, ...]}
+        events={[%{start_at: ~T[09:00:00], end_at: ~T[12:00:00], color_code: "#FF0000"}, ...]}
       />
   """
   def dashboard_component(assigns) do
@@ -43,7 +43,7 @@ defmodule OmedisWeb.TimeTracking do
           activities={@activities}
           start_at={@start_at}
           end_at={@end_at}
-          log_entries={@log_entries}
+          events={@events}
           language={@language}
           current_time={@current_time}
         />
@@ -72,7 +72,7 @@ defmodule OmedisWeb.TimeTracking do
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
   attr :current_time, :any, required: true
-  attr :log_entries, :list, required: true
+  attr :events, :list, required: true
   attr :language, :any, required: true
   attr :active_activity_id, :string, required: true
 
@@ -92,13 +92,13 @@ defmodule OmedisWeb.TimeTracking do
 
       <div class="w-[30%] flex items-end justify-end gap-4 h-[100%] ">
         <div class="w-[40%] relative h-[100%]">
-          <%= for entry <- @log_entries do %>
+          <%= for event <- @events do %>
             <div
               class="absolute w-[100%]"
               style={
-                "top: #{get_top_to_use_for_entry(entry, @start_at, @end_at)}%;
-                background-color: #{entry.color_code};
-                height: #{get_height_to_use_for_entry(entry, @current_time , @start_at, @end_at)}%;
+                "top: #{get_top_to_use_for_event(event, @start_at, @end_at)}%;
+                background-color: #{event.color_code};
+                height: #{get_height_to_use_for_event(event, @current_time , @start_at, @end_at)}%;
                 "
               }
             />
@@ -174,21 +174,21 @@ defmodule OmedisWeb.TimeTracking do
   end
 
   @doc """
-  Get the height to use for the entry based on the total time spent on the entry and the maximum time in minutes.
+  Get the height to use for the event based on the total time spent on the event and the maximum time in minutes.
 
   ## Example
 
-      iex> entry = %{start_at: ~T[09:00:00], end_at: ~T[11:00:00]}
-      iex> get_height_to_use_for_entry(entry, ~T[10:00:00],  ~T[08:00:00], ~T[18:00:00])
+      iex> event = %{start_at: ~T[09:00:00], end_at: ~T[11:00:00]}
+      iex> get_height_to_use_for_event(event, ~T[10:00:00],  ~T[08:00:00], ~T[18:00:00])
       16.666666666666668 # Represents 16.67% of the total height
   """
 
-  def get_height_to_use_for_entry(entry, current_time, start_at, end_at) do
+  def get_height_to_use_for_event(event, current_time, start_at, end_at) do
     time_spent =
-      if entry.end_at == nil do
-        Time.diff(current_time, entry.start_at, :minute)
+      if event.dtend == nil do
+        Time.diff(current_time, event.dtstart, :minute)
       else
-        Time.diff(entry.end_at, entry.start_at, :minute)
+        Time.diff(event.dtend, event.dtstart, :minute)
       end
 
     maximum_time_in_minutes = Time.diff(end_at, start_at, :minute)
@@ -196,22 +196,22 @@ defmodule OmedisWeb.TimeTracking do
   end
 
   @doc """
-  Get the absolute top % to use for the entry based on the total time spent on the entry and the maximum time in minutes.
+  Get the absolute top % to use for the event based on the total time spent on the event and the maximum time in minutes.
 
   ## Example
 
-      iex> entry = %{start_at: ~T[10:00:00], end_at: ~T[12:00:00]}
-      iex> get_top_to_use_for_entry(entry, ~T[08:00:00], ~T[18:00:00])
+      iex> event = %{start_at: ~T[10:00:00], end_at: ~T[12:00:00]}
+      iex> get_height_to_use_for_event(event, ~T[08:00:00], ~T[18:00:00])
       20.0 # Represents 20% from the top
   """
-  def get_top_to_use_for_entry(entry, start_at, end_at) do
-    time_difference_between_start_at_and_entry = Time.diff(entry.start_at, start_at, :minute)
+  def get_top_to_use_for_event(event, start_at, end_at) do
+    time_difference_between_start_at_and_event = Time.diff(event.dtstart, start_at, :minute)
 
-    time_difference_between_start_at_and_entry / Time.diff(end_at, start_at, :minute) * 100
+    time_difference_between_start_at_and_event / Time.diff(end_at, start_at, :minute) * 100
   end
 
   @doc """
-  Get the absolute top % to use for the current time based on the total time spent on the entry and the maximum time in minutes.
+  Get the absolute top % to use for the current time based on the total time spent on the event and the maximum time in minutes.
 
   ## Example
 
@@ -294,7 +294,7 @@ defmodule OmedisWeb.TimeTracking do
         <%= for event <- @events do %>
           <div
             class="absolute w-[100%] bg-gray-200 rounded-md p-2"
-            style={"top: #{calculate_top_position(event.start_at, @start_at, @end_at)}%; height: #{calculate_height(event.start_at, event.end_at, @start_at, @end_at)}%;"}
+            style={"top: #{calculate_top_position(event.dtstart, @start_at, @end_at)}%; height: #{calculate_height(event.dtstart, event.dtend, @start_at, @end_at)}%;"}
           >
             <%= event.title %>
           </div>
@@ -334,9 +334,9 @@ defmodule OmedisWeb.TimeTracking do
 
   def counter_for_time_taken_by_current_task(assigns) do
     ~H"""
-    <%= for log_entry <- @activity.log_entries |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
-      <p :if={log_entry.end_at == nil}>
-        <%= Time.diff(Time.utc_now(), log_entry.start_at, :minute) |> minutes_to_hhmm() %>
+    <%= for event <- @activity.events |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
+      <p :if={event.dtend == nil}>
+        <%= Time.diff(Time.utc_now(), event.dtstart, :minute) |> minutes_to_hhmm() %>
       </p>
     <% end %>
     """
