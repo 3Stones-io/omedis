@@ -452,7 +452,7 @@ defmodule Omedis.Accounts.ActivityTest do
       assert {:ok, new_activity} =
                Activity.create(attrs, actor: owner, tenant: organisation)
 
-      assert new_activity.is_default == true
+      assert new_activity.is_default
 
       updated_older_default_activity =
         Ash.get!(Activity, activity.id, actor: owner, tenant: organisation)
@@ -480,7 +480,7 @@ defmodule Omedis.Accounts.ActivityTest do
                  tenant: organisation
                )
 
-      assert updated_activity.is_default == true
+      assert updated_activity.is_default
 
       updated_older_default_activity =
         Ash.get!(Activity, activity.id, actor: owner, tenant: organisation)
