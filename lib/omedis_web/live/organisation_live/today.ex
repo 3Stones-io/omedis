@@ -68,15 +68,22 @@ defmodule OmedisWeb.OrganisationLive.Today do
     {:ok, %{results: events}} =
       Event.list_paginated_today(actor: current_user, tenant: organisation)
 
-    {min_start_in_events, max_end_in_events} = get_time_range(events)
+    {min_start_in_events, max_end_in_events} =
+      if Enum.empty?(events) do
+        {nil, nil}
+      else
+        get_time_range(events)
+      end
 
     start_at =
-      get_start_time_to_use(min_start_in_events, current_user.daily_start_at)
+      (get_start_time_to_use(min_start_in_events, current_user.daily_start_at) ||
+         organisation.default_daily_start_at)
       |> format_timezone(organisation.timezone)
       |> round_down_start_at()
 
     end_at =
-      get_end_time_to_use(max_end_in_events, current_user.daily_end_at)
+      (get_end_time_to_use(max_end_in_events, current_user.daily_end_at) ||
+         organisation.default_daily_end_at)
       |> format_timezone(organisation.timezone)
       |> round_up_end_at()
 
@@ -95,7 +102,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
      |> assign(:organisation, organisation)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
-     |> assign(:groups, groups_for_an_organisation(organisation.id))
+     |> assign(:groups, groups_for_an_organisation(organisation, current_user))
      |> assign(:projects, projects_for_an_organisation(organisation, current_user))
      |> assign(:group, group)
      |> assign(:project, project)
@@ -107,7 +114,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
     organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-    group = latest_group_for_an_organisation(organisation.id)
+    group = latest_group_for_an_organisation(organisation, socket.assigns.current_user)
     project = latest_project_for_an_organisation(organisation, socket.assigns.current_user)
 
     {:noreply,
@@ -174,12 +181,14 @@ defmodule OmedisWeb.OrganisationLive.Today do
     {min_start_in_events, max_end_in_events} = get_time_range(events)
 
     start_at =
-      get_start_time_to_use(min_start_in_events, current_user.daily_start_at)
+      (get_start_time_to_use(min_start_in_events, current_user.daily_start_at) ||
+         organisation.default_daily_start_at)
       |> format_timezone(organisation.timezone)
       |> round_down_start_at()
 
     end_at =
-      get_end_time_to_use(max_end_in_events, current_user.daily_end_at)
+      (get_end_time_to_use(max_end_in_events, current_user.daily_end_at) ||
+         organisation.default_daily_end_at)
       |> format_timezone(organisation.timezone)
       |> round_up_end_at()
 
@@ -198,9 +207,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     :timer.send_interval(1000, self(), :update_activities_and_current_time)
   end
 
-  defp get_start_time_to_use(nil, daily_start_at) do
-    daily_start_at
-  end
+  defp get_start_time_to_use(nil, daily_start_at), do: daily_start_at
 
   defp get_start_time_to_use(min_start_in_events, daily_start_at) do
     if Time.compare(min_start_in_events, daily_start_at) == :lt do
@@ -210,9 +217,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp get_end_time_to_use(nil, daily_end_at) do
-    daily_end_at
-  end
+  defp get_end_time_to_use(nil, daily_end_at), do: daily_end_at
 
   defp get_end_time_to_use(max_end_in_events, daily_end_at) do
     if Time.compare(max_end_in_events, daily_end_at) == :gt do
@@ -345,7 +350,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
      socket
      |> push_navigate(
        to:
-         "/organisations/#{socket.assigns.organisation}/today?group_id=#{id}&project_id=#{socket.assigns.project.id}"
+         ~p"/organisations/#{socket.assigns.organisation}/today?group_id=#{id}&project_id=#{socket.assigns.project.id}"
      )}
   end
 
@@ -354,7 +359,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
      socket
      |> push_navigate(
        to:
-         "/organisations/#{socket.assigns.organisation}/today?group_id=#{socket.assigns.group.id}&project_id=#{id}"
+         ~p"/organisations/#{socket.assigns.organisation}/today?group_id=#{socket.assigns.group.id}&project_id=#{id}"
      )}
   end
 
@@ -436,8 +441,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp latest_group_for_an_organisation(organisation_id) do
-    case Group.by_organisation_id(%{organisation_id: organisation_id}) do
+  defp latest_group_for_an_organisation(organisation, current_user) do
+    case Group.by_organisation_id(%{organisation_id: organisation.id},
+           actor: current_user,
+           tenant: organisation
+         ) do
       {:ok, %{results: groups}} ->
         Enum.min_by(groups, & &1.created_at)
 
@@ -463,8 +471,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp groups_for_an_organisation(organisation_id) do
-    case Group.by_organisation_id(%{organisation_id: organisation_id}) do
+  defp groups_for_an_organisation(organisation, current_user) do
+    case Group.by_organisation_id(%{organisation_id: organisation.id},
+           actor: current_user,
+           tenant: organisation
+         ) do
       {:ok, %{results: groups}} ->
         groups
         |> Enum.map(fn group -> {group.name, group.id} end)
