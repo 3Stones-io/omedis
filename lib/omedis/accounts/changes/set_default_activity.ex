@@ -19,7 +19,7 @@ defmodule Omedis.Accounts.Changes.SetDefaultActivity do
     if is_default do
       Activity
       |> Ash.Query.filter(group_id: group_id, is_default: true)
-      |> Ash.read_one!(tenant: organisation, actor: actor)
+      |> Ash.read_one!(authorize?: false, tenant: organisation)
       |> maybe_update_previous_default(changeset, organisation, actor)
     else
       changeset
