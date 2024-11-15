@@ -3,6 +3,9 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
   import Phoenix.LiveViewTest
 
+  alias Omedis.Accounts.Event
+  alias Omedis.Accounts.Group
+
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
     {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
@@ -64,7 +67,83 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
   end
 
   describe "/organisations/:slug/today" do
-    alias Omedis.Accounts.Event
+    test "navigating to today view redirects one to the today view for the latest group and project",
+         %{
+           conn: conn,
+           organisation: organisation,
+           owner: owner,
+           project: project
+         } do
+      {:ok, %{results: groups}} =
+        Group.by_organisation_id(%{organisation_id: organisation.id},
+          actor: owner,
+          tenant: organisation
+        )
+
+      latest_group = Enum.min_by(groups, & &1.created_at)
+
+      {:error, {:live_redirect, %{to: path}}} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/organisations/#{organisation}/today")
+
+      assert path ==
+               ~p"/organisations/#{organisation}/today?group_id=#{latest_group.id}&project_id=#{project.id}"
+    end
+
+    test "shows a drop down list of groups and navigates to group today page when different group is selected",
+         %{
+           conn: conn,
+           group: group,
+           organisation: organisation,
+           owner: owner,
+           project: project
+         } do
+      {:ok, group2} = create_group(organisation)
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(
+          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
+
+      lv
+      |> element("#group-select-form")
+      |> render_change(%{"group_id" => group2.id})
+
+      assert_redirect(
+        lv,
+        ~p"/organisations/#{organisation}/today?group_id=#{group2.id}&project_id=#{project.id}"
+      )
+    end
+
+    test "shows a drop down list of projects and navigates to project today page when different project is selected",
+         %{
+           conn: conn,
+           group: group,
+           organisation: organisation,
+           owner: owner,
+           project: project
+         } do
+      {:ok, project2} = create_project(organisation)
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(
+          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
+        )
+
+      lv
+      |> element("#project-select-form")
+      |> render_change(%{"project_id" => project2.id})
+
+      assert_redirect(
+        lv,
+        ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project2.id}"
+      )
+    end
 
     test "organisation owner can create a new event", %{
       conn: conn,

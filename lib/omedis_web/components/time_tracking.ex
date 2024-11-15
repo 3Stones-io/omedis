@@ -362,7 +362,12 @@ defmodule OmedisWeb.TimeTracking do
       </p>
 
       <div class="w-[100%] flex justify-between">
-        <form phx-change="select_group" phx-submit="select_group" class="w-[48%] form-control">
+        <form
+          phx-change="select_group"
+          phx-submit="select_group"
+          class="w-[48%] form-control"
+          id="group-select-form"
+        >
           <p>
             <%= with_locale(@language, fn -> %>
               <%= gettext("Select Group") %>
@@ -383,7 +388,12 @@ defmodule OmedisWeb.TimeTracking do
           </select>
         </form>
 
-        <form phx-change="select_project" phx-submit="select_project" class=" w-[48%] form-control">
+        <form
+          phx-change="select_project"
+          phx-submit="select_project"
+          class="w-[48%] form-control"
+          id="project-select-form"
+        >
           <p>
             <%= with_locale(@language, fn -> %>
               <%= gettext("Select Project") %>

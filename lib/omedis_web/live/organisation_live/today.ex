@@ -209,7 +209,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
   defp get_start_time_to_use(nil, daily_start_at), do: daily_start_at
 
-  defp get_start_time_to_use(min_start_in_events, daily_start_at) do
+  defp get_start_time_to_use(min_start_in_events, daily_start_at)
+       when not is_nil(daily_start_at) do
     if Time.compare(min_start_in_events, daily_start_at) == :lt do
       min_start_in_events
     else
@@ -217,15 +218,19 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
+  defp get_start_time_to_use(_, _), do: nil
+
   defp get_end_time_to_use(nil, daily_end_at), do: daily_end_at
 
-  defp get_end_time_to_use(max_end_in_events, daily_end_at) do
+  defp get_end_time_to_use(max_end_in_events, daily_end_at) when not is_nil(daily_end_at) do
     if Time.compare(max_end_in_events, daily_end_at) == :gt do
       max_end_in_events
     else
       daily_end_at
     end
   end
+
+  defp get_end_time_to_use(_, _), do: nil
 
   defp format_events(activities, organisation) do
     activities
