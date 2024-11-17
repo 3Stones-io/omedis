@@ -10,6 +10,9 @@ defmodule OmedisWeb.TimeTracking do
 
   import Gettext, only: [with_locale: 2]
 
+  alias OmedisWeb.CoreComponents
+  alias Phoenix.LiveView.JS
+
   attr :activities, :list, required: true
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
@@ -243,16 +246,31 @@ defmodule OmedisWeb.TimeTracking do
           id={"active-activity-#{@activity.id}"}
         />
 
-        <button
+        <div
           class="w-[100%] h-[100%] h-[40px] rounded-md"
           id={"activity-#{@activity.id}"}
-          phx-click="select_activity"
-          phx-value-activity_id={@activity.id}
           style={"background-color: #{@activity.color_code};"}
         >
-          <div class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
+          <p class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
             <span>
               <%= @activity.name %>
+            </span>
+            <span class="ml-4">
+              <%= if @active_activity_id == @activity.id do %>
+                <button
+                  phx-click={JS.push("stop_active_activity")}
+                  id={"stop-active-activity-#{@activity.id}"}
+                >
+                  <CoreComponents.icon name="hero-pause-circle-solid" class="w-6 h-6" />
+                </button>
+              <% else %>
+                <button
+                  phx-click={JS.push("start_activity", value: %{activity_id: @activity.id})}
+                  id={"start-activity-#{@activity.id}"}
+                >
+                  <CoreComponents.icon name="hero-play-circle-solid" class="w-6 h-6" />
+                </button>
+              <% end %>
             </span>
             <span>
               <.counter_for_time_taken_by_current_task
@@ -261,8 +279,8 @@ defmodule OmedisWeb.TimeTracking do
                 current_time={@current_time}
               />
             </span>
-          </div>
-        </button>
+          </p>
+        </div>
       </div>
     </div>
     """

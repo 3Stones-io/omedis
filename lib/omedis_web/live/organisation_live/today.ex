@@ -330,24 +330,19 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   @impl true
+  def handle_event("start_activity", %{"activity_id" => activity_id}, socket) do
+    if socket.assigns.active_activity_id do
+      {:noreply,
+       socket
+       |> stop_events_for_active_activity()
+       |> create_event(activity_id)}
+    else
+      {:noreply, create_event(socket, activity_id)}
+    end
+  end
 
-  def handle_event("select_activity", %{"activity_id" => activity_id}, socket) do
-    current_user = socket.assigns.current_user
-    organisation = socket.assigns.organisation
-    %{id: group_id} = _group = socket.assigns.group
-    %{id: project_id} = _project = socket.assigns.project
-
-    {:noreply,
-     socket
-     |> assign(
-       :activities,
-       activities(group_id, project_id, actor: current_user, tenant: organisation)
-     )
-     |> create_or_stop_event(
-       activity_id,
-       organisation,
-       current_user
-     )}
+  def handle_event("stop_active_activity", _params, socket) do
+    {:noreply, stop_events_for_active_activity(socket)}
   end
 
   def handle_event("select_group", %{"group_id" => id}, socket) do
@@ -368,45 +363,22 @@ defmodule OmedisWeb.OrganisationLive.Today do
      )}
   end
 
-  defp create_or_stop_event(socket, activity_id, organisation, user)
-       when is_binary(activity_id) do
+  defp stop_events_for_active_activity(socket) do
     {:ok, events} =
-      Event.by_activity_today(%{activity_id: activity_id},
-        actor: user,
-        tenant: organisation
+      Event.by_activity_today(%{activity_id: socket.assigns.active_activity_id},
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.organisation
       )
-
-    case Enum.find(events, fn event -> event.dtend == nil end) do
-      nil ->
-        stop_any_active_event(socket, organisation, user)
-        create_event(socket, activity_id)
-
-      event ->
-        create_or_stop_event(socket, event, activity_id,
-          actor: user,
-          tenant: organisation
-        )
-    end
-  end
-
-  defp create_or_stop_event(socket, event, activity_id, opts) do
-    if event.activity_id == activity_id do
-      stop_event(socket, event, opts)
-    else
-      stop_event(socket, event, opts)
-      create_event(socket, activity_id)
-    end
-  end
-
-  defp stop_any_active_event(socket, organisation, user) do
-    {:ok, %{results: events}} = Event.list_paginated(actor: user, tenant: organisation)
 
     case Enum.find(events, fn event -> event.dtend == nil end) do
       nil ->
         socket
 
       event ->
-        stop_event(socket, event, actor: user, tenant: organisation)
+        stop_event(socket, event,
+          actor: socket.assigns.current_user,
+          tenant: socket.assigns.organisation
+        )
     end
   end
 
