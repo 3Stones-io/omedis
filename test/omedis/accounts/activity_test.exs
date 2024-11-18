@@ -413,4 +413,79 @@ defmodule Omedis.Accounts.ActivityTest do
       assert Enum.empty?(activities)
     end
   end
+
+  describe "set_default_activity" do
+    setup %{group: group, organisation: organisation, project: project, owner: owner} do
+      {:ok, activity} =
+        create_activity(organisation, %{
+          name: "Test Activity",
+          group_id: group.id,
+          project_id: project.id,
+          is_default: true
+        })
+
+      %{
+        activity: activity,
+        group: group,
+        organisation: organisation,
+        owner: owner,
+        project: project
+      }
+    end
+
+    test "a new activity can be set to default and the existing default is removed", %{
+      activity: activity,
+      group: group,
+      organisation: organisation,
+      owner: owner,
+      project: project
+    } do
+      attrs = %{
+        color_code: "#FF0000",
+        group_id: group.id,
+        is_default: true,
+        name: "New Default Activity",
+        project_id: project.id,
+        slug: "new-default-activity"
+      }
+
+      assert {:ok, new_activity} =
+               Activity.create(attrs, actor: owner, tenant: organisation)
+
+      assert new_activity.is_default
+
+      updated_older_default_activity =
+        Ash.get!(Activity, activity.id, actor: owner, tenant: organisation)
+
+      refute updated_older_default_activity.is_default
+    end
+
+    test "can update default activity for existing records", %{
+      activity: activity,
+      group: group,
+      organisation: organisation,
+      owner: owner,
+      project: project
+    } do
+      {:ok, activity_2} =
+        create_activity(organisation, %{
+          name: "Test Activity 2",
+          group_id: group.id,
+          project_id: project.id
+        })
+
+      assert {:ok, updated_activity} =
+               Activity.update(activity_2, %{is_default: true},
+                 actor: owner,
+                 tenant: organisation
+               )
+
+      assert updated_activity.is_default
+
+      updated_older_default_activity =
+        Ash.get!(Activity, activity.id, actor: owner, tenant: organisation)
+
+      refute updated_older_default_activity.is_default
+    end
+  end
 end
