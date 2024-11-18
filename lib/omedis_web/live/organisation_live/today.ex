@@ -334,15 +334,15 @@ defmodule OmedisWeb.OrganisationLive.Today do
     if socket.assigns.active_activity_id do
       {:noreply,
        socket
-       |> stop_events_for_active_activity()
+       |> stop_any_active_event()
        |> create_event(activity_id)}
     else
       {:noreply, create_event(socket, activity_id)}
     end
   end
 
-  def handle_event("stop_active_activity", _params, socket) do
-    {:noreply, stop_events_for_active_activity(socket)}
+  def handle_event("stop_current_activity", _params, socket) do
+    {:noreply, stop_any_active_event(socket)}
   end
 
   def handle_event("select_group", %{"group_id" => id}, socket) do
@@ -363,7 +363,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
      )}
   end
 
-  defp stop_events_for_active_activity(socket) do
+  defp stop_any_active_event(socket) do
     {:ok, events} =
       Event.by_activity_today(%{activity_id: socket.assigns.active_activity_id},
         actor: socket.assigns.current_user,

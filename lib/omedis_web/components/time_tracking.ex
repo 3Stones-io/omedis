@@ -258,8 +258,8 @@ defmodule OmedisWeb.TimeTracking do
             <span class="ml-4">
               <%= if @active_activity_id == @activity.id do %>
                 <button
-                  phx-click={JS.push("stop_active_activity")}
-                  id={"stop-active-activity-#{@activity.id}"}
+                  phx-click={JS.push("stop_current_activity")}
+                  id={"stop-current-activity-#{@activity.id}"}
                 >
                   <CoreComponents.icon name="hero-pause-circle-solid" class="w-6 h-6" />
                 </button>

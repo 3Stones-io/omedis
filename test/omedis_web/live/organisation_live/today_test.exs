@@ -170,7 +170,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       assert lv
              |> element("#start-activity-#{activity.id}")
-             |> render_click() =~ "stop-active-activity-#{activity.id}"
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       {:ok, [event]} =
         Event.by_activity_today(
@@ -210,10 +210,10 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       # Create a event
       assert lv
              |> element("#start-activity-#{activity.id}")
-             |> render_click() =~ "stop-active-activity-#{activity.id}"
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       assert lv
-             |> element("#stop-active-activity-#{activity.id}")
+             |> element("#stop-current-activity-#{activity.id}")
              |> render_click() =~ "start-activity-#{activity.id}"
 
       # Verify event was stopped (end_at was set)
@@ -253,7 +253,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       assert lv
              |> element("#start-activity-#{activity.id}")
-             |> render_click() =~ "stop-active-activity-#{activity.id}"
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       {:ok, [event]} =
         Event.by_activity_today(
@@ -293,10 +293,10 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       # Create a event
       assert lv
              |> element("#start-activity-#{activity.id}")
-             |> render_click() =~ "stop-active-activity-#{activity.id}"
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       assert lv
-             |> element("#stop-active-activity-#{activity.id}")
+             |> element("#stop-current-activity-#{activity.id}")
              |> render_click() =~ "start-activity-#{activity.id}"
 
       # Verify event was stopped (end_at was set)
