@@ -11,161 +11,119 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/activity_live/show.ex:53
+#: lib/omedis_web/live/activity_live/show.ex:35
 #, elixir-autogen, elixir-format
-msgctxt "activity_action"
-msgid "Edit activity"
+msgid "Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:64
+#: lib/omedis_web/live/activity_live/form_component.ex:196
 #, elixir-autogen, elixir-format
-msgctxt "activity_action"
-msgid "View Events"
+msgid "Activity saved successfully"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:129
+#: lib/omedis_web/live/activity_live/show.ex:96
 #, elixir-autogen, elixir-format
-msgctxt "activity_actions"
-msgid "Edit"
+msgid "Back to activities"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:119
+#: lib/omedis_web/live/activity_live/show.ex:82
 #, elixir-autogen, elixir-format
-msgctxt "activity_actions"
-msgid "Show"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/show.ex:77
-#, elixir-autogen, elixir-format
-msgctxt "activity_attribute"
 msgid "Color code"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:72
+#: lib/omedis_web/live/activity_live/index.ex:111
 #, elixir-autogen, elixir-format
-msgctxt "activity_attribute"
-msgid "Name"
+msgid "Default"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:83
+#: lib/omedis_web/live/activity_live/index.ex:133
 #, elixir-autogen, elixir-format
-msgctxt "activity_attribute"
-msgid "Position"
+msgid "Edit"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/index.ex:235
+#: lib/omedis_web/live/activity_live/show.ex:178
+#, elixir-autogen, elixir-format
+msgid "Edit Activity"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/show.ex:56
+#, elixir-autogen, elixir-format
+msgid "Edit activity"
 msgstr ""
 
 #: lib/omedis_web/live/activity_live/form_component.ex:83
 #, elixir-autogen, elixir-format
-msgctxt "activity_form"
 msgid "Enable or disable custom color input"
 msgstr ""
 
 #: lib/omedis_web/live/activity_live/form_component.ex:68
 #, elixir-autogen, elixir-format
-msgctxt "activity_form"
 msgid "Enter custom color"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex:141
-#, elixir-autogen, elixir-format
-msgctxt "activity_form"
-msgid "Save Activity"
-msgstr ""
-
 #: lib/omedis_web/live/activity_live/index.ex:39
+#: lib/omedis_web/live/activity_live/index.ex:281
 #, elixir-autogen, elixir-format
-msgctxt "activity_list_page_title"
 msgid "Listing Activities"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:35
+#: lib/omedis_web/live/activity_live/index.ex:67
+#: lib/omedis_web/live/activity_live/show.ex:76
 #, elixir-autogen, elixir-format
-msgctxt "activity_page_title"
-msgid "Activity"
+msgid "Name"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:231
-#: lib/omedis_web/live/activity_live/show.ex:168
+#: lib/omedis_web/live/activity_live/index.ex:49
+#: lib/omedis_web/live/activity_live/index.ex:260
 #, elixir-autogen, elixir-format
-msgctxt "activity_page_title"
-msgid "Edit Activity"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/index.ex:277
-#, elixir-autogen, elixir-format
-msgctxt "activity_page_title"
-msgid "Listing Activities"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/index.ex:256
-#, elixir-autogen, elixir-format
-msgctxt "activity_page_title"
 msgid "New Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:165
+#: lib/omedis_web/live/activity_live/form_component.ex:210
 #, elixir-autogen, elixir-format
-msgctxt "activity_page_title"
+msgid "Please correct the errors below"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/index.ex:77
+#: lib/omedis_web/live/activity_live/show.ex:88
+#, elixir-autogen, elixir-format
+msgid "Position"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/form_component.ex:143
+#, elixir-autogen, elixir-format
+msgid "Save Activity"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/form_component.ex:139
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/index.ex:123
+#, elixir-autogen, elixir-format
+msgid "Show"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/show.ex:172
+#, elixir-autogen, elixir-format
 msgid "Show Activity"
 msgstr ""
 
 #: lib/omedis_web/live/activity_live/show.ex:40
 #, elixir-autogen, elixir-format
-msgctxt "activity_page_title"
 msgid "This is an activity record from your database."
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex:194
+#: lib/omedis_web/live/activity_live/show.ex:67
 #, elixir-autogen, elixir-format
-msgctxt "activity_status"
-msgid "Activity saved successfully"
+msgid "View Events"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:108
+#: lib/omedis_web/live/activity_live/index.ex:243
+#: lib/omedis_web/live/activity_live/index.ex:268
+#: lib/omedis_web/live/activity_live/show.ex:192
 #, elixir-autogen, elixir-format
-msgctxt "activity_status"
-msgid "Default"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/form_component.ex:208
-#, elixir-autogen, elixir-format
-msgctxt "activity_status"
-msgid "Please correct the errors below"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/index.ex:67
-#, elixir-autogen, elixir-format
-msgctxt "activity_table"
-msgid "Name"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/index.ex:76
-#, elixir-autogen, elixir-format
-msgctxt "activity_table"
-msgid "Position"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/index.ex:239
-#: lib/omedis_web/live/activity_live/index.ex:264
-#: lib/omedis_web/live/activity_live/show.ex:181
-#, elixir-autogen, elixir-format
-msgctxt "authorization_error"
 msgid "You are not authorized to access this page"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/index.ex:49
-#, elixir-autogen, elixir-format
-msgctxt "create_activity"
-msgid "New Activity"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/form_component.ex:138
-#, elixir-autogen, elixir-format
-msgctxt "form_action"
-msgid "Saving..."
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/show.ex:91
-#, elixir-autogen, elixir-format
-msgctxt "navigation"
-msgid "Back to activities"
 msgstr ""

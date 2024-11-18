@@ -18,13 +18,12 @@ defmodule OmedisWeb.OrganisationLive.Today do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {dpgettext("navigation", "navigation", "Home"), ~p"/", false},
-            {dpgettext("navigation", "navigation", "Organisations"), ~p"/organisations", false},
+            {dgettext("navigation", "Home"), ~p"/", false},
+            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dpgettext("navigation", "navigation", "Groups"),
-             ~p"/organisations/#{@organisation}/groups", false},
+            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {dpgettext("navigation", "navigation", "Today"), "", true}
+            {dgettext("navigation", "Today"), "", true}
           ]}
           language={@language}
         />
@@ -35,9 +34,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
           project={@project}
           language={@language}
           projects={@projects}
-          header_text={
-            dpgettext("organisation", "today_select_group_and_project", "Select group and project")
-          }
+          header_text={dgettext("organisation", "Select group and project")}
         />
 
         <.dashboard_component
@@ -436,9 +433,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
       put_flash(
         socket,
         :error,
-        dpgettext(
+        dgettext(
           "organisation",
-          "authorisation_error",
           "You are not authorized to perform this action"
         )
       )
@@ -456,9 +452,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
       put_flash(
         socket,
         :error,
-        dpgettext(
+        dgettext(
           "organisation",
-          "authorisation_error",
           "You are not authorized to perform this action"
         )
       )

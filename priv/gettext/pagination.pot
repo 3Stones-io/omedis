@@ -11,27 +11,24 @@
 msgid ""
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:50
+#: lib/omedis_web/components/pagination_component.ex:35
+#: lib/omedis_web/components/pagination_component.ex:110
 #, elixir-autogen, elixir-format
-msgid "Comment"
+msgid "Next"
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:64
+#: lib/omedis_web/components/pagination_component.ex:24
+#: lib/omedis_web/components/pagination_component.ex:63
 #, elixir-autogen, elixir-format
-msgid "End at"
+msgid "Previous"
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:110
+#: lib/omedis_web/components/pagination_component.ex:43
 #, elixir-autogen, elixir-format
-msgid "Events"
+msgid "Showing page"
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:41
+#: lib/omedis_web/components/pagination_component.ex:47
 #, elixir-autogen, elixir-format
-msgid "Listing Events for"
-msgstr ""
-
-#: lib/omedis_web/live/event_live/index.ex:57
-#, elixir-autogen, elixir-format
-msgid "Start at"
+msgid "of"
 msgstr ""

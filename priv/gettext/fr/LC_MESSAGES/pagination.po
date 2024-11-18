@@ -11,27 +11,24 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: lib/omedis_web/live/event_live/index.ex:50
+#: lib/omedis_web/components/pagination_component.ex:35
+#: lib/omedis_web/components/pagination_component.ex:110
 #, elixir-autogen, elixir-format
-msgid "Comment"
-msgstr "Commentaire"
+msgid "Next"
+msgstr "Suivant"
 
-#: lib/omedis_web/live/event_live/index.ex:64
+#: lib/omedis_web/components/pagination_component.ex:24
+#: lib/omedis_web/components/pagination_component.ex:63
 #, elixir-autogen, elixir-format
-msgid "End at"
-msgstr "Se termine à"
+msgid "Previous"
+msgstr "Précédent"
 
-#: lib/omedis_web/live/event_live/index.ex:110
+#: lib/omedis_web/components/pagination_component.ex:43
 #, elixir-autogen, elixir-format
-msgid "Events"
-msgstr "Événements"
+msgid "Showing page"
+msgstr "Affichage de la page"
 
-#: lib/omedis_web/live/event_live/index.ex:41
+#: lib/omedis_web/components/pagination_component.ex:47
 #, elixir-autogen, elixir-format
-msgid "Listing Events for"
-msgstr "Liste des événements pour"
-
-#: lib/omedis_web/live/event_live/index.ex:57
-#, elixir-autogen, elixir-format
-msgid "Start at"
-msgstr "Commence à"
+msgid "of"
+msgstr "de"

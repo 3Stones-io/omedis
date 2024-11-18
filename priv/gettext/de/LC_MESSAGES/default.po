@@ -11,114 +11,43 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/components/core_components.ex:77
-#: lib/omedis_web/components/core_components.ex:141
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "action"
-msgid "close"
-msgstr "schließen"
-
 #: lib/omedis_web/components/core_components.ex:527
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "actions"
+#, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Aktionen"
 
-#: lib/omedis_web/live/group_live/index.ex:183
-#: lib/omedis_web/live/group_live/index.ex:206
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "authorization_error"
-msgid "You are not authorized to access this page"
-msgstr "Sie sind nicht berechtigt, auf diese Seite zuzugreifen"
-
 #: lib/omedis_web/components/core_components.ex:172
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "client-error"
+#, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
-msgstr "Verbindung wird wiederhergestellt"
-
-#: lib/omedis_web/components/core_components.ex:167
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "client-error"
-msgid "We can't find the internet"
-msgstr "Wir können das Internet nicht finden."
-
-#: lib/omedis_web/live/invitation_live/form_component.ex:44
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "invitation"
-msgid "Invitation created successfully"
-msgstr "Einladung erfolgreich erstellt"
-
-#: lib/omedis_web/components/general_components.ex:810
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "navigation"
-msgid "Edit Profile"
-msgstr "Profil bearbeiten"
-
-#: lib/omedis_web/components/pagination_component.ex:35
-#: lib/omedis_web/components/pagination_component.ex:110
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "pagination"
-msgid "Next"
-msgstr "Nächste"
-
-#: lib/omedis_web/components/pagination_component.ex:24
-#: lib/omedis_web/components/pagination_component.ex:63
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "pagination"
-msgid "Previous"
-msgstr "Vorherige"
-
-#: lib/omedis_web/components/pagination_component.ex:43
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "pagination"
-msgid "Showing page"
-msgstr "Seite anzeigen"
-
-#: lib/omedis_web/components/pagination_component.ex:47
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "pagination"
-msgid "of"
-msgstr "von"
-
-#: lib/omedis_web/components/core_components.ex:184
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "server-error"
-msgid "Hang in there while we get back on track"
-msgstr "Halten Sie durch, während wir wieder auf Kurs kommen"
-
-#: lib/omedis_web/components/core_components.ex:179
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "server-error"
-msgid "Something went wrong!"
-msgstr "Etwas ist schief gelaufen!"
+msgstr "Versuche, die Verbindung wiederherzustellen"
 
 #: lib/omedis_web/components/core_components.ex:163
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "status"
+#, elixir-autogen, elixir-format
 msgid "Error!"
 msgstr "Fehler!"
 
+#: lib/omedis_web/components/core_components.ex:184
+#, elixir-autogen, elixir-format
+msgid "Hang in there while we get back on track"
+msgstr "Bitte gedulden Sie sich, während wir die Verbindung wiederherstellen"
+
+#: lib/omedis_web/components/core_components.ex:179
+#, elixir-autogen, elixir-format
+msgid "Something went wrong!"
+msgstr "Etwas ist schief gelaufen!"
+
 #: lib/omedis_web/components/core_components.ex:162
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "status"
+#, elixir-autogen, elixir-format
 msgid "Success!"
 msgstr "Erfolg!"
 
-#: lib/omedis_web/components/time_tracking.ex:60
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "time_tracking"
-msgid "No activities are defined yet."
-msgstr "Es sind noch keine Aktivitäten definiert."
+#: lib/omedis_web/components/core_components.ex:167
+#, elixir-autogen, elixir-format
+msgid "We can't find the internet"
+msgstr "Wir können das Internet nicht finden"
 
-#: lib/omedis_web/components/time_tracking.ex:368
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "time_tracking"
-msgid "Select Group"
-msgstr "Gruppe auswählen"
-
-#: lib/omedis_web/components/time_tracking.ex:389
-#, elixir-autogen, elixir-format, fuzzy
-msgctxt "time_tracking"
-msgid "Select Project"
-msgstr "Projekt auswählen"
+#: lib/omedis_web/components/core_components.ex:77
+#: lib/omedis_web/components/core_components.ex:141
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "schließen"

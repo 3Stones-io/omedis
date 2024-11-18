@@ -17,13 +17,12 @@ defmodule OmedisWeb.ActivityLive.Show do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {dpgettext("navigation", "navigation", "Home"), ~p"/", false},
-            {dpgettext("navigation", "navigation", "Organisations"), ~p"/organisations", false},
+            {dgettext("navigation", "Home"), ~p"/", false},
+            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dpgettext("navigation", "navigation", "Groups"),
-             ~p"/organisations/#{@organisation}/groups", false},
+            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {dpgettext("navigation", "navigation", "Activities"),
+            {dgettext("navigation", "Activities"),
              ~p"/organisations/#{@organisation}/groups/#{@group}/activities", false},
             {@activity.name, "", true}
           ]}
@@ -32,14 +31,13 @@ defmodule OmedisWeb.ActivityLive.Show do
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= dpgettext("activity", "activity_page_title", "Activity") %>
+            <%= dgettext("activity", "Activity") %>
           <% end) %>
 
           <:subtitle>
             <%= with_locale(@language, fn -> %>
-              <%= dpgettext(
+              <%= dgettext(
                 "activity",
-                "activity_page_title",
                 "This is an activity record from your database."
               ) %>
             <% end) %>
@@ -54,7 +52,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= dpgettext("activity", "activity_action", "Edit activity") %>
+                  <%= dgettext("activity", "Edit activity") %>
                 <% end) %>
               </.button>
             </.link>
@@ -65,7 +63,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= dpgettext("activity", "activity_action", "View Events") %>
+                  <%= dgettext("activity", "View Events") %>
                 <% end) %>
               </.button>
             </.link>
@@ -73,28 +71,22 @@ defmodule OmedisWeb.ActivityLive.Show do
         </.header>
 
         <.list>
-          <:item title={
-            with_locale(@language, fn -> dpgettext("activity", "activity_attribute", "Name") end)
-          }>
+          <:item title={with_locale(@language, fn -> dgettext("activity", "Name") end)}>
             <%= @activity.name %>
           </:item>
 
-          <:item title={
-            with_locale(@language, fn -> dpgettext("activity", "activity_attribute", "Color code") end)
-          }>
+          <:item title={with_locale(@language, fn -> dgettext("activity", "Color code") end)}>
             <%= @activity.color_code %>
           </:item>
 
-          <:item title={
-            with_locale(@language, fn -> dpgettext("activity", "activity_attribute", "Position") end)
-          }>
+          <:item title={with_locale(@language, fn -> dgettext("activity", "Position") end)}>
             <%= @activity.position %>
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}>
           <%= with_locale(@language, fn -> %>
-            <%= dpgettext("activity", "navigation", "Back to activities") %>
+            <%= dgettext("activity", "Back to activities") %>
           <% end) %>
         </.back>
 
@@ -170,13 +162,13 @@ defmodule OmedisWeb.ActivityLive.Show do
   defp page_title(:show, language),
     do:
       with_locale(language, fn ->
-        dpgettext("activity", "activity_page_title", "Show Activity")
+        dgettext("activity", "Show Activity")
       end)
 
   defp page_title(:edit, language),
     do:
       with_locale(language, fn ->
-        dpgettext("activity", "activity_page_title", "Edit Activity")
+        dgettext("activity", "Edit Activity")
       end)
 
   defp apply_action(socket, :edit) do
@@ -190,7 +182,7 @@ defmodule OmedisWeb.ActivityLive.Show do
       socket
       |> put_flash(
         :error,
-        dpgettext("activity", "authorization_error", "You are not authorized to access this page")
+        dgettext("activity", "You are not authorized to access this page")
       )
       |> push_navigate(
         to:

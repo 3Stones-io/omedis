@@ -21,18 +21,17 @@ defmodule OmedisWeb.ProjectLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {dpgettext("navigation", "navigation", "Home"), ~p"/", false},
-            {dpgettext("navigation", "navigation", "Organisations"), ~p"/organisations", false},
+            {dgettext("navigation", "Home"), ~p"/", false},
+            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dpgettext("navigation", "navigation", "Projects"), ~p"/organisations/#{@organisation}",
-             true}
+            {dgettext("navigation", "Projects"), ~p"/organisations/#{@organisation}", true}
           ]}
           language={@language}
         />
 
         <.header>
           <%= with_locale(@language, fn ->
-            dpgettext("project", "project_page_title", "Listing Projects")
+            dgettext("project", "Listing Projects")
           end) %>
           <:actions>
             <.link
@@ -41,7 +40,7 @@ defmodule OmedisWeb.ProjectLive.Index do
             >
               <.button>
                 <%= with_locale(@language, fn ->
-                  dpgettext("navigation", "navigation", "New Project")
+                  dgettext("navigation", "New Project")
                 end) %>
               </.button>
             </.link>
@@ -59,16 +58,14 @@ defmodule OmedisWeb.ProjectLive.Index do
         >
           <:col
             :let={{_id, project}}
-            label={with_locale(@language, fn -> dpgettext("project", "project_table", "Name") end)}
+            label={with_locale(@language, fn -> dgettext("project", "Name") end)}
           >
             <%= project.name %>
           </:col>
 
           <:col
             :let={{_id, project}}
-            label={
-              with_locale(@language, fn -> dpgettext("project", "project_table", "Position") end)
-            }
+            label={with_locale(@language, fn -> dgettext("project", "Position") end)}
           >
             <%= project.position %>
           </:col>
@@ -76,7 +73,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           <:action :let={{_id, project}}>
             <div class="sr-only">
               <.link navigate={~p"/organisations/#{@organisation}/projects/#{project}"}>
-                <%= with_locale(@language, fn -> dpgettext("project", "navigation", "Show") end) %>
+                <%= with_locale(@language, fn -> dgettext("project", "Show") end) %>
               </.link>
             </div>
 
@@ -84,7 +81,7 @@ defmodule OmedisWeb.ProjectLive.Index do
               :if={Ash.can?({project, :update}, @current_user, tenant: @organisation)}
               patch={~p"/organisations/#{@organisation}/projects/#{project}/edit"}
             >
-              <%= with_locale(@language, fn -> dpgettext("project", "navigation", "Edit") end) %>
+              <%= with_locale(@language, fn -> dgettext("project", "Edit") end) %>
             </.link>
           </:action>
         </.table>
@@ -177,7 +174,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     |> assign(
       :page_title,
       with_locale(socket.assigns.language, fn ->
-        dpgettext("project", "project_list", "Projects")
+        dgettext("project", "Projects")
       end)
     )
     |> assign(:project, nil)
@@ -205,7 +202,7 @@ defmodule OmedisWeb.ProjectLive.Index do
       |> assign(
         :page_title,
         with_locale(socket.assigns.language, fn ->
-          dpgettext("project", "project_page_title", "New Project")
+          dgettext("project", "New Project")
         end)
       )
       |> assign(:user_has_access_rights, true)
@@ -223,7 +220,7 @@ defmodule OmedisWeb.ProjectLive.Index do
       |> assign(
         :page_title,
         with_locale(socket.assigns.language, fn ->
-          dpgettext("project", "project_page_title", "Edit Project")
+          dgettext("project", "Edit Project")
         end)
       )
       |> assign(:project, project)
@@ -240,7 +237,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     |> assign(
       :page_title,
       with_locale(socket.assigns.language, fn ->
-        dpgettext("project", "project_page_title", "Projects")
+        dgettext("project", "Projects")
       end)
     )
     |> assign(:user_has_access_rights, false)
@@ -248,7 +245,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     |> put_flash(
       :error,
       with_locale(socket.assigns.language, fn ->
-        dpgettext("project", "authorisation_error", "You are not authorized to access this page")
+        dgettext("project", "You are not authorized to access this page")
       end)
     )
   end

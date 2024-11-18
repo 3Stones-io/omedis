@@ -74,7 +74,7 @@ defmodule OmedisWeb.CoreComponents do
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
                   class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
-                  aria-label={pgettext("action", "close")}
+                  aria-label={gettext("close")}
                 >
                   <.icon name="hero-x-mark-solid" class="h-5 w-5" />
                 </button>
@@ -135,11 +135,7 @@ defmodule OmedisWeb.CoreComponents do
         <%= @title %>
       </p>
       <p class="mt-2 text-sm leading-5"><%= msg %></p>
-      <button
-        type="button"
-        class="group absolute top-1 right-1 p-2"
-        aria-label={pgettext("action", "close")}
-      >
+      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
@@ -159,29 +155,29 @@ defmodule OmedisWeb.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title={pgettext("status", "Success!")} flash={@flash} />
-      <.flash kind={:error} title={pgettext("status", "Error!")} flash={@flash} />
+      <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
+      <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
       <.flash
         id="client-error"
         kind={:error}
-        title={pgettext("client-error", "We can't find the internet")}
+        title={gettext("We can't find the internet")}
         phx-disconnected={show(".phx-client-error #client-error")}
         phx-connected={hide("#client-error")}
         hidden
       >
-        <%= pgettext("client-error", "Attempting to reconnect") %>
+        <%= gettext("Attempting to reconnect") %>
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
       <.flash
         id="server-error"
         kind={:error}
-        title={pgettext("server-error", "Something went wrong!")}
+        title={gettext("Something went wrong!")}
         phx-disconnected={show(".phx-server-error #server-error")}
         phx-connected={hide("#server-error")}
         hidden
       >
-        <%= pgettext("server-error", "Hang in there while we get back on track") %>
+        <%= gettext("Hang in there while we get back on track") %>
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
@@ -524,7 +520,7 @@ defmodule OmedisWeb.CoreComponents do
               </div>
             </th>
             <th :if={@action != []} class="relative p-0 pb-4">
-              <span class="sr-only"><%= pgettext("actions", "Actions") %></span>
+              <span class="sr-only"><%= gettext("Actions") %></span>
             </th>
           </tr>
         </thead>

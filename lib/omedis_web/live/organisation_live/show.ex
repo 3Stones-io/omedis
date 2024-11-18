@@ -14,9 +14,8 @@ defmodule OmedisWeb.OrganisationLive.Show do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {with_locale(@language, fn -> dpgettext("navigation", "navigation", "Home") end), ~p"/",
-             false},
-            {with_locale(@language, fn -> dpgettext("navigation", "navigation", "Organisations") end),
+            {with_locale(@language, fn -> dgettext("navigation", "Home") end), ~p"/", false},
+            {with_locale(@language, fn -> dgettext("navigation", "Organisations") end),
              ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", true}
           ]}
@@ -34,28 +33,28 @@ defmodule OmedisWeb.OrganisationLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= dpgettext("organisation", "organisation_actions", "Edit organisation") %>
+                  <%= dgettext("organisation", "Edit organisation") %>
                 <% end) %>
               </.button>
             </.link>
             <.link patch={~p"/organisations/#{@organisation}/invitations"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= dpgettext("organisation", "organisation_actions", "Invitations") %>
+                  <%= dgettext("organisation", "Invitations") %>
                 <% end) %>
               </.button>
             </.link>
             <.link patch={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= dpgettext("organisation", "organisation_actions", "Projects") %>
+                  <%= dgettext("organisation", "Projects") %>
                 <% end) %>
               </.button>
             </.link>
             <.link patch={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= dpgettext("organisation", "organisation_actions", "Groups") %>
+                  <%= dgettext("organisation", "Groups") %>
                 <% end) %>
               </.button>
             </.link>
@@ -63,7 +62,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
             <.link patch={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= dpgettext("organisation", "organisation_actions", "Today") %>
+                  <%= dgettext("organisation", "Today") %>
                 <% end) %>
               </.button>
             </.link>
@@ -73,7 +72,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
         <.list>
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Slug")
+              dgettext("organisation", "Slug")
             end)
           }>
             <%= @organisation.slug %>
@@ -81,7 +80,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Name")
+              dgettext("organisation", "Name")
             end)
           }>
             <%= @organisation.name %>
@@ -89,14 +88,14 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Owner")
+              dgettext("organisation", "Owner")
             end)
           }>
             <%= @organisation.owner.as_string %>
           </:item>
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Timezone")
+              dgettext("organisation", "Timezone")
             end)
           }>
             <%= @organisation.timezone %>
@@ -104,7 +103,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Additional info")
+              dgettext("organisation", "Additional info")
             end)
           }>
             <%= @organisation.additional_info %>
@@ -112,7 +111,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Street")
+              dgettext("organisation", "Street")
             end)
           }>
             <%= @organisation.street %>
@@ -120,7 +119,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Street2")
+              dgettext("organisation", "Street2")
             end)
           }>
             <%= @organisation.street2 %>
@@ -128,7 +127,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Po box")
+              dgettext("organisation", "Po box")
             end)
           }>
             <%= @organisation.po_box %>
@@ -136,7 +135,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Zip code")
+              dgettext("organisation", "Zip code")
             end)
           }>
             <%= @organisation.zip_code %>
@@ -144,7 +143,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "City")
+              dgettext("organisation", "City")
             end)
           }>
             <%= @organisation.city %>
@@ -152,7 +151,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Canton")
+              dgettext("organisation", "Canton")
             end)
           }>
             <%= @organisation.canton %>
@@ -160,7 +159,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Country")
+              dgettext("organisation", "Country")
             end)
           }>
             <%= @organisation.country %>
@@ -168,7 +167,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Description")
+              dgettext("organisation", "Description")
             end)
           }>
             <%= @organisation.description %>
@@ -176,7 +175,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Phone")
+              dgettext("organisation", "Phone")
             end)
           }>
             <%= @organisation.phone %>
@@ -184,7 +183,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Fax")
+              dgettext("organisation", "Fax")
             end)
           }>
             <%= @organisation.fax %>
@@ -192,7 +191,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Email")
+              dgettext("organisation", "Email")
             end)
           }>
             <%= @organisation.email %>
@@ -200,7 +199,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Website")
+              dgettext("organisation", "Website")
             end)
           }>
             <%= @organisation.website %>
@@ -208,7 +207,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Zsr Number")
+              dgettext("organisation", "Zsr Number")
             end)
           }>
             <%= @organisation.zsr_number %>
@@ -216,7 +215,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Ean gln")
+              dgettext("organisation", "Ean gln")
             end)
           }>
             <%= @organisation.ean_gln %>
@@ -224,7 +223,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Uid Bfs Number")
+              dgettext("organisation", "Uid Bfs Number")
             end)
           }>
             <%= @organisation.uid_bfs_number %>
@@ -232,7 +231,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Trade register no")
+              dgettext("organisation", "Trade register no")
             end)
           }>
             <%= @organisation.trade_register_no %>
@@ -240,7 +239,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Bur number")
+              dgettext("organisation", "Bur number")
             end)
           }>
             <%= @organisation.bur_number %>
@@ -248,7 +247,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Account number")
+              dgettext("organisation", "Account number")
             end)
           }>
             <%= @organisation.account_number %>
@@ -256,7 +255,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Iban")
+              dgettext("organisation", "Iban")
             end)
           }>
             <%= @organisation.iban %>
@@ -264,7 +263,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Bic")
+              dgettext("organisation", "Bic")
             end)
           }>
             <%= @organisation.bic %>
@@ -272,7 +271,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Bank")
+              dgettext("organisation", "Bank")
             end)
           }>
             <%= @organisation.bank %>
@@ -280,7 +279,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dpgettext("organisation", "organisation_attribute", "Account holder")
+              dgettext("organisation", "Account holder")
             end)
           }>
             <%= @organisation.account_holder %>
@@ -289,7 +288,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
         <.back navigate={~p"/organisations"}>
           <%= with_locale(@language, fn -> %>
-            <%= dpgettext("organisation", "navigation", "Back to organisations") %>
+            <%= dgettext("organisation", "Back to organisations") %>
           <% end) %>
         </.back>
 
@@ -342,9 +341,8 @@ defmodule OmedisWeb.OrganisationLive.Show do
       socket
       |> put_flash(
         :error,
-        dpgettext(
+        dgettext(
           "organisation",
-          "authorisation_error",
           "You are not authorized to access this page"
         )
       )
@@ -354,13 +352,13 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
   defp page_title(:show, language) do
     with_locale(language, fn ->
-      dpgettext("organisation", "organisation_page_title", "Show Organisation")
+      dgettext("organisation", "Show Organisation")
     end)
   end
 
   defp page_title(:edit, language) do
     with_locale(language, fn ->
-      dpgettext("organisation", "organisation_page_title", "Edit Organisation")
+      dgettext("organisation", "Edit Organisation")
     end)
   end
 end

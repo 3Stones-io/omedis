@@ -11,114 +11,43 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/components/core_components.ex:77
-#: lib/omedis_web/components/core_components.ex:141
-#, elixir-autogen, elixir-format
-msgctxt "action"
-msgid "close"
-msgstr "chiudi"
-
 #: lib/omedis_web/components/core_components.ex:527
 #, elixir-autogen, elixir-format
-msgctxt "actions"
 msgid "Actions"
 msgstr "Azioni"
 
-#: lib/omedis_web/live/group_live/index.ex:183
-#: lib/omedis_web/live/group_live/index.ex:206
-#, elixir-autogen, elixir-format
-msgctxt "authorization_error"
-msgid "You are not authorized to access this page"
-msgstr "Non sei autorizzato ad accedere a questa pagina"
-
 #: lib/omedis_web/components/core_components.ex:172
 #, elixir-autogen, elixir-format
-msgctxt "client-error"
 msgid "Attempting to reconnect"
 msgstr "Tentativo di riconnessione"
 
-#: lib/omedis_web/components/core_components.ex:167
+#: lib/omedis_web/components/core_components.ex:163
 #, elixir-autogen, elixir-format
-msgctxt "client-error"
-msgid "We can't find the internet"
-msgstr "Non riusciamo a trovare Internet"
-
-#: lib/omedis_web/live/invitation_live/form_component.ex:44
-#, elixir-autogen, elixir-format
-msgctxt "invitation"
-msgid "Invitation created successfully"
-msgstr "Invito creato con successo"
-
-#: lib/omedis_web/components/general_components.ex:810
-#, elixir-autogen, elixir-format
-msgctxt "navigation"
-msgid "Edit Profile"
-msgstr "Modifica profilo"
-
-#: lib/omedis_web/components/pagination_component.ex:35
-#: lib/omedis_web/components/pagination_component.ex:110
-#, elixir-autogen, elixir-format
-msgctxt "pagination"
-msgid "Next"
-msgstr "Successivo"
-
-#: lib/omedis_web/components/pagination_component.ex:24
-#: lib/omedis_web/components/pagination_component.ex:63
-#, elixir-autogen, elixir-format
-msgctxt "pagination"
-msgid "Previous"
-msgstr "Precedente"
-
-#: lib/omedis_web/components/pagination_component.ex:43
-#, elixir-autogen, elixir-format
-msgctxt "pagination"
-msgid "Showing page"
-msgstr "Mostrando pagina"
-
-#: lib/omedis_web/components/pagination_component.ex:47
-#, elixir-autogen, elixir-format
-msgctxt "pagination"
-msgid "of"
-msgstr "di"
+msgid "Error!"
+msgstr "Errore!"
 
 #: lib/omedis_web/components/core_components.ex:184
 #, elixir-autogen, elixir-format
-msgctxt "server-error"
 msgid "Hang in there while we get back on track"
 msgstr "Resisti mentre torniamo in carreggiata"
 
 #: lib/omedis_web/components/core_components.ex:179
 #, elixir-autogen, elixir-format
-msgctxt "server-error"
 msgid "Something went wrong!"
 msgstr "Qualcosa è andato storto!"
 
-#: lib/omedis_web/components/core_components.ex:163
-#, elixir-autogen, elixir-format
-msgctxt "status"
-msgid "Error!"
-msgstr "Errore!"
-
 #: lib/omedis_web/components/core_components.ex:162
 #, elixir-autogen, elixir-format
-msgctxt "status"
 msgid "Success!"
 msgstr "Successo!"
 
-#: lib/omedis_web/components/time_tracking.ex:60
+#: lib/omedis_web/components/core_components.ex:167
 #, elixir-autogen, elixir-format
-msgctxt "time_tracking"
-msgid "No activities are defined yet."
-msgstr "Nessuna attività è ancora definita."
+msgid "We can't find the internet"
+msgstr "Non riusciamo a trovare internet"
 
-#: lib/omedis_web/components/time_tracking.ex:368
+#: lib/omedis_web/components/core_components.ex:77
+#: lib/omedis_web/components/core_components.ex:141
 #, elixir-autogen, elixir-format
-msgctxt "time_tracking"
-msgid "Select Group"
-msgstr "Seleziona gruppo"
-
-#: lib/omedis_web/components/time_tracking.ex:389
-#, elixir-autogen, elixir-format
-msgctxt "time_tracking"
-msgid "Select Project"
-msgstr "Seleziona progetto"
+msgid "close"
+msgstr "chiudi"

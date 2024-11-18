@@ -8,30 +8,27 @@
 ### to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: en\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/event_live/index.ex:50
+#: lib/omedis_web/components/pagination_component.ex:35
+#: lib/omedis_web/components/pagination_component.ex:110
 #, elixir-autogen, elixir-format
-msgid "Comment"
-msgstr ""
+msgid "Next"
+msgstr "Nächste"
 
-#: lib/omedis_web/live/event_live/index.ex:64
+#: lib/omedis_web/components/pagination_component.ex:24
+#: lib/omedis_web/components/pagination_component.ex:63
 #, elixir-autogen, elixir-format
-msgid "End at"
-msgstr ""
+msgid "Previous"
+msgstr "Vorherige"
 
-#: lib/omedis_web/live/event_live/index.ex:110
+#: lib/omedis_web/components/pagination_component.ex:43
 #, elixir-autogen, elixir-format
-msgid "Events"
-msgstr ""
+msgid "Showing page"
+msgstr "Seite anzeigen"
 
-#: lib/omedis_web/live/event_live/index.ex:41
+#: lib/omedis_web/components/pagination_component.ex:47
 #, elixir-autogen, elixir-format
-msgid "Listing Events for"
-msgstr ""
-
-#: lib/omedis_web/live/event_live/index.ex:57
-#, elixir-autogen, elixir-format
-msgid "Start at"
-msgstr ""
+msgid "of"
+msgstr "von"

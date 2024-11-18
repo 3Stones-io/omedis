@@ -11,143 +11,100 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/project_live/index.ex:236
-#: lib/omedis_web/live/project_live/show.ex:125
+#: lib/omedis_web/live/project_live/show.ex:68
 #, elixir-autogen, elixir-format
-msgctxt "authorisation_error"
-msgid "You are not authorized to access this page"
-msgstr "Sie sind nicht berechtigt, auf diese Seite zuzugreifen"
-
-#: lib/omedis_web/live/project_live/show.ex:56
-#, elixir-autogen, elixir-format
-msgctxt "navigation"
 msgid "Back to projects"
-msgstr "Zurück zu den Projekten"
+msgstr "Zurück zu Projekten"
 
-#: lib/omedis_web/live/project_live/index.ex:80
+#: lib/omedis_web/live/project_live/index.ex:87
 #, elixir-autogen, elixir-format
-msgctxt "navigation"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: lib/omedis_web/live/project_live/index.ex:72
+#: lib/omedis_web/live/project_live/index.ex:226
+#: lib/omedis_web/live/project_live/show.ex:153
 #, elixir-autogen, elixir-format
-msgctxt "navigation"
-msgid "Show"
-msgstr "Anzeigen"
-
-#: lib/omedis_web/live/project_live/form_component.ex:61
-#, elixir-autogen, elixir-format
-msgctxt "project_action"
-msgid "Save Project"
-msgstr "Projekt speichern"
-
-#: lib/omedis_web/live/project_live/form_component.ex:59
-#, elixir-autogen, elixir-format
-msgctxt "project_action"
-msgid "Saving..."
-msgstr "Speichern..."
-
-#: lib/omedis_web/live/project_live/show.ex:46
-#, elixir-autogen, elixir-format
-msgctxt "project_attribute"
-msgid "Name"
-msgstr "Name"
-
-#: lib/omedis_web/live/project_live/show.ex:50
-#, elixir-autogen, elixir-format
-msgctxt "project_attribute"
-msgid "Position"
-msgstr "Position"
-
-#: lib/omedis_web/live/project_live/form_component.ex:31
-#, elixir-autogen, elixir-format
-msgctxt "project_form"
-msgid "Name"
-msgstr "Name"
-
-#: lib/omedis_web/live/project_live/form_component.ex:39
-#, elixir-autogen, elixir-format
-msgctxt "project_form"
-msgid "Organisation"
-msgstr "Organisation"
-
-#: lib/omedis_web/live/project_live/form_component.ex:51
-#, elixir-autogen, elixir-format
-msgctxt "project_form"
-msgid "Position"
-msgstr "Position"
-
-#: lib/omedis_web/live/project_live/index.ex:172
-#, elixir-autogen, elixir-format
-msgctxt "project_list"
-msgid "Projects"
-msgstr "Projekte"
-
-#: lib/omedis_web/live/project_live/index.ex:214
-#: lib/omedis_web/live/project_live/show.ex:137
-#, elixir-autogen, elixir-format
-msgctxt "project_page_title"
 msgid "Edit Project"
 msgstr "Projekt bearbeiten"
 
-#: lib/omedis_web/live/project_live/index.ex:33
+#: lib/omedis_web/live/project_live/index.ex:35
 #, elixir-autogen, elixir-format
-msgctxt "project_page_title"
 msgid "Listing Projects"
 msgstr "Projekte auflisten"
 
-#: lib/omedis_web/live/project_live/index.ex:198
+#: lib/omedis_web/live/project_live/form_component.ex:30
+#: lib/omedis_web/live/project_live/index.ex:62
+#: lib/omedis_web/live/project_live/show.ex:55
 #, elixir-autogen, elixir-format
-msgctxt "project_page_title"
+msgid "Name"
+msgstr "Name"
+
+#: lib/omedis_web/live/project_live/index.ex:208
+#, elixir-autogen, elixir-format
 msgid "New Project"
 msgstr "Neues Projekt"
 
-#: lib/omedis_web/live/project_live/show.ex:28
-#: lib/omedis_web/live/project_live/show.ex:134
+#: lib/omedis_web/live/project_live/form_component.ex:38
 #, elixir-autogen, elixir-format
-msgctxt "project_page_title"
+msgid "Organisation"
+msgstr "Organisation"
+
+#: lib/omedis_web/live/project_live/form_component.ex:108
+#, elixir-autogen, elixir-format
+msgid "Please correct the errors below."
+msgstr "Bitte korrigieren Sie die untenstehenden Fehler."
+
+#: lib/omedis_web/live/project_live/form_component.ex:50
+#: lib/omedis_web/live/project_live/index.ex:70
+#: lib/omedis_web/live/project_live/show.ex:61
+#, elixir-autogen, elixir-format
+msgid "Position"
+msgstr "Position"
+
+#: lib/omedis_web/live/project_live/show.ex:29
+#: lib/omedis_web/live/project_live/show.ex:149
+#, elixir-autogen, elixir-format
 msgid "Project"
 msgstr "Projekt"
 
-#: lib/omedis_web/live/project_live/index.ex:229
+#: lib/omedis_web/live/project_live/form_component.ex:94
 #, elixir-autogen, elixir-format
-msgctxt "project_page_title"
+msgid "Project saved."
+msgstr "Projekt gespeichert."
+
+#: lib/omedis_web/live/project_live/index.ex:180
+#: lib/omedis_web/live/project_live/index.ex:243
+#, elixir-autogen, elixir-format
 msgid "Projects"
 msgstr "Projekte"
 
-#: lib/omedis_web/live/project_live/show.ex:30
+#: lib/omedis_web/live/project_live/form_component.ex:61
 #, elixir-autogen, elixir-format
-msgctxt "project_page_title"
+msgid "Save Project"
+msgstr "Projekt speichern"
+
+#: lib/omedis_web/live/project_live/form_component.ex:58
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr "Speichern..."
+
+#: lib/omedis_web/live/project_live/index.ex:79
+#, elixir-autogen, elixir-format
+msgid "Show"
+msgstr "Anzeigen"
+
+#: lib/omedis_web/live/project_live/show.ex:32
+#, elixir-autogen, elixir-format
 msgid "This is a project record from your database."
 msgstr "Dies ist ein Projekteintag aus Ihrer Datenbank."
 
 #: lib/omedis_web/live/project_live/form_component.ex:12
 #, elixir-autogen, elixir-format
-msgctxt "project_page_title"
 msgid "Use this form to manage project records in your database."
 msgstr "Verwenden Sie dieses Formular, um Projekte in Ihrer Datenbank zu verwalten."
 
-#: lib/omedis_web/live/project_live/form_component.ex:107
+#: lib/omedis_web/live/project_live/index.ex:251
+#: lib/omedis_web/live/project_live/show.ex:137
 #, elixir-autogen, elixir-format
-msgctxt "project_status"
-msgid "Please correct the errors below."
-msgstr "Bitte korrigieren Sie die untenstehenden Fehler."
-
-#: lib/omedis_web/live/project_live/form_component.ex:93
-#, elixir-autogen, elixir-format
-msgctxt "project_status"
-msgid "Project saved."
-msgstr "Projekt gespeichert."
-
-#: lib/omedis_web/live/project_live/index.ex:57
-#, elixir-autogen, elixir-format
-msgctxt "project_table"
-msgid "Name"
-msgstr "Name"
-
-#: lib/omedis_web/live/project_live/index.ex:64
-#, elixir-autogen, elixir-format
-msgctxt "project_table"
-msgid "Position"
-msgstr "Position"
+msgid "You are not authorized to access this page"
+msgstr "Sie sind nicht berechtigt, auf diese Seite zuzugreifen"
