@@ -20,7 +20,7 @@ defmodule Omedis.Accounts.Group do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :user, on_delete: :delete
     end
   end
@@ -29,17 +29,13 @@ defmodule Omedis.Accounts.Group do
     plural_name :groups
   end
 
-  identities do
-    identity :unique_slug_per_tenant, [:slug, :tenant_id]
-  end
-
   code_interface do
     domain Omedis.Accounts
     define :create
     define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
-    define :by_tenant_id
+    define :by_organisation_id
     define :by_slug, get_by: [:slug], action: :read
   end
 
@@ -47,7 +43,6 @@ defmodule Omedis.Accounts.Group do
     create :create do
       accept [
         :name,
-        :tenant_id,
         :user_id,
         :slug
       ]
@@ -77,8 +72,8 @@ defmodule Omedis.Accounts.Group do
       filter expr(slug == ^arg(:slug))
     end
 
-    read :by_tenant_id do
-      argument :tenant_id, :uuid do
+    read :by_organisation_id do
+      argument :organisation_id, :uuid do
         allow_nil? false
       end
 
@@ -87,10 +82,20 @@ defmodule Omedis.Accounts.Group do
 
       prepare build(sort: :created_at)
 
-      filter expr(tenant_id == ^arg(:tenant_id))
+      filter expr(organisation_id == ^arg(:organisation_id))
     end
 
     destroy :destroy do
+    end
+  end
+
+  policies do
+    policy action_type([:create, :update, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action_type([:read]) do
+      authorize_if Omedis.Accounts.AccessFilter
     end
   end
 
@@ -98,14 +103,9 @@ defmodule Omedis.Accounts.Group do
     validate present(:name)
   end
 
-  def slug_exists?(slug, tenant_id) do
-    __MODULE__
-    |> Ash.Query.filter(slug: slug, tenant_id: tenant_id)
-    |> Ash.read_one!(authorize?: false)
-    |> case do
-      nil -> false
-      _ -> true
-    end
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 
   attributes do
@@ -119,10 +119,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   relationships do
-    belongs_to :tenant, Omedis.Accounts.Tenant do
-      allow_nil? true
-      attribute_writable? true
-    end
+    belongs_to :organisation, Omedis.Accounts.Organisation
 
     belongs_to :user, User do
       allow_nil? true
@@ -140,13 +137,7 @@ defmodule Omedis.Accounts.Group do
     end
   end
 
-  policies do
-    policy action_type([:create, :update, :destroy]) do
-      authorize_if Omedis.Accounts.CanAccessResource
-    end
-
-    policy action_type([:read]) do
-      authorize_if Omedis.Accounts.AccessFilter
-    end
+  identities do
+    identity :unique_slug_per_organisation, :slug
   end
 end

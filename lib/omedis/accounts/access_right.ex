@@ -11,9 +11,44 @@ defmodule Omedis.Accounts.AccessRight do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :group, on_delete: :delete
     end
+  end
+
+  code_interface do
+    define :create
+    define :read
+    define :update
+    define :destroy
+  end
+
+  actions do
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [
+        :resource_name,
+        :read,
+        :write,
+        :update,
+        :create,
+        :group_id
+      ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [:read, :write, :update, :create]
+
+      primary? true
+    end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
   end
 
   attributes do
@@ -30,38 +65,7 @@ defmodule Omedis.Accounts.AccessRight do
   end
 
   relationships do
-    belongs_to :tenant, Omedis.Accounts.Tenant
+    belongs_to :organisation, Omedis.Accounts.Organisation
     belongs_to :group, Omedis.Accounts.Group
-  end
-
-  actions do
-    defaults [:read, :destroy]
-
-    create :create do
-      accept [
-        :resource_name,
-        :read,
-        :write,
-        :update,
-        :create,
-        :tenant_id,
-        :group_id
-      ]
-
-      primary? true
-    end
-
-    update :update do
-      accept [:read, :write, :update, :create]
-
-      primary? true
-    end
-  end
-
-  code_interface do
-    define :create
-    define :read
-    define :update
-    define :destroy
   end
 end

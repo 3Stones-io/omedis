@@ -1,6 +1,6 @@
 defmodule Omedis.Accounts.Invitation do
   @moduledoc """
-  Represents an invitation to join a tenant.
+  Represents an invitation to join an organisation.
   """
 
   use Ash.Resource,
@@ -11,6 +11,81 @@ defmodule Omedis.Accounts.Invitation do
   postgres do
     table "invitations"
     repo Omedis.Repo
+
+    references do
+      reference :organisation, on_delete: :delete
+    end
+  end
+
+  code_interface do
+    domain Omedis.Accounts
+    define :by_id, get_by: [:id]
+    define :create
+    define :destroy
+    define :list_paginated
+  end
+
+  actions do
+    defaults [:read, :destroy]
+
+    read :list_paginated do
+      argument :sort_order, :atom do
+        allow_nil? true
+        default :asc
+        constraints one_of: [:asc, :desc]
+      end
+
+      pagination offset?: true,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 countable: :by_default
+
+      prepare build(sort: [inserted_at: arg(:sort_order)])
+    end
+
+    update :update do
+      accept [:email, :language, :creator_id, :inserted_at]
+
+      primary? true
+    end
+
+    create :create do
+      accept [:email, :language, :creator_id, :expires_at]
+
+      argument :groups, {:array, :uuid}, allow_nil?: false
+
+      change manage_relationship(:groups,
+               on_lookup: :relate,
+               on_no_match: :error,
+               on_match: :ignore,
+               on_missing: :unrelate
+             )
+
+      change Omedis.Accounts.Changes.SendInvitationEmail
+
+      primary? true
+    end
+
+    read :by_id
+  end
+
+  policies do
+    policy action_type([:create, :destroy]) do
+      authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action(:by_id) do
+      authorize_if Omedis.Accounts.InvitationNotExpiredFilter
+    end
+
+    policy action([:list_paginated, :read]) do
+      authorize_if Omedis.Accounts.AccessFilter
+    end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+    global? true
   end
 
   attributes do
@@ -24,16 +99,19 @@ defmodule Omedis.Accounts.Invitation do
 
     attribute :language, :string, allow_nil?: false
 
-    timestamps()
-  end
+    attribute :inserted_at, :utc_datetime_usec do
+      writable? true
+      default &DateTime.utc_now/0
+      match_other_defaults? true
+      allow_nil? false
+    end
 
-  actions do
-    defaults [:read]
-
-    create :create do
-      accept [:email, :language, :creator_id, :tenant_id]
-
-      primary? true
+    attribute :updated_at, :utc_datetime_usec do
+      writable? false
+      default &DateTime.utc_now/0
+      update_default &DateTime.utc_now/0
+      match_other_defaults? true
+      allow_nil? false
     end
   end
 
@@ -43,24 +121,19 @@ defmodule Omedis.Accounts.Invitation do
       attribute_writable? true
     end
 
-    belongs_to :tenant, Omedis.Accounts.Tenant do
-      allow_nil? false
-      attribute_writable? true
-    end
+    belongs_to :organisation, Omedis.Accounts.Organisation
 
     belongs_to :user, Omedis.Accounts.User do
       allow_nil? true
       attribute_writable? true
     end
 
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Invitation.Relationships.InvitationAccessRights
+    end
+
     many_to_many :groups, Omedis.Accounts.Group do
       through Omedis.Accounts.InvitationGroup
-    end
-  end
-
-  policies do
-    policy do
-      authorize_if always()
     end
   end
 end

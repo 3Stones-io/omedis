@@ -16,21 +16,18 @@ defmodule Omedis.Accounts.CanAccessResource do
   def match?(nil, _context, _options), do: false
   def match?(_actor, %{subject: %{tenant: nil}}, _options), do: false
 
-  def match?(actor, %{subject: %{tenant: tenant}}, _options) when actor.id == tenant.owner_id do
-    true
-  end
-
-  def match?(actor, %{subject: %{tenant: tenant, resource: resource}} = context, _options) do
+  def match?(actor, %{subject: %{tenant: organisation, resource: resource}} = context, _options) do
     resource_name = get_resource_name(resource)
     action = get_action(context)
 
     Ash.exists?(
       filter(
         AccessRight,
-        resource_name == ^resource_name and tenant_id == ^tenant.id and
+        resource_name == ^resource_name and
           (write == true or ^action == true) and
           exists(group.group_memberships, user_id == ^actor.id)
-      )
+      ),
+      tenant: organisation
     )
   end
 

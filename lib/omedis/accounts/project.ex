@@ -18,7 +18,7 @@ defmodule Omedis.Accounts.Project do
     repo Omedis.Repo
 
     references do
-      reference :tenant, on_delete: :delete
+      reference :organisation, on_delete: :delete
     end
   end
 
@@ -32,20 +32,15 @@ defmodule Omedis.Accounts.Project do
     define :create
     define :update
     define :by_id, get_by: [:id], action: :read
-    define :by_tenant_id
+    define :by_organisation_id
     define :list_paginated
-  end
-
-  identities do
-    identity :unique_name, [:name, :tenant_id]
-    identity :unique_position, [:position, :tenant_id]
   end
 
   actions do
     create :create do
       accept [
         :name,
-        :tenant_id,
+        :organisation_id,
         :position
       ]
 
@@ -55,7 +50,6 @@ defmodule Omedis.Accounts.Project do
     update :update do
       accept [
         :name,
-        :tenant_id,
         :position
       ]
 
@@ -67,13 +61,13 @@ defmodule Omedis.Accounts.Project do
       primary? true
     end
 
-    read :by_tenant_id do
-      argument :tenant_id, :uuid do
+    read :by_organisation_id do
+      argument :organisation_id, :uuid do
         allow_nil? false
       end
 
-      prepare build(load: [:tenant])
-      filter expr(tenant_id == ^arg(:tenant_id))
+      prepare build(load: [:organisation])
+      filter expr(organisation_id == ^arg(:organisation_id))
     end
 
     read :list_paginated do
@@ -81,50 +75,6 @@ defmodule Omedis.Accounts.Project do
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit)
 
       prepare build(sort: :created_at)
-    end
-  end
-
-  validations do
-    validate present(:name)
-    validate present(:tenant_id)
-
-    validate present(:position)
-  end
-
-  attributes do
-    uuid_primary_key :id
-
-    attribute :name, :string, allow_nil?: false, public?: true
-    attribute :tenant_id, :uuid, allow_nil?: false, public?: true
-
-    attribute :position, :string, allow_nil?: false, public?: true
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
-  end
-
-  def get_max_position_by_tenant_id(tenant_id, opts \\ []) do
-    __MODULE__
-    |> Ash.Query.filter(tenant_id: tenant_id)
-    |> Ash.Query.sort(position: :desc)
-    |> Ash.Query.limit(1)
-    |> Ash.Query.select([:position])
-    |> Ash.read!(opts)
-    |> Enum.at(0)
-    |> case do
-      nil -> 0
-      record -> record.position |> String.to_integer()
-    end
-  end
-
-  relationships do
-    belongs_to :tenant, Omedis.Accounts.Tenant do
-      allow_nil? true
-      attribute_writable? true
-    end
-
-    has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.Project.Relationships.ProjectAccessRights
     end
   end
 
@@ -140,5 +90,39 @@ defmodule Omedis.Accounts.Project do
     policy do
       authorize_if always()
     end
+  end
+
+  validations do
+    validate present(:name)
+
+    validate present(:position)
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :name, :string, allow_nil?: false, public?: true
+    attribute :position, :string, allow_nil?: false, public?: true
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :organisation, Omedis.Accounts.Organisation
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.Project.Relationships.ProjectAccessRights
+    end
+  end
+
+  identities do
+    identity :unique_name, :name
+    identity :unique_position, :position
   end
 end

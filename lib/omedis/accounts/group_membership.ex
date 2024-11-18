@@ -8,9 +8,9 @@ defmodule Omedis.Accounts.GroupMembership do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.AccessFilter
   alias Omedis.Accounts.CanAccessResource
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupMembershipAccessFilter
   alias Omedis.Accounts.User
 
   postgres do
@@ -19,21 +19,15 @@ defmodule Omedis.Accounts.GroupMembership do
 
     references do
       reference :group, on_delete: :delete
+      reference :organisation, on_delete: :delete
       reference :user, on_delete: :delete
     end
   end
 
-  identities do
-    identity :unique_group_membership, [:group_id, :user_id]
-  end
-
-  relationships do
-    belongs_to :group, Group, primary_key?: true, allow_nil?: false
-    belongs_to :user, User, primary_key?: true, allow_nil?: false
-
-    has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.GroupMembership.Relationships.GroupMembershipAccessRights
-    end
+  code_interface do
+    define :create
+    define :read
+    define :destroy
   end
 
   actions do
@@ -46,15 +40,9 @@ defmodule Omedis.Accounts.GroupMembership do
     end
   end
 
-  code_interface do
-    define :create
-    define :read
-    define :destroy
-  end
-
   policies do
     policy action_type(:read) do
-      authorize_if GroupMembershipAccessFilter
+      authorize_if AccessFilter
     end
 
     policy action_type([:create, :destroy]) do
@@ -62,7 +50,27 @@ defmodule Omedis.Accounts.GroupMembership do
     end
   end
 
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+  end
+
   attributes do
     uuid_primary_key :id
+  end
+
+  relationships do
+    belongs_to :group, Group, primary_key?: true, allow_nil?: false
+    belongs_to :user, User, primary_key?: true, allow_nil?: false
+
+    has_many :access_rights, Omedis.Accounts.AccessRight do
+      manual Omedis.Accounts.GroupMembership.Relationships.GroupMembershipAccessRights
+    end
+
+    belongs_to :organisation, Omedis.Accounts.Organisation
+  end
+
+  identities do
+    identity :unique_group_membership, [:group_id, :user_id]
   end
 end

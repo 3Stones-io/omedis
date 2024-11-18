@@ -13,6 +13,31 @@ config :omedis,
   generators: [timestamp_type: :utc_datetime],
   pagination_default_limit: 10
 
+config :spark,
+  formatter: [
+    remove_parens?: true,
+    "Ash.Resource": [
+      section_order: [
+        :postgres,
+        :resource,
+        :code_interface,
+        :actions,
+        :policies,
+        :pub_sub,
+        :preparations,
+        :changes,
+        :validations,
+        :multitenancy,
+        :attributes,
+        :relationships,
+        :calculations,
+        :aggregates,
+        :identities
+      ]
+    ],
+    "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
+  ]
+
 # Configures the endpoint
 config :omedis, OmedisWeb.Endpoint,
   url: [host: "localhost"],
@@ -39,6 +64,12 @@ config :omedis, :token_signing_secret, System.get_env("TOKEN_SIGNING_SECRET") ||
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
 config :omedis, Omedis.Mailer, adapter: Swoosh.Adapters.Local
+
+# Oban
+config :omedis, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [default: 10, invitation: 20],
+  repo: Omedis.Repo
 
 # Configure esbuild (the version is required)
 config :esbuild,

@@ -11,13 +11,10 @@ defmodule Omedis.Accounts.Checks.GroupAndProjectExist do
 
   @impl true
   def match?(_actor, context, _opts) do
-    tenant = context.subject.tenant
+    organisation = context.subject.tenant
 
-    group_exists? =
-      Ash.exists?(Ash.Query.filter(Omedis.Accounts.Group, tenant_id == ^tenant.id))
-
-    project_exists? =
-      Ash.exists?(Ash.Query.filter(Omedis.Accounts.Project, tenant_id == ^tenant.id))
+    group_exists? = Ash.exists?(Omedis.Accounts.Group, tenant: organisation)
+    project_exists? = Ash.exists?(Omedis.Accounts.Project, tenant: organisation)
 
     group_exists? and project_exists?
   end

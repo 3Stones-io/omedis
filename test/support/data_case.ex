@@ -19,6 +19,8 @@ defmodule Omedis.DataCase do
 
   using do
     quote do
+      use Oban.Testing, repo: Omedis.Repo
+
       alias Omedis.Repo
 
       import Ecto

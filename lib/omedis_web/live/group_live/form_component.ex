@@ -2,6 +2,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
   use OmedisWeb, :live_component
 
   alias AshPhoenix.Form
+  alias Omedis.Accounts
   alias Omedis.Accounts.Group
 
   @impl true
@@ -35,7 +36,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
             type="text"
             label={with_locale(@language, fn -> gettext("Slug") end)}
           />
-          <input type="hidden" name="group[tenant_id]" value={@tenant.id} />
+          <input type="hidden" name="group[organisation_id]" value={@organisation.id} />
           <input type="hidden" name="group[user_id]" value={@current_user.id} />
         <% end %>
         <%= if @form.source.type == :update do %>
@@ -84,7 +85,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           Map.put(
             group_params,
             "slug",
-            update_slug(Slug.slugify(new_name), socket.assigns.tenant.id)
+            update_slug(Slug.slugify(new_name), socket)
           )
         end
       else
@@ -115,19 +116,30 @@ defmodule OmedisWeb.GroupLive.FormComponent do
     end
   end
 
-  defp update_slug(slug, tenant_id) do
-    case Group.slug_exists?(slug, tenant_id) do
-      true -> generate_unique_slug(slug, tenant_id)
-      false -> Slug.slugify(slug)
+  defp update_slug(slug, socket) do
+    if Accounts.slug_exists?(Group, [slug: slug, organisation_id: socket.assigns.organisation.id],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       ) do
+      generate_unique_slug(slug, socket)
+    else
+      Slug.slugify(slug)
     end
   end
 
-  defp generate_unique_slug(base_slug, tenant_id) do
+  defp generate_unique_slug(base_slug, socket) do
     new_slug = "#{base_slug}#{:rand.uniform(99)}"
 
-    case Group.slug_exists?(new_slug, tenant_id) do
-      true -> generate_unique_slug(base_slug, tenant_id)
-      false -> Slug.slugify(new_slug)
+    if Accounts.slug_exists?(
+         Group,
+         [slug: new_slug, organisation_id: socket.assigns.organisation.id],
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation,
+         authorize?: false
+       ) do
+      generate_unique_slug(base_slug, socket)
+    else
+      Slug.slugify(new_slug)
     end
   end
 
@@ -140,7 +152,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           group,
           :update,
           as: "group",
-          tenant: socket.assigns.tenant,
+          tenant: socket.assigns.organisation,
           actor: socket.assigns.current_user
         )
       else
@@ -148,7 +160,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
           Omedis.Accounts.Group,
           :create,
           as: "group",
-          tenant: socket.assigns.tenant,
+          tenant: socket.assigns.organisation,
           actor: socket.assigns.current_user
         )
       end

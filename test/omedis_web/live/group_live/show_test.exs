@@ -5,38 +5,36 @@ defmodule OmedisWeb.GroupLive.ShowTest do
 
   setup do
     {:ok, user} = create_user()
+    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    {:ok, group} = create_group(organisation)
+    {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
-    {:ok, tenant} = create_tenant(%{owner_id: user.id})
-    {:ok, group} = create_group(%{tenant_id: tenant.id})
-
-    create_group_membership(%{group_id: group.id, user_id: user.id})
-
-    create_access_right(%{
-      group_id: group.id,
-      resource_name: "Group",
-      tenant_id: tenant.id,
-      read: true,
-      write: true
-    })
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group.id,
+        resource_name: "Group",
+        read: true,
+        write: true
+      })
 
     %{
       group: group,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     }
   end
 
-  describe "/tenants/:slug/groups/:group_slug" do
-    test "renders group details if user is the tenant owner", %{
+  describe "/organisations/:slug/groups/:group_slug" do
+    test "renders group details if user is the organisation owner", %{
       conn: conn,
       group: group,
-      tenant: tenant,
+      organisation: organisation,
       user: user
     } do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}")
 
       assert html =~ "Slug"
       assert html =~ group.name
@@ -44,60 +42,61 @@ defmodule OmedisWeb.GroupLive.ShowTest do
 
     test "renders group details is a user is authorized", %{
       conn: conn,
-      tenant: tenant
+      organisation: organisation
     } do
       {:ok, authorized_user} = create_user()
-      {:ok, group} = create_group(%{tenant_id: tenant.id})
+      {:ok, group} = create_group(organisation, %{name: "Test Group"})
 
-      create_group_membership(%{
-        group_id: group.id,
-        user_id: authorized_user.id
-      })
+      {:ok, _} =
+        create_group_membership(organisation, %{
+          group_id: group.id,
+          user_id: authorized_user.id
+        })
 
-      create_access_right(%{
-        group_id: group.id,
-        resource_name: "Tenant",
-        tenant_id: tenant.id,
-        read: true,
-        write: true
-      })
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: group.id,
+          resource_name: "Organisation",
+          read: true,
+          write: true
+        })
 
-      create_access_right(%{
-        group_id: group.id,
-        resource_name: "Group",
-        tenant_id: tenant.id,
-        read: true,
-        write: true
-      })
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: group.id,
+          resource_name: "Group",
+          read: true,
+          write: true
+        })
 
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}")
 
-      assert html =~ group.name
+      assert html =~ "Test Group"
     end
 
     test "does not render a group details if user is unauthorized", %{
       conn: conn,
       user: user
     } do
-      {:ok, tenant} = create_tenant()
-      {:ok, group} = create_group(%{tenant_id: tenant.id})
-      create_group_membership(%{group_id: group.id, user_id: user.id})
+      {:ok, organisation} = create_organisation()
+      {:ok, group} = create_group(organisation)
+      {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
-      create_access_right(%{
-        group_id: group.id,
-        resource_name: "Group",
-        tenant_id: tenant.id,
-        read: false,
-        write: false
-      })
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: group.id,
+          resource_name: "Group",
+          read: false,
+          write: false
+        })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
-        |> live(~p"/tenants/#{tenant}/groups/#{group}")
+        |> live(~p"/organisations/#{organisation}/groups/#{group}")
       end
     end
   end

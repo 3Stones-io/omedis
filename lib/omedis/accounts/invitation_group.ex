@@ -11,21 +11,38 @@ defmodule Omedis.Accounts.InvitationGroup do
   postgres do
     table "invitation_groups"
     repo Omedis.Repo
-  end
 
-  attributes do
-    uuid_primary_key :id
-    timestamps()
+    references do
+      reference :invitation, on_delete: :delete
+      reference :group, on_delete: :delete
+      reference :organisation, on_delete: :delete
+    end
   end
 
   actions do
-    defaults [:read]
+    defaults [:read, :destroy]
 
     create :create do
       accept [:invitation_id, :group_id]
 
       primary? true
     end
+  end
+
+  policies do
+    policy do
+      authorize_if always()
+    end
+  end
+
+  multitenancy do
+    strategy :attribute
+    attribute :organisation_id
+  end
+
+  attributes do
+    uuid_primary_key :id
+    timestamps()
   end
 
   relationships do
@@ -38,11 +55,7 @@ defmodule Omedis.Accounts.InvitationGroup do
       allow_nil? false
       primary_key? true
     end
-  end
 
-  policies do
-    policy do
-      authorize_if always()
-    end
+    belongs_to :organisation, Omedis.Accounts.Organisation
   end
 end

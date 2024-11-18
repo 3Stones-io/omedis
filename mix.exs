@@ -72,7 +72,8 @@ defmodule Omedis.MixProject do
       {:faker, "~> 0.18"},
       {:bandit, "~> 1.5"},
       {:ash_phoenix, "~> 2.1.2"},
-      {:slugify, "~> 1.3"}
+      {:slugify, "~> 1.3"},
+      {:oban, "~> 2.17"}
     ]
   end
 

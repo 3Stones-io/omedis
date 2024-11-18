@@ -11,8 +11,8 @@ defmodule OmedisWeb.Router do
     plug :put_secure_browser_headers
     plug :load_from_session
     plug OmedisWeb.Plugs.Locale
-    plug OmedisWeb.Plugs.CurrentTenant
-    plug OmedisWeb.Plugs.TenantsCount
+    plug OmedisWeb.Plugs.CurrentOrganisation
+    plug OmedisWeb.Plugs.OrganisationsCount
   end
 
   pipeline :api do
@@ -38,47 +38,52 @@ defmodule OmedisWeb.Router do
     ash_authentication_live_session :authentication_required,
       on_mount: [
         {OmedisWeb.LiveUserAuth, :live_user_required},
-        {OmedisWeb.LiveTenant, :assign_current_tenant},
-        {OmedisWeb.LiveTenant, :assign_tenants_count},
+        {OmedisWeb.LiveOrganisation, :assign_current_organisation},
+        {OmedisWeb.LiveOrganisation, :assign_organisations_count},
         {OmedisWeb.LiveHelpers, :assign_locale}
       ] do
       live "/edit_profile", EditProfileLive, :index
-      live "/tenants", TenantLive.Index, :index
-      live "/tenants/new", TenantLive.Index, :new
-      live "/tenants/:slug/edit", TenantLive.Index, :edit
+      live "/organisations", OrganisationLive.Index, :index
+      live "/organisations/new", OrganisationLive.Index, :new
+      live "/organisations/:slug/edit", OrganisationLive.Index, :edit
 
-      live "/tenants/:slug/today", TenantLive.Today, :index
+      live "/organisations/:slug/invitations", InvitationLive.Index, :index
 
-      live "/tenants/:slug/groups/:group_slug/activities", ActivityLive.Index, :index
-      live "/tenants/:slug/groups/:group_slug/activities/new", ActivityLive.Index, :new
+      live "/organisations/:slug/today", OrganisationLive.Today, :index
 
-      live "/tenants/:slug/projects", ProjectLive.Index, :index
-      live "/tenants/:slug/projects/new", ProjectLive.Index, :new
-      live "/tenants/:slug/projects/:id", ProjectLive.Show, :show
-      live "/tenants/:slug/projects/:id/edit", ProjectLive.Index, :edit
-      live "/tenants/:slug/projects/:id/show/edit", ProjectLive.Show, :edit
+      live "/organisations/:slug/groups/:group_slug/activities", ActivityLive.Index, :index
+      live "/organisations/:slug/groups/:group_slug/activities/new", ActivityLive.Index, :new
+      live "/organisations/:slug/groups/:group_slug/activities/:id", ActivityLive.Show, :show
 
-      live "/tenants/:slug/groups", GroupLive.Index, :index
-      live "/tenants/:slug/groups/new", GroupLive.Index, :new
-      live "/tenants/:slug/groups/:group_slug/show/edit", GroupLive.Show, :edit
-      live "/tenants/:slug/groups/:group_slug", GroupLive.Show, :show
-      live "/tenants/:slug/groups/:group_slug/edit", GroupLive.Index, :edit
-
-      live "/tenants/:slug/groups/:group_slug/activities/:id", ActivityLive.Show, :show
-
-      live "/tenants/:slug/groups/:group_slug/activities/:id/edit",
+      live "/organisations/:slug/groups/:group_slug/activities/:id/edit",
            ActivityLive.Index,
            :edit
 
-      live "/tenants/:slug/groups/:group_slug/activities/:id/show/edit",
+      live "/organisations/:slug/groups/:group_slug/activities/:id/show/edit",
            ActivityLive.Show,
            :edit
 
-      live "/tenants/:slug", TenantLive.Show, :show
-      live "/tenants/:slug/show/edit", TenantLive.Show, :edit
+      live "/organisations/:slug/projects", ProjectLive.Index, :index
+      live "/organisations/:slug/projects/new", ProjectLive.Index, :new
+      live "/organisations/:slug/projects/:id", ProjectLive.Show, :show
+      live "/organisations/:slug/projects/:id/edit", ProjectLive.Index, :edit
+      live "/organisations/:slug/projects/:id/show/edit", ProjectLive.Show, :edit
 
-      live "/tenants/:slug/activities/:id/log_entries", LogEntryLive.Index, :index
+      live "/organisations/:slug/groups", GroupLive.Index, :index
+      live "/organisations/:slug/groups/new", GroupLive.Index, :new
+      live "/organisations/:slug/groups/:group_slug/show/edit", GroupLive.Show, :edit
+      live "/organisations/:slug/groups/:group_slug", GroupLive.Show, :show
+      live "/organisations/:slug/groups/:group_slug/edit", GroupLive.Index, :edit
+
+      live "/organisations/:slug", OrganisationLive.Show, :show
+      live "/organisations/:slug/show/edit", OrganisationLive.Show, :edit
+
+      live "/organisations/:slug/activities/:id/events", EventLive.Index, :index
+
+      live "/organisations/:slug/invitations/new", InvitationLive.Index, :new
     end
+
+    live "/organisations/:slug/invitations/:id", InvitationLive.Show, :show
   end
 
   # Other scopes may use custom stacks.
