@@ -19,7 +19,7 @@ defmodule OmedisWeb.TimeTracking do
   attr :current_time, :any, required: true
   attr :events, :list, required: true
   attr :language, :any, required: true
-  attr :active_activity_id, :string, required: true
+  attr :current_activity_id, :string, required: true
 
   @doc """
   Renders the main dashboard component.
@@ -42,7 +42,7 @@ defmodule OmedisWeb.TimeTracking do
         <.no_activities language={@language} />
       <% else %>
         <.dashboard_card
-          active_activity_id={@active_activity_id}
+          current_activity_id={@current_activity_id}
           activities={@activities}
           start_at={@start_at}
           end_at={@end_at}
@@ -77,7 +77,7 @@ defmodule OmedisWeb.TimeTracking do
   attr :current_time, :any, required: true
   attr :events, :list, required: true
   attr :language, :any, required: true
-  attr :active_activity_id, :string, required: true
+  attr :current_activity_id, :string, required: true
 
   def dashboard_card(assigns) do
     ~H"""
@@ -85,7 +85,7 @@ defmodule OmedisWeb.TimeTracking do
       <div class="md:w-[40%]  flex justify-start flex-col gap-5 h-[100%]">
         <%= for activity <- @activities do %>
           <.activity_button
-            active_activity_id={@active_activity_id}
+            current_activity_id={@current_activity_id}
             activity={activity}
             language={@language}
             current_time={@current_time}
@@ -234,14 +234,14 @@ defmodule OmedisWeb.TimeTracking do
   attr :activity, :any, required: true
   attr :current_time, :any, required: true
   attr :language, :any, required: true
-  attr :active_activity_id, :string, required: true
+  attr :current_activity_id, :string, required: true
 
   def activity_button(assigns) do
     ~H"""
     <div class="flex flex-col gap-0">
       <div class="flex flex-row gap-2 items-center">
         <p
-          :if={@active_activity_id == @activity.id}
+          :if={@current_activity_id == @activity.id}
           class="h-[10px] w-[10px] bg-green-500 rounded-full"
           id={"active-activity-#{@activity.id}"}
         />
@@ -256,7 +256,7 @@ defmodule OmedisWeb.TimeTracking do
               <%= @activity.name %>
             </span>
             <span class="ml-4">
-              <%= if @active_activity_id == @activity.id do %>
+              <%= if @current_activity_id == @activity.id do %>
                 <button
                   phx-click={JS.push("stop_current_activity")}
                   id={"stop-current-activity-#{@activity.id}"}

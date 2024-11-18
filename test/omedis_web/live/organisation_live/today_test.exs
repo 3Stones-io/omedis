@@ -364,7 +364,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       refute lv
              |> element("#start-activity-#{activity.id}")
-             |> render_click() =~ "stop-active-activity-#{activity.id}"
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       assert {:ok, []} =
                Event.by_activity_today(
