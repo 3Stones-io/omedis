@@ -1,0 +1,97 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/omedis_web/live/group_live/index.ex:79
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/index.ex:108
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/index.ex:94
+#, elixir-autogen, elixir-format
+msgid "Edit"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/index.ex:175
+#: lib/omedis_web/live/group_live/show.ex:105
+#, elixir-autogen, elixir-format
+msgid "Edit Group"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/index.ex:258
+#, elixir-autogen, elixir-format
+msgid "Group deleted"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/index.ex:38
+#: lib/omedis_web/live/group_live/index.ex:221
+#, elixir-autogen, elixir-format
+msgid "Listing Groups"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/form_component.ex:35
+#: lib/omedis_web/live/group_live/form_component.ex:49
+#: lib/omedis_web/live/group_live/index.ex:65
+#: lib/omedis_web/live/group_live/show.ex:43
+#, elixir-autogen, elixir-format
+msgid "Name"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/index.ex:49
+#: lib/omedis_web/live/group_live/index.ex:200
+#, elixir-autogen, elixir-format
+msgid "New Group"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/form_component.ex:61
+#, elixir-autogen, elixir-format
+msgid "Save Group"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/form_component.ex:59
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr ""
+
+#: lib/omedis_web/live/group_live/show.ex:102
+#, elixir-autogen, elixir-format
+msgid "Show Group"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/form_component.ex:40
+#: lib/omedis_web/live/group_live/form_component.ex:54
+#: lib/omedis_web/live/group_live/index.ex:72
+#: lib/omedis_web/live/group_live/show.ex:46
+#, elixir-autogen, elixir-format
+msgid "Slug"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/form_component.ex:16
+#, elixir-autogen, elixir-format
+msgid "Use this form to manage group records in your database."
+msgstr ""
+
+#: lib/omedis_web/live/group_live/index.ex:184
+#: lib/omedis_web/live/group_live/index.ex:209
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to access this page"
+msgstr ""
+
+#: lib/omedis_web/live/group_live/index.ex:266
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to delete this group"
+msgstr ""

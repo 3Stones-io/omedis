@@ -18,15 +18,16 @@ defmodule OmedisWeb.OrganisationLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/", false},
-            {gettext("Organisations"), ~p"/organisations", true}
+            {with_locale(@language, fn -> dgettext("navigation", "Home") end), ~p"/", false},
+            {with_locale(@language, fn -> dgettext("navigation", "Organisations") end),
+             ~p"/organisations", true}
           ]}
           language={@language}
         />
 
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Listing Organisations") %>
+            <%= dgettext("organisation", "Listing Organisations") %>
           <% end) %>
           <:actions>
             <.link
@@ -35,7 +36,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("New Organisation") %>
+                  <%= dgettext("organisation", "New Organisation") %>
                 <% end) %>
               </.button>
             </.link>
@@ -48,7 +49,14 @@ defmodule OmedisWeb.OrganisationLive.Index do
             rows={@streams.organisations}
             row_click={fn {_id, organisation} -> JS.navigate(~p"/organisations/#{organisation}") end}
           >
-            <:col :let={{_id, organisation}} label={with_locale(@language, fn -> gettext("Name") end)}>
+            <:col
+              :let={{_id, organisation}}
+              label={
+                with_locale(@language, fn ->
+                  dgettext("organisation", "Name")
+                end)
+              }
+            >
               <%= organisation.name %>
               <%= if not is_nil(organisation.additional_info) and organisation.additional_info != "" do %>
                 <br />
@@ -57,7 +65,11 @@ defmodule OmedisWeb.OrganisationLive.Index do
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> gettext("Street") end)}
+              label={
+                with_locale(@language, fn ->
+                  dgettext("organisation", "Street")
+                end)
+              }
             >
               <%= organisation.street %>
               <%= if not is_nil(organisation.street2) do %>
@@ -72,22 +84,41 @@ defmodule OmedisWeb.OrganisationLive.Index do
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> gettext("Zip Code") end)}
+              label={
+                with_locale(@language, fn ->
+                  dgettext("organisation", "Zip Code")
+                end)
+              }
             >
               <%= organisation.zip_code %>
             </:col>
-            <:col :let={{_id, organisation}} label={with_locale(@language, fn -> gettext("City") end)}>
+            <:col
+              :let={{_id, organisation}}
+              label={
+                with_locale(@language, fn ->
+                  dgettext("organisation", "City")
+                end)
+              }
+            >
               <%= organisation.city %>
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> gettext("Canton") end)}
+              label={
+                with_locale(@language, fn ->
+                  dgettext("organisation", "Canton")
+                end)
+              }
             >
               <%= organisation.canton %>
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> gettext("Country") end)}
+              label={
+                with_locale(@language, fn ->
+                  dgettext("organisation", "Country")
+                end)
+              }
             >
               <%= organisation.country %>
             </:col>
@@ -95,13 +126,13 @@ defmodule OmedisWeb.OrganisationLive.Index do
               <div class="sr-only">
                 <.link navigate={~p"/organisations/#{organisation}"}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("Show") %>
+                    <%= dgettext("organisation", "Show") %>
                   <% end) %>
                 </.link>
               </div>
               <.link patch={~p"/organisations/#{organisation}/edit"}>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Edit") %>
+                  <%= dgettext("organisation", "Edit") %>
                 <% end) %>
               </.link>
             </:action>
@@ -155,12 +186,20 @@ defmodule OmedisWeb.OrganisationLive.Index do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("Edit Organisation") end)
+        with_locale(socket.assigns.language, fn ->
+          dgettext("organisation", "Edit Organisation")
+        end)
       )
       |> assign(:organisation, organisation)
     else
       socket
-      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> put_flash(
+        :error,
+        dgettext(
+          "organisation",
+          "You are not authorized to access this page"
+        )
+      )
       |> push_navigate(to: ~p"/organisations")
     end
   end
@@ -170,12 +209,20 @@ defmodule OmedisWeb.OrganisationLive.Index do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("New Organisation") end)
+        with_locale(socket.assigns.language, fn ->
+          dgettext("organisation", "New Organisation")
+        end)
       )
       |> assign(:organisation, nil)
     else
       socket
-      |> put_flash(:error, gettext("You are not authorized to access this page"))
+      |> put_flash(
+        :error,
+        dgettext(
+          "organisation",
+          "You are not authorized to access this page"
+        )
+      )
       |> push_navigate(to: ~p"/organisations")
     end
   end
@@ -184,7 +231,9 @@ defmodule OmedisWeb.OrganisationLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Listing Organisations") end)
+      with_locale(socket.assigns.language, fn ->
+        dgettext("organisation", "Listing Organisations")
+      end)
     )
     |> assign(:organisation, nil)
     |> PaginationUtils.list_paginated(params, :organisations, fn offset ->

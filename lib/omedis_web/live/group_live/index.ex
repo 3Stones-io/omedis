@@ -20,22 +20,22 @@ defmodule OmedisWeb.GroupLive.Index do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/", false},
-            {gettext("Organisations"), ~p"/organisations", false},
+            {dgettext("navigation", "Home"), ~p"/", false},
+            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation}", true}
+            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}", true}
           ]}
           language={@language}
         />
 
         <div>
           <.link navigate={~p"/organisations/#{@organisation}"} class="button">
-            <%= gettext("Back") %>
+            <%= dgettext("navigation", "Back") %>
           </.link>
         </div>
         <.header>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Listing Groups") %>
+            <%= dgettext("group", "Listing Groups") %>
           <% end) %>
           <:actions>
             <.link
@@ -46,7 +46,7 @@ defmodule OmedisWeb.GroupLive.Index do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("New Group") %>
+                  <%= dgettext("group", "New Group") %>
                 <% end) %>
               </.button>
             </.link>
@@ -60,15 +60,24 @@ defmodule OmedisWeb.GroupLive.Index do
             fn {_id, group} -> JS.navigate(~p"/organisations/#{@organisation}/groups/#{group}") end
           }
         >
-          <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Name") end)}>
+          <:col
+            :let={{_id, group}}
+            label={with_locale(@language, fn -> dgettext("group", "Name") end)}
+          >
             <%= group.name %>
           </:col>
 
-          <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Slug") end)}>
+          <:col
+            :let={{_id, group}}
+            label={with_locale(@language, fn -> dgettext("group", "Slug") end)}
+          >
             <%= group.slug %>
           </:col>
 
-          <:col :let={{_id, group}} label={with_locale(@language, fn -> gettext("Actions") end)}>
+          <:col
+            :let={{_id, group}}
+            label={with_locale(@language, fn -> dgettext("group", "Actions") end)}
+          >
             <div class="flex gap-4">
               <.link
                 :if={
@@ -82,7 +91,7 @@ defmodule OmedisWeb.GroupLive.Index do
                 class="font-semibold"
               >
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Edit") %>
+                  <%= dgettext("group", "Edit") %>
                 <% end) %>
               </.link>
               <.link
@@ -96,7 +105,7 @@ defmodule OmedisWeb.GroupLive.Index do
               >
                 <p class="font-semibold" phx-click="delete" phx-value-id={group.id}>
                   <%= with_locale(@language, fn -> %>
-                    <%= gettext("Delete") %>
+                    <%= dgettext("group", "Delete") %>
                   <% end) %>
                 </p>
               </.link>
@@ -162,7 +171,9 @@ defmodule OmedisWeb.GroupLive.Index do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn -> gettext("Edit Group") end)
+        with_locale(socket.assigns.language, fn ->
+          dgettext("group", "Edit Group")
+        end)
       )
       |> assign(:group, group)
     else
@@ -170,7 +181,7 @@ defmodule OmedisWeb.GroupLive.Index do
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->
-          gettext("You are not authorized to access this page")
+          dgettext("group", "You are not authorized to access this page")
         end)
       )
       |> redirect(to: ~p"/organisations/#{socket.assigns.organisation}/groups")
@@ -183,14 +194,19 @@ defmodule OmedisWeb.GroupLive.Index do
          tenant: socket.assigns.organisation
        ) do
       socket
-      |> assign(:page_title, with_locale(socket.assigns.language, fn -> gettext("New Group") end))
+      |> assign(
+        :page_title,
+        with_locale(socket.assigns.language, fn ->
+          dgettext("group", "New Group")
+        end)
+      )
       |> assign(:group, nil)
     else
       socket
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->
-          gettext("You are not authorized to access this page")
+          dgettext("group", "You are not authorized to access this page")
         end)
       )
       |> redirect(to: ~p"/organisations/#{socket.assigns.organisation}/groups")
@@ -201,7 +217,9 @@ defmodule OmedisWeb.GroupLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Listing Groups") end)
+      with_locale(socket.assigns.language, fn ->
+        dgettext("group", "Listing Groups")
+      end)
     )
     |> assign(:group, nil)
     |> PaginationUtils.list_paginated(params, :groups, fn offset ->
@@ -236,14 +254,16 @@ defmodule OmedisWeb.GroupLive.Index do
        |> stream_delete(:groups, group)
        |> put_flash(
          :info,
-         with_locale(socket.assigns.language, fn -> gettext("Group deleted") end)
+         with_locale(socket.assigns.language, fn ->
+           dgettext("group", "Group deleted")
+         end)
        )}
     else
       socket
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->
-          gettext("You are not authorized to delete this group")
+          dgettext("group", "You are not authorized to delete this group")
         end)
       )
     end

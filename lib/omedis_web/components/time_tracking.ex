@@ -10,13 +10,16 @@ defmodule OmedisWeb.TimeTracking do
 
   import Gettext, only: [with_locale: 2]
 
+  alias OmedisWeb.CoreComponents
+  alias Phoenix.LiveView.JS
+
   attr :activities, :list, required: true
   attr :start_at, :any, required: true
   attr :end_at, :any, required: true
   attr :current_time, :any, required: true
   attr :events, :list, required: true
   attr :language, :any, required: true
-  attr :active_activity_id, :string, required: true
+  attr :current_activity_id, :string, required: true
 
   @doc """
   Renders the main dashboard component.
@@ -39,7 +42,7 @@ defmodule OmedisWeb.TimeTracking do
         <.no_activities language={@language} />
       <% else %>
         <.dashboard_card
-          active_activity_id={@active_activity_id}
+          current_activity_id={@current_activity_id}
           activities={@activities}
           start_at={@start_at}
           end_at={@end_at}
@@ -57,7 +60,7 @@ defmodule OmedisWeb.TimeTracking do
     <div class="w-[100%] h-[30vh] flex justify-center items-center">
       <%= with_locale(@language, fn -> %>
         <p>
-          <%= gettext("No activities have been defined yet.") %>
+          <%= dgettext("organisation", "No activities have been defined yet.") %>
         </p>
       <% end) %>
     </div>
@@ -74,7 +77,7 @@ defmodule OmedisWeb.TimeTracking do
   attr :current_time, :any, required: true
   attr :events, :list, required: true
   attr :language, :any, required: true
-  attr :active_activity_id, :string, required: true
+  attr :current_activity_id, :string, required: true
 
   def dashboard_card(assigns) do
     ~H"""
@@ -82,7 +85,7 @@ defmodule OmedisWeb.TimeTracking do
       <div class="md:w-[40%]  flex justify-start flex-col gap-5 h-[100%]">
         <%= for activity <- @activities do %>
           <.activity_button
-            active_activity_id={@active_activity_id}
+            current_activity_id={@current_activity_id}
             activity={activity}
             language={@language}
             current_time={@current_time}
@@ -231,28 +234,43 @@ defmodule OmedisWeb.TimeTracking do
   attr :activity, :any, required: true
   attr :current_time, :any, required: true
   attr :language, :any, required: true
-  attr :active_activity_id, :string, required: true
+  attr :current_activity_id, :string, required: true
 
   def activity_button(assigns) do
     ~H"""
     <div class="flex flex-col gap-0">
       <div class="flex flex-row gap-2 items-center">
         <p
-          :if={@active_activity_id == @activity.id}
+          :if={@current_activity_id == @activity.id}
           class="h-[10px] w-[10px] bg-green-500 rounded-full"
           id={"active-activity-#{@activity.id}"}
         />
 
-        <button
+        <div
           class="w-[100%] h-[100%] h-[40px] rounded-md"
           id={"activity-#{@activity.id}"}
-          phx-click="select_activity"
-          phx-value-activity_id={@activity.id}
           style={"background-color: #{@activity.color_code};"}
         >
-          <div class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
+          <p class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
             <span>
               <%= @activity.name %>
+            </span>
+            <span class="ml-4">
+              <%= if @current_activity_id == @activity.id do %>
+                <button
+                  phx-click={JS.push("stop_current_activity")}
+                  id={"stop-current-activity-#{@activity.id}"}
+                >
+                  <CoreComponents.icon name="hero-pause-circle-solid" class="w-6 h-6" />
+                </button>
+              <% else %>
+                <button
+                  phx-click={JS.push("start_activity", value: %{activity_id: @activity.id})}
+                  id={"start-activity-#{@activity.id}"}
+                >
+                  <CoreComponents.icon name="hero-play-circle-solid" class="w-6 h-6" />
+                </button>
+              <% end %>
             </span>
             <span>
               <.counter_for_time_taken_by_current_task
@@ -261,8 +279,8 @@ defmodule OmedisWeb.TimeTracking do
                 current_time={@current_time}
               />
             </span>
-          </div>
-        </button>
+          </p>
+        </div>
       </div>
     </div>
     """
@@ -370,7 +388,7 @@ defmodule OmedisWeb.TimeTracking do
         >
           <p>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Select Group") %>
+              <%= dgettext("organisation", "Select Group") %>
             <% end) %>
           </p>
 
@@ -396,7 +414,7 @@ defmodule OmedisWeb.TimeTracking do
         >
           <p>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Select Project") %>
+              <%= dgettext("organisation", "Select Project") %>
             <% end) %>
           </p>
           <select

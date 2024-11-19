@@ -15,23 +15,24 @@ defmodule OmedisWeb.ProjectLive.Show do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/", false},
-            {gettext("Organisations"), ~p"/organisations", false},
+            {dgettext("navigation", "Home"), ~p"/", false},
+            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {gettext("Projects"), ~p"/organisations/#{@organisation}/projects", false},
+            {dgettext("navigation", "Projects"), ~p"/organisations/#{@organisation}/projects", false},
             {@project.name, "", true}
           ]}
           language={@language}
         />
 
         <.header>
-          <%= with_locale(@language, fn -> %>
-            <%= gettext("Project") %>
-          <% end) %>
+          <%= with_locale(@language, fn -> dgettext("project", "Project") end) %>
           <:subtitle>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("This is a project record from your database.") %>
-            <% end) %>
+            <%= with_locale(@language, fn ->
+              dgettext(
+                "project",
+                "This is a project record from your database."
+              )
+            end) %>
           </:subtitle>
 
           <:actions>
@@ -40,26 +41,26 @@ defmodule OmedisWeb.ProjectLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
-                <%= with_locale(@language, fn -> %>
-                  <%= gettext("Edit Project") %>
-                <% end) %>
+                <%= with_locale(@language, fn ->
+                  dgettext("navigation", "Edit Project")
+                end) %>
               </.button>
             </.link>
           </:actions>
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> gettext("Name") end)}>
+          <:item title={with_locale(@language, fn -> dgettext("project", "Name") end)}>
             <%= @project.name %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Position") end)}>
+          <:item title={with_locale(@language, fn -> dgettext("project", "Position") end)}>
             <%= @project.position %>
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/projects"}>
-          <%= with_locale(@language, fn -> gettext("Back to projects") end) %>
+          <%= with_locale(@language, fn -> dgettext("project", "Back to projects") end) %>
         </.back>
 
         <.modal
@@ -128,7 +129,10 @@ defmodule OmedisWeb.ProjectLive.Show do
       |> put_flash(
         :error,
         with_locale(socket.assigns.language, fn ->
-          gettext("You are not authorized to access this page")
+          dgettext(
+            "project",
+            "You are not authorized to access this page"
+          )
         end)
       )
     end
@@ -136,6 +140,9 @@ defmodule OmedisWeb.ProjectLive.Show do
 
   defp maybe_check_and_enforce_edit_access(socket, _), do: socket
 
-  defp page_title(:show, language), do: with_locale(language, fn -> gettext("Project") end)
-  defp page_title(:edit, language), do: with_locale(language, fn -> gettext("Edit Project") end)
+  defp page_title(:show, language),
+    do: with_locale(language, fn -> dgettext("project", "Project") end)
+
+  defp page_title(:edit, language),
+    do: with_locale(language, fn -> dgettext("project", "Edit Project") end)
 end

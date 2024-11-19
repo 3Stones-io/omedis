@@ -21,7 +21,7 @@ defmodule OmedisWeb.PaginationComponent do
           ]}
         >
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Previous") %>
+            <%= dgettext("pagination", "Previous") %>
           <% end) %>
         </.page_link>
         <.page_link
@@ -32,7 +32,7 @@ defmodule OmedisWeb.PaginationComponent do
           ]}
         >
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Next") %>
+            <%= dgettext("pagination", "Next") %>
           <% end) %>
         </.page_link>
       </div>
@@ -40,11 +40,11 @@ defmodule OmedisWeb.PaginationComponent do
         <div>
           <p class="text-sm text-gray-700">
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Showing page") %>
+              <%= dgettext("pagination", "Showing page") %>
             <% end) %>
             <span class="font-medium text-gray-900"><%= @current_page %></span>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("of") %>
+              <%= dgettext("pagination", "of") %>
             <% end) %>
             <span class="font-medium text-gray-900"><%= @total_pages %></span>
           </p>
@@ -60,7 +60,7 @@ defmodule OmedisWeb.PaginationComponent do
             >
               <span class="sr-only">
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Previous") %>
+                  <%= dgettext("pagination", "Previous") %>
                 <% end) %>
               </span>
 
@@ -107,7 +107,7 @@ defmodule OmedisWeb.PaginationComponent do
             >
               <span class="sr-only">
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Next") %>
+                  <%= dgettext("pagination", "Next") %>
                 <% end) %>
               </span>
               <svg
