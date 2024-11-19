@@ -1,0 +1,149 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: lib/omedis_web/live/register_live.ex:313
+#, elixir-autogen, elixir-format
+msgid "Birthdate"
+msgstr "Date de naissance"
+
+#: lib/omedis_web/live/register_live.ex:161
+#, elixir-autogen, elixir-format
+msgid "Change language"
+msgstr "Changer de langue"
+
+#: lib/omedis_web/live/register_live.ex:344
+#: lib/omedis_web/live/register_live.ex:358
+#, elixir-autogen, elixir-format
+msgid "Daily End Time"
+msgstr "Heure de fin quotidienne"
+
+#: lib/omedis_web/live/register_live.ex:321
+#: lib/omedis_web/live/register_live.ex:335
+#, elixir-autogen, elixir-format
+msgid "Daily Start Time"
+msgstr "Heure de début quotidienne"
+
+#: lib/omedis_web/live/register_live.ex:369
+#, elixir-autogen, elixir-format
+msgid "Don't have an account? Sign up"
+msgstr "Vous n'avez pas de compte ? Inscrivez-vous"
+
+#: lib/omedis_web/live/login_live.ex:97
+#: lib/omedis_web/live/login_live.ex:103
+#: lib/omedis_web/live/login_live.ex:111
+#: lib/omedis_web/live/register_live.ex:236
+#: lib/omedis_web/live/register_live.ex:239
+#, elixir-autogen, elixir-format
+msgid "Email"
+msgstr "E-mail"
+
+#: lib/omedis_web/live/register_live.ex:297
+#, elixir-autogen, elixir-format
+msgid "Female"
+msgstr "Femme"
+
+#: lib/omedis_web/live/register_live.ex:250
+#: lib/omedis_web/live/register_live.ex:256
+#, elixir-autogen, elixir-format
+msgid "First Name"
+msgstr "Prénom"
+
+#: lib/omedis_web/live/register_live.ex:294
+#, elixir-autogen, elixir-format
+msgid "Gender"
+msgstr "Genre"
+
+#: lib/omedis_web/live/register_live.ex:268
+#: lib/omedis_web/live/register_live.ex:270
+#, elixir-autogen, elixir-format
+msgid "Last Name"
+msgstr "Nom de famille"
+
+#: lib/omedis_web/live/register_live.ex:296
+#, elixir-autogen, elixir-format
+msgid "Male"
+msgstr "Homme"
+
+#: lib/omedis_web/live/login_live.ex:119
+#: lib/omedis_web/live/login_live.ex:126
+#: lib/omedis_web/live/login_live.ex:133
+#: lib/omedis_web/live/register_live.ex:280
+#: lib/omedis_web/live/register_live.ex:283
+#, elixir-autogen, elixir-format
+msgid "Password"
+msgstr "Mot de passe"
+
+#: lib/omedis_web/live/register_live.ex:49
+#: lib/omedis_web/live/register_live.ex:145
+#, elixir-autogen, elixir-format
+msgid "Register"
+msgstr "S'inscrire"
+
+#: lib/omedis_web/live/register_live.ex:301
+#, elixir-autogen, elixir-format
+msgid "Select Your Gender"
+msgstr "Sélectionnez votre genre"
+
+#: lib/omedis_web/live/register_live.ex:217
+#: lib/omedis_web/live/register_live.ex:223
+#, elixir-autogen, elixir-format
+msgid "Select an Organisation"
+msgstr "Sélectionnez une organisation"
+
+#: lib/omedis_web/live/login_live.ex:32
+#: lib/omedis_web/live/login_live.ex:87
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr "Se connecter"
+
+#: lib/omedis_web/live/register_live.ex:378
+#, elixir-autogen, elixir-format
+msgid "Sign up"
+msgstr "S'inscrire"
+
+#: lib/omedis_web/live/login_live.ex:141
+#: lib/omedis_web/live/login_live.ex:144
+#, elixir-autogen, elixir-format
+msgid "Signing in..."
+msgstr "Connexion en cours..."
+
+#: lib/omedis_web/live/register_live.ex:381
+#, elixir-autogen, elixir-format
+msgid "Signing up..."
+msgstr "Inscription en cours..."
+
+#: lib/omedis_web/controllers/auth_controller.ex:38
+#, elixir-autogen, elixir-format
+msgid "Something went wrong. Try again."
+msgstr "Quelque chose s'est mal passé. Réessayez."
+
+#: lib/omedis_web/live/register_live.ex:150
+#, elixir-autogen, elixir-format
+msgid "Use a permanent address where you can receive mail."
+msgstr "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
+
+#: lib/omedis_web/live/login_live.ex:91
+#, elixir-autogen, elixir-format
+msgid "Use your credentials to sign in"
+msgstr "Utilisez vos identifiants pour vous connecter"
+
+#: lib/omedis_web/controllers/auth_controller.ex:24
+#, elixir-autogen, elixir-format
+msgid "Username or password is incorrect"
+msgstr "Nom d'utilisateur ou mot de passe incorrect"
+
+#: lib/omedis_web/live/login_live.ex:128
+#: lib/omedis_web/live/register_live.ex:281
+#, elixir-autogen, elixir-format
+msgid "new password"
+msgstr "nouveau mot de passe"

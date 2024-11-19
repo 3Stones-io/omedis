@@ -18,12 +18,12 @@ defmodule OmedisWeb.OrganisationLive.Today do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/", false},
-            {gettext("Organisations"), ~p"/organisations", false},
+            {dgettext("navigation", "Home"), ~p"/", false},
+            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {gettext("Today"), "", true}
+            {dgettext("navigation", "Today"), "", true}
           ]}
           language={@language}
         />
@@ -34,7 +34,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
           project={@project}
           language={@language}
           projects={@projects}
-          header_text={with_locale(@language, fn -> gettext("Select group and project") end)}
+          header_text={dgettext("organisation", "Select group and project")}
         />
 
         <.dashboard_component
@@ -402,7 +402,14 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
       assign(socket, :current_activity_id, activity_id)
     else
-      put_flash(socket, :error, gettext("You are not authorized to perform this action"))
+      put_flash(
+        socket,
+        :error,
+        dgettext(
+          "organisation",
+          "You are not authorized to perform this action"
+        )
+      )
     end
   end
 
@@ -414,7 +421,14 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
       assign(socket, :current_activity_id, nil)
     else
-      put_flash(socket, :error, gettext("You are not authorized to perform this action"))
+      put_flash(
+        socket,
+        :error,
+        dgettext(
+          "organisation",
+          "You are not authorized to perform this action"
+        )
+      )
     end
   end
 

@@ -60,7 +60,7 @@ defmodule OmedisWeb.TimeTracking do
     <div class="w-[100%] h-[30vh] flex justify-center items-center">
       <%= with_locale(@language, fn -> %>
         <p>
-          <%= gettext("No activities are defined yet.") %>
+          <%= dgettext("organisation", "No activities are defined yet.") %>
         </p>
       <% end) %>
     </div>
@@ -388,7 +388,7 @@ defmodule OmedisWeb.TimeTracking do
         >
           <p>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Select Group") %>
+              <%= dgettext("organisation", "Select Group") %>
             <% end) %>
           </p>
 
@@ -414,7 +414,7 @@ defmodule OmedisWeb.TimeTracking do
         >
           <p>
             <%= with_locale(@language, fn -> %>
-              <%= gettext("Select Project") %>
+              <%= dgettext("organisation", "Select Project") %>
             <% end) %>
           </p>
           <select
