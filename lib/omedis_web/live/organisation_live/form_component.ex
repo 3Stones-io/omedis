@@ -69,7 +69,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             type="text"
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> gettext("Zip code") end)} <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> gettext("Zip Code") end)} <span class='text-red-600'>*</span>"
               )
             }
           /><.input
@@ -129,7 +129,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:po_box]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Po Box") end)}
+            label={with_locale(@language, fn -> gettext("PO Box") end)}
           />
         </div>
 
@@ -177,7 +177,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:zsr_number]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Zsr Number") end)}
+            label={with_locale(@language, fn -> gettext("ZSR Number") end)}
           />
           <.error :for={msg <- get_field_errors(f[:zsr_number], :zsr_number)}>
             <%= "Zsr_number" <> " " <> msg %>
@@ -187,7 +187,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:ean_gln]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Ean Gln") end)}
+            label={with_locale(@language, fn -> gettext("EAN/GLN") end)}
           />
         </div>
 
@@ -195,7 +195,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:uid_bfs_number]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Uid Bfs Number") end)}
+            label={with_locale(@language, fn -> gettext("UID/BFS Number") end)}
           />
         </div>
         <div class="space-y-3">
@@ -216,14 +216,14 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:iban]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Iban") end)}
+            label={with_locale(@language, fn -> gettext("IBAN") end)}
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:bic]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Bic") end)}
+            label={with_locale(@language, fn -> gettext("BIC") end)}
           />
         </div>
 

@@ -72,7 +72,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
             </:col>
             <:col
               :let={{_id, organisation}}
-              label={with_locale(@language, fn -> gettext("Zip code") end)}
+              label={with_locale(@language, fn -> gettext("Zip Code") end)}
             >
               <%= organisation.zip_code %>
             </:col>

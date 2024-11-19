@@ -41,7 +41,7 @@ defmodule OmedisWeb.ProjectLive.Show do
             >
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Edit project") %>
+                  <%= gettext("Edit Project") %>
                 <% end) %>
               </.button>
             </.link>
@@ -53,7 +53,7 @@ defmodule OmedisWeb.ProjectLive.Show do
             <%= @project.name %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Postion") end)}>
+          <:item title={with_locale(@language, fn -> gettext("Position") end)}>
             <%= @project.position %>
           </:item>
         </.list>

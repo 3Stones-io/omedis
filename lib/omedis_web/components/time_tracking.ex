@@ -57,7 +57,7 @@ defmodule OmedisWeb.TimeTracking do
     <div class="w-[100%] h-[30vh] flex justify-center items-center">
       <%= with_locale(@language, fn -> %>
         <p>
-          <%= gettext("No activities are defined yet.") %>
+          <%= gettext("No activities have been defined yet.") %>
         </p>
       <% end) %>
     </div>

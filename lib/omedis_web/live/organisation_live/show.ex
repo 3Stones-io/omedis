@@ -84,7 +84,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
             <%= @organisation.timezone %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Additional info") end)}>
+          <:item title={with_locale(@language, fn -> gettext("Additional Info") end)}>
             <%= @organisation.additional_info %>
           </:item>
 
@@ -96,11 +96,11 @@ defmodule OmedisWeb.OrganisationLive.Show do
             <%= @organisation.street2 %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Po box") end)}>
+          <:item title={with_locale(@language, fn -> gettext("PO Box") end)}>
             <%= @organisation.po_box %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Zip code") end)}>
+          <:item title={with_locale(@language, fn -> gettext("Zip Code") end)}>
             <%= @organisation.zip_code %>
           </:item>
 
@@ -136,35 +136,35 @@ defmodule OmedisWeb.OrganisationLive.Show do
             <%= @organisation.website %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Zsr Number") end)}>
+          <:item title={with_locale(@language, fn -> gettext("ZSR Number") end)}>
             <%= @organisation.zsr_number %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Ean gln") end)}>
+          <:item title={with_locale(@language, fn -> gettext("EAN/GLN") end)}>
             <%= @organisation.ean_gln %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Uid Bfs Number") end)}>
+          <:item title={with_locale(@language, fn -> gettext("UID/BFS Number") end)}>
             <%= @organisation.uid_bfs_number %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Trade register no") end)}>
+          <:item title={with_locale(@language, fn -> gettext("Trade Register No") end)}>
             <%= @organisation.trade_register_no %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Bur number") end)}>
+          <:item title={with_locale(@language, fn -> gettext("BUR Number") end)}>
             <%= @organisation.bur_number %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Account number") end)}>
+          <:item title={with_locale(@language, fn -> gettext("Account Number") end)}>
             <%= @organisation.account_number %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Iban") end)}>
+          <:item title={with_locale(@language, fn -> gettext("IBAN") end)}>
             <%= @organisation.iban %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Bic") end)}>
+          <:item title={with_locale(@language, fn -> gettext("BIC") end)}>
             <%= @organisation.bic %>
           </:item>
 
@@ -172,7 +172,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
             <%= @organisation.bank %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> gettext("Account holder") end)}>
+          <:item title={with_locale(@language, fn -> gettext("Account Holder") end)}>
             <%= @organisation.account_holder %>
           </:item>
         </.list>
