@@ -195,6 +195,10 @@ defmodule Omedis.Repo.Migrations.AddOrganisationIdWhereMissing do
              name: "activities_unique_slug_index"
            )
 
+    create unique_index(:activities, [:organisation_id, :position, :group_id],
+             name: "activities_unique_position_index"
+           )
+
     drop constraint(:access_rights, "access_rights_group_id_fkey")
 
     alter table(:access_rights) do
@@ -234,6 +238,10 @@ defmodule Omedis.Repo.Migrations.AddOrganisationIdWhereMissing do
     drop_if_exists unique_index(:activities, [:organisation_id, :position, :group_id],
                      name: "activities_unique_position_index"
                    )
+
+    create unique_index(:activities, [:position, :group_id],
+             name: "activities_unique_position_index"
+           )
 
     drop_if_exists unique_index(:activities, [:organisation_id, :color_code, :group_id],
                      name: "activities_unique_color_code_position_index"
