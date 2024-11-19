@@ -212,6 +212,11 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> element("#activity-#{activity.id}")
              |> render_click() =~ "active-activity-#{activity.id}"
 
+      # TODO: Maybe find a better way to handle this
+      # Wait for 1 second to elapse then stop the event,
+      # otherwise, this error will be returned: "end date must be greater than the start date"
+      Process.sleep(1000)
+
       # Click same activity again to stop it
       refute lv
              |> element("#activity-#{activity.id}")
@@ -363,6 +368,11 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       assert lv
              |> element("#activity-#{activity.id}")
              |> render_click() =~ "active-activity-#{activity.id}"
+
+      # TODO: Maybe find a better way to handle this
+      # Wait for 1 second to elapse then stop the event,
+      # otherwise, this error will be returned: "end date must be greater than the start date"
+      Process.sleep(1000)
 
       # Click same activity again to stop it
       refute lv

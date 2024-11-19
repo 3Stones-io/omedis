@@ -376,14 +376,22 @@ defmodule OmedisWeb.OrganisationLive.Today do
         tenant: organisation
       )
 
+    # Set the stop time for the current event one second before starting a new one
+    event_stop_time = DateTime.add(DateTime.utc_now(), -1, :second)
+
     case Enum.find(events, fn event -> event.dtend == nil end) do
       nil ->
-        stop_any_active_event(socket, organisation, user)
+        stop_any_active_event(socket,
+          actor: user,
+          tenant: organisation
+        )
+
         create_event(socket, activity_id)
 
       event ->
         create_or_stop_event(socket, event, activity_id,
           actor: user,
+          event_stop_time: event_stop_time,
           tenant: organisation
         )
     end
@@ -398,15 +406,15 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp stop_any_active_event(socket, organisation, user) do
-    {:ok, %{results: events}} = Event.list_paginated(actor: user, tenant: organisation)
+  defp stop_any_active_event(socket, opts) do
+    {:ok, %{results: events}} = Event.list_paginated(actor: opts[:actor], tenant: opts[:tenant])
 
     case Enum.find(events, fn event -> event.dtend == nil end) do
       nil ->
         socket
 
       event ->
-        stop_event(socket, event, actor: user, tenant: organisation)
+        stop_event(socket, event, opts)
     end
   end
 
@@ -438,7 +446,10 @@ defmodule OmedisWeb.OrganisationLive.Today do
     if Ash.can?({event, :update}, socket.assigns.current_user,
          tenant: socket.assigns.organisation
        ) do
-      {:ok, _event} = Event.update(event, %{dtend: DateTime.utc_now()}, opts)
+      dtend = if(opts[:event_stop_time], do: opts[:event_stop_time], else: DateTime.utc_now())
+
+      {:ok, _event} =
+        Event.update(event, %{dtend: dtend}, actor: opts[:actor], tenant: opts[:tenant])
 
       assign(socket, :active_activity_id, nil)
     else

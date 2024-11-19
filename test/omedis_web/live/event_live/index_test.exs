@@ -63,19 +63,32 @@ defmodule OmedisWeb.EventLive.IndexTest do
       owner: owner,
       user: user
     } do
-      {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id,
-          summary: "User's event"
-        })
+      after_one_second = DateTime.add(DateTime.utc_now(), 1, :second)
+      after_two_seconds = DateTime.add(DateTime.utc_now(), 2, :second)
 
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: owner.id,
-          summary: "Owner's event"
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtend: after_one_second,
+            user_id: user.id,
+            summary: "User's event"
+          },
+          actor: user
+        )
+
+      {:ok, _} =
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtstart: after_two_seconds,
+            user_id: owner.id,
+            summary: "Owner's event"
+          },
+          actor: owner
+        )
 
       {:ok, _lv, html} =
         conn
@@ -93,19 +106,32 @@ defmodule OmedisWeb.EventLive.IndexTest do
       organisation: organisation,
       user: user
     } do
-      {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: authorized_user.id,
-          summary: "Test summary 1"
-        })
+      after_one_second = DateTime.add(DateTime.utc_now(), 1, :second)
+      after_two_seconds = DateTime.add(DateTime.utc_now(), 2, :second)
 
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id,
-          summary: "Test summary 2"
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtend: after_one_second,
+            user_id: authorized_user.id,
+            summary: "Test summary 1"
+          },
+          actor: authorized_user
+        )
+
+      {:ok, _} =
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtstart: after_two_seconds,
+            user_id: user.id,
+            summary: "Test summary 2"
+          },
+          actor: user
+        )
 
       {:ok, _lv, html} =
         conn
@@ -140,11 +166,15 @@ defmodule OmedisWeb.EventLive.IndexTest do
         })
 
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id,
-          summary: "Test summary"
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: user.id,
+            summary: "Test summary"
+          },
+          actor: user
+        )
 
       {:ok, _, html} =
         conn
