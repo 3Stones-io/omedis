@@ -11,20 +11,20 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/activity_live/index.ex:32
-#: lib/omedis_web/live/activity_live/show.ex:26
-#: lib/omedis_web/live/event_live/index.ex:29
-#: lib/omedis_web/live/group_live/show.ex:36
+#: lib/omedis_web/live/activity_live/index.ex:31
+#: lib/omedis_web/live/activity_live/show.ex:25
+#: lib/omedis_web/live/event_live/index.ex:28
+#: lib/omedis_web/live/group_live/show.ex:35
 #, elixir-autogen, elixir-format
 msgid "Activities"
 msgstr ""
 
-#: lib/omedis_web/live/group_live/index.ex:34
+#: lib/omedis_web/live/group_live/index.ex:33
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr ""
 
-#: lib/omedis_web/live/group_live/show.ex:58
+#: lib/omedis_web/live/group_live/show.ex:53
 #, elixir-autogen, elixir-format
 msgid "Back to groups"
 msgstr ""
@@ -51,12 +51,12 @@ msgstr ""
 msgid "Edit Profile"
 msgstr ""
 
-#: lib/omedis_web/live/project_live/show.ex:46
+#: lib/omedis_web/live/project_live/show.ex:45
 #, elixir-autogen, elixir-format
 msgid "Edit project"
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:33
+#: lib/omedis_web/live/event_live/index.ex:32
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr ""
@@ -105,7 +105,7 @@ msgstr ""
 msgid "Navigation Breadcrumb"
 msgstr ""
 
-#: lib/omedis_web/live/project_live/index.ex:44
+#: lib/omedis_web/live/project_live/index.ex:43
 #, elixir-autogen, elixir-format
 msgid "New Project"
 msgstr ""
@@ -117,8 +117,8 @@ msgstr ""
 #: lib/omedis_web/live/group_live/index.ex:24
 #: lib/omedis_web/live/group_live/show.ex:19
 #: lib/omedis_web/live/invitation_live/index.ex:111
-#: lib/omedis_web/live/organisation_live/index.ex:23
-#: lib/omedis_web/live/organisation_live/show.ex:19
+#: lib/omedis_web/live/organisation_live/index.ex:22
+#: lib/omedis_web/live/organisation_live/show.ex:18
 #: lib/omedis_web/live/organisation_live/today.ex:22
 #: lib/omedis_web/live/project_live/index.ex:25
 #: lib/omedis_web/live/project_live/show.ex:19
@@ -164,7 +164,7 @@ msgstr ""
 msgid "Team"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/today.ex:27
+#: lib/omedis_web/live/organisation_live/today.ex:26
 #, elixir-autogen, elixir-format
 msgid "Today"
 msgstr ""

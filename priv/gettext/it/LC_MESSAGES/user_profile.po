@@ -58,12 +58,12 @@ msgstr "Genere"
 msgid "Gender %{msg}"
 msgstr "Genere %{msg}"
 
-#: lib/omedis_web/live/edit_profile.ex:270
+#: lib/omedis_web/live/edit_profile.ex:268
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Lingua"
 
-#: lib/omedis_web/live/edit_profile.ex:286
+#: lib/omedis_web/live/edit_profile.ex:284
 #, elixir-autogen, elixir-format
 msgid "Language %{msg}"
 msgstr "Lingua %{msg}"
@@ -89,12 +89,12 @@ msgstr "Aggiornamento del profilo fallito"
 msgid "Profile updated successfully"
 msgstr "Profilo aggiornato con successo"
 
-#: lib/omedis_web/live/edit_profile.ex:297
+#: lib/omedis_web/live/edit_profile.ex:295
 #, elixir-autogen, elixir-format
 msgid "Save Profile"
 msgstr "Salva profilo"
 
-#: lib/omedis_web/live/edit_profile.ex:301
+#: lib/omedis_web/live/edit_profile.ex:299
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
@@ -109,7 +109,7 @@ msgstr "Seleziona genere"
 msgid "Select Organisation"
 msgstr "Seleziona organizzazione"
 
-#: lib/omedis_web/live/edit_profile.ex:278
+#: lib/omedis_web/live/edit_profile.ex:276
 #, elixir-autogen, elixir-format
 msgid "Select Your Language"
 msgstr "Seleziona la tua lingua"

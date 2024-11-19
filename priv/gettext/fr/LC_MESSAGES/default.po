@@ -11,43 +11,43 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: lib/omedis_web/components/core_components.ex:527
+#: lib/omedis_web/components/core_components.ex:523
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Actions"
 
-#: lib/omedis_web/components/core_components.ex:172
+#: lib/omedis_web/components/core_components.ex:168
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Tentative de reconnexion"
 
-#: lib/omedis_web/components/core_components.ex:163
+#: lib/omedis_web/components/core_components.ex:159
 #, elixir-autogen, elixir-format
 msgid "Error!"
 msgstr "Erreur !"
 
-#: lib/omedis_web/components/core_components.ex:184
+#: lib/omedis_web/components/core_components.ex:180
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
 msgstr "Patientez pendant que nous rétablissons la connexion"
 
-#: lib/omedis_web/components/core_components.ex:179
+#: lib/omedis_web/components/core_components.ex:175
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Quelque chose s'est mal passé !"
 
-#: lib/omedis_web/components/core_components.ex:162
+#: lib/omedis_web/components/core_components.ex:158
 #, elixir-autogen, elixir-format
 msgid "Success!"
 msgstr "Succès !"
 
-#: lib/omedis_web/components/core_components.ex:167
+#: lib/omedis_web/components/core_components.ex:163
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Nous ne pouvons pas trouver l'internet"
 
 #: lib/omedis_web/components/core_components.ex:77
-#: lib/omedis_web/components/core_components.ex:141
+#: lib/omedis_web/components/core_components.ex:138
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "fermer"

@@ -11,158 +11,158 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:286
+#: lib/omedis_web/live/organisation_live/form_component.ex:268
 #, elixir-autogen, elixir-format
 msgid "Account Number"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:283
+#: lib/omedis_web/live/organisation_live/show.ex:282
 #, elixir-autogen, elixir-format
 msgid "Account holder"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:251
+#: lib/omedis_web/live/organisation_live/show.ex:250
 #, elixir-autogen, elixir-format
 msgid "Account number"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:132
+#: lib/omedis_web/live/organisation_live/form_component.ex:126
 #, elixir-autogen, elixir-format
 msgid "Additional Info"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:107
+#: lib/omedis_web/live/organisation_live/show.ex:106
 #, elixir-autogen, elixir-format
 msgid "Additional info"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:292
+#: lib/omedis_web/live/organisation_live/show.ex:291
 #, elixir-autogen, elixir-format
 msgid "Back to organisations"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:257
-#: lib/omedis_web/live/organisation_live/show.ex:275
+#: lib/omedis_web/live/organisation_live/form_component.ex:244
+#: lib/omedis_web/live/organisation_live/show.ex:274
 #, elixir-autogen, elixir-format
 msgid "Bank"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:275
-#: lib/omedis_web/live/organisation_live/show.ex:267
+#: lib/omedis_web/live/organisation_live/form_component.ex:258
+#: lib/omedis_web/live/organisation_live/show.ex:266
 #, elixir-autogen, elixir-format
 msgid "Bic"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:243
+#: lib/omedis_web/live/organisation_live/show.ex:242
 #, elixir-autogen, elixir-format
 msgid "Bur number"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:156
-#: lib/omedis_web/live/organisation_live/index.ex:110
-#: lib/omedis_web/live/organisation_live/show.ex:155
+#: lib/omedis_web/live/organisation_live/form_component.ex:150
+#: lib/omedis_web/live/organisation_live/index.ex:109
+#: lib/omedis_web/live/organisation_live/show.ex:154
 #, elixir-autogen, elixir-format
 msgid "Canton"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:83
-#: lib/omedis_web/live/organisation_live/index.ex:100
-#: lib/omedis_web/live/organisation_live/show.ex:147
+#: lib/omedis_web/live/organisation_live/form_component.ex:82
+#: lib/omedis_web/live/organisation_live/index.ex:99
+#: lib/omedis_web/live/organisation_live/show.ex:146
 #, elixir-autogen, elixir-format
 msgid "City"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:91
-#: lib/omedis_web/live/organisation_live/index.ex:120
-#: lib/omedis_web/live/organisation_live/show.ex:163
+#: lib/omedis_web/live/organisation_live/form_component.ex:86
+#: lib/omedis_web/live/organisation_live/index.ex:119
+#: lib/omedis_web/live/organisation_live/show.ex:162
 #, elixir-autogen, elixir-format
 msgid "Country"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:117
+#: lib/omedis_web/live/organisation_live/form_component.ex:111
 #, elixir-autogen, elixir-format
 msgid "Daily End At"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:102
+#: lib/omedis_web/live/organisation_live/form_component.ex:96
 #, elixir-autogen, elixir-format
 msgid "Daily Start At"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:171
+#: lib/omedis_web/live/organisation_live/show.ex:170
 #, elixir-autogen, elixir-format
 msgid "Description"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:224
+#: lib/omedis_web/live/organisation_live/form_component.ex:212
 #, elixir-autogen, elixir-format
 msgid "Ean Gln"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:219
+#: lib/omedis_web/live/organisation_live/show.ex:218
 #, elixir-autogen, elixir-format
 msgid "Ean gln"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/index.ex:136
+#: lib/omedis_web/live/organisation_live/index.ex:135
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/index.ex:191
-#: lib/omedis_web/live/organisation_live/show.ex:362
+#: lib/omedis_web/live/organisation_live/index.ex:190
+#: lib/omedis_web/live/organisation_live/show.ex:361
 #, elixir-autogen, elixir-format
 msgid "Edit Organisation"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:37
+#: lib/omedis_web/live/organisation_live/show.ex:36
 #, elixir-autogen, elixir-format
 msgid "Edit organisation"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:185
-#: lib/omedis_web/live/organisation_live/show.ex:195
+#: lib/omedis_web/live/organisation_live/form_component.ex:174
+#: lib/omedis_web/live/organisation_live/show.ex:194
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:175
-#: lib/omedis_web/live/organisation_live/show.ex:187
+#: lib/omedis_web/live/organisation_live/form_component.ex:166
+#: lib/omedis_web/live/organisation_live/show.ex:186
 #, elixir-autogen, elixir-format
 msgid "Fax"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:58
+#: lib/omedis_web/live/organisation_live/show.ex:57
 #, elixir-autogen, elixir-format
 msgid "Groups"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:266
-#: lib/omedis_web/live/organisation_live/show.ex:259
+#: lib/omedis_web/live/organisation_live/form_component.ex:251
+#: lib/omedis_web/live/organisation_live/show.ex:258
 #, elixir-autogen, elixir-format
 msgid "Iban"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:44
+#: lib/omedis_web/live/organisation_live/show.ex:43
 #, elixir-autogen, elixir-format
 msgid "Invitations"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/index.ex:31
-#: lib/omedis_web/live/organisation_live/index.ex:236
+#: lib/omedis_web/live/organisation_live/index.ex:30
+#: lib/omedis_web/live/organisation_live/index.ex:235
 #, elixir-autogen, elixir-format
 msgid "Listing Organisations"
 msgstr ""
 
 #: lib/omedis_web/live/organisation_live/form_component.ex:30
-#: lib/omedis_web/live/organisation_live/index.ex:57
-#: lib/omedis_web/live/organisation_live/show.ex:84
+#: lib/omedis_web/live/organisation_live/index.ex:56
+#: lib/omedis_web/live/organisation_live/show.ex:83
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/index.ex:40
-#: lib/omedis_web/live/organisation_live/index.ex:214
+#: lib/omedis_web/live/organisation_live/index.ex:39
+#: lib/omedis_web/live/organisation_live/index.ex:213
 #, elixir-autogen, elixir-format
 msgid "New Organisation"
 msgstr ""
@@ -172,43 +172,43 @@ msgstr ""
 msgid "No activities are defined yet."
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:348
+#: lib/omedis_web/live/organisation_live/form_component.ex:330
 #, elixir-autogen, elixir-format
 msgid "Organisation saved."
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:92
+#: lib/omedis_web/live/organisation_live/show.ex:91
 #, elixir-autogen, elixir-format
 msgid "Owner"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:166
-#: lib/omedis_web/live/organisation_live/show.ex:179
+#: lib/omedis_web/live/organisation_live/form_component.ex:159
+#: lib/omedis_web/live/organisation_live/show.ex:178
 #, elixir-autogen, elixir-format
 msgid "Phone"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:144
+#: lib/omedis_web/live/organisation_live/form_component.ex:138
 #, elixir-autogen, elixir-format
 msgid "Po Box"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:131
+#: lib/omedis_web/live/organisation_live/show.ex:130
 #, elixir-autogen, elixir-format
 msgid "Po box"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:51
+#: lib/omedis_web/live/organisation_live/show.ex:50
 #, elixir-autogen, elixir-format
 msgid "Projects"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:299
+#: lib/omedis_web/live/organisation_live/form_component.ex:281
 #, elixir-autogen, elixir-format
 msgid "Save Organisation"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:295
+#: lib/omedis_web/live/organisation_live/form_component.ex:277
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
@@ -223,94 +223,94 @@ msgstr ""
 msgid "Select Project"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/today.ex:39
+#: lib/omedis_web/live/organisation_live/today.ex:37
 #, elixir-autogen, elixir-format
 msgid "Select group and project"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/index.ex:130
+#: lib/omedis_web/live/organisation_live/index.ex:129
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:356
+#: lib/omedis_web/live/organisation_live/show.ex:355
 #, elixir-autogen, elixir-format
 msgid "Show Organisation"
 msgstr ""
 
 #: lib/omedis_web/live/organisation_live/form_component.ex:42
-#: lib/omedis_web/live/organisation_live/show.ex:76
+#: lib/omedis_web/live/organisation_live/show.ex:75
 #, elixir-autogen, elixir-format
 msgid "Slug"
 msgstr ""
 
 #: lib/omedis_web/live/organisation_live/form_component.ex:53
-#: lib/omedis_web/live/organisation_live/index.ex:71
-#: lib/omedis_web/live/organisation_live/show.ex:115
+#: lib/omedis_web/live/organisation_live/index.ex:70
+#: lib/omedis_web/live/organisation_live/show.ex:114
 #, elixir-autogen, elixir-format
 msgid "Street"
 msgstr ""
 
 #: lib/omedis_web/live/organisation_live/form_component.ex:65
-#: lib/omedis_web/live/organisation_live/show.ex:123
+#: lib/omedis_web/live/organisation_live/show.ex:122
 #, elixir-autogen, elixir-format
 msgid "Street2"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:99
+#: lib/omedis_web/live/organisation_live/show.ex:98
 #, elixir-autogen, elixir-format
 msgid "Timezone"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:66
+#: lib/omedis_web/live/organisation_live/show.ex:65
 #, elixir-autogen, elixir-format
 msgid "Today"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:247
+#: lib/omedis_web/live/organisation_live/form_component.ex:235
 #, elixir-autogen, elixir-format
 msgid "Trade Register No"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/show.ex:235
+#: lib/omedis_web/live/organisation_live/show.ex:234
 #, elixir-autogen, elixir-format
 msgid "Trade register no"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:236
-#: lib/omedis_web/live/organisation_live/show.ex:227
+#: lib/omedis_web/live/organisation_live/form_component.ex:224
+#: lib/omedis_web/live/organisation_live/show.ex:226
 #, elixir-autogen, elixir-format
 msgid "Uid Bfs Number"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:199
-#: lib/omedis_web/live/organisation_live/show.ex:203
+#: lib/omedis_web/live/organisation_live/form_component.ex:187
+#: lib/omedis_web/live/organisation_live/show.ex:202
 #, elixir-autogen, elixir-format
 msgid "Website"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/index.ex:199
-#: lib/omedis_web/live/organisation_live/index.ex:222
-#: lib/omedis_web/live/organisation_live/show.ex:345
+#: lib/omedis_web/live/organisation_live/index.ex:198
+#: lib/omedis_web/live/organisation_live/index.ex:221
+#: lib/omedis_web/live/organisation_live/show.ex:344
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/today.ex:439
-#: lib/omedis_web/live/organisation_live/today.ex:458
+#: lib/omedis_web/live/organisation_live/today.ex:436
+#: lib/omedis_web/live/organisation_live/today.ex:455
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to perform this action"
 msgstr ""
 
 #: lib/omedis_web/live/organisation_live/form_component.ex:76
-#: lib/omedis_web/live/organisation_live/index.ex:90
-#: lib/omedis_web/live/organisation_live/show.ex:139
+#: lib/omedis_web/live/organisation_live/index.ex:89
+#: lib/omedis_web/live/organisation_live/show.ex:138
 #, elixir-autogen, elixir-format
 msgid "Zip code"
 msgstr ""
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:210
-#: lib/omedis_web/live/organisation_live/show.ex:211
+#: lib/omedis_web/live/organisation_live/form_component.ex:198
+#: lib/omedis_web/live/organisation_live/show.ex:210
 #, elixir-autogen, elixir-format
 msgid "Zsr Number"
 msgstr ""
