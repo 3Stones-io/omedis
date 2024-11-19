@@ -209,7 +209,6 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             field={@form[:ean_gln]}
             type="text"
             label={
-            label={
               with_locale(@language, fn ->
                 dgettext("organisation", "EAN/GLN")
               end)
@@ -221,7 +220,6 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:uid_bfs_number]}
             type="text"
-            label={
             label={
               with_locale(@language, fn ->
                 dgettext("organisation", "UID/BFS Number")

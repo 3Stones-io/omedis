@@ -51,11 +51,6 @@ msgstr "Documenti"
 msgid "Edit Profile"
 msgstr "Modifica Profilo"
 
-#: lib/omedis_web/live/project_live/show.ex:45
-#, elixir-autogen, elixir-format
-msgid "Edit project"
-msgstr "Modifica progetto"
-
 #: lib/omedis_web/live/event_live/index.ex:32
 #, elixir-autogen, elixir-format
 msgid "Events"
@@ -182,3 +177,8 @@ msgstr "Tracciatore del tempo di oggi"
 #, elixir-autogen, elixir-format
 msgid "Your Profile"
 msgstr "Il tuo profilo"
+
+#: lib/omedis_web/live/project_live/show.ex:45
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Edit Project"
+msgstr "Modifica progetto"
