@@ -103,7 +103,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Additional info")
+              dgettext("organisation", "Additional Info")
             end)
           }>
             <%= @organisation.additional_info %>
@@ -127,7 +127,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Po box")
+              dgettext("organisation", "PO Box")
             end)
           }>
             <%= @organisation.po_box %>
@@ -135,7 +135,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Zip code")
+              dgettext("organisation", "Zip Code")
             end)
           }>
             <%= @organisation.zip_code %>
@@ -207,7 +207,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Zsr Number")
+              dgettext("organisation", "ZSR Number")
             end)
           }>
             <%= @organisation.zsr_number %>
@@ -215,7 +215,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Ean gln")
+              dgettext("organisation", "EAN/GLN")
             end)
           }>
             <%= @organisation.ean_gln %>
@@ -223,7 +223,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Uid Bfs Number")
+              dgettext("organisation", "UID/BFS Number")
             end)
           }>
             <%= @organisation.uid_bfs_number %>
@@ -231,7 +231,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Trade register no")
+              dgettext("organisation", "Trade Register No")
             end)
           }>
             <%= @organisation.trade_register_no %>
@@ -239,7 +239,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Bur number")
+              dgettext("organisation", "BUR Number")
             end)
           }>
             <%= @organisation.bur_number %>
@@ -247,7 +247,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Account number")
+              dgettext("organisation", "Account Number")
             end)
           }>
             <%= @organisation.account_number %>
@@ -255,7 +255,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Iban")
+              dgettext("organisation", "IBAN")
             end)
           }>
             <%= @organisation.iban %>
@@ -263,7 +263,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Bic")
+              dgettext("organisation", "BIC")
             end)
           }>
             <%= @organisation.bic %>
@@ -279,7 +279,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
           <:item title={
             with_locale(@language, fn ->
-              dgettext("organisation", "Account holder")
+              dgettext("organisation", "Account Holder")
             end)
           }>
             <%= @organisation.account_holder %>

@@ -52,7 +52,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             >
               <.button>
                 <%= with_locale(@language, fn -> %>
-                  <%= dgettext("activity", "Edit activity") %>
+                  <%= dgettext("activity", "Edit Activity") %>
                 <% end) %>
               </.button>
             </.link>
@@ -75,7 +75,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             <%= @activity.name %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> dgettext("activity", "Color code") end)}>
+          <:item title={with_locale(@language, fn -> dgettext("activity", "Color Code") end)}>
             <%= @activity.color_code %>
           </:item>
 

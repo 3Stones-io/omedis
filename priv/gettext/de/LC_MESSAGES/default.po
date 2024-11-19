@@ -19,7 +19,7 @@ msgstr "Aktionen"
 #: lib/omedis_web/components/core_components.ex:168
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
-msgstr "Versuche, die Verbindung wiederherzustellen"
+msgstr "Verbindung wird wiederhergestellt"
 
 #: lib/omedis_web/components/core_components.ex:159
 #, elixir-autogen, elixir-format
@@ -29,7 +29,7 @@ msgstr "Fehler!"
 #: lib/omedis_web/components/core_components.ex:180
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
-msgstr "Bitte gedulden Sie sich, während wir die Verbindung wiederherstellen"
+msgstr "Halten Sie durch, während wir wieder auf Kurs kommen"
 
 #: lib/omedis_web/components/core_components.ex:175
 #, elixir-autogen, elixir-format
@@ -44,7 +44,7 @@ msgstr "Erfolg!"
 #: lib/omedis_web/components/core_components.ex:163
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
-msgstr "Wir können das Internet nicht finden"
+msgstr "Wir können das Internet nicht finden."
 
 #: lib/omedis_web/components/core_components.ex:77
 #: lib/omedis_web/components/core_components.ex:138

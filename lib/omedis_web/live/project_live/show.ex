@@ -42,7 +42,7 @@ defmodule OmedisWeb.ProjectLive.Show do
             >
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
                 <%= with_locale(@language, fn ->
-                  dgettext("navigation", "Edit project")
+                  dgettext("navigation", "Edit Project")
                 end) %>
               </.button>
             </.link>

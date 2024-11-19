@@ -66,7 +66,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
 
       assert html =~ "Project"
       assert html =~ project.name
-      assert html =~ "Edit project"
+      assert html =~ "Edit Project"
     end
 
     test "renders project details if user is authorized", %{
@@ -92,7 +92,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
         |> live(~p"/organisations/#{organisation}/projects/#{project.id}")
 
       assert html =~ "Project"
-      assert html =~ "Edit project"
+      assert html =~ "Edit Project"
       assert html =~ project.name
     end
 

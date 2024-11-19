@@ -86,7 +86,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
               :let={{_id, organisation}}
               label={
                 with_locale(@language, fn ->
-                  dgettext("organisation", "Zip code")
+                  dgettext("organisation", "Zip Code")
                 end)
               }
             >

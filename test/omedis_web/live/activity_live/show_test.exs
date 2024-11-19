@@ -100,7 +100,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
         |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}")
 
       assert html =~ activity.name
-      assert html =~ "Edit activity"
+      assert html =~ "Edit Activity"
     end
 
     test "shows activity details if user is authorized", %{
@@ -116,7 +116,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
         |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}")
 
       assert html =~ activity.name
-      assert html =~ "Edit activity"
+      assert html =~ "Edit Activity"
     end
 
     test "unauthorized user cannot see activity details", %{
@@ -149,7 +149,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
           ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}/show/edit"
         )
 
-      assert html =~ "Edit activity"
+      assert html =~ "Edit Activity"
 
       assert html =
                show_live
@@ -184,7 +184,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
           ~p"/organisations/#{organisation}/groups/#{group}/activities/#{activity.id}/show/edit"
         )
 
-      assert html =~ "Edit activity"
+      assert html =~ "Edit Activity"
 
       assert html =
                show_live

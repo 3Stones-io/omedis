@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Language: fr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n>1);\n"
 
 #: lib/omedis_web/components/core_components.ex:523
 #, elixir-autogen, elixir-format
@@ -29,12 +29,12 @@ msgstr "Erreur !"
 #: lib/omedis_web/components/core_components.ex:180
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
-msgstr "Patientez pendant que nous rétablissons la connexion"
+msgstr "Accrochez-vous pendant que nous nous remettons sur les rails"
 
 #: lib/omedis_web/components/core_components.ex:175
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
-msgstr "Quelque chose s'est mal passé !"
+msgstr "Quelque chose a mal tourné !"
 
 #: lib/omedis_web/components/core_components.ex:158
 #, elixir-autogen, elixir-format
@@ -44,7 +44,7 @@ msgstr "Succès !"
 #: lib/omedis_web/components/core_components.ex:163
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
-msgstr "Nous ne pouvons pas trouver l'internet"
+msgstr "Nous ne pouvons pas trouver Internet"
 
 #: lib/omedis_web/components/core_components.ex:77
 #: lib/omedis_web/components/core_components.ex:138

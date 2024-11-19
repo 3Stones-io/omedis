@@ -26,11 +26,6 @@ msgstr "Attività salvata con successo"
 msgid "Back to activities"
 msgstr "Torna alle attività"
 
-#: lib/omedis_web/live/activity_live/show.ex:78
-#, elixir-autogen, elixir-format
-msgid "Color code"
-msgstr "Codice colore"
-
 #: lib/omedis_web/live/activity_live/index.ex:108
 #, elixir-autogen, elixir-format
 msgid "Default"
@@ -42,15 +37,11 @@ msgid "Edit"
 msgstr "Modifica"
 
 #: lib/omedis_web/live/activity_live/index.ex:232
+#: lib/omedis_web/live/activity_live/show.ex:55
 #: lib/omedis_web/live/activity_live/show.ex:171
 #, elixir-autogen, elixir-format
 msgid "Edit Activity"
 msgstr "Modifica Attività"
-
-#: lib/omedis_web/live/activity_live/show.ex:55
-#, elixir-autogen, elixir-format
-msgid "Edit activity"
-msgstr "Modifica attività"
 
 #: lib/omedis_web/live/activity_live/form_component.ex:83
 #, elixir-autogen, elixir-format
@@ -127,3 +118,8 @@ msgstr "Visualizza Eventi"
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr "Non sei autorizzato ad accedere a questa pagina"
+
+#: lib/omedis_web/live/activity_live/show.ex:78
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Color Code"
+msgstr "Codice colore"

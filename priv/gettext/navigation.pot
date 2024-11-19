@@ -51,11 +51,6 @@ msgstr ""
 msgid "Edit Profile"
 msgstr ""
 
-#: lib/omedis_web/live/project_live/show.ex:45
-#, elixir-autogen, elixir-format
-msgid "Edit project"
-msgstr ""
-
 #: lib/omedis_web/live/event_live/index.ex:32
 #, elixir-autogen, elixir-format
 msgid "Events"
@@ -181,4 +176,9 @@ msgstr ""
 #: lib/omedis_web/components/general_components.ex:787
 #, elixir-autogen, elixir-format
 msgid "Your Profile"
+msgstr ""
+
+#: lib/omedis_web/live/project_live/show.ex:45
+#, elixir-autogen, elixir-format
+msgid "Edit Project"
 msgstr ""
