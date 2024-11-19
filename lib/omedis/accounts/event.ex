@@ -138,6 +138,8 @@ defmodule Omedis.Accounts.Event do
     validate compare(:dtend, greater_than: :dtstart),
       where: [attribute_does_not_equal(:dtend, nil)],
       message: "end date must be greater than the start date"
+
+    validate {Omedis.Accounts.Event.Validations.NoOverlapValidation, []}
   end
 
   multitenancy do

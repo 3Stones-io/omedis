@@ -332,9 +332,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
   @impl true
   def handle_event("start_activity", %{"activity_id" => activity_id}, socket) do
     if socket.assigns.current_activity_id do
+      event_stop_time = DateTime.add(DateTime.utc_now(), -1, :second)
+
       {:noreply,
        socket
-       |> stop_any_active_event()
+       |> stop_any_active_event(event_stop_time: event_stop_time)
        |> create_event(activity_id)}
     else
       {:noreply, create_event(socket, activity_id)}
@@ -363,7 +365,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
      )}
   end
 
-  defp stop_any_active_event(socket) do
+  defp stop_any_active_event(socket, event_stop_time \\ DateTime.utc_now()) do
     {:ok, events} =
       Event.by_activity_today(%{activity_id: socket.assigns.current_activity_id},
         actor: socket.assigns.current_user,
@@ -377,6 +379,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
       event ->
         stop_event(socket, event,
           actor: socket.assigns.current_user,
+          event_stop_time: event_stop_time,
           tenant: socket.assigns.organisation
         )
     end
@@ -417,7 +420,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
     if Ash.can?({event, :update}, socket.assigns.current_user,
          tenant: socket.assigns.organisation
        ) do
-      {:ok, _event} = Event.update(event, %{dtend: DateTime.utc_now()}, opts)
+      {:ok, _event} =
+        Event.update(event, %{dtend: opts[:event_stop_time]},
+          actor: opts[:actor],
+          tenant: opts[:tenant]
+        )
 
       assign(socket, :current_activity_id, nil)
     else
