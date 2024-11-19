@@ -983,12 +983,6 @@ msgstr "Veranstaltungen anzeigen"
 msgid "Account Holder"
 msgstr "Kontoinhaber"
 
-#: lib/omedis_web/live/organisation_live/form_component.ex:226
-#: lib/omedis_web/live/organisation_live/show.ex:167
-#, elixir-autogen, elixir-format
-msgid "BIC"
-msgstr "BIC"
-
 #: lib/omedis_web/live/organisation_live/show.ex:155
 #, elixir-autogen, elixir-format
 msgid "BUR Number"
