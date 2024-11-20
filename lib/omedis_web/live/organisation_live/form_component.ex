@@ -27,7 +27,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             type="text"
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> gettext("Name") end)} <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> dgettext("organisation", "Name") end)} <span class='text-red-600'>*</span>"
               )
             }
           />
@@ -39,7 +39,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             type="text"
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> gettext("Slug") end)} <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> dgettext("organisation", "Slug") end)} <span class='text-red-600'>*</span>"
               )
             }
           />
@@ -50,7 +50,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             type="text"
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> gettext("Street") end)} <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> dgettext("organisation", "Street") end)} <span class='text-red-600'>*</span>"
               )
             }
           />
@@ -60,7 +60,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:street2]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Street2") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "Street2")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
@@ -69,29 +73,18 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             type="text"
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> gettext("Zip code") end)} <span class='text-red-600'>*</span>"
+                "#{with_locale(@language, fn -> dgettext("organisation", "Zip Code") end)} <span class='text-red-600'>*</span>"
               )
             }
-          /><.input
+          />
+          <.input
             field={@form[:city]}
             type="text"
-            label={
-              Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> gettext("City") end)} <span class='text-red-600'>*</span>"
-              )
-            }
+            label={with_locale(@language, fn -> dgettext("organisation", "City") end)}
           />
         </div>
         <div class="space-y-3">
-          <.input
-            field={@form[:country]}
-            type="text"
-            label={
-              Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> gettext("Country") end)} <span class='text-red-600'>*</span>"
-              )
-            }
-          />
+          <.input field={@form[:country]} type="text" label={dgettext("organisation", "Country")} />
         </div>
 
         <input type="hidden" value={@current_user.id} name="organisation[owner_id]" />
@@ -99,7 +92,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:default_daily_start_at]}
             type="time"
-            label={with_locale(@language, fn -> gettext("Daily Start At") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "Daily Start At")
+              end)
+            }
             value={
               (@organisation && input_value(@form, :default_daily_start_at)) ||
                 @current_user.daily_start_at
@@ -110,7 +107,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:default_daily_end_at]}
             type="time"
-            label={with_locale(@language, fn -> gettext("Daily End At") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "Daily End At")
+              end)
+            }
             value={
               (@organisation && input_value(@form, :default_daily_end_at)) ||
                 @current_user.daily_end_at
@@ -121,7 +122,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:additional_info]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Additional Info") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "Additional Info")
+              end)
+            }
           />
         </div>
 
@@ -129,7 +134,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:po_box]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Po Box") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "PO Box")
+              end)
+            }
           />
         </div>
 
@@ -137,21 +146,25 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:canton]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Canton") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "Canton")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:phone]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Phone") end)}
+            label={with_locale(@language, fn -> dgettext("organisation", "Phone") end)}
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:fax]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Fax") end)}
+            label={with_locale(@language, fn -> dgettext("organisation", "Fax") end)}
           />
         </div>
 
@@ -159,7 +172,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:email]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Email") end)}
+            label={with_locale(@language, fn -> dgettext("organisation", "Email") end)}
           />
           <.error :for={msg <- get_field_errors(f[:email], :email)}>
             <%= "Email" <> " " <> msg %>
@@ -170,14 +183,22 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:website]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Website") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "Website")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:zsr_number]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Zsr Number") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "ZSR Number")
+              end)
+            }
           />
           <.error :for={msg <- get_field_errors(f[:zsr_number], :zsr_number)}>
             <%= "Zsr_number" <> " " <> msg %>
@@ -187,7 +208,11 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:ean_gln]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Ean Gln") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "EAN/GLN")
+              end)
+            }
           />
         </div>
 
@@ -195,35 +220,43 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:uid_bfs_number]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Uid Bfs Number") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "UID/BFS Number")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:trade_register_no]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Trade Register No") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "Trade Register No")
+              end)
+            }
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:bank]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Bank") end)}
+            label={with_locale(@language, fn -> dgettext("organisation", "Bank") end)}
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:iban]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Iban") end)}
+            label={with_locale(@language, fn -> dgettext("organisation", "IBAN") end)}
           />
         </div>
         <div class="space-y-3">
           <.input
             field={@form[:bic]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Bic") end)}
+            label={with_locale(@language, fn -> dgettext("organisation", "BIC") end)}
           />
         </div>
 
@@ -231,15 +264,23 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           <.input
             field={@form[:account_number]}
             type="text"
-            label={with_locale(@language, fn -> gettext("Account Number") end)}
+            label={
+              with_locale(@language, fn ->
+                dgettext("organisation", "Account Number")
+              end)
+            }
           />
         </div>
 
         <:actions>
-          <.button phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}>
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Save Organisation") %>
-            <% end) %>
+          <.button phx-disable-with={
+            with_locale(@language, fn ->
+              dgettext("organisation", "Saving...")
+            end)
+          }>
+            <%= with_locale(@language, fn ->
+              dgettext("organisation", "Save Organisation")
+            end) %>
           </.button>
         </:actions>
       </.simple_form>
@@ -286,7 +327,9 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           socket
           |> put_flash(
             :info,
-            with_locale(socket.assigns.language, fn -> gettext("Organisation saved.") end)
+            with_locale(socket.assigns.language, fn ->
+              dgettext("organisation", "Organisation saved.")
+            end)
           )
           |> push_navigate(to: path_for(socket.assigns.action, organisation))
 

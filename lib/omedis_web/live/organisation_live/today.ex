@@ -18,12 +18,12 @@ defmodule OmedisWeb.OrganisationLive.Today do
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
-            {gettext("Home"), ~p"/", false},
-            {gettext("Organisations"), ~p"/organisations", false},
+            {dgettext("navigation", "Home"), ~p"/", false},
+            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {gettext("Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {gettext("Today"), "", true}
+            {dgettext("navigation", "Today"), "", true}
           ]}
           language={@language}
         />
@@ -34,11 +34,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
           project={@project}
           language={@language}
           projects={@projects}
-          header_text={with_locale(@language, fn -> gettext("Select group and project") end)}
+          header_text={dgettext("organisation", "Select group and project")}
         />
 
         <.dashboard_component
-          active_activity_id={@active_activity_id}
+          current_activity_id={@current_activity_id}
           activities={@activities}
           start_at={@start_at}
           end_at={@end_at}
@@ -107,7 +107,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
      |> assign(:group, group)
      |> assign(:project, project)
      |> assign(:events, events)
-     |> assign_active_activity(activities)
+     |> assign_current_activity(activities)
      |> assign(:activities, activities)}
   end
 
@@ -140,15 +140,15 @@ defmodule OmedisWeb.OrganisationLive.Today do
     Time.add(time, offset, :hour)
   end
 
-  defp assign_active_activity(socket, activities) do
+  defp assign_current_activity(socket, activities) do
     opts = [actor: socket.assigns.current_user, tenant: socket.assigns.organisation]
     events = get_active_event(activities, opts)
 
     if Enum.empty?(events) do
-      assign(socket, :active_activity_id, nil)
+      assign(socket, :current_activity_id, nil)
     else
       activity_id = List.first(events).activity_id
-      assign(socket, :active_activity_id, activity_id)
+      assign(socket, :current_activity_id, activity_id)
     end
   end
 
@@ -330,24 +330,21 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   @impl true
+  def handle_event("start_activity", %{"activity_id" => activity_id}, socket) do
+    if socket.assigns.current_activity_id do
+      event_stop_time = DateTime.add(DateTime.utc_now(), -1, :second)
 
-  def handle_event("select_activity", %{"activity_id" => activity_id}, socket) do
-    current_user = socket.assigns.current_user
-    organisation = socket.assigns.organisation
-    %{id: group_id} = _group = socket.assigns.group
-    %{id: project_id} = _project = socket.assigns.project
+      {:noreply,
+       socket
+       |> stop_any_active_event(event_stop_time: event_stop_time)
+       |> create_event(activity_id)}
+    else
+      {:noreply, create_event(socket, activity_id)}
+    end
+  end
 
-    {:noreply,
-     socket
-     |> assign(
-       :activities,
-       activities(group_id, project_id, actor: current_user, tenant: organisation)
-     )
-     |> create_or_stop_event(
-       activity_id,
-       organisation,
-       current_user
-     )}
+  def handle_event("stop_current_activity", _params, socket) do
+    {:noreply, stop_any_active_event(socket)}
   end
 
   def handle_event("select_group", %{"group_id" => id}, socket) do
@@ -368,45 +365,23 @@ defmodule OmedisWeb.OrganisationLive.Today do
      )}
   end
 
-  defp create_or_stop_event(socket, activity_id, organisation, user)
-       when is_binary(activity_id) do
+  defp stop_any_active_event(socket, event_stop_time \\ DateTime.utc_now()) do
     {:ok, events} =
-      Event.by_activity_today(%{activity_id: activity_id},
-        actor: user,
-        tenant: organisation
+      Event.by_activity_today(%{activity_id: socket.assigns.current_activity_id},
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.organisation
       )
-
-    case Enum.find(events, fn event -> event.dtend == nil end) do
-      nil ->
-        stop_any_active_event(socket, organisation, user)
-        create_event(socket, activity_id)
-
-      event ->
-        create_or_stop_event(socket, event, activity_id,
-          actor: user,
-          tenant: organisation
-        )
-    end
-  end
-
-  defp create_or_stop_event(socket, event, activity_id, opts) do
-    if event.activity_id == activity_id do
-      stop_event(socket, event, opts)
-    else
-      stop_event(socket, event, opts)
-      create_event(socket, activity_id)
-    end
-  end
-
-  defp stop_any_active_event(socket, organisation, user) do
-    {:ok, %{results: events}} = Event.list_paginated(actor: user, tenant: organisation)
 
     case Enum.find(events, fn event -> event.dtend == nil end) do
       nil ->
         socket
 
       event ->
-        stop_event(socket, event, actor: user, tenant: organisation)
+        stop_event(socket, event,
+          actor: socket.assigns.current_user,
+          event_stop_time: event_stop_time,
+          tenant: socket.assigns.organisation
+        )
     end
   end
 
@@ -428,9 +403,16 @@ defmodule OmedisWeb.OrganisationLive.Today do
           tenant: organisation
         )
 
-      assign(socket, :active_activity_id, activity_id)
+      assign(socket, :current_activity_id, activity_id)
     else
-      put_flash(socket, :error, gettext("You are not authorized to perform this action"))
+      put_flash(
+        socket,
+        :error,
+        dgettext(
+          "organisation",
+          "You are not authorized to perform this action"
+        )
+      )
     end
   end
 
@@ -438,11 +420,22 @@ defmodule OmedisWeb.OrganisationLive.Today do
     if Ash.can?({event, :update}, socket.assigns.current_user,
          tenant: socket.assigns.organisation
        ) do
-      {:ok, _event} = Event.update(event, %{dtend: DateTime.utc_now()}, opts)
+      {:ok, _event} =
+        Event.update(event, %{dtend: opts[:event_stop_time]},
+          actor: opts[:actor],
+          tenant: opts[:tenant]
+        )
 
-      assign(socket, :active_activity_id, nil)
+      assign(socket, :current_activity_id, nil)
     else
-      put_flash(socket, :error, gettext("You are not authorized to perform this action"))
+      put_flash(
+        socket,
+        :error,
+        dgettext(
+          "organisation",
+          "You are not authorized to perform this action"
+        )
+      )
     end
   end
 

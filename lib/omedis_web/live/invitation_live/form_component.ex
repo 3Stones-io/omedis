@@ -41,7 +41,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Invitation created successfully"))
+         |> put_flash(:info, dgettext("invitation", "Invitation created successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, form} ->
@@ -110,11 +110,16 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= with_locale(@language, fn -> gettext("New Invitation") end) %>
+        <%= with_locale(@language, fn ->
+          dgettext("invitation", "New Invitation")
+        end) %>
 
         <:subtitle>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Use this form to invite new members.") %>
+            <%= dgettext(
+              "invitation",
+              "Use this form to invite new members."
+            ) %>
           <% end) %>
         </:subtitle>
       </.header>
@@ -129,12 +134,14 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         <.input
           field={@form[:email]}
           type="email"
-          label={with_locale(@language, fn -> gettext("Email") end)}
+          label={with_locale(@language, fn -> dgettext("invitation", "Email") end)}
         />
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            <%= with_locale(@language, fn -> gettext("Language") end) %>
+            <%= with_locale(@language, fn ->
+              dgettext("invitation", "Language")
+            end) %>
           </label>
           <div class="flex space-x-4">
             <%= for {_language, code} <- @supported_languages do %>
@@ -156,7 +163,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            <%= gettext("Groups") %>
+            <%= with_locale(@language, fn -> dgettext("invitation", "Groups") end) %>
           </label>
 
           <div class="space-y-2">
@@ -172,8 +179,12 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
           </div>
         </div>
         <:actions>
-          <.button phx-disable-with={with_locale(@language, fn -> gettext("Saving...") end)}>
-            <%= with_locale(@language, fn -> gettext("Send Invitation") end) %>
+          <.button phx-disable-with={
+            with_locale(@language, fn -> dgettext("invitation", "Saving...") end)
+          }>
+            <%= with_locale(@language, fn ->
+              dgettext("invitation", "Send Invitation")
+            end) %>
           </.button>
         </:actions>
       </.simple_form>

@@ -145,7 +145,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       )
     end
 
-    test "organisation owner can create a new event", %{
+    test "organisation owner can create a new event by clicking on the start_event button", %{
       conn: conn,
       group: group,
       activity: activity,
@@ -169,8 +169,8 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         )
 
       assert lv
-             |> element("#activity-#{activity.id}")
-             |> render_click() =~ "active-activity-#{activity.id}"
+             |> element("#start-activity-#{activity.id}")
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       {:ok, [event]} =
         Event.by_activity_today(
@@ -184,7 +184,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       assert event.organisation_id == organisation.id
     end
 
-    test "organisation owner can stop active event when selecting same activity again", %{
+    test "organisation owner can stop active event when clicking on the stop_event button", %{
       conn: conn,
       group: group,
       activity: activity,
@@ -209,13 +209,12 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       # Create a event
       assert lv
-             |> element("#activity-#{activity.id}")
-             |> render_click() =~ "active-activity-#{activity.id}"
+             |> element("#start-activity-#{activity.id}")
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
-      # Click same activity again to stop it
-      refute lv
-             |> element("#activity-#{activity.id}")
-             |> render_click() =~ "active-activity-#{activity.id}"
+      assert lv
+             |> element("#stop-current-activity-#{activity.id}")
+             |> render_click() =~ "start-activity-#{activity.id}"
 
       # Verify event was stopped (end_at was set)
       {:ok, [event]} =
@@ -229,75 +228,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       assert not is_nil(event.dtend)
     end
 
-    test "organisation owner can switch active event by selecting different activity", %{
-      conn: conn,
-      group: group,
-      owner: owner,
-      project: project,
-      organisation: organisation
-    } do
-      {:ok, _} =
-        create_access_right(organisation, %{
-          group_id: group.id,
-          read: true,
-          resource_name: "Event",
-          write: true
-        })
-
-      {:ok, activity_1} =
-        create_activity(organisation, %{
-          group_id: group.id,
-          project_id: project.id,
-          name: "Activity 1"
-        })
-
-      {:ok, activity_2} =
-        create_activity(organisation, %{
-          group_id: group.id,
-          project_id: project.id,
-          name: "Activity 2"
-        })
-
-      {:ok, lv, _html} =
-        conn
-        |> log_in_user(owner)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
-
-      # Start event for the first activity
-      assert lv
-             |> element("#activity-#{activity_1.id}")
-             |> render_click() =~ "active-activity-#{activity_1.id}"
-
-      # Switch to second activity
-      assert lv
-             |> element("#activity-#{activity_2.id}")
-             |> render_click() =~ "active-activity-#{activity_2.id}"
-
-      # Verify first event was stopped
-      {:ok, [event_1]} =
-        Event.by_activity_today(
-          %{activity_id: activity_1.id},
-          actor: owner,
-          tenant: organisation
-        )
-
-      assert not is_nil(event_1.dtend)
-
-      # Verify second event is active
-      {:ok, events_2} =
-        Event.by_activity_today(
-          %{activity_id: activity_2.id},
-          actor: owner,
-          tenant: organisation
-        )
-
-      event_2 = List.last(events_2)
-      assert is_nil(event_2.dtend)
-    end
-
-    test "authorized user can create a new event", %{
+    test "authorized user can create a new event by clicking on the start_event button", %{
       authorized_user: authorized_user,
       conn: conn,
       group: group,
@@ -321,8 +252,8 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         )
 
       assert lv
-             |> element("#activity-#{activity.id}")
-             |> render_click() =~ "active-activity-#{activity.id}"
+             |> element("#start-activity-#{activity.id}")
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       {:ok, [event]} =
         Event.by_activity_today(
@@ -336,7 +267,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       assert event.organisation_id == organisation.id
     end
 
-    test "authorized user can stop active event when selecting same activity again", %{
+    test "authorized user can stop active event by clicking on the stop_event button", %{
       authorized_user: authorized_user,
       conn: conn,
       group: group,
@@ -361,13 +292,12 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       # Create a event
       assert lv
-             |> element("#activity-#{activity.id}")
-             |> render_click() =~ "active-activity-#{activity.id}"
+             |> element("#start-activity-#{activity.id}")
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
-      # Click same activity again to stop it
-      refute lv
-             |> element("#activity-#{activity.id}")
-             |> render_click() =~ "active-activity-#{activity.id}"
+      assert lv
+             |> element("#stop-current-activity-#{activity.id}")
+             |> render_click() =~ "start-activity-#{activity.id}"
 
       # Verify event was stopped (end_at was set)
       {:ok, [event]} =
@@ -379,74 +309,6 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       assert event.activity_id == activity.id
       assert not is_nil(event.dtend)
-    end
-
-    test "authorized user can switch active event by selecting different activity", %{
-      authorized_user: authorized_user,
-      conn: conn,
-      group: group,
-      project: project,
-      organisation: organisation
-    } do
-      {:ok, _} =
-        create_access_right(organisation, %{
-          group_id: group.id,
-          read: true,
-          resource_name: "Event",
-          write: true
-        })
-
-      {:ok, activity_1} =
-        create_activity(organisation, %{
-          group_id: group.id,
-          project_id: project.id,
-          name: "Activity 1"
-        })
-
-      {:ok, activity_2} =
-        create_activity(organisation, %{
-          group_id: group.id,
-          project_id: project.id,
-          name: "Activity 2"
-        })
-
-      {:ok, lv, _html} =
-        conn
-        |> log_in_user(authorized_user)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
-
-      # Start event for the first activity
-      assert lv
-             |> element("#activity-#{activity_1.id}")
-             |> render_click() =~ "active-activity-#{activity_1.id}"
-
-      # Switch to second activity
-      assert lv
-             |> element("#activity-#{activity_2.id}")
-             |> render_click() =~ "active-activity-#{activity_2.id}"
-
-      # Verify first event was stopped
-      {:ok, [event_1]} =
-        Event.by_activity_today(
-          %{activity_id: activity_1.id},
-          actor: authorized_user,
-          tenant: organisation
-        )
-
-      assert not is_nil(event_1.dtend)
-
-      # Verify second event is active
-      {:ok, events_2} =
-        Event.by_activity_today(
-          %{activity_id: activity_2.id},
-          actor: authorized_user,
-          tenant: organisation
-        )
-
-      event_2 = List.last(events_2)
-      assert is_nil(event_2.dtend)
     end
 
     test "unauthorized user cannot create events", %{
@@ -501,8 +363,8 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         )
 
       refute lv
-             |> element("#activity-#{activity.id}")
-             |> render_click() =~ "active-activity-#{activity.id}"
+             |> element("#start-activity-#{activity.id}")
+             |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       assert {:ok, []} =
                Event.by_activity_today(

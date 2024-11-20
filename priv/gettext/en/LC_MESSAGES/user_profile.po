@@ -1,0 +1,121 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/omedis_web/live/edit_profile.ex:214
+#: lib/omedis_web/live/edit_profile.ex:224
+#, elixir-autogen, elixir-format
+msgid "Birthdate"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:231
+#, elixir-autogen, elixir-format
+msgid "Birthdate %{msg}"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:240
+#, elixir-autogen, elixir-format
+msgid "Current Organisation"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:259
+#, elixir-autogen, elixir-format
+msgid "Current Organisation %{msg}"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:130
+#, elixir-autogen, elixir-format
+msgid "Edit your profile details"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:137
+#: lib/omedis_web/live/edit_profile.ex:147
+#, elixir-autogen, elixir-format
+msgid "First Name"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:154
+#, elixir-autogen, elixir-format
+msgid "First Name %{msg}"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:188
+#, elixir-autogen, elixir-format
+msgid "Gender"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:205
+#, elixir-autogen, elixir-format
+msgid "Gender %{msg}"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:268
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:284
+#, elixir-autogen, elixir-format
+msgid "Language %{msg}"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:163
+#: lib/omedis_web/live/edit_profile.ex:172
+#, elixir-autogen, elixir-format
+msgid "Last Name"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:179
+#, elixir-autogen, elixir-format
+msgid "Last Name %{msg}"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:80
+#, elixir-autogen, elixir-format
+msgid "Profile update failed"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:65
+#, elixir-autogen, elixir-format
+msgid "Profile updated successfully"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:295
+#, elixir-autogen, elixir-format
+msgid "Save Profile"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:299
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:196
+#, elixir-autogen, elixir-format
+msgid "Select Gender"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:248
+#, elixir-autogen, elixir-format
+msgid "Select Organisation"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:276
+#, elixir-autogen, elixir-format
+msgid "Select Your Language"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:40
+#: lib/omedis_web/live/edit_profile.ex:125
+#, elixir-autogen, elixir-format
+msgid "Update Profile"
+msgstr ""

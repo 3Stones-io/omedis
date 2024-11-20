@@ -45,7 +45,9 @@ defmodule OmedisWeb.RegisterLive do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn -> gettext("Sign up") end)
+      with_locale(socket.assigns.language, fn ->
+        dgettext("auth", "Register")
+      end)
     )
     |> assign(:action, "/auth/user/password/register/")
     |> assign(
@@ -140,12 +142,15 @@ defmodule OmedisWeb.RegisterLive do
             <div class="lg:col-span-3 flex flex-col">
               <h2 class="text-base font-semibold leading-7 text-gray-900">
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Register") %>
+                  <%= dgettext("auth", "Register") %>
                 <% end) %>
               </h2>
               <p class="mt-1 text-sm leading-6 text-gray-600">
                 <%= with_locale(@language, fn -> %>
-                  <%= gettext("Use a permanent address where you can receive mail.") %>
+                  <%= dgettext(
+                    "auth",
+                    "Use a permanent address where you can receive mail."
+                  ) %>
                 <% end) %>
               </p>
             </div>
@@ -153,7 +158,7 @@ defmodule OmedisWeb.RegisterLive do
           <div class="w-full px-1">
             <p class="text-base font-semibold leading-7 text-gray-900">
               <%= with_locale(@language, fn -> %>
-                <%= gettext("Change language") %>
+                <%= dgettext("auth", "Change language") %>
               <% end) %>
             </p>
             <div class="flex items-center space-x-2">
@@ -207,9 +212,17 @@ defmodule OmedisWeb.RegisterLive do
                       type="select"
                       id="select_organisation"
                       field={f[:current_organisation_id]}
-                      label={with_locale(@language, fn -> gettext("Select an Organisation") end)}
+                      label={
+                        with_locale(@language, fn ->
+                          dgettext("auth", "Select an Organisation")
+                        end)
+                      }
                       options={Enum.map(@organisations, &{&1.name, &1.id})}
-                      prompt={with_locale(@language, fn -> gettext("Select an Organisation") end)}
+                      prompt={
+                        with_locale(@language, fn ->
+                          dgettext("auth", "Select an Organisation")
+                        end)
+                      }
                       required
                     />
                   </div>
@@ -220,10 +233,10 @@ defmodule OmedisWeb.RegisterLive do
                     type="email"
                     disabled={@selected_organisation_id == nil}
                     field={f[:email]}
-                    placeholder={with_locale(@language, fn -> gettext("Email") end)}
+                    placeholder={with_locale(@language, fn -> dgettext("auth", "Email") end)}
                     autocomplete="email"
                     required
-                    label={with_locale(@language, fn -> gettext("Email") end)}
+                    label={with_locale(@language, fn -> dgettext("auth", "Email") end)}
                   />
                 </div>
 
@@ -232,9 +245,17 @@ defmodule OmedisWeb.RegisterLive do
                     type="text"
                     disabled={@selected_organisation_id == nil}
                     field={f[:first_name]}
-                    placeholder={with_locale(@language, fn -> gettext("First Name") end)}
+                    placeholder={
+                      with_locale(@language, fn ->
+                        dgettext("auth", "First Name")
+                      end)
+                    }
                     required
-                    label={with_locale(@language, fn -> gettext("First Name") end)}
+                    label={
+                      with_locale(@language, fn ->
+                        dgettext("auth", "First Name")
+                      end)
+                    }
                     phx-debounce="blur"
                   />
                 </div>
@@ -244,9 +265,9 @@ defmodule OmedisWeb.RegisterLive do
                     type="text"
                     disabled={@selected_organisation_id == nil}
                     field={f[:last_name]}
-                    placeholder={with_locale(@language, fn -> gettext("Last Name") end)}
+                    placeholder={with_locale(@language, fn -> dgettext("auth", "Last Name") end)}
                     required
-                    label={with_locale(@language, fn -> gettext("Last Name") end)}
+                    label={with_locale(@language, fn -> dgettext("auth", "Last Name") end)}
                     phx-debounce="blur"
                   />
                 </div>
@@ -256,10 +277,10 @@ defmodule OmedisWeb.RegisterLive do
                     type="password"
                     disabled={@selected_organisation_id == nil}
                     field={f[:password]}
-                    placeholder={with_locale(@language, fn -> gettext("Password") end)}
-                    autocomplete={gettext("new password")}
+                    placeholder={with_locale(@language, fn -> dgettext("auth", "Password") end)}
+                    autocomplete={dgettext("auth", "new password")}
                     required
-                    label={with_locale(@language, fn -> gettext("Password") end)}
+                    label={with_locale(@language, fn -> dgettext("auth", "Password") end)}
                     phx-debounce="blur"
                   />
                 </div>
@@ -270,12 +291,16 @@ defmodule OmedisWeb.RegisterLive do
                     disabled={@selected_organisation_id == nil}
                     field={f[:gender]}
                     required
-                    label={with_locale(@language, fn -> gettext("Gender") end)}
+                    label={with_locale(@language, fn -> dgettext("auth", "Gender") end)}
                     options={[
-                      with_locale(@language, fn -> gettext("Male") end),
-                      with_locale(@language, fn -> gettext("Female") end)
+                      with_locale(@language, fn -> dgettext("auth", "Male") end),
+                      with_locale(@language, fn -> dgettext("auth", "Female") end)
                     ]}
-                    prompt={with_locale(@language, fn -> gettext("Select Your Gender") end)}
+                    prompt={
+                      with_locale(@language, fn ->
+                        dgettext("auth", "Select Your Gender")
+                      end)
+                    }
                   />
                 </div>
 
@@ -285,7 +310,7 @@ defmodule OmedisWeb.RegisterLive do
                     disabled={@selected_organisation_id == nil}
                     field={f[:birthdate]}
                     required
-                    label={with_locale(@language, fn -> gettext("Birthdate") end)}
+                    label={with_locale(@language, fn -> dgettext("auth", "Birthdate") end)}
                     phx-debounce="blur"
                   />
                 </div>
@@ -293,7 +318,7 @@ defmodule OmedisWeb.RegisterLive do
                 <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn -> %>
-                      <%= gettext("Daily Start Time") %>
+                      <%= dgettext("auth", "Daily Start Time") %>
                     <% end) %>
                   </label>
 
@@ -307,7 +332,7 @@ defmodule OmedisWeb.RegisterLive do
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
                       <%= with_locale(@language, fn -> %>
-                        <%= gettext("Daily Start Time") <> " " <> msg %>
+                        <%= dgettext("auth", "Daily Start Time") <> " " <> msg %>
                       <% end) %>
                     </.error>
                   </div>
@@ -316,7 +341,7 @@ defmodule OmedisWeb.RegisterLive do
                 <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn -> %>
-                      <%= gettext("Daily End Time") %>
+                      <%= dgettext("auth", "Daily End Time") %>
                     <% end) %>
                   </label>
 
@@ -330,7 +355,7 @@ defmodule OmedisWeb.RegisterLive do
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
                       <%= with_locale(@language, fn -> %>
-                        <%= gettext("Daily End Time") <> " " <> msg %>
+                        <%= dgettext("auth", "Daily End Time") <> " " <> msg %>
                       <% end) %>
                     </.error>
                   </div>
@@ -341,7 +366,7 @@ defmodule OmedisWeb.RegisterLive do
                 <.link navigate="/login">
                   <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
                     <%= with_locale(@language, fn -> %>
-                      <%= gettext("Don't have an account? Sign up") %>
+                      <%= dgettext("auth", "Don't have an account? Sign up") %>
                     <% end) %>
                   </p>
                 </.link>
@@ -349,8 +374,12 @@ defmodule OmedisWeb.RegisterLive do
             </div>
 
             <div class="mt-6 flex items-center justify-end gap-x-6">
-              <%= submit(with_locale(@language, fn -> gettext("Sign up") end),
-                phx_disable_with: with_locale(@language, fn -> gettext("Signing up...") end),
+              <%= submit(
+                with_locale(@language, fn -> dgettext("auth", "Sign up") end),
+                phx_disable_with:
+                  with_locale(@language, fn ->
+                    dgettext("auth", "Signing up...")
+                  end),
                 disabled: @selected_organisation_id == nil,
                 class:
                   "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

@@ -35,17 +35,31 @@ defmodule Omedis.EventTest do
       organisation: organisation,
       user: user
     } do
+      after_one_second = get_datetime_after(1, :second)
+
       {:ok, event_1} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtend: after_one_second,
+            user_id: user.id
+          },
+          actor: user
+        )
+
+      after_two_seconds = get_datetime_after(2, :second)
 
       {:ok, event_2} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtstart: after_two_seconds,
+            user_id: user.id
+          },
+          actor: user
+        )
 
       {:ok, %{results: result}} =
         Event.by_activity(%{activity_id: activity.id},
@@ -62,17 +76,31 @@ defmodule Omedis.EventTest do
       organisation: organisation,
       user: user
     } do
-      {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id
-        })
+      after_one_second = get_datetime_after(1, :second)
 
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtend: after_one_second,
+            user_id: user.id
+          },
+          actor: user
+        )
+
+      after_two_second = get_datetime_after(2, :second)
+
+      {:ok, _} =
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtstart: after_two_second,
+            user_id: user.id
+          },
+          actor: user
+        )
 
       {:ok, unauthorized_user} = create_user()
 
@@ -107,20 +135,31 @@ defmodule Omedis.EventTest do
       organisation: organisation,
       user: user
     } do
+      after_one_second = get_datetime_after(1, :second)
+
       {:ok, event_1} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtend: after_one_second,
+            user_id: user.id
+          },
+          actor: user
+        )
+
+      after_two_seconds = get_datetime_after(2, :second)
 
       {:ok, _event_2} =
         create_event(
           organisation,
           %{
             activity_id: activity.id,
+            dtstart: after_two_seconds,
             user_id: user.id
           },
-          context: %{created_at: DateTime.add(DateTime.utc_now(), -2, :day)}
+          actor: user,
+          context: %{created_at: get_datetime_after(-2, :day)}
         )
 
       {:ok, result} =
@@ -140,10 +179,14 @@ defmodule Omedis.EventTest do
       user: user
     } do
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: user.id
+          },
+          actor: user
+        )
 
       {:ok, unauthorized_user} = create_user()
 
@@ -239,7 +282,7 @@ defmodule Omedis.EventTest do
         |> attrs_for(organisation)
         |> Map.put(:activity_id, activity.id)
         |> Map.put(:user_id, user.id)
-        |> Map.put(:dtend, DateTime.add(DateTime.utc_now(), -1, :minute))
+        |> Map.put(:dtend, get_datetime_after(-1, :minute))
 
       assert {:error, %Ash.Error.Invalid{errors: errors}} =
                Event.create(attrs, actor: user, tenant: organisation)
@@ -267,6 +310,148 @@ defmodule Omedis.EventTest do
       assert {:error, %Ash.Error.Forbidden{}} =
                Event.create(attrs, actor: unauthorized_user, tenant: organisation)
     end
+
+    test "allows overlapping events for different users", %{
+      activity: activity,
+      organisation: organisation,
+      owner: owner,
+      user: authorized_user
+    } do
+      # Create an event for organisation owner
+      now = DateTime.utc_now()
+      one_hour_later = get_datetime_after(3600, :second)
+
+      attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, owner.id)
+        |> Map.put(:dtstart, now)
+        |> Map.put(:dtend, one_hour_later)
+
+      assert {:ok, _} = Event.create(attrs, actor: owner, tenant: organisation)
+
+      # Create overlapping event for the authorized user
+      other_attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, authorized_user.id)
+        # 30 minutes after start
+        |> Map.put(:dtstart, get_datetime_after(1800, :second))
+        # 90 minutes after start
+        |> Map.put(:dtend, get_datetime_after(5400, :second))
+
+      assert {:ok, _} =
+               Event.create(other_attrs, actor: authorized_user, tenant: organisation)
+    end
+
+    test "prevents creating an event that starts before an ongoing event ends", %{
+      activity: activity,
+      organisation: organisation,
+      user: user
+    } do
+      now = DateTime.utc_now()
+      one_hour_later = get_datetime_after(3600, :second)
+
+      attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, user.id)
+        |> Map.put(:dtstart, now)
+        |> Map.put(:dtend, one_hour_later)
+
+      assert {:ok, _} = Event.create(attrs, actor: user, tenant: organisation)
+
+      # Try to create overlapping event - starts during first event
+      overlapping_event_attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, user.id)
+        # 1 minute after start
+        |> Map.put(:dtstart, get_datetime_after(60, :second))
+
+      assert {:error, %Ash.Error.Invalid{errors: errors}} =
+               Event.create(overlapping_event_attrs, actor: user, tenant: organisation)
+
+      assert [
+               %Ash.Error.Changes.InvalidAttribute{
+                 field: :dtstart,
+                 message: "cannot create an event that overlaps with another event"
+               }
+             ] = errors
+    end
+
+    test "prevents creating an event that overlaps with ongoing events", %{
+      activity: activity,
+      organisation: organisation,
+      user: user
+    } do
+      attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, user.id)
+        |> Map.put(:dtend, nil)
+
+      assert {:ok, _} = Event.create(attrs, actor: user, tenant: organisation)
+
+      attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, user.id)
+        # 1 minute after start
+        |> Map.put(:dtstart, DateTime.utc_now())
+
+      assert {:error, %Ash.Error.Invalid{errors: errors}} =
+               Event.create(attrs, actor: user, tenant: organisation)
+
+      assert [
+               %Ash.Error.Changes.InvalidAttribute{
+                 field: :dtstart,
+                 message: "cannot create an event that overlaps with another event"
+               }
+             ] = errors
+    end
+
+    test "prevents creating an event that starts at the same time as end time of an ongoing event",
+         %{
+           activity: activity,
+           organisation: organisation,
+           user: user
+         } do
+      after_one_second = get_datetime_after(1, :second)
+
+      attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, user.id)
+        |> Map.put(:dtend, after_one_second)
+
+      assert {:ok, _} = Event.create(attrs, actor: user, tenant: organisation)
+
+      attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, user.id)
+        # Same time as end of ongoing event
+        |> Map.put(:dtstart, after_one_second)
+
+      assert {:error, %Ash.Error.Invalid{errors: errors}} =
+               Event.create(attrs, actor: user, tenant: organisation)
+
+      assert [
+               %Ash.Error.Changes.InvalidAttribute{
+                 field: :dtstart,
+                 message: "cannot create an event that overlaps with another event"
+               }
+             ] = errors
+    end
   end
 
   describe "list_paginated/1" do
@@ -275,13 +460,22 @@ defmodule Omedis.EventTest do
       organisation: organisation,
       owner: owner
     } do
-      Enum.each(1..15, fn _ ->
+      for i <- 1..15 do
+        dtstart = get_datetime_after(i + 1, :second)
+        dtend = get_datetime_after(i + 2, :second)
+
         {:ok, _} =
-          create_event(organisation, %{
-            activity_id: activity.id,
-            user_id: owner.id
-          })
-      end)
+          create_event(
+            organisation,
+            %{
+              activity_id: activity.id,
+              dtend: dtend,
+              dtstart: dtstart,
+              user_id: owner.id
+            },
+            actor: owner
+          )
+      end
 
       # Fetch first page of paginated events
       assert {:ok, %{results: results, count: count}} =
@@ -310,13 +504,22 @@ defmodule Omedis.EventTest do
       organisation: organisation,
       user: authorized_user
     } do
-      Enum.each(1..15, fn _ ->
+      for i <- 1..15 do
+        dtstart = get_datetime_after(i + 1, :second)
+        dtend = get_datetime_after(i + 2, :second)
+
         {:ok, _} =
-          create_event(organisation, %{
-            activity_id: activity.id,
-            user_id: authorized_user.id
-          })
-      end)
+          create_event(
+            organisation,
+            %{
+              activity_id: activity.id,
+              dtend: dtend,
+              dtstart: dtstart,
+              user_id: authorized_user.id
+            },
+            actor: authorized_user
+          )
+      end
 
       # Fetch paginated events
       assert {:ok, %{results: results, count: count}} =
@@ -336,13 +539,19 @@ defmodule Omedis.EventTest do
       owner: owner
     } do
       for i <- 1..3 do
+        dtstart = get_datetime_after(i + 1, :second)
+        dtend = get_datetime_after(i + 2, :second)
+
         {:ok, event} =
           create_event(
             organisation,
             %{
               activity_id: activity.id,
+              dtend: dtend,
+              dtstart: dtstart,
               user_id: owner.id
             },
+            actor: owner,
             context: %{created_at: Omedis.TestUtils.time_after(-i * 12_000)}
           )
 
@@ -366,10 +575,14 @@ defmodule Omedis.EventTest do
       user: authorized_user
     } do
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: authorized_user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: authorized_user.id
+          },
+          actor: authorized_user
+        )
 
       {:ok, unauthorized_user} = create_user()
 
@@ -398,23 +611,37 @@ defmodule Omedis.EventTest do
       organisation: organisation,
       owner: owner
     } do
-      Enum.each(1..5, fn _ ->
-        {:ok, _today_event} =
-          create_event(organisation, %{
-            activity_id: activity.id,
-            user_id: owner.id
-          })
-      end)
+      past_date = get_datetime_after(-2, :day)
 
       {:ok, past_event} =
         create_event(
           organisation,
           %{
             activity_id: activity.id,
+            dtend: get_datetime_after(-1, :day),
+            dtstart: past_date,
             user_id: owner.id
           },
-          context: %{created_at: DateTime.add(DateTime.utc_now(), -2, :day)}
+          actor: owner,
+          context: %{created_at: past_date}
         )
+
+      for i <- 1..5 do
+        dtstart = get_datetime_after(i + 1, :second)
+        dtend = get_datetime_after(i + 2, :second)
+
+        {:ok, _today_event} =
+          create_event(
+            organisation,
+            %{
+              activity_id: activity.id,
+              dtend: dtend,
+              dtstart: dtstart,
+              user_id: owner.id
+            },
+            actor: owner
+          )
+      end
 
       assert {:ok, %{results: results, count: count}} =
                Event.list_paginated_today(
@@ -440,23 +667,37 @@ defmodule Omedis.EventTest do
       organisation: organisation,
       user: authorized_user
     } do
-      Enum.each(1..5, fn _ ->
-        {:ok, _today_event} =
-          create_event(organisation, %{
-            activity_id: activity.id,
-            user_id: authorized_user.id
-          })
-      end)
+      past_date = get_datetime_after(-2, :day)
 
       {:ok, past_event} =
         create_event(
           organisation,
           %{
             activity_id: activity.id,
+            dtend: get_datetime_after(-1, :day),
+            dtstart: past_date,
             user_id: authorized_user.id
           },
-          context: %{created_at: DateTime.add(DateTime.utc_now(), -2, :day)}
+          actor: authorized_user,
+          context: %{created_at: past_date}
         )
+
+      for i <- 1..5 do
+        dtstart = get_datetime_after(i + 1, :second)
+        dtend = get_datetime_after(i + 2, :second)
+
+        {:ok, _today_event} =
+          create_event(
+            organisation,
+            %{
+              activity_id: activity.id,
+              dtend: dtend,
+              dtstart: dtstart,
+              user_id: authorized_user.id
+            },
+            actor: authorized_user
+          )
+      end
 
       assert {:ok, %{results: results, count: count}} =
                Event.list_paginated_today(
@@ -483,13 +724,19 @@ defmodule Omedis.EventTest do
       owner: owner
     } do
       for i <- 1..3 do
+        dtstart = get_datetime_after(i + 1, :second)
+        dtend = get_datetime_after(i + 2, :second)
+
         {:ok, event} =
           create_event(
             organisation,
             %{
               activity_id: activity.id,
+              dtend: dtend,
+              dtstart: dtstart,
               user_id: owner.id
             },
+            actor: owner,
             context: %{created_at: Omedis.TestUtils.time_after(-i * 3600)}
           )
 
@@ -513,10 +760,14 @@ defmodule Omedis.EventTest do
       user: authorized_user
     } do
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: authorized_user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: authorized_user.id
+          },
+          actor: authorized_user
+        )
 
       {:ok, unauthorized_user} = create_user()
 
@@ -546,19 +797,28 @@ defmodule Omedis.EventTest do
       user: user
     } do
       {:ok, event_1} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          dtend: DateTime.add(DateTime.utc_now(), 60, :minute),
-          dtstart: DateTime.utc_now(),
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtend: get_datetime_after(60, :minute),
+            dtstart: DateTime.utc_now(),
+            user_id: user.id
+          },
+          actor: user
+        )
 
       {:ok, event_2} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          dtend: nil,
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtstart: get_datetime_after(61, :minute),
+            dtend: nil,
+            user_id: user.id
+          },
+          actor: user
+        )
 
       {:ok, [event_1_from_db, event_2_from_db]} = Event.read(actor: user, tenant: organisation)
 
@@ -579,19 +839,30 @@ defmodule Omedis.EventTest do
       organisation: organisation,
       user: user
     } do
+      after_one_second = get_datetime_after(1, :second)
       {:ok, another_user} = create_user()
 
       {:ok, event_1} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtend: after_one_second,
+            user_id: user.id
+          },
+          actor: user
+        )
 
       {:ok, event_2} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: another_user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtstart: after_one_second,
+            user_id: another_user.id
+          },
+          actor: another_user
+        )
 
       {:ok, result} = Event.read(actor: user, tenant: organisation)
 
@@ -607,16 +878,24 @@ defmodule Omedis.EventTest do
       {:ok, unauthorized_user} = create_user()
 
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: user.id
+          },
+          actor: user
+        )
 
       {:ok, _} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: unauthorized_user.id
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: unauthorized_user.id
+          },
+          actor: unauthorized_user
+        )
 
       assert {:ok, []} = Event.read(actor: unauthorized_user, tenant: organisation)
     end
@@ -629,11 +908,15 @@ defmodule Omedis.EventTest do
       owner: owner
     } do
       {:ok, event} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: owner.id,
-          summary: "Original summary"
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: owner.id,
+            summary: "Original summary"
+          },
+          actor: owner
+        )
 
       update_attrs = %{summary: "Updated summary"}
 
@@ -649,11 +932,15 @@ defmodule Omedis.EventTest do
       user: user
     } do
       {:ok, event} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id,
-          summary: "Original summary"
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: user.id,
+            summary: "Original summary"
+          },
+          actor: user
+        )
 
       update_attrs = %{summary: "Updated summary"}
 
@@ -669,11 +956,15 @@ defmodule Omedis.EventTest do
       user: user
     } do
       {:ok, event} =
-        create_event(organisation, %{
-          activity_id: activity.id,
-          user_id: user.id,
-          summary: "Original summary"
-        })
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: user.id,
+            summary: "Original summary"
+          },
+          actor: user
+        )
 
       {:ok, unauthorized_user} = create_user()
 
@@ -685,5 +976,57 @@ defmodule Omedis.EventTest do
                  tenant: organisation
                )
     end
+
+    test "prevents updates that would create overlaps", %{
+      activity: activity,
+      organisation: organisation,
+      user: user
+    } do
+      # Create two non-overlapping events
+      now = DateTime.utc_now()
+
+      first_attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, user.id)
+        |> Map.put(:dtstart, now)
+        |> Map.put(:dtend, get_datetime_after(3600, :second))
+
+      second_attrs =
+        Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, user.id)
+        # 2 hours after start
+        |> Map.put(:dtstart, get_datetime_after(7200, :second))
+        # 3 hours after start
+        |> Map.put(:dtend, get_datetime_after(10_800, :second))
+
+      assert {:ok, _first_event} = Event.create(first_attrs, actor: user, tenant: organisation)
+      assert {:ok, second_event} = Event.create(second_attrs, actor: user, tenant: organisation)
+
+      # Try to update second event to overlap with first
+      assert {:error, %Ash.Error.Invalid{errors: errors}} =
+               Event.update(
+                 second_event,
+                 # 30 minutes after start
+                 %{dtstart: get_datetime_after(1800, :second)},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert [
+               %Ash.Error.Changes.InvalidAttribute{
+                 field: :dtstart,
+                 message: "cannot create an event that overlaps with another event"
+               }
+             ] = errors
+    end
+  end
+
+  defp get_datetime_after(offset, value) do
+    DateTime.utc_now()
+    |> DateTime.add(offset, value)
   end
 end

@@ -1,0 +1,184 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/omedis_web/live/activity_live/index.ex:31
+#: lib/omedis_web/live/activity_live/show.ex:25
+#: lib/omedis_web/live/event_live/index.ex:28
+#: lib/omedis_web/live/group_live/show.ex:35
+#, elixir-autogen, elixir-format
+msgid "Activities"
+msgstr "Aktivitäten"
+
+#: lib/omedis_web/live/group_live/index.ex:33
+#, elixir-autogen, elixir-format
+msgid "Back"
+msgstr "Zurück"
+
+#: lib/omedis_web/live/group_live/show.ex:53
+#, elixir-autogen, elixir-format
+msgid "Back to groups"
+msgstr "Zurück zu Gruppen"
+
+#: lib/omedis_web/components/general_components.ex:284
+#: lib/omedis_web/components/general_components.ex:676
+#, elixir-autogen, elixir-format
+msgid "Calendar"
+msgstr "Kalender"
+
+#: lib/omedis_web/components/general_components.ex:881
+#, elixir-autogen, elixir-format
+msgid "Create first organisation"
+msgstr "Erste Organisation erstellen"
+
+#: lib/omedis_web/components/general_components.ex:306
+#: lib/omedis_web/components/general_components.ex:698
+#, elixir-autogen, elixir-format
+msgid "Documents"
+msgstr "Dokumente"
+
+#: lib/omedis_web/components/general_components.ex:810
+#, elixir-autogen, elixir-format
+msgid "Edit Profile"
+msgstr "Profil bearbeiten"
+
+#: lib/omedis_web/live/event_live/index.ex:32
+#, elixir-autogen, elixir-format
+msgid "Events"
+msgstr "Veranstaltungen"
+
+#: lib/omedis_web/components/general_components.ex:352
+#: lib/omedis_web/components/general_components.ex:744
+#: lib/omedis_web/live/activity_live/index.ex:29
+#: lib/omedis_web/live/activity_live/show.ex:23
+#: lib/omedis_web/live/event_live/index.ex:26
+#: lib/omedis_web/live/group_live/index.ex:26
+#: lib/omedis_web/live/group_live/show.ex:21
+#: lib/omedis_web/live/organisation_live/today.ex:24
+#, elixir-autogen, elixir-format
+msgid "Groups"
+msgstr "Gruppen"
+
+#: lib/omedis_web/live/activity_live/index.ex:26
+#: lib/omedis_web/live/activity_live/show.ex:20
+#: lib/omedis_web/live/event_live/index.ex:23
+#: lib/omedis_web/live/group_live/index.ex:23
+#: lib/omedis_web/live/group_live/show.ex:18
+#: lib/omedis_web/live/invitation_live/index.ex:110
+#: lib/omedis_web/live/organisation_live/index.ex:21
+#: lib/omedis_web/live/organisation_live/show.ex:17
+#: lib/omedis_web/live/organisation_live/today.ex:21
+#: lib/omedis_web/live/project_live/index.ex:24
+#: lib/omedis_web/live/project_live/show.ex:18
+#, elixir-autogen, elixir-format
+msgid "Home"
+msgstr "Startseite"
+
+#: lib/omedis_web/live/invitation_live/index.ex:113
+#, elixir-autogen, elixir-format
+msgid "Invitations"
+msgstr "Einladungen"
+
+#: lib/omedis_web/components/general_components.ex:509
+#: lib/omedis_web/components/general_components.ex:819
+#, elixir-autogen, elixir-format
+msgid "Login"
+msgstr "Anmelden"
+
+#: lib/omedis_web/components/general_components.ex:29
+#: lib/omedis_web/components/general_components.ex:49
+#, elixir-autogen, elixir-format
+msgid "Navigation Breadcrumb"
+msgstr "Navigationspfad"
+
+#: lib/omedis_web/live/project_live/index.ex:43
+#, elixir-autogen, elixir-format
+msgid "New Project"
+msgstr "Neues Projekt"
+
+#: lib/omedis_web/components/general_components.ex:885
+#: lib/omedis_web/live/activity_live/index.ex:27
+#: lib/omedis_web/live/activity_live/show.ex:21
+#: lib/omedis_web/live/event_live/index.ex:24
+#: lib/omedis_web/live/group_live/index.ex:24
+#: lib/omedis_web/live/group_live/show.ex:19
+#: lib/omedis_web/live/invitation_live/index.ex:111
+#: lib/omedis_web/live/organisation_live/index.ex:22
+#: lib/omedis_web/live/organisation_live/show.ex:18
+#: lib/omedis_web/live/organisation_live/today.ex:22
+#: lib/omedis_web/live/project_live/index.ex:25
+#: lib/omedis_web/live/project_live/show.ex:19
+#, elixir-autogen, elixir-format
+msgid "Organisations"
+msgstr "Organisationen"
+
+#: lib/omedis_web/components/general_components.ex:262
+#: lib/omedis_web/components/general_components.ex:365
+#: lib/omedis_web/components/general_components.ex:654
+#: lib/omedis_web/components/general_components.ex:757
+#: lib/omedis_web/live/project_live/index.ex:27
+#: lib/omedis_web/live/project_live/show.ex:21
+#, elixir-autogen, elixir-format
+msgid "Projects"
+msgstr "Projekte"
+
+#: lib/omedis_web/components/general_components.ex:517
+#: lib/omedis_web/components/general_components.ex:822
+#, elixir-autogen, elixir-format
+msgid "Register"
+msgstr "Registrieren"
+
+#: lib/omedis_web/components/general_components.ex:333
+#: lib/omedis_web/components/general_components.ex:725
+#, elixir-autogen, elixir-format
+msgid "Reports"
+msgstr "Berichte"
+
+#: lib/omedis_web/components/general_components.ex:466
+#, elixir-autogen, elixir-format
+msgid "Search..."
+msgstr "Suchen..."
+
+#: lib/omedis_web/components/general_components.ex:813
+#, elixir-autogen, elixir-format
+msgid "Sign out"
+msgstr "Abmelden"
+
+#: lib/omedis_web/components/general_components.ex:240
+#: lib/omedis_web/components/general_components.ex:632
+#, elixir-autogen, elixir-format
+msgid "Team"
+msgstr "Team"
+
+#: lib/omedis_web/live/organisation_live/today.ex:26
+#, elixir-autogen, elixir-format
+msgid "Today"
+msgstr "Heute"
+
+#: lib/omedis_web/components/general_components.ex:187
+#: lib/omedis_web/components/general_components.ex:217
+#: lib/omedis_web/components/general_components.ex:581
+#: lib/omedis_web/components/general_components.ex:610
+#, elixir-autogen, elixir-format
+msgid "Today's Time Tracker"
+msgstr "Heutiger Zeit-Tracker"
+
+#: lib/omedis_web/components/general_components.ex:395
+#: lib/omedis_web/components/general_components.ex:787
+#, elixir-autogen, elixir-format
+msgid "Your Profile"
+msgstr "Ihr Profil"
+
+#: lib/omedis_web/live/project_live/show.ex:45
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Edit Project"
+msgstr "Projekt bearbeiten"
