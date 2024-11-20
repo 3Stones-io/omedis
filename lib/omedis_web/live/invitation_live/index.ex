@@ -4,19 +4,16 @@ defmodule OmedisWeb.InvitationLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Invitation
-  alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
+  on_mount {OmedisWeb.LiveHelpers, :assign_current_organisation}
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true
-  def mount(%{"slug" => slug}, _session, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-
+  def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:organisation, organisation)
      |> assign(:sort_order, :desc)
      |> stream(:invitations, [])}
   end

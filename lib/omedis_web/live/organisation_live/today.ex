@@ -6,6 +6,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
 
+  on_mount {OmedisWeb.LiveHelpers, :assign_current_organisation}
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -52,10 +54,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   @impl true
-  def mount(_params, %{"language" => language} = _session, socket) do
+  def mount(_params, %{"language" => language} = session, socket) do
     {:ok,
      socket
-     |> assign(:language, language)}
+     |> assign(:language, language)
+     |> assign(:pubsub_topics_unique_id, session["pubsub_topics_unique_id"])}
   end
 
   @impl true
@@ -403,6 +406,13 @@ defmodule OmedisWeb.OrganisationLive.Today do
           tenant: organisation
         )
 
+      :ok =
+        Phoenix.PubSub.broadcast(
+          Omedis.PubSub,
+          "current_activity_#{socket.assigns.pubsub_topics_unique_id}",
+          {:event_started, activity}
+        )
+
       assign(socket, :current_activity_id, activity_id)
     else
       put_flash(
@@ -424,6 +434,13 @@ defmodule OmedisWeb.OrganisationLive.Today do
         Event.update(event, %{dtend: opts[:event_stop_time]},
           actor: opts[:actor],
           tenant: opts[:tenant]
+        )
+
+      :ok =
+        Phoenix.PubSub.broadcast(
+          Omedis.PubSub,
+          "current_activity_#{socket.assigns.pubsub_topics_unique_id}",
+          {:event_stopped, nil}
         )
 
       assign(socket, :current_activity_id, nil)
