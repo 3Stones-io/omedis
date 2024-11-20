@@ -44,17 +44,25 @@ defmodule Omedis.FarmersTest do
       assert user.first_name == "Stefan"
     end
 
-    test "destroy/1 deletes a user" do
+    test "destroy/1 archives a user record" do
       {:ok, user} =
         create_user(%{email: "test@gmail.com"})
 
       {:ok, users} = User.read()
       assert Enum.empty?(users) == false
 
-      assert :ok = User.destroy(user)
+      assert :ok = User.destroy(user, actor: user)
 
-      {:ok, users} = User.read()
-      assert Enum.empty?(users) == true
+      assert_raise Ash.Error.Invalid, fn ->
+        Ash.get!(User, user.id)
+      end
+    end
+
+    test "only a user can archive their own record" do
+      {:ok, user} = create_user(%{email: "test@gmail.com"})
+      {:ok, user2} = create_user(%{email: "test2@gmail.com"})
+
+      assert {:error, _} = User.destroy(user2, actor: user)
     end
 
     test "by_id/1 returns a user given a valid id" do

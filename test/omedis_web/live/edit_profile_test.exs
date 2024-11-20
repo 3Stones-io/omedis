@@ -49,4 +49,18 @@ defmodule OmedisWeb.EditProfileTest do
       assert user.first_name == "Jane"
     end
   end
+
+  test "You can delete your own account", %{conn: conn} do
+    {:ok, user} = create_user()
+
+    assert {:ok, index_live, html} =
+             conn
+             |> log_in_user(user)
+             |> live(~p"/edit_profile")
+
+    assert index_live
+           |> element("#delete-account-#{user.id}")
+           |> render_click()
+           |> IO.inspect()
+  end
 end
