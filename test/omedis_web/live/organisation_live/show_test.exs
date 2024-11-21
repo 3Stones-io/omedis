@@ -17,7 +17,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     {:ok, group} = create_group(organisation)
     {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
-    {:ok, organisation: organisation, group: group}
+    {:ok, organisation: organisation, group: group, user: user}
   end
 
   describe "/organisations/:slug" do
@@ -137,5 +137,235 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       assert html =~ "Organisation saved"
       assert html =~ "Updated Organisation"
     end
+  end
+
+  describe "/organisations/:slug (Time Tracker)" do
+    alias Omedis.Accounts.Event
+
+    setup %{group: group, organisation: organisation, user: user} do
+      {:ok, project} = create_project(organisation)
+
+      {:ok, activity_1} =
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Activity 1",
+          color_code: "#FF0000"
+        })
+
+      {:ok, activity_2} =
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Activity 2",
+          color_code: "#00FF00"
+        })
+
+      %{
+        activity_1: activity_1,
+        activity_2: activity_2,
+        group: group,
+        organisation: organisation,
+        user: user
+      }
+    end
+
+    test "shows time tracker with the Start Timer button when there is no active activity", %{
+      conn: conn,
+      organisation: organisation
+    } do
+      {:ok, view, _html} = live(conn, ~p"/organisations/#{organisation}")
+
+      wait_until(fn ->
+        html = render(view)
+        assert html =~ "Start Timer"
+        assert html =~ "hero-play-circle-solid"
+      end)
+    end
+
+    test "starts timer when activity is selected", %{
+      activity_1: activity_1,
+      conn: conn,
+      organisation: organisation,
+      user: user
+    } do
+      {:ok, organisation_live_view, _html} = live(conn, ~p"/organisations/#{organisation}")
+
+      wait_until(fn ->
+        html = render(organisation_live_view)
+        assert html =~ "Start Timer"
+      end)
+
+      assert time_tracker_live_view =
+               find_live_child(organisation_live_view, "time-tracker-liveview")
+
+      # Select an activity
+      time_tracker_live_view
+      |> element("button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']")
+      |> render_click()
+
+      wait_until(fn ->
+        html = render(time_tracker_live_view)
+
+        refute html =~ "Start Timer"
+        assert html =~ "animate-pulse"
+      end)
+
+      # Wait for event to be created.
+      Process.sleep(1000)
+
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
+    end
+
+    test "stops timer when clicking active activity", %{
+      conn: conn,
+      organisation: organisation,
+      activity_1: activity_1,
+      user: user
+    } do
+      {:ok, organisation_live_view, _html} = live(conn, ~p"/organisations/#{organisation}")
+
+      wait_until(fn ->
+        html = render(organisation_live_view)
+        assert html =~ "Start Timer"
+      end)
+
+      assert time_tracker_live_view =
+               find_live_child(organisation_live_view, "time-tracker-liveview")
+
+      # Select an activity
+      time_tracker_live_view
+      |> element("button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']")
+      |> render_click()
+
+      wait_until(fn ->
+        html = render(time_tracker_live_view)
+
+        refute html =~ "Start Timer"
+        assert html =~ "animate-pulse"
+      end)
+
+      # Wait for event to be created.
+      Process.sleep(1000)
+
+      # Stop activity
+      time_tracker_live_view
+      |> element("#time-tracker-stop-event")
+      |> render_click()
+
+      wait_until(fn ->
+        html = render(time_tracker_live_view)
+
+        assert html =~ "Start Timer"
+      end)
+
+      # Verify event was stopped
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      refute is_nil(event.dtend)
+    end
+
+    test "maintains timer state on page reload", %{
+      conn: conn,
+      organisation: organisation,
+      activity_1: activity_1,
+      user: user
+    } do
+      {:ok, organisation_live_view, _html} = live(conn, ~p"/organisations/#{organisation}")
+
+      wait_until(fn ->
+        html = render(organisation_live_view)
+        assert html =~ "Start Timer"
+      end)
+
+      assert time_tracker_live_view =
+               find_live_child(organisation_live_view, "time-tracker-liveview")
+
+      # Select an activity
+      time_tracker_live_view
+      |> element("button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']")
+      |> render_click()
+
+      wait_until(fn ->
+        html = render(time_tracker_live_view)
+        refute html =~ "Start Timer"
+        assert html =~ "animate-pulse"
+      end)
+
+      # Wait for event to be created.
+      Process.sleep(1000)
+
+      # Simulate page reload by mounting a new live view
+      {:ok, new_view, _html} = live(conn, ~p"/organisations/#{organisation}")
+
+      # Verify timer is still running
+      wait_until(fn ->
+        html = render(new_view)
+        refute html =~ "Start Timer"
+        assert html =~ "animate-pulse"
+      end)
+
+      # Verify event is still active
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
+    end
+
+    test "unauthorized user cannot see time tracker", %{
+      conn: conn,
+      group: group,
+      organisation: organisation
+    } do
+      {:ok, unauthorized_user} = create_user()
+
+      {:ok, _} =
+        create_group_membership(organisation, %{group_id: group.id, user_id: unauthorized_user.id})
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: group.id,
+          read: true,
+          resource_name: "Organisation"
+        })
+
+      {:ok, view, html} =
+        conn
+        |> log_in_user(unauthorized_user)
+        |> live(~p"/organisations/#{organisation}")
+
+      refute html =~ "Start Timer"
+      refute view |> element("button", "Start Timer") |> has_element?()
+    end
+  end
+
+  defp wait_until(fun), do: wait_until(1_000, fun)
+  defp wait_until(0, fun), do: fun.()
+
+  defp wait_until(timeout, fun) do
+    fun.()
+  rescue
+    ExUnit.AssertionError ->
+      :timer.sleep(10)
+      wait_until(max(0, timeout - 10), fun)
   end
 end
