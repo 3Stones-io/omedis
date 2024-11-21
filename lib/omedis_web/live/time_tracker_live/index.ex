@@ -50,6 +50,8 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
           <div
             id="activity-dropdown"
             class="hidden absolute right-0 mt-1 w-fit max-w-56 h-fit max-h-56 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+            phx-click-away={JS.hide(to: "#activity-dropdown")}
+            phx-hook="HideOnNavigate"
           >
             <%= if Enum.empty?(@activities) do %>
               <div class="pt-3 pb-1">

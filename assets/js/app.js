@@ -24,14 +24,15 @@ import topbar from "../vendor/topbar";
 
 import Alpine from "alpinejs";
 
-import FlashAutoDisappear from "./hooks/flash_auto_disappear"
-import SlugInput from "./hooks/slug_input"
+import FlashAutoDisappear from "./hooks/flash_auto_disappear";
+import HideOnNavigate from "./hooks/hide_on_navigate";
 
 window.Alpine = Alpine;
 Alpine.start();
 
 let Hooks = {
   FlashAutoDisappear,
+  HideOnNavigate,
   SlugInput,
 };
 
