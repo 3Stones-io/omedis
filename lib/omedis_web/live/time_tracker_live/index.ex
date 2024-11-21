@@ -41,16 +41,16 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
           <button
             type="button"
             class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-            phx-click={JS.toggle(to: "#activity-dropdown")}
+            phx-click={JS.toggle(to: "#time-tracker-activities-dropdown")}
           >
             <.icon name="hero-play-circle-solid" class="w-5 h-5" />
             <%= gettext("Start Timer") %>
           </button>
 
           <div
-            id="activity-dropdown"
+            id="time-tracker-activities-dropdown"
             class="hidden absolute right-0 mt-1 w-fit max-w-56 h-fit max-h-56 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
-            phx-click-away={JS.hide(to: "#activity-dropdown")}
+            phx-click-away={JS.hide(to: "#time-tracker-activities-dropdown")}
             phx-hook="HideOnNavigate"
           >
             <%= if Enum.empty?(@activities) do %>
@@ -62,7 +62,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                 <%= for activity <- @activities do %>
                   <button
                     phx-click="select_activity"
-                    phx-value-activity-id={activity.id}
+                    phx-value-activity_id={activity.id}
                     class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     role="menuitem"
                   >
@@ -133,7 +133,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
      socket
      |> assign(:current_organisation, organisation)
      |> assign(:current_user, current_user)
-     |> maybe_assign_current_activity_and_list_activities()}
+     |> maybe_assign_activities()}
   end
 
   def handle_info({:event_started, activity}, socket) do
@@ -219,23 +219,24 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     :ok
   end
 
-  defp maybe_assign_current_activity_and_list_activities(socket) do
-    load_more_token = socket.assigns.load_more_activities_token
-    opts = build_opts(socket, load_more_token)
+  defp maybe_assign_activities(socket) do
+    opts = build_opts(socket)
 
-    {:ok, %{results: activities}} = do_list_activities(opts)
+    {:ok, %{results: activities}} = Activity.list_cursor_paginated(opts)
 
     socket
     |> assign_activities_and_token(activities)
     |> assign_current_activity(activities)
   end
 
-  defp build_opts(socket, load_more_token) do
+  defp build_opts(socket) do
     base_opts = [
       actor: socket.assigns.current_user,
       tenant: socket.assigns.current_organisation,
       load: [:events]
     ]
+
+    load_more_token = socket.assigns.load_more_activities_token
 
     if load_more_token do
       Keyword.put(base_opts, :page, after: load_more_token)
@@ -253,10 +254,6 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     socket
     |> assign(:activities, activities)
     |> assign(:load_more_activities_token, load_more_activities_token)
-  end
-
-  defp do_list_activities(opts) do
-    Activity.list_cursor_paginated(opts)
   end
 
   defp assign_current_activity(socket, activities) do
@@ -292,7 +289,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   @impl true
-  def handle_event("select_activity", %{"activity-id" => activity_id}, socket) do
+  def handle_event("select_activity", %{"activity_id" => activity_id}, socket) do
     opts = [actor: socket.assigns.current_user, tenant: socket.assigns.current_organisation]
 
     if Ash.can?({Event, :create}, opts) do
@@ -320,7 +317,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   def handle_event("load-more-activities", _params, socket) do
-    {:noreply, maybe_assign_current_activity_and_list_activities(socket)}
+    {:noreply, maybe_assign_activities(socket)}
   end
 
   defp create_event(activity_id, opts) do
