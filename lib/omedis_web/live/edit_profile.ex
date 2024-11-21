@@ -1,8 +1,7 @@
 defmodule OmedisWeb.EditProfileLive do
-  alias AshPhoenix.Form
-  alias Omedis.Accounts.Organisation
-
   use OmedisWeb, :live_view
+
+  alias AshPhoenix.Form
 
   @supported_languages [
     {"English", "en"},
@@ -14,11 +13,9 @@ defmodule OmedisWeb.EditProfileLive do
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     Gettext.put_locale(language)
-    organisations_for_an_owner = organisations_for_an_owner(socket.assigns.current_user)
 
     socket =
       socket
-      |> assign(:organisations_for_an_owner, organisations_for_an_owner)
       |> assign(:language, language)
       |> assign(:supported_languages, @supported_languages)
       |> assign(:errors, [])
@@ -87,20 +84,7 @@ defmodule OmedisWeb.EditProfileLive do
     Enum.map(field.errors, &translate_error(&1))
   end
 
-  defp organisations_for_an_owner(owner) do
-    case Organisation.by_owner_id(%{owner_id: owner.id}, actor: owner) do
-      {:ok, organisations} ->
-        Enum.map(organisations, fn organisation ->
-          {organisation.name, organisation.id}
-        end)
-
-      _ ->
-        []
-    end
-  end
-
   @impl true
-
   def render(assigns) do
     ~H"""
     <.side_and_topbar
@@ -229,34 +213,6 @@ defmodule OmedisWeb.EditProfileLive do
                     <.error :for={msg <- get_field_errors(f[:birthdate], :birthdate)}>
                       <%= with_locale(@language, fn ->
                         dgettext("user_profile", "Birthdate %{msg}", msg: msg)
-                      end) %>
-                    </.error>
-                  </div>
-                </div>
-
-                <div class="sm:col-span-3">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= with_locale(@language, fn ->
-                      dgettext("user_profile", "Current Organisation")
-                    end) %>
-                  </label>
-
-                  <div phx-feedback-for={f[:current_organisation_id].name} class="mt-2">
-                    <%= select(f, :current_organisation_id, @organisations_for_an_owner,
-                      prompt:
-                        with_locale(@language, fn ->
-                          dgettext("user_profile", "Select Organisation")
-                        end),
-                      class:
-                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      value: f[:current_organisation_id].value,
-                      "phx-debounce": "blur"
-                    ) %>
-                    <.error :for={
-                      msg <- get_field_errors(f[:current_organisation_id], :current_organisation_id)
-                    }>
-                      <%= with_locale(@language, fn ->
-                        dgettext("user_profile", "Current Organisation %{msg}", msg: msg)
                       end) %>
                     </.error>
                   </div>
