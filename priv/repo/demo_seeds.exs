@@ -72,7 +72,7 @@ end
     organisation_1,
     [
       %{group_id: group_1.id, user_id: user_1.id},
-      %{group_id: group_2.id, user_id: user_2.id}
+      %{group_id: group_2.id, user_id: user_1.id}
     ],
     :unique_group_membership
   )
@@ -105,7 +105,7 @@ end
 %{records: _records, status: :success} =
   bulk_create.(
     Accounts.AccessRight,
-    organisation_2,
+    organisation_1,
     [
       %{
         group_id: group_2.id,
@@ -113,6 +113,39 @@ end
         read: true,
         write: true
       },
+      %{
+        group_id: group_1.id,
+        resource_name: "Group",
+        read: true,
+        write: true
+      },
+      %{
+        group_id: group_2.id,
+        resource_name: "Activity",
+        read: true,
+        write: true
+      },
+      %{
+        group_id: group_1.id,
+        resource_name: "Activity",
+        read: true,
+        write: true
+      },
+      %{
+        group_id: group_2.id,
+        resource_name: "Event",
+        read: true,
+        write: true
+      }
+    ],
+    nil
+  )
+
+%{records: _records, status: :success} =
+  bulk_create.(
+    Accounts.AccessRight,
+    organisation_2,
+    [
       %{
         group_id: group_3.id,
         read: true,
@@ -122,7 +155,7 @@ end
     nil
   )
 
-%{records: _records, status: :success} =
+%{records: [project_1, project_2], status: :success} =
   bulk_create.(
     Accounts.Project,
     organisation_1,
@@ -150,6 +183,29 @@ end
       }
     ],
     :unique_name
+  )
+
+%{records: _records, status: :success} =
+  bulk_create.(
+    Accounts.Activity,
+    organisation_1,
+    [
+      %{
+        color_code: "#1f77b4",
+        group_id: group_1.id,
+        is_default: true,
+        project_id: project_1.id,
+        name: "Demo Activity 1"
+      },
+      %{
+        color_code: "#ff7f0e",
+        group_id: group_2.id,
+        is_default: false,
+        project_id: project_2.id,
+        name: "Demo Activity 2"
+      }
+    ],
+    :unique_slug
   )
 
 %{records: [invitation_1 | _rest], status: :success} =
