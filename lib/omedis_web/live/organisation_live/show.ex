@@ -2,7 +2,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Organisation
 
-  on_mount {OmedisWeb.LiveHelpers, :assign_current_organisation}
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
   @impl true
   def render(assigns) do

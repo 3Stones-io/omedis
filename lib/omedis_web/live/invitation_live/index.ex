@@ -7,7 +7,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
-  on_mount {OmedisWeb.LiveHelpers, :assign_current_organisation}
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true

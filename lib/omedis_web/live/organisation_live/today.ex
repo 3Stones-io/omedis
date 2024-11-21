@@ -6,7 +6,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
 
-  on_mount {OmedisWeb.LiveHelpers, :assign_current_organisation}
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
   @impl true
   def render(assigns) do

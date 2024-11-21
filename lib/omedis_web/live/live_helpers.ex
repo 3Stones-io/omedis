@@ -23,13 +23,13 @@ defmodule OmedisWeb.LiveHelpers do
     {:cont, assign(socket, :language, language)}
   end
 
-  def on_mount(:assign_current_organisation, _params, session, socket) do
+  def on_mount(:assign_and_broadcast_current_organisation, _params, session, socket) do
     pubsub_topics_unique_id = session["pubsub_topics_unique_id"]
 
     maybe_updated_socket =
       socket
       |> attach_hook(
-        :handle_assign_current_organisation,
+        :handle_assign_and_broadcast_current_organisation,
         :handle_params,
         fn
           %{"slug" => slug} = _params, _uri, socket ->
