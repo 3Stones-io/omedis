@@ -48,7 +48,9 @@ Welcome to the Omedis project! Before starting, please check if your question is
    git merge main
    ```
 
-   ⚠️ We've had unnecessary merge conflicts in the past caused by bad habits. Make sure to always keep your branches in sync with `main` before merging.
+   > [!WARNING]
+   > We've had unnecessary merge conflicts in the past caused by bad habits.  
+   > Make sure to always keep your branches in sync with `main` before merging.
 
 ## Working on Issues
 
