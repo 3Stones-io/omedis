@@ -369,7 +369,7 @@ defmodule OmedisWeb.TimeTracking do
       :io_lib.format("~2..0B:~2..0B", [hours, remaining_minutes])
       |> IO.iodata_to_binary()
 
-    "(#{formatted_time})"
+    "#{formatted_time}"
   end
 
   def select_for_groups_and_project(assigns) do

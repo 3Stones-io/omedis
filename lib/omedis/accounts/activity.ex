@@ -33,7 +33,6 @@ defmodule Omedis.Accounts.Activity do
     define :update
     define :update_position
     define :by_id, get_by: [:id], action: :read
-    define :list_cursor_paginated
     define :list_paginated
     define :by_group_id_and_project_id
   end
@@ -110,13 +109,6 @@ defmodule Omedis.Accounts.Activity do
       prepare build(load: [:events], sort: [position: :asc])
 
       filter expr(group_id == ^arg(:group_id))
-    end
-
-    read :list_cursor_paginated do
-      pagination keyset?: true,
-                 default_limit: Application.compile_env(:omedis, :pagination_default_limit)
-
-      prepare build(load: [:events], sort: [position: :asc])
     end
 
     read :by_group_id_and_project_id do
