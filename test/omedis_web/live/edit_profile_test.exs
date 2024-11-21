@@ -52,15 +52,33 @@ defmodule OmedisWeb.EditProfileTest do
 
   test "You can delete your own account", %{conn: conn} do
     {:ok, user} = create_user()
+    {:ok, _} = create_organisation(%{owner_id: user.id})
 
-    assert {:ok, index_live, html} =
+    assert {:ok, index_live, _html} =
              conn
              |> log_in_user(user)
              |> live(~p"/edit_profile")
 
-    assert index_live
+    assert {:error, {:redirect, %{to: url}}} =
+             index_live
+             |> element("#delete-account-#{user.id}")
+             |> render_click()
+
+    assert url == ~p"/"
+  end
+
+  test "unauthorised users cannot delete an account", %{conn: conn} do
+    {:ok, user} = create_user()
+    {:ok, _} = create_organisation(%{owner_id: user.id})
+    {:ok, unauthorised_user} = create_user()
+
+    assert {:ok, index_live, _html} =
+             conn
+             |> log_in_user(unauthorised_user)
+             |> live(~p"/edit_profile")
+
+    refute index_live
            |> element("#delete-account-#{user.id}")
-           |> render_click()
-           |> IO.inspect()
+           |> has_element?()
   end
 end

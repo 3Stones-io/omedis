@@ -88,14 +88,14 @@ defmodule OmedisWeb.EditProfileLive do
     case User.destroy(id, actor: socket.assigns.current_user) do
       :ok ->
         {:noreply,
-          socket
-          |> redirect(to: "/")
-          |> put_flash(
-            :info,
-            with_locale(socket.assigns.language, fn ->
-              dgettext("user_profile", "Account deleted successfully")
-            end)
-          )}
+         socket
+         |> redirect(to: "/")
+         |> put_flash(
+           :info,
+           with_locale(socket.assigns.language, fn ->
+             dgettext("user_profile", "Account deleted successfully")
+           end)
+         )}
 
       _error ->
         {:noreply,
