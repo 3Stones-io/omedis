@@ -252,7 +252,9 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         assert time_tracker_live_view
                |> element("#time-tracker-stop-event")
                |> has_element?()
+      end)
 
+      wait_until(fn ->
         # Stop activity
         time_tracker_live_view
         |> element("#time-tracker-stop-event")
@@ -260,18 +262,18 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
         html = render(time_tracker_live_view)
         assert html =~ "Start Timer"
-
-        # Verify event was stopped
-        assert {:ok, [event]} =
-                 Event.by_activity_today(
-                   %{activity_id: activity_1.id},
-                   actor: user,
-                   tenant: organisation
-                 )
-
-        assert event.activity_id == activity_1.id
-        refute is_nil(event.dtend)
       end)
+
+      # Verify event was stopped
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      refute is_nil(event.dtend)
     end
 
     test "maintains timer state on page reload", %{
@@ -312,18 +314,18 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         # Verify timer is still running
         refute html =~ "Start Timer"
         assert html =~ "animate-pulse"
-
-        # Verify event is still active
-        assert {:ok, [event]} =
-                 Event.by_activity_today(
-                   %{activity_id: activity_1.id},
-                   actor: user,
-                   tenant: organisation
-                 )
-
-        assert event.activity_id == activity_1.id
-        assert is_nil(event.dtend)
       end)
+
+      # Verify event is still active
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
     end
 
     test "unauthorized user cannot see time tracker", %{
