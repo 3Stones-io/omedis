@@ -12,8 +12,12 @@ defmodule Omedis.MixProject do
       aliases: aliases(),
       deps: deps(),
       preferred_cli_env: [
-        check_code: :test
-      ]
+        check_code: :test,
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.html": :test
+      ],
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -68,6 +72,7 @@ defmodule Omedis.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
+      {:excoveralls, "~> 0.18.3"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:faker, "~> 0.18"},
       {:bandit, "~> 1.5"},
@@ -104,9 +109,17 @@ defmodule Omedis.MixProject do
       check_code: [
         "format --check-formatted",
         "credo --strict",
-        "test --warnings-as-errors",
-        "check_snapshots"
+        &check_resource_snapshots/1,
+        "test --cover --warnings-as-errors"
       ]
     ]
+  end
+
+  defp check_resource_snapshots(_) do
+    {output, status} =
+      System.cmd("mix", ["ash_postgres.squash_snapshots", "--check"], stderr_to_stdout: true)
+
+    IO.write(output)
+    status
   end
 end
