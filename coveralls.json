@@ -1,0 +1,6 @@
+{
+  "coverage_options": {
+    "minimum_coverage": 83.6
+  },
+  "skip_files": ["lib/omedis_web/components/core_components.ex"]
+}

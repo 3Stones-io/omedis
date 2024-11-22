@@ -86,7 +86,7 @@ jobs:
         env:
           CI: true
           DISABLE_ML_FEATURES: true
-        run: mix test --warnings-as-errors
+        run: mix test --cover --warnings-as-errors
 
       - name: Run Credo
         run: mix credo --strict
