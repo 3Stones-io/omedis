@@ -104,7 +104,8 @@ defmodule Omedis.MixProject do
       check_code: [
         "format --check-formatted",
         "credo --strict",
-        "test --warnings-as-errors"
+        "test --warnings-as-errors",
+        "check_snapshots"
       ]
     ]
   end
