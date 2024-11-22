@@ -44,17 +44,32 @@ defmodule Omedis.FarmersTest do
       assert user.first_name == "Stefan"
     end
 
-    test "destroy/1 deletes a user" do
-      {:ok, user} =
-        create_user(%{email: "test@gmail.com"})
+    test "only the organisation owner can delete their account" do
+      {:ok, user} = create_user(%{email: "test@gmail.com"})
+      {:ok, _} = create_organisation(%{owner_id: user.id})
+      {:ok, _user_2} = create_user(%{email: "test2@gmail.com"})
 
       {:ok, users} = User.read()
       assert Enum.empty?(users) == false
 
-      assert :ok = User.destroy(user)
+      assert :ok = User.destroy(user, actor: user)
+
+      assert_raise Ash.Error.Invalid, fn ->
+        Ash.get!(User, user.id)
+      end
 
       {:ok, users} = User.read()
-      assert Enum.empty?(users) == true
+      assert length(users) == 1
+    end
+
+    test "unauthorised users cannot delete accounts" do
+      {:ok, user} = create_user(%{email: "test@gmail.com"})
+      {:ok, _} = create_organisation(%{owner_id: user.id})
+      {:ok, user2} = create_user(%{email: "test2@gmail.com"})
+
+      assert_raise Ash.Error.Forbidden, fn ->
+        User.destroy!(user, actor: user2)
+      end
     end
 
     test "by_id/1 returns a user given a valid id" do

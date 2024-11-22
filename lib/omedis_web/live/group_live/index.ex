@@ -2,11 +2,11 @@ defmodule OmedisWeb.GroupLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
+  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
 
   @impl true
   def render(assigns) do
@@ -143,13 +143,8 @@ defmodule OmedisWeb.GroupLive.Index do
   end
 
   @impl true
-  def mount(%{"slug" => slug}, _session, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-
-    {:ok,
-     socket
-     |> assign(:organisation, organisation)
-     |> stream(:groups, [])}
+  def mount(_params, _session, socket) do
+    {:ok, stream(socket, :groups, [])}
   end
 
   @impl true
