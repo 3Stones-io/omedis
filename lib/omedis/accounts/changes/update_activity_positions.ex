@@ -26,7 +26,7 @@ defmodule Omedis.Accounts.Changes.UpdateActivityPositions do
         |> Ash.Query.filter(group_id == ^group_id)
         |> Ash.count!(actor: actor, tenant: organisation)
 
-      move_activity_to_end_of_table(
+      shift_activity_position(
         activity_to_shift,
         max_position + 1,
         organisation,
@@ -36,7 +36,7 @@ defmodule Omedis.Accounts.Changes.UpdateActivityPositions do
       changeset
     end)
     |> Ash.Changeset.after_action(fn _changeset, result ->
-      move_activity_to_end_of_table(
+      shift_activity_position(
         activity_to_shift,
         old_position,
         organisation,
@@ -47,7 +47,7 @@ defmodule Omedis.Accounts.Changes.UpdateActivityPositions do
     end)
   end
 
-  defp move_activity_to_end_of_table(activity, new_position, organisation, actor) do
+  defp shift_activity_position(activity, new_position, organisation, actor) do
     Activity.update(
       activity,
       %{position: new_position},

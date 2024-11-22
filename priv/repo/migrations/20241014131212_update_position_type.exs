@@ -8,29 +8,15 @@ defmodule Omedis.Repo.Migrations.UpdatePositionType do
   use Ecto.Migration
 
   def up do
-    # Drop the existing index first
-    drop_if_exists index(:log_categories, [:position, :group_id],
-                     name: :log_categories_unique_position_index
-                   )
-
-    # Modify column with explicit USING clause
-    execute "ALTER TABLE log_categories ALTER COLUMN position TYPE bigint USING position::bigint"
-
-    # Recreate the index
-    create unique_index(:log_categories, [:position, :group_id],
-             name: :log_categories_unique_position_index
-           )
+    alter table(:log_categories) do
+      remove :position
+      add :position, :bigint
+    end
   end
 
   def down do
-    drop_if_exists index(:log_categories, [:position, :group_id],
-                     name: :log_categories_unique_position_index
-                   )
-
-    execute "ALTER TABLE log_categories ALTER COLUMN position TYPE varchar USING position::varchar"
-
-    create unique_index(:log_categories, [:position, :group_id],
-             name: :log_categories_unique_position_index
-           )
+    alter table(:log_categories) do
+      add :position, :string
+    end
   end
 end

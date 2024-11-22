@@ -45,10 +45,6 @@ defmodule Omedis.Repo.Migrations.RenameLogCategories do
              name: "activities_unique_color_code_index"
            )
 
-    create unique_index(:activities, [:position, :group_id],
-             name: "activities_unique_position_index"
-           )
-
     create unique_index(:activities, [:slug, :group_id], name: "activities_unique_slug_index")
   end
 
@@ -94,10 +90,6 @@ defmodule Omedis.Repo.Migrations.RenameLogCategories do
     # Re-create original indices
     create unique_index(:log_categories, [:color_code, :group_id],
              name: "log_categories_unique_color_code_position_index"
-           )
-
-    create unique_index(:log_categories, [:position, :group_id],
-             name: "log_categories_unique_position_index"
            )
 
     create unique_index(:log_categories, [:slug, :group_id],
