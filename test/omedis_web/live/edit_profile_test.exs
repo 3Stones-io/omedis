@@ -65,6 +65,10 @@ defmodule OmedisWeb.EditProfileTest do
              |> render_click()
 
     assert url == ~p"/"
+
+    # Verify user is logged out by attempting to access a protected route
+    assert {:error, {:redirect, %{to: "/login"}}} =
+             live(conn, ~p"/edit_profile")
   end
 
   test "unauthorised users cannot delete an account", %{conn: conn} do

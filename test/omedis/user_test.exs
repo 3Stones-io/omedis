@@ -44,7 +44,7 @@ defmodule Omedis.FarmersTest do
       assert user.first_name == "Stefan"
     end
 
-    test "authorised users can archive their own account" do
+    test "only the organisation owner can delete their account" do
       {:ok, user} = create_user(%{email: "test@gmail.com"})
       {:ok, _} = create_organisation(%{owner_id: user.id})
       {:ok, _user_2} = create_user(%{email: "test2@gmail.com"})
@@ -62,7 +62,7 @@ defmodule Omedis.FarmersTest do
       assert length(users) == 1
     end
 
-    test "unauthorised users cannot archive their own accounts" do
+    test "unauthorised users cannot delete accounts" do
       {:ok, user} = create_user(%{email: "test@gmail.com"})
       {:ok, _} = create_organisation(%{owner_id: user.id})
       {:ok, user2} = create_user(%{email: "test2@gmail.com"})
