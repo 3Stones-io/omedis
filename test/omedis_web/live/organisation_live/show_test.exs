@@ -209,20 +209,17 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
         refute html =~ "Start Timer"
         assert html =~ "animate-pulse"
+
+        assert {:ok, [event]} =
+                 Event.by_activity_today(
+                   %{activity_id: activity_1.id},
+                   actor: user,
+                   tenant: organisation
+                 )
+
+        assert event.activity_id == activity_1.id
+        assert is_nil(event.dtend)
       end)
-
-      # Wait for event to be created.
-      Process.sleep(1000)
-
-      assert {:ok, [event]} =
-               Event.by_activity_today(
-                 %{activity_id: activity_1.id},
-                 actor: user,
-                 tenant: organisation
-               )
-
-      assert event.activity_id == activity_1.id
-      assert is_nil(event.dtend)
     end
 
     test "stops timer when clicking active activity", %{
@@ -251,32 +248,30 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
         refute html =~ "Start Timer"
         assert html =~ "animate-pulse"
-      end)
 
-      # Wait for event to be created.
-      Process.sleep(1000)
+        assert time_tracker_live_view
+               |> element("#time-tracker-stop-event")
+               |> has_element?()
 
-      # Stop activity
-      time_tracker_live_view
-      |> element("#time-tracker-stop-event")
-      |> render_click()
+        # Stop activity
+        time_tracker_live_view
+        |> element("#time-tracker-stop-event")
+        |> render_click()
 
-      wait_until(fn ->
         html = render(time_tracker_live_view)
-
         assert html =~ "Start Timer"
+
+        # Verify event was stopped
+        assert {:ok, [event]} =
+                 Event.by_activity_today(
+                   %{activity_id: activity_1.id},
+                   actor: user,
+                   tenant: organisation
+                 )
+
+        assert event.activity_id == activity_1.id
+        refute is_nil(event.dtend)
       end)
-
-      # Verify event was stopped
-      assert {:ok, [event]} =
-               Event.by_activity_today(
-                 %{activity_id: activity_1.id},
-                 actor: user,
-                 tenant: organisation
-               )
-
-      assert event.activity_id == activity_1.id
-      refute is_nil(event.dtend)
     end
 
     test "maintains timer state on page reload", %{
@@ -302,33 +297,33 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       wait_until(fn ->
         html = render(time_tracker_live_view)
+
+        # Verify timer is running
         refute html =~ "Start Timer"
         assert html =~ "animate-pulse"
       end)
 
-      # Wait for event to be created.
-      Process.sleep(1000)
-
-      # Simulate page reload by mounting a new live view
+      # Simulate page reload
       {:ok, new_view, _html} = live(conn, ~p"/organisations/#{organisation}")
 
-      # Verify timer is still running
       wait_until(fn ->
         html = render(new_view)
+
+        # Verify timer is still running
         refute html =~ "Start Timer"
         assert html =~ "animate-pulse"
+
+        # Verify event is still active
+        assert {:ok, [event]} =
+                 Event.by_activity_today(
+                   %{activity_id: activity_1.id},
+                   actor: user,
+                   tenant: organisation
+                 )
+
+        assert event.activity_id == activity_1.id
+        assert is_nil(event.dtend)
       end)
-
-      # Verify event is still active
-      assert {:ok, [event]} =
-               Event.by_activity_today(
-                 %{activity_id: activity_1.id},
-                 actor: user,
-                 tenant: organisation
-               )
-
-      assert event.activity_id == activity_1.id
-      assert is_nil(event.dtend)
     end
 
     test "unauthorized user cannot see time tracker", %{
@@ -354,7 +349,10 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         |> live(~p"/organisations/#{organisation}")
 
       refute html =~ "Start Timer"
-      refute view |> element("button", "Start Timer") |> has_element?()
+
+      refute view
+             |> element("button", "Start Timer")
+             |> has_element?()
     end
   end
 
