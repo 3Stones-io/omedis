@@ -72,7 +72,7 @@ end
     organisation_1,
     [
       %{group_id: group_1.id, user_id: user_1.id},
-      %{group_id: group_2.id, user_id: user_1.id}
+      %{group_id: group_2.id, user_id: user_2.id}
     ],
     :unique_group_membership
   )
@@ -136,6 +136,20 @@ end
         resource_name: "Event",
         read: true,
         write: true
+      }
+    ],
+    nil
+  )
+
+%{records: _records, status: :success} =
+  bulk_create.(
+    Accounts.AccessRight,
+    organisation_1,
+    [
+      %{
+        group_id: group_1.id,
+        read: true,
+        resource_name: "Organisation"
       }
     ],
     nil
