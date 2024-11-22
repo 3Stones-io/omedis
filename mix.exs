@@ -12,8 +12,12 @@ defmodule Omedis.MixProject do
       aliases: aliases(),
       deps: deps(),
       preferred_cli_env: [
-        check_code: :test
-      ]
+        check_code: :test,
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.html": :test
+      ],
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -68,12 +72,14 @@ defmodule Omedis.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
+      {:excoveralls, "~> 0.18.3"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:faker, "~> 0.18"},
       {:bandit, "~> 1.5"},
       {:ash_phoenix, "~> 2.1.2"},
       {:slugify, "~> 1.3"},
-      {:oban, "~> 2.17"}
+      {:oban, "~> 2.17"},
+      {:ash_archival, "~> 1.0.4"}
     ]
   end
 
@@ -104,7 +110,7 @@ defmodule Omedis.MixProject do
       check_code: [
         "format --check-formatted",
         "credo --strict",
-        "test --warnings-as-errors"
+        "test --cover --warnings-as-errors"
       ]
     ]
   end

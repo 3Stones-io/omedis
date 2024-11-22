@@ -1,8 +1,8 @@
 defmodule OmedisWeb.EditProfileLive do
-  alias AshPhoenix.Form
-  alias Omedis.Accounts.Organisation
-
   use OmedisWeb, :live_view
+
+  alias AshPhoenix.Form
+  alias Omedis.Accounts.User
 
   @supported_languages [
     {"English", "en"},
@@ -14,11 +14,9 @@ defmodule OmedisWeb.EditProfileLive do
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     Gettext.put_locale(language)
-    organisations_for_an_owner = organisations_for_an_owner(socket.assigns.current_user)
 
     socket =
       socket
-      |> assign(:organisations_for_an_owner, organisations_for_an_owner)
       |> assign(:language, language)
       |> assign(:supported_languages, @supported_languages)
       |> assign(:errors, [])
@@ -83,24 +81,36 @@ defmodule OmedisWeb.EditProfileLive do
     end
   end
 
+  def handle_event("delete_account", %{"id" => id}, socket) do
+    case User.destroy(id, actor: socket.assigns.current_user) do
+      :ok ->
+        {:noreply,
+         socket
+         |> redirect(to: "/")
+         |> put_flash(
+           :info,
+           with_locale(socket.assigns.language, fn ->
+             dgettext("user_profile", "Account deleted successfully")
+           end)
+         )}
+
+      _error ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           with_locale(socket.assigns.language, fn ->
+             dgettext("user_profile", "Failed to delete account! Please try again.")
+           end)
+         )}
+    end
+  end
+
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
   end
 
-  defp organisations_for_an_owner(owner) do
-    case Organisation.by_owner_id(%{owner_id: owner.id}, actor: owner) do
-      {:ok, organisations} ->
-        Enum.map(organisations, fn organisation ->
-          {organisation.name, organisation.id}
-        end)
-
-      _ ->
-        []
-    end
-  end
-
   @impl true
-
   def render(assigns) do
     ~H"""
     <.side_and_topbar
@@ -118,7 +128,7 @@ defmodule OmedisWeb.EditProfileLive do
           phx-change="validate"
           phx-submit="submit"
         >
-          <div class="space-y-6">
+          <div class="space-y-4">
             <div class="border-b border-gray-900/10 pb-12">
               <h2 class="text-base font-semibold leading-7 text-gray-900">
                 <%= with_locale(@language, fn ->
@@ -237,34 +247,6 @@ defmodule OmedisWeb.EditProfileLive do
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
                     <%= with_locale(@language, fn ->
-                      dgettext("user_profile", "Current Organisation")
-                    end) %>
-                  </label>
-
-                  <div phx-feedback-for={f[:current_organisation_id].name} class="mt-2">
-                    <%= select(f, :current_organisation_id, @organisations_for_an_owner,
-                      prompt:
-                        with_locale(@language, fn ->
-                          dgettext("user_profile", "Select Organisation")
-                        end),
-                      class:
-                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      value: f[:current_organisation_id].value,
-                      "phx-debounce": "blur"
-                    ) %>
-                    <.error :for={
-                      msg <- get_field_errors(f[:current_organisation_id], :current_organisation_id)
-                    }>
-                      <%= with_locale(@language, fn ->
-                        dgettext("user_profile", "Current Organisation %{msg}", msg: msg)
-                      end) %>
-                    </.error>
-                  </div>
-                </div>
-
-                <div class="sm:col-span-3">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= with_locale(@language, fn ->
                       dgettext("user_profile", "Language")
                     end) %>
                   </label>
@@ -285,25 +267,46 @@ defmodule OmedisWeb.EditProfileLive do
                       end) %>
                     </.error>
                   </div>
+
+                  <div class="mt-6 flex items-center justify-end gap-x-6">
+                    <%= submit(
+                      with_locale(@language, fn ->
+                        dgettext("user_profile", "Save Profile")
+                      end),
+                      phx_disable_with:
+                        with_locale(@language, fn ->
+                          dgettext("user_profile", "Saving...")
+                        end),
+                      class:
+                        "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    ) %>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div class="mt-6 flex items-center justify-end gap-x-6">
-              <%= submit(
-                with_locale(@language, fn ->
-                  dgettext("user_profile", "Save Profile")
-                end),
-                phx_disable_with:
-                  with_locale(@language, fn ->
-                    dgettext("user_profile", "Saving...")
-                  end),
-                class:
-                  "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              ) %>
-            </div>
           </div>
         </.form>
+
+        <div class="mt-6 flex items-center justify-end gap-x-6">
+          <.link
+            :if={Ash.can?({@current_user, :destroy}, @current_user)}
+            id={"delete-account-#{@current_user.id}"}
+            phx-click={JS.push("delete_account", value: %{id: @current_user.id})}
+            data-confirm={
+              with_locale(@language, fn ->
+                dgettext(
+                  "user_profile",
+                  "Are you sure you want to delete your account?"
+                )
+              end)
+            }
+            class="bg-red-600 hover:bg-red-900 text-white px-3 py-2 rounded-md"
+          >
+            <%= with_locale(@language, fn ->
+              dgettext("user_profile", "Delete Account")
+            end) %>
+          </.link>
+        </div>
       </div>
     </.side_and_topbar>
     """
