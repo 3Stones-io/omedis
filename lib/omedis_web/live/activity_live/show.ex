@@ -5,6 +5,8 @@ defmodule OmedisWeb.ActivityLive.Show do
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
 
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -130,8 +132,8 @@ defmodule OmedisWeb.ActivityLive.Show do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug}, _, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+  def handle_params(%{"id" => id, "group_slug" => group_slug}, _, socket) do
+    organisation = socket.assigns.organisation
     group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: organisation)
     groups = Ash.read!(Group, actor: socket.assigns.current_user, tenant: organisation)
     activity = Activity.by_id!(id, actor: socket.assigns.current_user, tenant: organisation)
@@ -152,7 +154,6 @@ defmodule OmedisWeb.ActivityLive.Show do
      |> assign(:projects, projects)
      |> assign(:group, group)
      |> assign(:groups, groups)
-     |> assign(:organisation, organisation)
      |> assign(:is_custom_color, true)
      |> assign(:color_code, activity.color_code)
      |> assign(:next_position, next_position)

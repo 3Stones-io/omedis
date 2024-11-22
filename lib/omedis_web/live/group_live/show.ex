@@ -1,7 +1,8 @@
 defmodule OmedisWeb.GroupLive.Show do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.Organisation
+
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
   @impl true
   def render(assigns) do
@@ -85,16 +86,16 @@ defmodule OmedisWeb.GroupLive.Show do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "group_slug" => group_slug}, _, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-
+  def handle_params(%{"group_slug" => group_slug}, _, socket) do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
-     |> assign(:organisation, organisation)
      |> assign(
        :group,
-       Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: organisation)
+       Group.by_slug!(group_slug,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.organisation
+       )
      )}
   end
 

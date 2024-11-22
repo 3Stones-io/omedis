@@ -1,6 +1,5 @@
 defmodule OmedisWeb.OrganisationLive.Show do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Organisation
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
@@ -323,13 +322,8 @@ defmodule OmedisWeb.OrganisationLive.Show do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug}, _, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-
-    {:noreply,
-     socket
-     |> assign(:organisation, organisation)
-     |> apply_action(socket.assigns.live_action)}
+  def handle_params(_params, _, socket) do
+    {:noreply, apply_action(socket, socket.assigns.live_action)}
   end
 
   defp apply_action(socket, :show) do

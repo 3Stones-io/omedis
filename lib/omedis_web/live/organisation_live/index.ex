@@ -180,18 +180,17 @@ defmodule OmedisWeb.OrganisationLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"slug" => slug}) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+  defp apply_action(socket, :edit, _params) do
+    organisation = socket.assigns.organisation
 
     if Ash.can?({organisation, :update}, socket.assigns.current_user) do
-      socket
-      |> assign(
+      assign(
+        socket,
         :page_title,
         with_locale(socket.assigns.language, fn ->
           dgettext("organisation", "Edit Organisation")
         end)
       )
-      |> assign(:organisation, organisation)
     else
       socket
       |> put_flash(

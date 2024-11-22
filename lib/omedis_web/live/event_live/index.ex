@@ -2,7 +2,6 @@ defmodule OmedisWeb.EventLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Event
-  alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -86,19 +85,16 @@ defmodule OmedisWeb.EventLive.Index do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-
+  def handle_params(%{"id" => id} = params, _url, socket) do
     {:ok, activity} =
       id
-      |> Activity.by_id!(actor: socket.assigns.current_user, tenant: organisation)
+      |> Activity.by_id!(actor: socket.assigns.current_user, tenant: socket.assigns.organisation)
       |> Ash.load(:group, authorize?: false)
 
     {:noreply,
      socket
      |> assign(:activity, activity)
      |> assign(:group, activity.group)
-     |> assign(:organisation, organisation)
      |> apply_action(socket.assigns.live_action, params)}
   end
 

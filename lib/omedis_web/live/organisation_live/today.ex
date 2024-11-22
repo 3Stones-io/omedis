@@ -3,7 +3,6 @@ defmodule OmedisWeb.OrganisationLive.Today do
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Event
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
@@ -62,9 +61,9 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   @impl true
-  def handle_params(%{"group_id" => id, "project_id" => project_id, "slug" => slug}, _, socket) do
+  def handle_params(%{"group_id" => id, "project_id" => project_id}, _, socket) do
     current_user = socket.assigns.current_user
-    organisation = Organisation.by_slug!(slug, actor: current_user)
+    organisation = socket.assigns.organisation
     group = Group.by_id!(id, tenant: organisation, actor: current_user)
     project = Project.by_id!(project_id, tenant: organisation, actor: current_user)
 
@@ -102,7 +101,6 @@ defmodule OmedisWeb.OrganisationLive.Today do
      socket
      |> assign(:current_time, current_time)
      |> assign(:page_title, "Today")
-     |> assign(:organisation, organisation)
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
      |> assign(:groups, groups_for_an_organisation(organisation, current_user))
@@ -115,8 +113,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug}, _, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+  def handle_params(_params, _, socket) do
+    organisation = socket.assigns.organisation
     group = latest_group_for_an_organisation(organisation, socket.assigns.current_user)
     project = latest_project_for_an_organisation(organisation, socket.assigns.current_user)
 

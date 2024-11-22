@@ -168,32 +168,16 @@ defmodule OmedisWeb.ActivityLive.Index do
   end
 
   def mount(
-        %{"slug" => slug, "group_slug" => group_slug},
+        %{"slug" => _slug, "group_slug" => _group_slug},
         %{"language" => language} = _session,
         socket
       ) do
     if connected?(socket),
       do: Phoenix.PubSub.subscribe(Omedis.PubSub, "activity_positions_updated")
 
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-    group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: organisation)
-
     {:ok,
      socket
      |> assign(:language, language)
-     |> assign(:organisation, organisation)
-     |> assign(
-       :groups,
-       Ash.read!(Group, actor: socket.assigns.current_user, tenant: organisation)
-     )
-     |> assign(
-       :projects,
-       Project.by_organisation_id!(%{organisation_id: organisation.id},
-         actor: socket.assigns.current_user,
-         tenant: organisation
-       )
-     )
-     |> assign(:group, group)
      |> assign(:is_custom_color, false)
      |> stream(:activities, [])}
   end
@@ -214,9 +198,23 @@ defmodule OmedisWeb.ActivityLive.Index do
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
+  def handle_params(%{"group_slug" => group_slug} = params, _url, socket) do
+    actor = socket.assigns.current_user
+    organisation = socket.assigns.organisation
+    group = Group.by_slug!(group_slug, actor: actor, tenant: organisation)
+    groups = Ash.read!(Group, actor: actor, tenant: organisation)
+
+    projects =
+      Project.by_organisation_id!(%{organisation_id: organisation.id},
+        actor: actor,
+        tenant: organisation
+      )
+
     {:noreply,
      socket
+     |> assign(:group, group)
+     |> assign(:groups, groups)
+     |> assign(:projects, projects)
      |> apply_action(socket.assigns.live_action, params)}
   end
 
