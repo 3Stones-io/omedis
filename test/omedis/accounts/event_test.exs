@@ -822,16 +822,23 @@ defmodule Omedis.EventTest do
 
       {:ok, [event_1_from_db, event_2_from_db]} = Event.read(actor: user, tenant: organisation)
 
-      date_time_now = DateTime.utc_now() |> DateTime.truncate(:second)
-
       assert event_1_from_db.id == event_1.id
       assert event_2_from_db.id == event_2.id
       assert event_1_from_db.uid == event_1.id
       assert event_2_from_db.uid == event_2.id
-      assert DateTime.truncate(event_1_from_db.dtstamp, :second) == date_time_now
-      assert DateTime.truncate(event_2_from_db.dtstamp, :second) == date_time_now
       assert event_1_from_db.duration_minutes == 60
       assert event_2_from_db.duration_minutes == nil
+
+      date_time_now = DateTime.utc_now()
+
+      # Allow for small time differences by checking if timestamps are within 1 second
+      assert_in_delta DateTime.to_unix(event_1_from_db.dtstamp),
+                      DateTime.to_unix(date_time_now),
+                      1
+
+      assert_in_delta DateTime.to_unix(event_2_from_db.dtstamp),
+                      DateTime.to_unix(date_time_now),
+                      1
     end
 
     test "authorized user can read all events", %{
