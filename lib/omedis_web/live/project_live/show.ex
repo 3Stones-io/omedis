@@ -3,6 +3,8 @@ defmodule OmedisWeb.ProjectLive.Show do
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
 
+  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -99,10 +101,9 @@ defmodule OmedisWeb.ProjectLive.Show do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "id" => id}, _, socket) do
+  def handle_params(%{"id" => id}, _, socket) do
     actor = socket.assigns.current_user
-    organisation = Organisation.by_slug!(slug, actor: actor)
-    project = Project.by_id!(id, actor: actor, tenant: organisation)
+    project = Project.by_id!(id, actor: actor, tenant: socket.assigns.organisation)
 
     {:noreply,
      socket
@@ -110,7 +111,6 @@ defmodule OmedisWeb.ProjectLive.Show do
      |> assign(:project, project)
      |> assign(:next_position, project.position)
      |> assign(:organisations, Ash.read!(Organisation, actor: actor))
-     |> assign(:organisation, organisation)
      |> maybe_check_and_enforce_edit_access(socket.assigns.live_action)}
   end
 
