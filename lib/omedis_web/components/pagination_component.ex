@@ -20,9 +20,7 @@ defmodule OmedisWeb.PaginationComponent do
             @current_page <= 1 && "cursor-not-allowed opacity-50"
           ]}
         >
-          <%= with_locale(@language, fn -> %>
-            <%= dgettext("pagination", "Previous") %>
-          <% end) %>
+          <%= dgettext("pagination", "Previous") %>
         </.page_link>
         <.page_link
           patch={@current_page != @total_pages && @resource_path <> "?page=#{@current_page + 1}"}
@@ -31,21 +29,15 @@ defmodule OmedisWeb.PaginationComponent do
             @current_page == @total_pages && "cursor-not-allowed opacity-50"
           ]}
         >
-          <%= with_locale(@language, fn -> %>
-            <%= dgettext("pagination", "Next") %>
-          <% end) %>
+          <%= dgettext("pagination", "Next") %>
         </.page_link>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <p class="text-sm text-gray-700">
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("pagination", "Showing page") %>
-            <% end) %>
+            <%= dgettext("pagination", "Showing page") %>
             <span class="font-medium text-gray-900"><%= @current_page %></span>
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("pagination", "of") %>
-            <% end) %>
+            <%= dgettext("pagination", "of") %>
             <span class="font-medium text-gray-900"><%= @total_pages %></span>
           </p>
         </div>
@@ -59,9 +51,7 @@ defmodule OmedisWeb.PaginationComponent do
               ]}
             >
               <span class="sr-only">
-                <%= with_locale(@language, fn -> %>
-                  <%= dgettext("pagination", "Previous") %>
-                <% end) %>
+                <%= dgettext("pagination", "Previous") %>
               </span>
 
               <svg
@@ -106,9 +96,7 @@ defmodule OmedisWeb.PaginationComponent do
               ]}
             >
               <span class="sr-only">
-                <%= with_locale(@language, fn -> %>
-                  <%= dgettext("pagination", "Next") %>
-                <% end) %>
+                <%= dgettext("pagination", "Next") %>
               </span>
               <svg
                 class="h-5 w-5"

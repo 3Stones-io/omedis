@@ -67,7 +67,7 @@ When developing new features or updating static content in the application, foll
 For any static text added to your templates or views, wrap it with the `with_locale/2` function to ensure it can be translated based on the user's language preference. The syntax is as follows:
 
 ```elixir
-with_locale(@language, fn -> gettext("Your New Text Here") end)
+dgettext("Context", "Your New Text Here")
 ```
 
 Make sure that every piece of new static text is wrapped in this function to ensure proper localization.

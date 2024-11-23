@@ -4,10 +4,7 @@ defmodule OmedisWeb.GeneralComponents do
   """
   use OmedisWeb, :verified_routes
   use Phoenix.Component
-
   use Gettext, backend: OmedisWeb.Gettext
-
-  import Gettext, only: [with_locale: 2]
 
   alias Phoenix.LiveView.JS
 
@@ -505,17 +502,13 @@ defmodule OmedisWeb.GeneralComponents do
                         <%= @current_user.as_string %>
                       <% else %>
                         <.link navigate="/login" class="text-blue-500">
-                          <%= with_locale(@language, fn -> %>
-                            <%= dgettext("navigation", "Login") %>
-                          <% end) %>
+                          <%= dgettext("navigation", "Login") %>
                         </.link>
                         <span>
                           |
                         </span>
                         <.link navigate="/register" class="text-blue-500">
-                          <%= with_locale(@language, fn -> %>
-                            <%= dgettext("navigation", "Register") %>
-                          <% end) %>
+                          <%= dgettext("navigation", "Register") %>
                         </.link>
                       <% end %>
                     </span>
@@ -807,10 +800,10 @@ defmodule OmedisWeb.GeneralComponents do
     >
       <div :if={@current_user} class="flex  p-2 flex-col gap-2">
         <.link navigate="/edit_profile">
-          <%= with_locale(@language, fn -> dgettext("navigation", "Edit Profile") end) %>
+          <%= dgettext("navigation", "Edit Profile") %>
         </.link>
         <.link navigate="/auth/user/sign-out">
-          <%= with_locale(@language, fn -> dgettext("navigation", "Sign out") end) %>
+          <%= dgettext("navigation", "Sign out") %>
         </.link>
       </div>
 
@@ -867,7 +860,7 @@ defmodule OmedisWeb.GeneralComponents do
           d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
         />
       </svg>
-      <%= organisations_link_text(@organisations_count, @language) %>
+      <%= organisations_link_text(@organisations_count) %>
     </.link>
     """
   end
@@ -875,15 +868,10 @@ defmodule OmedisWeb.GeneralComponents do
   defp organisations_link_path(0), do: ~p"/organisations/new"
   defp organisations_link_path(_organisations_count), do: ~p"/organisations"
 
-  defp organisations_link_text(0, language),
-    do:
-      with_locale(language, fn ->
-        dgettext("navigation", "Create first organisation")
-      end)
+  defp organisations_link_text(0), do: dgettext("navigation", "Create first organisation")
 
-  defp organisations_link_text(organisations_count, language) do
-    "#{with_locale(language, fn -> dgettext("navigation", "Organisations") end)} (#{organisations_count})"
-  end
+  defp organisations_link_text(organisations_count),
+    do: "#{dgettext("navigation", "Organisations")} (#{organisations_count})"
 
   attr :class, :string, default: nil
   attr :color, :string, required: true

@@ -27,14 +27,9 @@ defmodule OmedisWeb.ProjectLive.Show do
         />
 
         <.header>
-          <%= with_locale(@language, fn -> dgettext("project", "Project") end) %>
+          <%= dgettext("project", "Project") %>
           <:subtitle>
-            <%= with_locale(@language, fn ->
-              dgettext(
-                "project",
-                "This is a project record from your database."
-              )
-            end) %>
+            <%= dgettext("project", "This is a project record from your database.") %>
           </:subtitle>
 
           <:actions>
@@ -43,26 +38,24 @@ defmodule OmedisWeb.ProjectLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
-                <%= with_locale(@language, fn ->
-                  dgettext("navigation", "Edit Project")
-                end) %>
+                <%= dgettext("navigation", "Edit Project") %>
               </.button>
             </.link>
           </:actions>
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> dgettext("project", "Name") end)}>
+          <:item title={dgettext("project", "Name")}>
             <%= @project.name %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> dgettext("project", "Position") end)}>
+          <:item title={dgettext("project", "Position")}>
             <%= @project.position %>
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/projects"}>
-          <%= with_locale(@language, fn -> dgettext("project", "Back to projects") end) %>
+          <%= dgettext("project", "Back to projects") %>
         </.back>
 
         <.modal
@@ -107,7 +100,7 @@ defmodule OmedisWeb.ProjectLive.Show do
 
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
+     |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:project, project)
      |> assign(:next_position, project.position)
      |> assign(:organisations, Ash.read!(Organisation, actor: actor))
@@ -128,21 +121,14 @@ defmodule OmedisWeb.ProjectLive.Show do
       |> push_patch(to: ~p"/organisations/#{organisation}/projects/#{socket.assigns.project.id}")
       |> put_flash(
         :error,
-        with_locale(socket.assigns.language, fn ->
-          dgettext(
-            "project",
-            "You are not authorized to access this page"
-          )
-        end)
+        dgettext("project", "You are not authorized to access this page")
       )
     end
   end
 
   defp maybe_check_and_enforce_edit_access(socket, _), do: socket
 
-  defp page_title(:show, language),
-    do: with_locale(language, fn -> dgettext("project", "Project") end)
+  defp page_title(:show), do: dgettext("project", "Project")
 
-  defp page_title(:edit, language),
-    do: with_locale(language, fn -> dgettext("project", "Edit Project") end)
+  defp page_title(:edit), do: dgettext("project", "Edit Project")
 end
