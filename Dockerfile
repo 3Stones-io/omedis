@@ -34,6 +34,10 @@ RUN mix local.hex --force && \
 # set build ENV
 ENV MIX_ENV="prod"
 
+# FIXME: Quick hack to fix building on Apple Silicon
+# https://github.com/wintermeyer/omedis/issues/385
+ENV ERL_AFLAGS="+JMsingle true"
+
 # install mix dependencies
 COPY mix.exs mix.lock ./
 RUN mix deps.get --only $MIX_ENV
