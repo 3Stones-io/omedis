@@ -21,6 +21,19 @@ You can log in on the UI with any of the above email addresses, with the passwor
 
 The demo seeds file can be found [here](priv/repo/demo_seeds.exs).
 
+# Docker
+
+Build and run the docker container with:
+```bash
+docker build . -t omedis
+docker run \
+  -e DATABASE_URL=postgresql://postgres:postgres@host.docker.internal/omedis_prod \
+  -e PHX_HOST=localhost \
+  -e SECRET_KEY_BASE=w/z9PINQc7cyGXo8B+vQHXxAi0EJ93W+Qg5ywPPUsBKapGI2ijVHvTEku3jgFtgX \
+  -p 4000:4000 \
+  omedis
+```
+
 # Developers
 
 Please use the Pull Request workflow to submit your changes. For a guide on how to create Pull Requests, check out [GitHub's tutorial on creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
