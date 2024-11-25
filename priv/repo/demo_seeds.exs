@@ -205,16 +205,12 @@ end
     organisation_1,
     [
       %{
-        color_code: "#1f77b4",
         group_id: group_1.id,
-        is_default: true,
         project_id: project_1.id,
         name: "Demo Activity 1"
       },
       %{
-        color_code: "#ff7f0e",
         group_id: group_2.id,
-        is_default: false,
         project_id: project_2.id,
         name: "Demo Activity 2"
       }
