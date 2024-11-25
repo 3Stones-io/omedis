@@ -4,19 +4,16 @@ defmodule OmedisWeb.InvitationLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Invitation
-  alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
+  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
 
   @impl true
-  def mount(%{"slug" => slug}, _session, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-
+  def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:organisation, organisation)
      |> assign(:sort_order, :desc)
      |> stream(:invitations, [])}
   end
@@ -70,9 +67,7 @@ defmodule OmedisWeb.InvitationLive.Index do
      socket
      |> put_flash(
        :info,
-       with_locale(socket.assigns.language, fn ->
-         dgettext("invitation", "Invitation deleted successfully")
-       end)
+       dgettext("invitation", "Invitation deleted successfully")
      )
      |> stream_delete(:invitations, invitation)}
   end
@@ -116,9 +111,7 @@ defmodule OmedisWeb.InvitationLive.Index do
         />
 
         <.header>
-          <%= with_locale(@language, fn ->
-            dgettext("invitation", "Listing Invitations")
-          end) %>
+          <%= dgettext("invitation", "Listing Invitations") %>
 
           <:actions>
             <.link
@@ -126,9 +119,7 @@ defmodule OmedisWeb.InvitationLive.Index do
               patch={~p"/organisations/#{@organisation}/invitations/new"}
             >
               <.button>
-                <%= with_locale(@language, fn -> %>
-                  <%= dgettext("invitation", "New Invitation") %>
-                <% end) %>
+                <%= dgettext("invitation", "New Invitation") %>
               </.button>
             </.link>
           </:actions>
@@ -153,39 +144,25 @@ defmodule OmedisWeb.InvitationLive.Index do
 
         <div class="overflow-x-auto">
           <.table id="invitations" rows={@streams.invitations}>
-            <:col
-              :let={{_id, invitation}}
-              label={with_locale(@language, fn -> dgettext("invitation", "Email") end)}
-            >
+            <:col :let={{_id, invitation}} label={dgettext("invitation", "Email")}>
               <%= invitation.email %>
             </:col>
 
-            <:col
-              :let={{_id, invitation}}
-              label={with_locale(@language, fn -> dgettext("invitation", "Status") end)}
-            >
+            <:col :let={{_id, invitation}} label={dgettext("invitation", "Status")}>
               <%= if invitation.user_id do %>
                 <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                  <%= with_locale(@language, fn ->
-                    dgettext("invitation", "Accepted")
-                  end) %>
+                  <%= dgettext("invitation", "Accepted") %>
                 </span>
               <% else %>
                 <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-600/20">
-                  <%= with_locale(@language, fn ->
-                    dgettext("invitation", "Pending")
-                  end) %>
+                  <%= dgettext("invitation", "Pending") %>
                 </span>
               <% end %>
             </:col>
 
             <:col
               :let={{_id, invitation}}
-              label={
-                with_locale(@language, fn ->
-                  dgettext("invitation", "Invited At")
-                end)
-              }
+              label={dgettext("invitation", "Invited At")}
               sort_by={(@sort_order == "asc" && "↓") || "↑"}
               col_click={
                 JS.push("sort_invitations",
@@ -198,14 +175,7 @@ defmodule OmedisWeb.InvitationLive.Index do
               <%= Calendar.strftime(invitation.inserted_at, "%Y-%m-%d %H:%M:%S") %>
             </:col>
 
-            <:col
-              :let={{_id, invitation}}
-              label={
-                with_locale(@language, fn ->
-                  dgettext("invitation", "Expires At")
-                end)
-              }
-            >
+            <:col :let={{_id, invitation}} label={dgettext("invitation", "Expires At")}>
               <%= Calendar.strftime(invitation.expires_at, "%Y-%m-%d %H:%M:%S") %>
             </:col>
 
@@ -217,18 +187,11 @@ defmodule OmedisWeb.InvitationLive.Index do
                   JS.push("delete_invitation", value: %{id: invitation.id}) |> hide("##{dom_id}")
                 }
                 data-confirm={
-                  with_locale(@language, fn ->
-                    dgettext(
-                      "invitation",
-                      "Are you sure you want to delete this invitation?"
-                    )
-                  end)
+                  dgettext("invitation", "Are you sure you want to delete this invitation?")
                 }
                 class="text-red-600 hover:text-red-900"
               >
-                <%= with_locale(@language, fn ->
-                  dgettext("invitation", "Delete")
-                end) %>
+                <%= dgettext("invitation", "Delete") %>
               </.link>
             </:action>
           </.table>

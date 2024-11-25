@@ -11,18 +11,18 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: lib/omedis_web/live/project_live/show.ex:63
+#: lib/omedis_web/live/project_live/show.ex:58
 #, elixir-autogen, elixir-format
 msgid "Back to projects"
 msgstr "Retour aux projets"
 
-#: lib/omedis_web/live/project_live/index.ex:84
+#: lib/omedis_web/live/project_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr "Modifier"
 
-#: lib/omedis_web/live/project_live/index.ex:223
-#: lib/omedis_web/live/project_live/show.ex:147
+#: lib/omedis_web/live/project_live/index.ex:200
+#: lib/omedis_web/live/project_live/show.ex:133
 #, elixir-autogen, elixir-format
 msgid "Edit Project"
 msgstr "Modifier le projet"
@@ -32,79 +32,79 @@ msgstr "Modifier le projet"
 msgid "Listing Projects"
 msgstr "Liste des projets"
 
-#: lib/omedis_web/live/project_live/form_component.ex:30
-#: lib/omedis_web/live/project_live/index.ex:61
-#: lib/omedis_web/live/project_live/show.ex:53
+#: lib/omedis_web/live/project_live/form_component.ex:25
+#: lib/omedis_web/live/project_live/index.ex:56
+#: lib/omedis_web/live/project_live/show.ex:48
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "Nom"
 
-#: lib/omedis_web/live/project_live/index.ex:205
+#: lib/omedis_web/live/project_live/index.ex:184
 #, elixir-autogen, elixir-format
 msgid "New Project"
 msgstr "Nouveau projet"
 
-#: lib/omedis_web/live/project_live/form_component.ex:38
+#: lib/omedis_web/live/project_live/form_component.ex:32
 #, elixir-autogen, elixir-format
 msgid "Organisation"
 msgstr "Organisation"
 
-#: lib/omedis_web/live/project_live/form_component.ex:108
+#: lib/omedis_web/live/project_live/form_component.ex:95
 #, elixir-autogen, elixir-format
 msgid "Please correct the errors below."
 msgstr "Veuillez corriger les erreurs ci-dessous."
 
-#: lib/omedis_web/live/project_live/form_component.ex:50
-#: lib/omedis_web/live/project_live/index.ex:68
-#: lib/omedis_web/live/project_live/show.ex:57
+#: lib/omedis_web/live/project_live/form_component.ex:44
+#: lib/omedis_web/live/project_live/index.ex:60
+#: lib/omedis_web/live/project_live/show.ex:52
 #, elixir-autogen, elixir-format
 msgid "Position"
 msgstr "Position"
 
-#: lib/omedis_web/live/project_live/show.ex:28
-#: lib/omedis_web/live/project_live/show.ex:144
+#: lib/omedis_web/live/project_live/show.ex:30
+#: lib/omedis_web/live/project_live/show.ex:131
 #, elixir-autogen, elixir-format
 msgid "Project"
 msgstr "Projet"
 
-#: lib/omedis_web/live/project_live/form_component.ex:94
+#: lib/omedis_web/live/project_live/form_component.ex:83
 #, elixir-autogen, elixir-format
 msgid "Project saved."
 msgstr "Projet enregistré."
 
-#: lib/omedis_web/live/project_live/index.ex:177
-#: lib/omedis_web/live/project_live/index.ex:240
+#: lib/omedis_web/live/project_live/index.ex:158
+#: lib/omedis_web/live/project_live/index.ex:215
 #, elixir-autogen, elixir-format
 msgid "Projects"
 msgstr "Projets"
 
-#: lib/omedis_web/live/project_live/form_component.ex:61
+#: lib/omedis_web/live/project_live/form_component.ex:52
 #, elixir-autogen, elixir-format
 msgid "Save Project"
 msgstr "Enregistrer le projet"
 
-#: lib/omedis_web/live/project_live/form_component.ex:58
+#: lib/omedis_web/live/project_live/form_component.ex:51
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Enregistrement..."
 
-#: lib/omedis_web/live/project_live/index.ex:76
+#: lib/omedis_web/live/project_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr "Afficher"
 
-#: lib/omedis_web/live/project_live/show.ex:31
+#: lib/omedis_web/live/project_live/show.ex:32
 #, elixir-autogen, elixir-format
 msgid "This is a project record from your database."
 msgstr "Ceci est un enregistrement de projet de votre base de données."
 
-#: lib/omedis_web/live/project_live/form_component.ex:12
+#: lib/omedis_web/live/project_live/form_component.ex:11
 #, elixir-autogen, elixir-format
 msgid "Use this form to manage project records in your database."
 msgstr "Utilisez ce formulaire pour gérer les enregistrements de projet dans votre base de données."
 
-#: lib/omedis_web/live/project_live/index.ex:248
-#: lib/omedis_web/live/project_live/show.ex:132
+#: lib/omedis_web/live/project_live/index.ex:221
+#: lib/omedis_web/live/project_live/show.ex:124
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr "Vous n'êtes pas autorisé à accéder à cette page"

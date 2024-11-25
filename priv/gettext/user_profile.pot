@@ -11,65 +11,65 @@
 msgid ""
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:198
-#: lib/omedis_web/live/edit_profile.ex:208
+#: lib/omedis_web/live/edit_profile.ex:190
+#: lib/omedis_web/live/edit_profile.ex:197
 #, elixir-autogen, elixir-format
 msgid "Birthdate"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:215
+#: lib/omedis_web/live/edit_profile.ex:202
 #, elixir-autogen, elixir-format
 msgid "Birthdate %{msg}"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:114
+#: lib/omedis_web/live/edit_profile.ex:129
 #, elixir-autogen, elixir-format
 msgid "Edit your profile details"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:121
-#: lib/omedis_web/live/edit_profile.ex:131
+#: lib/omedis_web/live/edit_profile.ex:134
+#: lib/omedis_web/live/edit_profile.ex:141
 #, elixir-autogen, elixir-format
 msgid "First Name"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:138
+#: lib/omedis_web/live/edit_profile.ex:146
 #, elixir-autogen, elixir-format
 msgid "First Name %{msg}"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:172
+#: lib/omedis_web/live/edit_profile.ex:171
 #, elixir-autogen, elixir-format
 msgid "Gender"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:189
+#: lib/omedis_web/live/edit_profile.ex:183
 #, elixir-autogen, elixir-format
 msgid "Gender %{msg}"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:224
+#: lib/omedis_web/live/edit_profile.ex:209
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:240
+#: lib/omedis_web/live/edit_profile.ex:220
 #, elixir-autogen, elixir-format
 msgid "Language %{msg}"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:147
-#: lib/omedis_web/live/edit_profile.ex:156
+#: lib/omedis_web/live/edit_profile.ex:153
+#: lib/omedis_web/live/edit_profile.ex:159
 #, elixir-autogen, elixir-format
 msgid "Last Name"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:163
+#: lib/omedis_web/live/edit_profile.ex:164
 #, elixir-autogen, elixir-format
 msgid "Last Name %{msg}"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:77
+#: lib/omedis_web/live/edit_profile.ex:75
 #, elixir-autogen, elixir-format
 msgid "Profile update failed"
 msgstr ""
@@ -79,28 +79,48 @@ msgstr ""
 msgid "Profile updated successfully"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:251
+#: lib/omedis_web/live/edit_profile.ex:226
 #, elixir-autogen, elixir-format
 msgid "Save Profile"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:255
+#: lib/omedis_web/live/edit_profile.ex:227
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:180
+#: lib/omedis_web/live/edit_profile.ex:176
 #, elixir-autogen, elixir-format
 msgid "Select Gender"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:232
+#: lib/omedis_web/live/edit_profile.ex:214
 #, elixir-autogen, elixir-format
 msgid "Select Your Language"
 msgstr ""
 
-#: lib/omedis_web/live/edit_profile.ex:37
-#: lib/omedis_web/live/edit_profile.ex:109
+#: lib/omedis_web/live/edit_profile.ex:38
+#: lib/omedis_web/live/edit_profile.ex:126
 #, elixir-autogen, elixir-format
 msgid "Update Profile"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:88
+#, elixir-autogen, elixir-format
+msgid "Account deleted successfully"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:244
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to delete your account?"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:251
+#, elixir-autogen, elixir-format
+msgid "Delete Account"
+msgstr ""
+
+#: lib/omedis_web/live/edit_profile.ex:96
+#, elixir-autogen, elixir-format
+msgid "Failed to delete account! Please try again."
 msgstr ""

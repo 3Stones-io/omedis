@@ -11,14 +11,14 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/components/general_components.ex:160
-#: lib/omedis_web/components/general_components.ex:555
+#: lib/omedis_web/components/general_components.ex:157
+#: lib/omedis_web/components/general_components.ex:548
 #, elixir-autogen, elixir-format
 msgid "Company logo"
 msgstr "Firmenlogo"
 
-#: lib/omedis_web/components/general_components.ex:164
-#: lib/omedis_web/components/general_components.ex:558
+#: lib/omedis_web/components/general_components.ex:161
+#: lib/omedis_web/components/general_components.ex:551
 #, elixir-autogen, elixir-format
 msgid "Main navigation"
 msgstr "Hauptnavigation"

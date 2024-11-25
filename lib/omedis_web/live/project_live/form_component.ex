@@ -8,12 +8,10 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
       <.header>
         <%= @title %>
         <:subtitle>
-          <%= with_locale(@language, fn -> %>
-            <%= dgettext(
-              "project",
-              "Use this form to manage project records in your database."
-            ) %>
-          <% end) %>
+          <%= dgettext(
+            "project",
+            "Use this form to manage project records in your database."
+          ) %>
         </:subtitle>
       </.header>
 
@@ -24,18 +22,14 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input
-          field={@form[:name]}
-          type="text"
-          label={with_locale(@language, fn -> dgettext("project", "Name") end)}
-        />
+        <.input field={@form[:name]} type="text" label={dgettext("project", "Name")} />
         <input type="hidden" name="project[organisation_id]" value={@organisation.id} />
         <.input
           field={@form[:organisation_id]}
           type="select"
           label={
             Phoenix.HTML.raw(
-              "#{with_locale(@language, fn -> dgettext("project", "Organisation") end)}  <span class='text-red-600'>*</span>"
+              "#{dgettext("project", "Organisation")}  <span class='text-red-600'>*</span>"
             )
           }
           disabled={true}
@@ -47,19 +41,15 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
             value={@next_position}
             label={
               Phoenix.HTML.raw(
-                "#{with_locale(@language, fn -> dgettext("project", "Position") end)}  <span class='text-red-600'>*</span>"
+                "#{dgettext("project", "Position")}  <span class='text-red-600'>*</span>"
               )
             }
           />
         </div>
 
         <:actions>
-          <.button phx-disable-with={
-            with_locale(@language, fn -> dgettext("project", "Saving...") end)
-          }>
-            <%= with_locale(@language, fn ->
-              dgettext("project", "Save Project")
-            end) %>
+          <.button phx-disable-with={dgettext("project", "Saving...")}>
+            <%= dgettext("project", "Save Project") %>
           </.button>
         </:actions>
       </.simple_form>
@@ -90,9 +80,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
           socket
           |> put_flash(
             :info,
-            with_locale(socket.assigns.language, fn ->
-              dgettext("project", "Project saved.")
-            end)
+            dgettext("project", "Project saved.")
           )
           |> push_patch(to: socket.assigns.patch)
 
@@ -104,9 +92,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
          |> assign(form: form)
          |> put_flash(
            :error,
-           with_locale(socket.assigns.language, fn ->
-             dgettext("project", "Please correct the errors below.")
-           end)
+           dgettext("project", "Please correct the errors below.")
          )}
     end
   end

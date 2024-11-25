@@ -2,11 +2,11 @@ defmodule OmedisWeb.EventLive.Index do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Event
-  alias Omedis.Accounts.Organisation
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
+  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
 
   @impl true
   def render(assigns) do
@@ -36,32 +36,21 @@ defmodule OmedisWeb.EventLive.Index do
 
         <.header>
           <span>
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("event", "Listing Events for") %>
-            <% end) %>
+            <%= dgettext("event", "Listing Events for") %>
           </span>
           <%= @activity.name %>
         </.header>
 
         <.table id="events" rows={@streams.events}>
-          <:col
-            :let={{_id, event}}
-            label={with_locale(@language, fn -> dgettext("event", "Comment") end)}
-          >
+          <:col :let={{_id, event}} label={dgettext("event", "Comment")}>
             <%= event.summary %>
           </:col>
 
-          <:col
-            :let={{_id, event}}
-            label={with_locale(@language, fn -> dgettext("event", "Start at") end)}
-          >
+          <:col :let={{_id, event}} label={dgettext("event", "Start at")}>
             <%= event.dtstart %>
           </:col>
 
-          <:col
-            :let={{_id, event}}
-            label={with_locale(@language, fn -> dgettext("event", "End at") end)}
-          >
+          <:col :let={{_id, event}} label={dgettext("event", "End at")}>
             <%= event.dtend %>
           </:col>
         </.table>
@@ -85,19 +74,16 @@ defmodule OmedisWeb.EventLive.Index do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "id" => id} = params, _url, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-
+  def handle_params(%{"id" => id} = params, _url, socket) do
     {:ok, activity} =
       id
-      |> Activity.by_id!(actor: socket.assigns.current_user, tenant: organisation)
+      |> Activity.by_id!(actor: socket.assigns.current_user, tenant: socket.assigns.organisation)
       |> Ash.load(:group, authorize?: false)
 
     {:noreply,
      socket
      |> assign(:activity, activity)
      |> assign(:group, activity.group)
-     |> assign(:organisation, organisation)
      |> apply_action(socket.assigns.live_action, params)}
   end
 
@@ -105,9 +91,7 @@ defmodule OmedisWeb.EventLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn ->
-        dgettext("event", "Events")
-      end)
+      dgettext("event", "Events")
     )
     |> assign(:event, nil)
     |> PaginationUtils.list_paginated(params, :events, fn offset ->

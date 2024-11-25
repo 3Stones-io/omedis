@@ -4,10 +4,12 @@ defmodule Omedis.Accounts.User do
   """
 
   use Ash.Resource,
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication],
+    extensions: [AshAuthentication, AshArchival.Resource],
     domain: Omedis.Accounts
 
+  alias Omedis.Accounts.CanDeleteAccount
   alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupMembership
@@ -99,6 +101,16 @@ defmodule Omedis.Accounts.User do
     end
   end
 
+  policies do
+    policy action_type(:destroy) do
+      authorize_if CanDeleteAccount
+    end
+
+    policy do
+      authorize_if always()
+    end
+  end
+
   preparations do
     prepare build(
               load: [
@@ -123,6 +135,7 @@ defmodule Omedis.Accounts.User do
     attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
     attribute :daily_start_at, :time, allow_nil?: true, public?: true
     attribute :daily_end_at, :time, allow_nil?: true, public?: true
+    attribute :archived_at, :utc_datetime_usec, allow_nil?: true, public?: false
 
     create_timestamp :created_at
     update_timestamp :updated_at
