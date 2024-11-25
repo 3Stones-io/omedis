@@ -109,17 +109,9 @@ defmodule Omedis.MixProject do
       check_code: [
         "format --check-formatted",
         "credo --strict",
-        &check_resource_snapshots/1,
+        "ash_postgres.squash_snapshots --check",
         "test --cover --warnings-as-errors"
       ]
     ]
-  end
-
-  defp check_resource_snapshots(_) do
-    {output, status} =
-      System.cmd("mix", ["ash_postgres.squash_snapshots", "--check"], stderr_to_stdout: true)
-
-    IO.write(output)
-    status
   end
 end
