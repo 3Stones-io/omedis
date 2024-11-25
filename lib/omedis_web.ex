@@ -88,7 +88,6 @@ defmodule OmedisWeb do
       # Core UI components and translation
       import OmedisWeb.CoreComponents
       use Gettext, backend: OmedisWeb.Gettext
-      import Gettext, only: [with_locale: 2]
 
       import OmedisWeb.GeneralComponents
       import OmedisWeb.TimeTracking

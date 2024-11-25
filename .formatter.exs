@@ -1,5 +1,6 @@
 [
   import_deps: [
+    :ash_archival,
     :ash_authentication,
     :ash_postgres,
     :ash,

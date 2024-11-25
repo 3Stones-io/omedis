@@ -5,6 +5,8 @@ defmodule OmedisWeb.ActivityLive.Show do
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
 
+  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -30,17 +32,13 @@ defmodule OmedisWeb.ActivityLive.Show do
         />
 
         <.header>
-          <%= with_locale(@language, fn -> %>
-            <%= dgettext("activity", "Activity") %>
-          <% end) %>
+          <%= dgettext("activity", "Activity") %>
 
           <:subtitle>
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext(
-                "activity",
-                "This is an activity record from your database."
-              ) %>
-            <% end) %>
+            <%= dgettext(
+              "activity",
+              "This is an activity record from your database."
+            ) %>
           </:subtitle>
 
           <:actions>
@@ -51,9 +49,7 @@ defmodule OmedisWeb.ActivityLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= with_locale(@language, fn -> %>
-                  <%= dgettext("activity", "Edit Activity") %>
-                <% end) %>
+                <%= dgettext("activity", "Edit Activity") %>
               </.button>
             </.link>
 
@@ -62,32 +58,28 @@ defmodule OmedisWeb.ActivityLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= with_locale(@language, fn -> %>
-                  <%= dgettext("activity", "View Events") %>
-                <% end) %>
+                <%= dgettext("activity", "View Events") %>
               </.button>
             </.link>
           </:actions>
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> dgettext("activity", "Name") end)}>
+          <:item title={dgettext("activity", "Name")}>
             <%= @activity.name %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> dgettext("activity", "Color Code") end)}>
+          <:item title={dgettext("activity", "Color Code")}>
             <%= @activity.color_code %>
           </:item>
 
-          <:item title={with_locale(@language, fn -> dgettext("activity", "Position") end)}>
+          <:item title={dgettext("activity", "Position")}>
             <%= @activity.position %>
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}>
-          <%= with_locale(@language, fn -> %>
-            <%= dgettext("activity", "Back to activities") %>
-          <% end) %>
+          <%= dgettext("activity", "Back to activities") %>
         </.back>
 
         <.modal
@@ -130,8 +122,8 @@ defmodule OmedisWeb.ActivityLive.Show do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "id" => id, "group_slug" => group_slug}, _, socket) do
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+  def handle_params(%{"id" => id, "group_slug" => group_slug}, _, socket) do
+    organisation = socket.assigns.organisation
     group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: organisation)
     groups = Ash.read!(Group, actor: socket.assigns.current_user, tenant: organisation)
     activity = Activity.by_id!(id, actor: socket.assigns.current_user, tenant: organisation)
@@ -146,30 +138,23 @@ defmodule OmedisWeb.ActivityLive.Show do
 
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
+     |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:activity, activity)
      |> assign(:organisations, Ash.read!(Organisation, actor: socket.assigns.current_user))
      |> assign(:projects, projects)
      |> assign(:group, group)
      |> assign(:groups, groups)
-     |> assign(:organisation, organisation)
      |> assign(:is_custom_color, true)
      |> assign(:color_code, activity.color_code)
      |> assign(:next_position, next_position)
      |> apply_action(socket.assigns.live_action)}
   end
 
-  defp page_title(:show, language),
-    do:
-      with_locale(language, fn ->
-        dgettext("activity", "Show Activity")
-      end)
+  defp page_title(:show),
+    do: dgettext("activity", "Show Activity")
 
-  defp page_title(:edit, language),
-    do:
-      with_locale(language, fn ->
-        dgettext("activity", "Edit Activity")
-      end)
+  defp page_title(:edit),
+    do: dgettext("activity", "Edit Activity")
 
   defp apply_action(socket, :edit) do
     actor = socket.assigns.current_user
@@ -177,7 +162,7 @@ defmodule OmedisWeb.ActivityLive.Show do
     activity = socket.assigns.activity
 
     if Ash.can?({activity, :update}, actor, tenant: organisation) do
-      assign(socket, :page_title, page_title(:edit, socket.assigns.language))
+      assign(socket, :page_title, page_title(:edit))
     else
       socket
       |> put_flash(

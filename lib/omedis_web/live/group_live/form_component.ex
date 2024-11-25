@@ -12,12 +12,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
       <.header>
         <%= @title %>
         <:subtitle>
-          <%= with_locale(@language, fn -> %>
-            <%= dgettext(
-              "group",
-              "Use this form to manage group records in your database."
-            ) %>
-          <% end) %>
+          <%= dgettext("group", "Use this form to manage group records in your database.") %> ) %>
         </:subtitle>
       </.header>
 
@@ -29,37 +24,19 @@ defmodule OmedisWeb.GroupLive.FormComponent do
         phx-submit="save"
       >
         <%= if @form.source.type == :create do %>
-          <.input
-            field={@form[:name]}
-            type="text"
-            label={with_locale(@language, fn -> dgettext("group", "Name") end)}
-          />
-          <.input
-            field={@form[:slug]}
-            type="text"
-            label={with_locale(@language, fn -> dgettext("group", "Slug") end)}
-          />
+          <.input field={@form[:name]} type="text" label={dgettext("group", "Name")} />
+          <.input field={@form[:slug]} type="text" label={dgettext("group", "Slug")} />
           <input type="hidden" name="group[organisation_id]" value={@organisation.id} />
           <input type="hidden" name="group[user_id]" value={@current_user.id} />
         <% end %>
         <%= if @form.source.type == :update do %>
-          <.input
-            field={@form[:name]}
-            type="text"
-            label={with_locale(@language, fn -> dgettext("group", "Name") end)}
-          />
-          <.input
-            field={@form[:slug]}
-            type="text"
-            label={with_locale(@language, fn -> dgettext("group", "Slug") end)}
-          />
+          <.input field={@form[:name]} type="text" label={dgettext("group", "Name")} />
+          <.input field={@form[:slug]} type="text" label={dgettext("group", "Slug")} />
         <% end %>
 
         <:actions>
-          <.button phx-disable-with={with_locale(@language, fn -> dgettext("group", "Saving...") end)}>
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("group", "Save Group") %>
-            <% end) %>
+          <.button phx-disable-with={dgettext("group", "Saving...")}>
+            <%= dgettext("group", "Save Group") %>
           </.button>
         </:actions>
       </.simple_form>

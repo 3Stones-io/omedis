@@ -64,9 +64,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
 
         <div class="flex gap-5">
           <p>
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("activity", "Enter custom color") %>
-            <% end) %>
+            <%= dgettext("activity", "Enter custom color") %>
           </p>
           <div
             role="switch"
@@ -79,9 +77,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
             aria-checked={@is_custom_color}
           >
             <span class="sr-only">
-              <%= with_locale(@language, fn -> %>
-                <%= dgettext("activity", "Enable or disable custom color input") %>
-              <% end) %>
+              <%= dgettext("activity", "Enable or disable custom color input") %>
             </span>
 
             <span class={
@@ -135,11 +131,9 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
               end
             }
             disabled={@form.source.source.valid? == false}
-            phx-disable-with={with_locale(@language, fn -> dgettext("activity", "Saving...") end)}
+            phx-disable-with={dgettext("activity", "Saving...")}
           >
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("activity", "Save Activity") %>
-            <% end) %>
+            <%= dgettext("activity", "Save Activity") %>
           </.button>
         </:actions>
       </.simple_form>
@@ -190,9 +184,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           socket
           |> put_flash(
             :info,
-            with_locale(socket.assigns.language, fn ->
-              dgettext("activity", "Activity saved successfully")
-            end)
+            dgettext("activity", "Activity saved successfully")
           )
           |> push_patch(to: socket.assigns.patch)
 
@@ -204,9 +196,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
          |> assign(form: form)
          |> put_flash(
            :error,
-           with_locale(socket.assigns.language, fn ->
-             dgettext("activity", "Please correct the errors below")
-           end)
+           dgettext("activity", "Please correct the errors below")
          )}
     end
   end

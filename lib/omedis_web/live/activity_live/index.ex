@@ -10,6 +10,7 @@ defmodule OmedisWeb.ActivityLive.Index do
   alias OmedisWeb.PaginationUtils
 
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
+  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
 
   @impl true
   def render(assigns) do
@@ -34,9 +35,7 @@ defmodule OmedisWeb.ActivityLive.Index do
         />
 
         <.header>
-          <%= with_locale(@language, fn -> %>
-            <%= dgettext("activity", "Listing Activities") %>
-          <% end) %>
+          <%= dgettext("activity", "Listing Activities") %>
 
           <:actions>
             <.link
@@ -44,9 +43,7 @@ defmodule OmedisWeb.ActivityLive.Index do
               patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/new"}
             >
               <.button>
-                <%= with_locale(@language, fn -> %>
-                  <%= dgettext("activity", "New Activity") %>
-                <% end) %>
+                <%= dgettext("activity", "New Activity") %>
               </.button>
             </.link>
           </:actions>
@@ -61,19 +58,13 @@ defmodule OmedisWeb.ActivityLive.Index do
             end
           }
         >
-          <:col
-            :let={{_id, activity}}
-            label={with_locale(@language, fn -> dgettext("activity", "Name") end)}
-          >
+          <:col :let={{_id, activity}} label={dgettext("activity", "Name")}>
             <.custom_color_button color={activity.color_code}>
               <%= activity.name %>
             </.custom_color_button>
           </:col>
 
-          <:col
-            :let={{_id, activity}}
-            label={with_locale(@language, fn -> dgettext("activity", "Position") end)}
-          >
+          <:col :let={{_id, activity}} label={dgettext("activity", "Position")}>
             <div
               :if={Ash.can?({activity, :update}, @current_user, tenant: @organisation)}
               class="position flex items-center"
@@ -104,9 +95,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           <:col :let={{_id, activity}}>
             <%= if activity.is_default do %>
               <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                <%= with_locale(@language, fn ->
-                  dgettext("activity", "Default")
-                end) %>
+                <%= dgettext("activity", "Default") %>
               </span>
             <% end %>
           </:col>
@@ -116,9 +105,7 @@ defmodule OmedisWeb.ActivityLive.Index do
               <.link navigate={
                 ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}"
               }>
-                <%= with_locale(@language, fn -> %>
-                  <%= dgettext("activity", "Show") %>
-                <% end) %>
+                <%= dgettext("activity", "Show") %>
               </.link>
             </div>
 
@@ -126,9 +113,7 @@ defmodule OmedisWeb.ActivityLive.Index do
               :if={Ash.can?({activity, :update}, @current_user, tenant: @organisation)}
               patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}/edit"}
             >
-              <%= with_locale(@language, fn -> %>
-                <%= dgettext("activity", "Edit") %>
-              <% end) %>
+              <%= dgettext("activity", "Edit") %>
             </.link>
           </:action>
         </.table>
@@ -167,32 +152,16 @@ defmodule OmedisWeb.ActivityLive.Index do
   end
 
   def mount(
-        %{"slug" => slug, "group_slug" => group_slug},
+        %{"slug" => _slug, "group_slug" => _group_slug},
         %{"language" => language} = _session,
         socket
       ) do
     if connected?(socket),
       do: Phoenix.PubSub.subscribe(Omedis.PubSub, "activity_positions_updated")
 
-    organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
-    group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: organisation)
-
     {:ok,
      socket
      |> assign(:language, language)
-     |> assign(:organisation, organisation)
-     |> assign(
-       :groups,
-       Ash.read!(Group, actor: socket.assigns.current_user, tenant: organisation)
-     )
-     |> assign(
-       :projects,
-       Project.by_organisation_id!(%{organisation_id: organisation.id},
-         actor: socket.assigns.current_user,
-         tenant: organisation
-       )
-     )
-     |> assign(:group, group)
      |> assign(:is_custom_color, false)
      |> stream(:activities, [])}
   end
@@ -213,9 +182,23 @@ defmodule OmedisWeb.ActivityLive.Index do
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
+  def handle_params(%{"group_slug" => group_slug} = params, _url, socket) do
+    actor = socket.assigns.current_user
+    organisation = socket.assigns.organisation
+    group = Group.by_slug!(group_slug, actor: actor, tenant: organisation)
+    groups = Ash.read!(Group, actor: actor, tenant: organisation)
+
+    projects =
+      Project.by_organisation_id!(%{organisation_id: organisation.id},
+        actor: actor,
+        tenant: organisation
+      )
+
     {:noreply,
      socket
+     |> assign(:group, group)
+     |> assign(:groups, groups)
+     |> assign(:projects, projects)
      |> apply_action(socket.assigns.live_action, params)}
   end
 
@@ -228,9 +211,7 @@ defmodule OmedisWeb.ActivityLive.Index do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn ->
-          dgettext("activity", "Edit Activity")
-        end)
+        dgettext("activity", "Edit Activity")
       )
       |> assign(:activity, activity)
     else
@@ -253,9 +234,7 @@ defmodule OmedisWeb.ActivityLive.Index do
       socket
       |> assign(
         :page_title,
-        with_locale(socket.assigns.language, fn ->
-          dgettext("activity", "New Activity")
-        end)
+        dgettext("activity", "New Activity")
       )
       |> assign(:activity, nil)
     else
@@ -274,9 +253,7 @@ defmodule OmedisWeb.ActivityLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn ->
-        dgettext("activity", "Listing Activities")
-      end)
+      dgettext("activity", "Listing Activities")
     )
     |> assign(:activity, nil)
     |> assign(:params, params)
