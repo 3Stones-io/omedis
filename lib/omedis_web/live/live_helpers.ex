@@ -39,11 +39,11 @@ defmodule OmedisWeb.LiveHelpers do
             :ok = Endpoint.subscribe("time_tracker_live_view_#{pubsub_topics_unique_id}")
 
             :ok =
-              Phoenix.PubSub.broadcast_from(
-                Omedis.PubSub,
+              Endpoint.broadcast_from(
                 self(),
                 "current_organisation_#{pubsub_topics_unique_id}",
-                {:organisation_selected, organisation}
+                "organisation_selected",
+                organisation
               )
 
             {:cont, assign(socket, :organisation, organisation)}
@@ -53,13 +53,13 @@ defmodule OmedisWeb.LiveHelpers do
         end
       )
       |> attach_hook(:handle_update_current_organisation, :handle_info, fn
-        {:time_tracker_live_view, :mounted}, socket ->
+        %Phoenix.Socket.Broadcast{event: "time_tracker_live_view_mounted"}, socket ->
           :ok =
-            Phoenix.PubSub.broadcast_from(
-              Omedis.PubSub,
+            Endpoint.broadcast_from(
               self(),
               "current_organisation_#{pubsub_topics_unique_id}",
-              {:organisation_selected, socket.assigns[:organisation]}
+              "organisation_selected",
+              socket.assigns[:organisation]
             )
 
           {:halt, socket}
@@ -84,7 +84,13 @@ defmodule OmedisWeb.LiveHelpers do
     {:cont, maybe_updated_socket}
   end
 
-  def add_pubsub_topics_unique_id_to_session(_conn) do
-    %{"pubsub_topics_unique_id" => Ash.UUID.generate()}
+  def add_pubsub_topics_unique_id_to_session(conn) do
+    case conn.private[:plug_session]["pubsub_topics_unique_id"] do
+      nil ->
+        %{"pubsub_topics_unique_id" => Ash.UUID.generate()}
+
+      pubsub_topics_unique_id ->
+        %{"pubsub_topics_unique_id" => pubsub_topics_unique_id}
+    end
   end
 end

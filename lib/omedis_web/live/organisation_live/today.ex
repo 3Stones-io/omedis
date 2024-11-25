@@ -4,6 +4,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   alias Omedis.Accounts.Event
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Project
+  alias OmedisWeb.Endpoint
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
@@ -405,10 +406,10 @@ defmodule OmedisWeb.OrganisationLive.Today do
         )
 
       :ok =
-        Phoenix.PubSub.broadcast(
-          Omedis.PubSub,
+        Endpoint.broadcast(
           "current_activity_#{socket.assigns.pubsub_topics_unique_id}",
-          {:event_started, activity}
+          "event_started",
+          activity
         )
 
       assign(socket, :current_activity_id, activity_id)
@@ -435,10 +436,10 @@ defmodule OmedisWeb.OrganisationLive.Today do
         )
 
       :ok =
-        Phoenix.PubSub.broadcast(
-          Omedis.PubSub,
+        Endpoint.broadcast(
           "current_activity_#{socket.assigns.pubsub_topics_unique_id}",
-          {:event_stopped, nil}
+          "event_stopped",
+          %{}
         )
 
       assign(socket, :current_activity_id, nil)

@@ -4,6 +4,8 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Event
   alias Omedis.Accounts.User
+  alias OmedisWeb.Endpoint
+  alias Phoenix.Socket.Broadcast
 
   @impl true
   def render(%{current_organisation: nil} = assigns) do
@@ -91,17 +93,18 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   def mount(_params, session, socket) do
     if connected?(socket) do
       pubsub_topics_unique_id = session["pubsub_topics_unique_id"]
-      :ok = Phoenix.PubSub.subscribe(Omedis.PubSub, "current_activity_#{pubsub_topics_unique_id}")
+
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
 
       :ok =
-        Phoenix.PubSub.subscribe(Omedis.PubSub, "current_organisation_#{pubsub_topics_unique_id}")
+        Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
 
       :ok =
-        Phoenix.PubSub.broadcast_from(
-          Omedis.PubSub,
+        Endpoint.broadcast_from(
           self(),
           "time_tracker_live_view_#{pubsub_topics_unique_id}",
-          {:time_tracker_live_view, :mounted}
+          "time_tracker_live_view_mounted",
+          %{}
         )
     end
 
@@ -119,11 +122,17 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   @impl true
-  def handle_info({:organisation_selected, nil}, socket) do
+  def handle_info(%Broadcast{event: "organisation_selected", payload: nil}, socket) do
     {:noreply, assign(socket, :current_organisation, nil)}
   end
 
-  def handle_info({:organisation_selected, organisation}, socket) do
+  def handle_info(
+        %Broadcast{
+          event: "organisation_selected",
+          payload: organisation
+        },
+        socket
+      ) do
     current_user =
       User.by_id!(socket.assigns.current_user_id,
         authorize?: false,
@@ -137,14 +146,14 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
      |> maybe_assign_activities()}
   end
 
-  def handle_info({:event_started, activity}, socket) do
+  def handle_info(%Broadcast{event: "event_started", payload: activity}, socket) do
     {:noreply,
      assign_async(socket, :current_activity, fn ->
        {:ok, %{current_activity: activity}}
      end)}
   end
 
-  def handle_info({:event_stopped, _}, socket) do
+  def handle_info(%Broadcast{event: "event_stopped"}, socket) do
     {:noreply, assign(socket, :current_activity, nil)}
   end
 

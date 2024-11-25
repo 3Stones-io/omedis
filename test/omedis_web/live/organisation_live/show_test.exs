@@ -230,6 +230,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     } do
       {:ok, organisation_live_view, _html} = live(conn, ~p"/organisations/#{organisation}")
 
+      # Wait for TimeTrackerLiveView to be mounted
       wait_until(fn ->
         html = render(organisation_live_view)
         assert html =~ "Start Timer"
@@ -239,41 +240,50 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
                find_live_child(organisation_live_view, "time-tracker-liveview")
 
       # Select an activity
-      time_tracker_live_view
-      |> element("button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']")
-      |> render_click()
-
-      wait_until(fn ->
-        html = render(time_tracker_live_view)
-
-        refute html =~ "Start Timer"
-        assert html =~ "animate-pulse"
-
-        assert time_tracker_live_view
-               |> element("#time-tracker-stop-event")
-               |> has_element?()
-      end)
-
-      wait_until(fn ->
-        # Stop activity
+      html =
         time_tracker_live_view
-        |> element("#time-tracker-stop-event")
+        |> element(
+          "button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']"
+        )
         |> render_click()
 
-        html = render(time_tracker_live_view)
-        assert html =~ "Start Timer"
+      refute html =~ "Start Timer"
+      assert html =~ "animate-pulse"
+
+      wait_until(fn ->
+        # Verify event was stopped
+        assert {:ok, [event]} =
+                 Event.by_activity_today(
+                   %{activity_id: activity_1.id},
+                   actor: user,
+                   tenant: organisation
+                 )
+
+        assert event.activity_id == activity_1.id
+        assert is_nil(event.dtend)
       end)
 
-      # Verify event was stopped
-      assert {:ok, [event]} =
-               Event.by_activity_today(
-                 %{activity_id: activity_1.id},
-                 actor: user,
-                 tenant: organisation
-               )
+      assert time_tracker_live_view
+             |> element("#time-tracker-stop-event")
+             |> has_element?()
 
-      assert event.activity_id == activity_1.id
-      refute is_nil(event.dtend)
+      # Stop activity
+      assert time_tracker_live_view
+             |> element("#time-tracker-stop-event")
+             |> render_click() =~ "Start Timer"
+
+      wait_until(fn ->
+        # Verify event was stopped
+        assert {:ok, [event]} =
+                 Event.by_activity_today(
+                   %{activity_id: activity_1.id},
+                   actor: user,
+                   tenant: organisation
+                 )
+
+        assert event.activity_id == activity_1.id
+        refute is_nil(event.dtend)
+      end)
     end
 
     test "maintains timer state on page reload", %{
@@ -284,6 +294,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     } do
       {:ok, organisation_live_view, _html} = live(conn, ~p"/organisations/#{organisation}")
 
+      # Wait for TimeTrackerLiveView to be mounted
       wait_until(fn ->
         html = render(organisation_live_view)
         assert html =~ "Start Timer"
@@ -293,21 +304,34 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
                find_live_child(organisation_live_view, "time-tracker-liveview")
 
       # Select an activity
-      time_tracker_live_view
-      |> element("button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']")
-      |> render_click()
+      html =
+        time_tracker_live_view
+        |> element(
+          "button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']"
+        )
+        |> render_click()
 
+      # Verify timer is running
+      refute html =~ "Start Timer"
+      assert html =~ "animate-pulse"
+
+      # Verify event is still active
       wait_until(fn ->
-        html = render(time_tracker_live_view)
+        assert {:ok, [event]} =
+                 Event.by_activity_today(
+                   %{activity_id: activity_1.id},
+                   actor: user,
+                   tenant: organisation
+                 )
 
-        # Verify timer is running
-        refute html =~ "Start Timer"
-        assert html =~ "animate-pulse"
+        assert event.activity_id == activity_1.id
+        assert is_nil(event.dtend)
       end)
 
       # Simulate page reload
       {:ok, new_view, _html} = live(conn, ~p"/organisations/#{organisation}")
 
+      # Wait for TimeTrackerLiveView to be mounted
       wait_until(fn ->
         html = render(new_view)
 
@@ -315,17 +339,6 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         refute html =~ "Start Timer"
         assert html =~ "animate-pulse"
       end)
-
-      # Verify event is still active
-      assert {:ok, [event]} =
-               Event.by_activity_today(
-                 %{activity_id: activity_1.id},
-                 actor: user,
-                 tenant: organisation
-               )
-
-      assert event.activity_id == activity_1.id
-      assert is_nil(event.dtend)
     end
 
     test "unauthorized user cannot see time tracker", %{
