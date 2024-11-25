@@ -11,73 +11,73 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: lib/omedis_web/live/invitation_live/index.ex:170
+#: lib/omedis_web/live/invitation_live/index.ex:154
 #, elixir-autogen, elixir-format
 msgid "Accepted"
 msgstr "Accepté"
 
-#: lib/omedis_web/live/invitation_live/index.ex:221
+#: lib/omedis_web/live/invitation_live/index.ex:190
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this invitation?"
 msgstr "Êtes-vous sûr de vouloir supprimer cette invitation ?"
 
-#: lib/omedis_web/live/invitation_live/show.ex:163
+#: lib/omedis_web/live/invitation_live/show.ex:113
 #, elixir-autogen, elixir-format
 msgid "Birthdate"
 msgstr "Date de naissance"
 
-#: lib/omedis_web/live/invitation_live/show.ex:288
+#: lib/omedis_web/live/invitation_live/show.ex:222
 #, elixir-autogen, elixir-format
 msgid "Complete Registration"
 msgstr "Compléter l'inscription"
 
-#: lib/omedis_web/live/invitation_live/show.ex:196
-#: lib/omedis_web/live/invitation_live/show.ex:209
+#: lib/omedis_web/live/invitation_live/show.ex:138
+#: lib/omedis_web/live/invitation_live/show.ex:149
 #, elixir-autogen, elixir-format
 msgid "Daily End Time"
 msgstr "Heure de fin quotidienne"
 
-#: lib/omedis_web/live/invitation_live/show.ex:173
-#: lib/omedis_web/live/invitation_live/show.ex:186
+#: lib/omedis_web/live/invitation_live/show.ex:120
+#: lib/omedis_web/live/invitation_live/show.ex:131
 #, elixir-autogen, elixir-format
 msgid "Daily Start Time"
 msgstr "Heure de début quotidienne"
 
-#: lib/omedis_web/live/invitation_live/index.ex:230
+#: lib/omedis_web/live/invitation_live/index.ex:194
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Supprimer"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:137
-#: lib/omedis_web/live/invitation_live/index.ex:158
-#: lib/omedis_web/live/invitation_live/show.ex:58
-#: lib/omedis_web/live/invitation_live/show.ex:65
+#: lib/omedis_web/live/invitation_live/form_component.ex:127
+#: lib/omedis_web/live/invitation_live/index.ex:147
+#: lib/omedis_web/live/invitation_live/show.ex:52
+#: lib/omedis_web/live/invitation_live/show.ex:55
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "E-mail"
 
-#: lib/omedis_web/live/invitation_live/index.ex:205
+#: lib/omedis_web/live/invitation_live/index.ex:178
 #, elixir-autogen, elixir-format
 msgid "Expires At"
 msgstr "Expire le"
 
-#: lib/omedis_web/live/invitation_live/show.ex:145
+#: lib/omedis_web/live/invitation_live/show.ex:102
 #, elixir-autogen, elixir-format
 msgid "Female"
 msgstr "Femme"
 
-#: lib/omedis_web/live/invitation_live/show.ex:78
-#: lib/omedis_web/live/invitation_live/show.ex:84
+#: lib/omedis_web/live/invitation_live/show.ex:64
+#: lib/omedis_web/live/invitation_live/show.ex:66
 #, elixir-autogen, elixir-format
 msgid "First Name"
 msgstr "Prénom"
 
-#: lib/omedis_web/live/invitation_live/show.ex:137
+#: lib/omedis_web/live/invitation_live/show.ex:99
 #, elixir-autogen, elixir-format
 msgid "Gender"
 msgstr "Genre"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:166
+#: lib/omedis_web/live/invitation_live/form_component.ex:153
 #, elixir-autogen, elixir-format
 msgid "Groups"
 msgstr "Groupes"
@@ -87,100 +87,100 @@ msgstr "Groupes"
 msgid "Invitation created successfully"
 msgstr "Invitation créée avec succès"
 
-#: lib/omedis_web/live/invitation_live/index.ex:74
+#: lib/omedis_web/live/invitation_live/index.ex:70
 #, elixir-autogen, elixir-format
 msgid "Invitation deleted successfully"
 msgstr "Invitation supprimée avec succès"
 
-#: lib/omedis_web/live/invitation_live/index.ex:186
+#: lib/omedis_web/live/invitation_live/index.ex:165
 #, elixir-autogen, elixir-format
 msgid "Invited At"
 msgstr "Invité le"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:143
+#: lib/omedis_web/live/invitation_live/form_component.ex:131
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Langue"
 
-#: lib/omedis_web/live/invitation_live/show.ex:97
-#: lib/omedis_web/live/invitation_live/show.ex:103
+#: lib/omedis_web/live/invitation_live/show.ex:75
+#: lib/omedis_web/live/invitation_live/show.ex:77
 #, elixir-autogen, elixir-format
 msgid "Last Name"
 msgstr "Nom de famille"
 
-#: lib/omedis_web/live/invitation_live/index.ex:120
+#: lib/omedis_web/live/invitation_live/index.ex:114
 #, elixir-autogen, elixir-format
 msgid "Listing Invitations"
 msgstr "Liste des invitations"
 
-#: lib/omedis_web/live/invitation_live/show.ex:142
+#: lib/omedis_web/live/invitation_live/show.ex:101
 #, elixir-autogen, elixir-format
 msgid "Male"
 msgstr "Homme"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:114
-#: lib/omedis_web/live/invitation_live/index.ex:130
+#: lib/omedis_web/live/invitation_live/form_component.ex:113
+#: lib/omedis_web/live/invitation_live/index.ex:122
 #, elixir-autogen, elixir-format
 msgid "New Invitation"
 msgstr "Nouvelle invitation"
 
-#: lib/omedis_web/live/invitation_live/show.ex:116
-#: lib/omedis_web/live/invitation_live/show.ex:123
+#: lib/omedis_web/live/invitation_live/show.ex:86
+#: lib/omedis_web/live/invitation_live/show.ex:89
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Mot de passe"
 
-#: lib/omedis_web/live/invitation_live/index.ex:176
+#: lib/omedis_web/live/invitation_live/index.ex:158
 #, elixir-autogen, elixir-format
 msgid "Pending"
 msgstr "En attente"
 
-#: lib/omedis_web/live/invitation_live/show.ex:24
+#: lib/omedis_web/live/invitation_live/show.ex:23
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "S'inscrire"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:183
+#: lib/omedis_web/live/invitation_live/form_component.ex:169
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Enregistrement..."
 
-#: lib/omedis_web/live/invitation_live/show.ex:150
+#: lib/omedis_web/live/invitation_live/show.ex:104
 #, elixir-autogen, elixir-format
 msgid "Select Your Gender"
 msgstr "Sélectionnez votre genre"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:186
+#: lib/omedis_web/live/invitation_live/form_component.ex:170
 #, elixir-autogen, elixir-format
 msgid "Send Invitation"
 msgstr "Envoyer l'invitation"
 
-#: lib/omedis_web/live/invitation_live/show.ex:220
+#: lib/omedis_web/live/invitation_live/show.ex:158
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr "S'inscrire"
 
-#: lib/omedis_web/live/invitation_live/show.ex:224
+#: lib/omedis_web/live/invitation_live/show.ex:159
 #, elixir-autogen, elixir-format
 msgid "Signing up..."
 msgstr "Inscription en cours..."
 
-#: lib/omedis_web/live/invitation_live/index.ex:165
+#: lib/omedis_web/live/invitation_live/index.ex:151
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Statut"
 
-#: lib/omedis_web/live/invitation_live/show.ex:29
+#: lib/omedis_web/live/invitation_live/show.ex:26
 #, elixir-autogen, elixir-format
 msgid "Use a permanent address where you can receive mail."
 msgstr "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:119
+#: lib/omedis_web/live/invitation_live/form_component.ex:116
 #, elixir-autogen, elixir-format
 msgid "Use this form to invite new members."
 msgstr "Utilisez ce formulaire pour inviter de nouveaux membres."
 
-#: lib/omedis_web/live/invitation_live/show.ex:119
+#: lib/omedis_web/live/invitation_live/show.ex:87
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "nouveau mot de passe"

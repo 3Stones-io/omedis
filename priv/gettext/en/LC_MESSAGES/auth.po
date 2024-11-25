@@ -11,91 +11,91 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/register_live.ex:313
+#: lib/omedis_web/live/register_live.ex:282
 #, elixir-autogen, elixir-format
 msgid "Birthdate"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:161
+#: lib/omedis_web/live/register_live.ex:151
 #, elixir-autogen, elixir-format
 msgid "Change language"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:344
-#: lib/omedis_web/live/register_live.ex:358
+#: lib/omedis_web/live/register_live.ex:308
+#: lib/omedis_web/live/register_live.ex:320
 #, elixir-autogen, elixir-format
 msgid "Daily End Time"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:321
-#: lib/omedis_web/live/register_live.ex:335
+#: lib/omedis_web/live/register_live.ex:289
+#: lib/omedis_web/live/register_live.ex:301
 #, elixir-autogen, elixir-format
 msgid "Daily Start Time"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:369
+#: lib/omedis_web/live/register_live.ex:329
 #, elixir-autogen, elixir-format
 msgid "Don't have an account? Sign up"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:97
-#: lib/omedis_web/live/login_live.ex:103
-#: lib/omedis_web/live/login_live.ex:111
-#: lib/omedis_web/live/register_live.ex:236
-#: lib/omedis_web/live/register_live.ex:239
+#: lib/omedis_web/live/login_live.ex:95
+#: lib/omedis_web/live/login_live.ex:101
+#: lib/omedis_web/live/login_live.ex:108
+#: lib/omedis_web/live/register_live.ex:217
+#: lib/omedis_web/live/register_live.ex:220
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:297
+#: lib/omedis_web/live/register_live.ex:270
 #, elixir-autogen, elixir-format
 msgid "Female"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:250
-#: lib/omedis_web/live/register_live.ex:256
+#: lib/omedis_web/live/register_live.ex:229
+#: lib/omedis_web/live/register_live.ex:231
 #, elixir-autogen, elixir-format
 msgid "First Name"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:294
+#: lib/omedis_web/live/register_live.ex:267
 #, elixir-autogen, elixir-format
 msgid "Gender"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:268
-#: lib/omedis_web/live/register_live.ex:270
+#: lib/omedis_web/live/register_live.ex:241
+#: lib/omedis_web/live/register_live.ex:243
 #, elixir-autogen, elixir-format
 msgid "Last Name"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:296
+#: lib/omedis_web/live/register_live.ex:269
 #, elixir-autogen, elixir-format
 msgid "Male"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:119
-#: lib/omedis_web/live/login_live.ex:126
-#: lib/omedis_web/live/login_live.ex:133
-#: lib/omedis_web/live/register_live.ex:280
-#: lib/omedis_web/live/register_live.ex:283
+#: lib/omedis_web/live/login_live.ex:115
+#: lib/omedis_web/live/login_live.ex:122
+#: lib/omedis_web/live/login_live.ex:128
+#: lib/omedis_web/live/register_live.ex:253
+#: lib/omedis_web/live/register_live.ex:256
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:49
-#: lib/omedis_web/live/register_live.ex:145
+#: lib/omedis_web/live/register_live.ex:48
+#: lib/omedis_web/live/register_live.ex:142
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:301
+#: lib/omedis_web/live/register_live.ex:272
 #, elixir-autogen, elixir-format
 msgid "Select Your Gender"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:217
-#: lib/omedis_web/live/register_live.ex:223
+#: lib/omedis_web/live/register_live.ex:204
+#: lib/omedis_web/live/register_live.ex:206
 #, elixir-autogen, elixir-format
 msgid "Select an Organisation"
 msgstr ""
@@ -106,18 +106,18 @@ msgstr ""
 msgid "Sign in"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:378
+#: lib/omedis_web/live/register_live.ex:337
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:141
-#: lib/omedis_web/live/login_live.ex:144
+#: lib/omedis_web/live/login_live.ex:135
+#: lib/omedis_web/live/login_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "Signing in..."
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:381
+#: lib/omedis_web/live/register_live.ex:338
 #, elixir-autogen, elixir-format
 msgid "Signing up..."
 msgstr ""
@@ -127,12 +127,12 @@ msgstr ""
 msgid "Something went wrong. Try again."
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:150
+#: lib/omedis_web/live/register_live.ex:145
 #, elixir-autogen, elixir-format
 msgid "Use a permanent address where you can receive mail."
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:91
+#: lib/omedis_web/live/login_live.ex:90
 #, elixir-autogen, elixir-format
 msgid "Use your credentials to sign in"
 msgstr ""
@@ -142,8 +142,8 @@ msgstr ""
 msgid "Username or password is incorrect"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:128
-#: lib/omedis_web/live/register_live.ex:281
+#: lib/omedis_web/live/login_live.ex:124
+#: lib/omedis_web/live/register_live.ex:254
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr ""

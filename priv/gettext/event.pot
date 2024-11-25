@@ -11,27 +11,27 @@
 msgid ""
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:49
+#: lib/omedis_web/live/event_live/index.ex:45
 #, elixir-autogen, elixir-format
 msgid "Comment"
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:63
+#: lib/omedis_web/live/event_live/index.ex:53
 #, elixir-autogen, elixir-format
 msgid "End at"
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:109
+#: lib/omedis_web/live/event_live/index.ex:94
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:40
+#: lib/omedis_web/live/event_live/index.ex:39
 #, elixir-autogen, elixir-format
 msgid "Listing Events for"
 msgstr ""
 
-#: lib/omedis_web/live/event_live/index.ex:56
+#: lib/omedis_web/live/event_live/index.ex:49
 #, elixir-autogen, elixir-format
 msgid "Start at"
 msgstr ""
