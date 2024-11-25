@@ -111,6 +111,8 @@ defmodule Omedis.MixProject do
         "format --check-formatted",
         "credo --strict",
         "cmd make check-gettext",
+        "ash_postgres.generate_migrations --check",
+        "ash_postgres.squash_snapshots --check",
         "test --cover --warnings-as-errors"
       ]
     ]
