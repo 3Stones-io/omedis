@@ -109,6 +109,7 @@ defmodule Omedis.MixProject do
       check_code: [
         "format --check-formatted",
         "credo --strict",
+        "ash_postgres.generate_migrations --check",
         "ash_postgres.squash_snapshots --check",
         "test --cover --warnings-as-errors"
       ]

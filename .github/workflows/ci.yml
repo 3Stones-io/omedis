@@ -63,6 +63,9 @@ jobs:
       - name: Check formatting
         run: mix format --check-formatted
 
+      - name: Check migrations
+        run: mix ash_postgres.generate_migrations --check
+
       - name: Check resource snapshots
         run: mix ash_postgres.squash_snapshots --check
 
