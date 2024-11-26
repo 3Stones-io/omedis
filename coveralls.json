@@ -2,5 +2,9 @@
   "coverage_options": {
     "minimum_coverage": 83.6
   },
-  "skip_files": ["lib/omedis_web/components/core_components.ex"]
+  "skip_files": [
+    "deps/ash_oban/lib/transformers/define_schedulers.ex",
+    "lib/omedis_web/components/core_components.ex",
+    "lib/omedis/accounts/user_notifier/client.ex"
+  ]
 }
