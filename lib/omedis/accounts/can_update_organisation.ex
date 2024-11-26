@@ -10,18 +10,29 @@ defmodule Omedis.Accounts.CanUpdateOrganisation do
   alias Omedis.Accounts.AccessRight
 
   def describe(_options) do
-    "User can update organisation if they are the owner or have write access through a group."
+    "User can update or destroy an organisation if they are the owner or have access through a group."
   end
 
   def match?(nil, _context, _opts), do: false
   def match?(_actor, %{subject: %{data: nil}}, _opts), do: false
 
-  def match?(actor, %{subject: %{data: organisation}}, _opts) do
+  def match?(actor, %{subject: %{data: organisation, action: %{type: :update}}}, _opts) do
     Ash.exists?(
       filter(
         AccessRight,
         resource_name == "Organisation" and
-          (write || update) && exists(group.group_memberships, user_id == ^actor.id)
+          update && exists(group.group_memberships, user_id == ^actor.id)
+      ),
+      tenant: organisation
+    )
+  end
+
+  def match?(actor, %{subject: %{data: organisation, action: %{type: :destroy}}}, _opts) do
+    Ash.exists?(
+      filter(
+        AccessRight,
+        resource_name == "Organisation" and
+          destroy && exists(group.group_memberships, user_id == ^actor.id)
       ),
       tenant: organisation
     )

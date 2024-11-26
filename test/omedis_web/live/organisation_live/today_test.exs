@@ -158,7 +158,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "Event",
-          write: true
+          create: true
         })
 
       {:ok, lv, _html} =
@@ -197,7 +197,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "Event",
-          write: true
+          create: true
         })
 
       {:ok, lv, _html} =
@@ -241,7 +241,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "Event",
-          write: true
+          create: true
         })
 
       {:ok, lv, _html} =
@@ -280,7 +280,8 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
           group_id: group.id,
           read: true,
           resource_name: "Event",
-          write: true
+          create: true,
+          update: true
         })
 
       {:ok, lv, _html} =
