@@ -11,115 +11,115 @@
 msgid ""
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:34
+#: lib/omedis_web/live/activity_live/show.ex:35
 #, elixir-autogen, elixir-format
 msgid "Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex:194
+#: lib/omedis_web/live/activity_live/form_component.ex:187
 #, elixir-autogen, elixir-format
 msgid "Activity saved successfully"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:89
+#: lib/omedis_web/live/activity_live/show.ex:82
 #, elixir-autogen, elixir-format
 msgid "Back to activities"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:108
+#: lib/omedis_web/live/activity_live/index.ex:98
 #, elixir-autogen, elixir-format
 msgid "Default"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:130
+#: lib/omedis_web/live/activity_live/index.ex:116
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:232
-#: lib/omedis_web/live/activity_live/show.ex:55
-#: lib/omedis_web/live/activity_live/show.ex:171
+#: lib/omedis_web/live/activity_live/index.ex:214
+#: lib/omedis_web/live/activity_live/show.ex:52
+#: lib/omedis_web/live/activity_live/show.ex:157
 #, elixir-autogen, elixir-format
 msgid "Edit Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex:83
+#: lib/omedis_web/live/activity_live/form_component.ex:80
 #, elixir-autogen, elixir-format
 msgid "Enable or disable custom color input"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex:68
+#: lib/omedis_web/live/activity_live/form_component.ex:67
 #, elixir-autogen, elixir-format
 msgid "Enter custom color"
 msgstr ""
 
 #: lib/omedis_web/live/activity_live/index.ex:38
-#: lib/omedis_web/live/activity_live/index.ex:278
+#: lib/omedis_web/live/activity_live/index.ex:256
 #, elixir-autogen, elixir-format
 msgid "Listing Activities"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:66
-#: lib/omedis_web/live/activity_live/show.ex:74
+#: lib/omedis_web/live/activity_live/index.ex:61
+#: lib/omedis_web/live/activity_live/show.ex:68
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:48
-#: lib/omedis_web/live/activity_live/index.ex:257
+#: lib/omedis_web/live/activity_live/index.ex:46
+#: lib/omedis_web/live/activity_live/index.ex:237
 #, elixir-autogen, elixir-format
 msgid "New Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex:208
+#: lib/omedis_web/live/activity_live/form_component.ex:199
 #, elixir-autogen, elixir-format
 msgid "Please correct the errors below"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:75
-#: lib/omedis_web/live/activity_live/show.ex:82
+#: lib/omedis_web/live/activity_live/index.ex:67
+#: lib/omedis_web/live/activity_live/show.ex:76
 #, elixir-autogen, elixir-format
 msgid "Position"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex:141
+#: lib/omedis_web/live/activity_live/form_component.ex:136
 #, elixir-autogen, elixir-format
 msgid "Save Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex:138
+#: lib/omedis_web/live/activity_live/form_component.ex:134
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:120
+#: lib/omedis_web/live/activity_live/index.ex:108
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:165
+#: lib/omedis_web/live/activity_live/show.ex:154
 #, elixir-autogen, elixir-format
 msgid "Show Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:39
+#: lib/omedis_web/live/activity_live/show.ex:38
 #, elixir-autogen, elixir-format
 msgid "This is an activity record from your database."
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:66
+#: lib/omedis_web/live/activity_live/show.ex:61
 #, elixir-autogen, elixir-format
 msgid "View Events"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:240
-#: lib/omedis_web/live/activity_live/index.ex:265
-#: lib/omedis_web/live/activity_live/show.ex:185
+#: lib/omedis_web/live/activity_live/index.ex:221
+#: lib/omedis_web/live/activity_live/index.ex:244
+#: lib/omedis_web/live/activity_live/show.ex:170
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:78
+#: lib/omedis_web/live/activity_live/show.ex:72
 #, elixir-autogen, elixir-format
 msgid "Color Code"
 msgstr ""

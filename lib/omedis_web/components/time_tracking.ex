@@ -8,8 +8,6 @@ defmodule OmedisWeb.TimeTracking do
   use Phoenix.Component
   use Gettext, backend: OmedisWeb.Gettext
 
-  import Gettext, only: [with_locale: 2]
-
   alias OmedisWeb.CoreComponents
   alias Phoenix.LiveView.JS
 
@@ -58,11 +56,9 @@ defmodule OmedisWeb.TimeTracking do
   def no_activities(assigns) do
     ~H"""
     <div class="w-[100%] h-[30vh] flex justify-center items-center">
-      <%= with_locale(@language, fn -> %>
-        <p>
-          <%= dgettext("organisation", "No activities have been defined yet.") %>
-        </p>
-      <% end) %>
+      <p>
+        <%= dgettext("organisation", "No activities have been defined yet.") %>
+      </p>
     </div>
     """
   end
@@ -387,9 +383,7 @@ defmodule OmedisWeb.TimeTracking do
           id="group-select-form"
         >
           <p>
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("organisation", "Select Group") %>
-            <% end) %>
+            <%= dgettext("organisation", "Select Group") %>
           </p>
 
           <select
@@ -413,9 +407,7 @@ defmodule OmedisWeb.TimeTracking do
           id="project-select-form"
         >
           <p>
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("organisation", "Select Project") %>
-            <% end) %>
+            <%= dgettext("organisation", "Select Project") %>
           </p>
           <select
             name="project_id"

@@ -32,27 +32,23 @@ defmodule OmedisWeb.GroupLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= with_locale(@language, fn -> %>
-                  <%= dgettext("navigation", "Activities") %>
-                <% end) %>
+                <%= dgettext("navigation", "Activities") %>
               </.button>
             </.link>
           </:actions>
         </.header>
 
         <.list>
-          <:item title={with_locale(@language, fn -> dgettext("group", "Name") end)}>
+          <:item title={dgettext("group", "Name")}>
             <%= @group.name %>
           </:item>
-          <:item title={with_locale(@language, fn -> dgettext("group", "Slug") end)}>
+          <:item title={dgettext("group", "Slug")}>
             <%= @group.slug %>
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups"}>
-          <%= with_locale(@language, fn -> %>
-            <%= dgettext("navigation", "Back to groups") %>
-          <% end) %>
+          <%= dgettext("navigation", "Back to groups") %>
         </.back>
 
         <.modal
@@ -82,14 +78,14 @@ defmodule OmedisWeb.GroupLive.Show do
     {:ok,
      socket
      |> assign(:language, language)
-     |> assign(:page_title, page_title(socket.assigns.live_action, language))}
+     |> assign(:page_title, page_title(socket.assigns.live_action))}
   end
 
   @impl true
   def handle_params(%{"group_slug" => group_slug}, _, socket) do
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action, socket.assigns.language))
+     |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(
        :group,
        Group.by_slug!(group_slug,
@@ -99,9 +95,9 @@ defmodule OmedisWeb.GroupLive.Show do
      )}
   end
 
-  defp page_title(:show, language),
-    do: with_locale(language, fn -> dgettext("group", "Show Group") end)
+  defp page_title(:show),
+    do: dgettext("group", "Show Group")
 
-  defp page_title(:edit, language),
-    do: with_locale(language, fn -> dgettext("group", "Edit Group") end)
+  defp page_title(:edit),
+    do: dgettext("group", "Edit Group")
 end
