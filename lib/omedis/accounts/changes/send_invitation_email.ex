@@ -1,22 +1,29 @@
 defmodule Omedis.Accounts.Changes.SendInvitationEmail do
   @moduledoc false
   use Ash.Resource.Change
+  use OmedisWeb, :verified_routes
 
-  alias Omedis.Workers.InvitationEmailWorker
+  alias Omedis.Accounts.UserNotifier
 
   def change(changeset, _opts, _context) do
     Ash.Changeset.after_transaction(changeset, fn
-      _changeset, {:ok, result} ->
-        {:ok, _job} =
-          %{
-            "id" => result.id,
-            "organisation_id" => result.organisation_id,
-            "actor_id" => result.creator_id
-          }
-          |> InvitationEmailWorker.new()
-          |> Oban.insert()
+      _changeset, {:ok, invitation} ->
+        invitation =
+          Ash.load!(invitation, :organisation, authorize?: false)
 
-        {:ok, result}
+        url =
+          static_url(
+            OmedisWeb.Endpoint,
+            ~p"/organisations/#{invitation.organisation}/invitations/#{invitation}"
+          )
+
+        case UserNotifier.deliver_invitation_email(invitation, url) do
+          {:ok, _email} ->
+            {:ok, invitation}
+
+          {:error, error} ->
+            Ash.Changeset.add_error(changeset, error)
+        end
 
       _changeset, {:error, error} ->
         {:error, error}

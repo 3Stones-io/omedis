@@ -3,10 +3,13 @@ defmodule Omedis.Accounts.Invitation do
   Represents an invitation to join an organisation.
   """
 
+  require Ash.Query
+
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Accounts,
+    extensions: [AshOban]
 
   postgres do
     table "invitations"
@@ -14,6 +17,17 @@ defmodule Omedis.Accounts.Invitation do
 
     references do
       reference :organisation, on_delete: :delete
+    end
+  end
+
+  oban do
+    triggers do
+      trigger :create do
+        action :create
+
+        max_attempts(3)
+        queue(:invitation)
+      end
     end
   end
 

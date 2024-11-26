@@ -78,8 +78,9 @@ defmodule Omedis.MixProject do
       {:bandit, "~> 1.5"},
       {:ash_phoenix, "~> 2.1.2"},
       {:slugify, "~> 1.3"},
-      {:oban, "~> 2.17"},
-      {:ash_archival, "~> 1.0.4"}
+      {:ash_oban, "~> 0.2.6"},
+      {:ash_archival, "~> 1.0.4"},
+      {:mox, "~> 1.2"}
     ]
   end
 

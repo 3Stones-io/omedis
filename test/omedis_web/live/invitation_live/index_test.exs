@@ -1,11 +1,14 @@
 defmodule OmedisWeb.InvitationLive.IndexTest do
   use OmedisWeb.ConnCase, async: true
 
+  import Mox
   import Phoenix.LiveViewTest
 
   require Ash.Query
 
   alias Omedis.Accounts.Invitation
+
+  setup :verify_on_exit!
 
   setup do
     {:ok, owner} = create_user()
@@ -79,6 +82,14 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       # Create invitations (15 for owner, 5 for user_2)
       invitations =
         for i <- 1..20 do
+          expect(
+            Omedis.Accounts.UserNotifier.ClientMock,
+            :deliver_invitation_email,
+            fn _invitation, _url ->
+              {:ok, %Swoosh.Email{}}
+            end
+          )
+
           {:ok, invitation} =
             create_invitation(organisation, %{
               email: "test#{i}@example.com",
@@ -285,6 +296,14 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       owner: owner,
       organisation: organisation
     } do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       assert {:ok, view, _html} =
                conn
                |> log_in_user(owner)
@@ -323,6 +342,14 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       authorized_user: authorized_user,
       organisation: organisation
     } do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       assert {:ok, view, _html} =
                conn
                |> log_in_user(authorized_user)

@@ -1,6 +1,7 @@
 defmodule OmedisWeb.InvitationLive.ShowTest do
   use OmedisWeb.ConnCase, async: true
 
+  import Mox
   import Omedis.Fixtures
   import Phoenix.LiveViewTest
 
@@ -17,6 +18,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
     "daily_start_at" => "09:00:00",
     "daily_end_at" => "17:00:00"
   }
+
+  setup :verify_on_exit!
 
   setup do
     {:ok, owner} = create_user()
@@ -39,6 +42,15 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         resource_name: "organisation",
         write: true
       })
+
+    expect(
+      Omedis.Accounts.UserNotifier.ClientMock,
+      :deliver_invitation_email,
+      2,
+      fn _invitation, _url ->
+        {:ok, %Swoosh.Email{}}
+      end
+    )
 
     {:ok, valid_invitation} =
       create_invitation(organisation, %{
@@ -104,6 +116,14 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       organisation: organisation,
       owner: owner
     } do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       {:ok, invitation} =
         create_invitation(organisation, %{
           creator_id: owner.id,

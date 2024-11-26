@@ -1,13 +1,15 @@
 defmodule Omedis.Accounts.InvitationTest do
   use Omedis.DataCase, async: true
 
+  import Mox
   import Omedis.Fixtures
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.InvitationGroup
-  alias Omedis.Workers.InvitationEmailWorker
 
   @params %{email: "test@example.com", language: "en"}
+
+  setup :verify_on_exit!
 
   setup do
     {:ok, owner} = create_user()
@@ -57,12 +59,21 @@ defmodule Omedis.Accounts.InvitationTest do
   end
 
   describe "create/1" do
-    test "organisation owner can create invitation and queue a job to send an invitation email",
+    test "organisation owner can create invitation and trigger email sending",
          %{
            group: group,
            owner: owner,
            organisation: organisation
          } do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn invitation, url ->
+          assert url =~ "/organisations/#{organisation.slug}/invitations/#{invitation.id}"
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       attrs = %{
         email: "test@example.com",
         language: "en",
@@ -72,15 +83,6 @@ defmodule Omedis.Accounts.InvitationTest do
 
       assert {:ok, invitation} =
                Invitation.create(attrs, actor: owner, tenant: organisation)
-
-      assert_enqueued(
-        worker: InvitationEmailWorker,
-        args: %{
-          actor_id: owner.id,
-          id: invitation.id
-        },
-        queue: :invitation
-      )
 
       assert invitation.email == "test@example.com"
       assert invitation.language == "en"
@@ -92,11 +94,19 @@ defmodule Omedis.Accounts.InvitationTest do
       assert group.id in group_ids
     end
 
-    test "authorized user can create invitation and queue a job to send an invitation email", %{
+    test "authorized user can create invitation and trigger email sending", %{
       organisation: organisation,
       group: group,
       authorized_user: user
     } do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       attrs = %{
         email: "test@example.com",
         language: "en",
@@ -106,12 +116,6 @@ defmodule Omedis.Accounts.InvitationTest do
 
       assert {:ok, invitation} = Invitation.create(attrs, actor: user, tenant: organisation)
 
-      assert_enqueued(
-        worker: InvitationEmailWorker,
-        args: %{actor_id: user.id, id: invitation.id},
-        queue: :invitation
-      )
-
       assert invitation.email == "test@example.com"
 
       invitation_groups = Ash.read!(InvitationGroup, authorize?: false, tenant: organisation)
@@ -119,12 +123,21 @@ defmodule Omedis.Accounts.InvitationTest do
       assert group.id in group_ids
     end
 
-    test "unauthorized user cannot create invitation and cannot queue a job to send an invitation email",
+    test "unauthorized user cannot create invitation",
          %{
            organisation: organisation,
            group: group,
            unauthorized_user: user
          } do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        0,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       attrs = %{
         email: "test@example.com",
         language: "en",
@@ -134,8 +147,6 @@ defmodule Omedis.Accounts.InvitationTest do
 
       assert {:error, %Ash.Error.Forbidden{}} =
                Invitation.create(attrs, actor: user, tenant: organisation)
-
-      refute_enqueued(worker: InvitationEmailWorker)
     end
 
     test "validates required attributes", %{
@@ -156,6 +167,14 @@ defmodule Omedis.Accounts.InvitationTest do
 
   describe "by_id/1" do
     test "returns invitation if it has not expired", %{organisation: organisation} do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       {:ok, invitation} = create_invitation(organisation)
 
       assert {:ok, _invitation} = Invitation.by_id(invitation.id)
@@ -165,6 +184,14 @@ defmodule Omedis.Accounts.InvitationTest do
       organisation: organisation,
       owner: owner
     } do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
 
       {:ok, invitation} =
@@ -183,6 +210,14 @@ defmodule Omedis.Accounts.InvitationTest do
 
   describe "destroy/2" do
     setup %{organisation: organisation} do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       {:ok, invitation} = create_invitation(organisation)
 
       %{invitation: invitation}
@@ -223,6 +258,14 @@ defmodule Omedis.Accounts.InvitationTest do
       organisation: organisation,
       owner: organisation_owner
     } do
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       {:ok, invitation} = create_invitation(organisation)
 
       assert {:ok, %{results: results, count: 1}} =
@@ -242,6 +285,14 @@ defmodule Omedis.Accounts.InvitationTest do
       creator_id = authorized_user.id
 
       for i <- 1..15 do
+        expect(
+          Omedis.Accounts.UserNotifier.ClientMock,
+          :deliver_invitation_email,
+          fn _invitation, _url ->
+            {:ok, %Swoosh.Email{}}
+          end
+        )
+
         params =
           Map.merge(@params, %{
             creator_id: creator_id,
@@ -277,6 +328,14 @@ defmodule Omedis.Accounts.InvitationTest do
     } do
       invitations =
         for i <- 1..3 do
+          expect(
+            Omedis.Accounts.UserNotifier.ClientMock,
+            :deliver_invitation_email,
+            fn _invitation, _url ->
+              {:ok, %Swoosh.Email{}}
+            end
+          )
+
           {:ok, invitation} =
             create_invitation(organisation, %{
               creator_id: organisation_owner.id
@@ -309,6 +368,14 @@ defmodule Omedis.Accounts.InvitationTest do
       creator_id = authorized_user.id
 
       for i <- 1..15 do
+        expect(
+          Omedis.Accounts.UserNotifier.ClientMock,
+          :deliver_invitation_email,
+          fn _invitation, _url ->
+            {:ok, %Swoosh.Email{}}
+          end
+        )
+
         params =
           Map.merge(@params, %{
             creator_id: creator_id,

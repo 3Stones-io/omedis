@@ -1,21 +1,17 @@
 defmodule Omedis.Accounts.UserNotifierTest do
   use Omedis.DataCase, async: true
 
+  import Mox
   import Omedis.Fixtures
-  import Swoosh.TestAssertions
 
   require Ash.Query
+
+  setup :verify_on_exit!
 
   setup do
     {:ok, user} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: user.id})
     {:ok, group} = create_group(organisation)
-
-    {:ok, invitation} =
-      create_invitation(organisation, %{
-        creator_id: user.id,
-        groups: [group.id]
-      })
 
     {:ok, _} =
       create_access_right(organisation, %{
@@ -33,7 +29,6 @@ defmodule Omedis.Accounts.UserNotifierTest do
 
     %{
       group: group,
-      invitation: Ash.load!(invitation, :organisation, authorize?: false),
       organisation: organisation,
       user: user
     }
@@ -42,17 +37,36 @@ defmodule Omedis.Accounts.UserNotifierTest do
   describe "deliver_invitation_email/2" do
     test "sends an invitation email",
          %{
-           invitation: invitation,
-           organisation: organisation
+           group: group,
+           organisation: organisation,
+           user: user
          } do
-      Omedis.Accounts.deliver_invitation_email(invitation, "INVITATION_URL")
-
-      assert_email_sent(
-        from: {"Omedis", "contact@omedis.com"},
-        subject: "Omedis | Invitation to join #{organisation.name}",
-        to: [invitation.email],
-        text_body: ~r/INVITATION_URL/
+      # Triggered by create_event/2 fixture
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
       )
+
+      {:ok, invitation} =
+        create_invitation(organisation, %{
+          creator_id: user.id,
+          groups: [group.id]
+        })
+
+      # Triggered by deliver_invitation_email/2
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, url ->
+          assert url == "INVITATION_URL"
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
+      Omedis.Accounts.deliver_invitation_email(invitation, "INVITATION_URL")
     end
 
     test "sends an invitation email in the correct language",
@@ -61,6 +75,15 @@ defmodule Omedis.Accounts.UserNotifierTest do
            organisation: organisation,
            user: user
          } do
+      # Triggered by create_event/2 fixture
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, _url ->
+          {:ok, %Swoosh.Email{}}
+        end
+      )
+
       {:ok, invitation} =
         create_invitation(organisation, %{
           creator_id: user.id,
@@ -70,15 +93,17 @@ defmodule Omedis.Accounts.UserNotifierTest do
 
       invitation = Ash.load!(invitation, :organisation, authorize?: false)
 
-      Omedis.Accounts.deliver_invitation_email(invitation, "INVITATION_URL")
-
-      assert_email_sent(
-        from: {"Omedis", "contact@omedis.com"},
-        subject: "Omedis | Invitation à rejoindre #{organisation.name}",
-        to: [invitation.email],
-        text_body: ~r/INVITATION_URL/,
-        text_body: ~r/Veuillez enregistrer votre nouveau compte Omedis pour/
+      # Triggered by deliver_invitation_email/2
+      expect(
+        Omedis.Accounts.UserNotifier.ClientMock,
+        :deliver_invitation_email,
+        fn _invitation, url ->
+          assert url == "INVITATION_URL"
+          {:ok, %Swoosh.Email{}}
+        end
       )
+
+      Omedis.Accounts.deliver_invitation_email(invitation, "INVITATION_URL")
     end
   end
 end

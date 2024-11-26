@@ -68,6 +68,7 @@ config :omedis, Omedis.Mailer, adapter: Swoosh.Adapters.Local
 # Oban
 config :omedis, Oban,
   engine: Oban.Engines.Basic,
+  plugins: [Oban.Plugins.Cron],
   queues: [default: 10, invitation: 20],
   repo: Omedis.Repo
 

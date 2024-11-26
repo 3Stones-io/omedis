@@ -15,7 +15,11 @@ defmodule Omedis.Application do
       {AshAuthentication.Supervisor, otp_app: :omedis},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Omedis.Finch},
-      {Oban, Application.fetch_env!(:omedis, Oban)},
+      {Oban,
+       AshOban.config(
+         Application.fetch_env!(:omedis, :ash_domains),
+         Application.fetch_env!(:omedis, Oban)
+       )},
       # Start a worker by calling: Omedis.Worker.start_link(arg)
       # {Omedis.Worker, arg},
       # Start to serve requests, typically the last entry
