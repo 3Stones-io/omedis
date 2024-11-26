@@ -59,9 +59,7 @@ defmodule OmedisWeb.EditProfileLive do
           |> redirect(to: "/edit_profile?locale=#{user.lang}")
           |> put_flash(
             :info,
-            with_locale(user.lang, fn ->
-              dgettext("user_profile", "Profile updated successfully")
-            end)
+            dgettext("user_profile", "Profile updated successfully")
           )
           |> assign(:current_user, user)
           |> assign(:form, to_form(AshPhoenix.Form.for_update(user, :update, as: "user")))
@@ -74,9 +72,7 @@ defmodule OmedisWeb.EditProfileLive do
          |> assign(form: form)
          |> put_flash(
            :error,
-           with_locale(socket.assigns.language, fn ->
-             dgettext("user_profile", "Profile update failed")
-           end)
+           dgettext("user_profile", "Profile update failed")
          )}
     end
   end
@@ -89,9 +85,7 @@ defmodule OmedisWeb.EditProfileLive do
          |> redirect(to: "/")
          |> put_flash(
            :info,
-           with_locale(socket.assigns.language, fn ->
-             dgettext("user_profile", "Account deleted successfully")
-           end)
+           dgettext("user_profile", "Account deleted successfully")
          )}
 
       _error ->
@@ -99,9 +93,7 @@ defmodule OmedisWeb.EditProfileLive do
          socket
          |> put_flash(
            :error,
-           with_locale(socket.assigns.language, fn ->
-             dgettext("user_profile", "Failed to delete account! Please try again.")
-           end)
+           dgettext("user_profile", "Failed to delete account! Please try again.")
          )}
     end
   end
@@ -131,152 +123,108 @@ defmodule OmedisWeb.EditProfileLive do
           <div class="space-y-4">
             <div class="border-b border-gray-900/10 pb-12">
               <h2 class="text-base font-semibold leading-7 text-gray-900">
-                <%= with_locale(@language, fn ->
-                  dgettext("user_profile", "Update Profile")
-                end) %>
+                <%= dgettext("user_profile", "Update Profile") %>
               </h2>
               <p class="mt-1 text-sm leading-6 text-gray-600">
-                <%= with_locale(@language, fn ->
-                  dgettext("user_profile", "Edit your profile details")
-                end) %>
+                <%= dgettext("user_profile", "Edit your profile details") %>
               </p>
               <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= with_locale(@language, fn ->
-                      dgettext("user_profile", "First Name")
-                    end) %>
+                    <%= dgettext("user_profile", "First Name") %>
                   </label>
 
                   <div phx-feedback-for={f[:first_name].name} class="mt-2">
                     <%= text_input(f, :first_name,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      placeholder:
-                        with_locale(@language, fn ->
-                          dgettext("user_profile", "First Name")
-                        end),
+                      placeholder: dgettext("user_profile", "First Name"),
                       value: f[:first_name].value,
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:first_name], :first_name)}>
-                      <%= with_locale(@language, fn ->
-                        dgettext("user_profile", "First Name %{msg}", msg: msg)
-                      end) %>
+                      <%= dgettext("user_profile", "First Name %{msg}", msg: msg) %>
                     </.error>
                   </div>
                 </div>
 
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= with_locale(@language, fn ->
-                      dgettext("user_profile", "Last Name")
-                    end) %>
+                    <%= dgettext("user_profile", "Last Name") %>
                   </label>
                   <div phx-feedback-for={f[:last_name].name} class="mt-2">
                     <%= text_input(f, :last_name,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      placeholder:
-                        with_locale(@language, fn ->
-                          dgettext("user_profile", "Last Name")
-                        end),
+                      placeholder: dgettext("user_profile", "Last Name"),
                       value: f[:last_name].value,
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:last_name], :last_name)}>
-                      <%= with_locale(@language, fn ->
-                        dgettext("user_profile", "Last Name %{msg}", msg: msg)
-                      end) %>
+                      <%= dgettext("user_profile", "Last Name %{msg}", msg: msg) %>
                     </.error>
                   </div>
                 </div>
 
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= with_locale(@language, fn ->
-                      dgettext("user_profile", "Gender")
-                    end) %>
+                    <%= dgettext("user_profile", "Gender") %>
                   </label>
 
                   <div phx-feedback-for={f[:gender].name} class="mt-2">
                     <%= select(f, :gender, ["Male", "Female"],
-                      prompt:
-                        with_locale(@language, fn ->
-                          dgettext("user_profile", "Select Gender")
-                        end),
+                      prompt: dgettext("user_profile", "Select Gender"),
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       value: f[:gender].value,
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:gender], :gender)}>
-                      <%= with_locale(@language, fn ->
-                        dgettext("user_profile", "Gender %{msg}", msg: msg)
-                      end) %>
+                      <%= dgettext("user_profile", "Gender %{msg}", msg: msg) %>
                     </.error>
                   </div>
                 </div>
 
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= with_locale(@language, fn ->
-                      dgettext("user_profile", "Birthdate")
-                    end) %>
+                    <%= dgettext("user_profile", "Birthdate") %>
                   </label>
 
                   <div phx-feedback-for={f[:birthdate].name} class="mt-2">
                     <%= date_input(f, :birthdate,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      placeholder:
-                        with_locale(@language, fn ->
-                          dgettext("user_profile", "Birthdate")
-                        end),
+                      placeholder: dgettext("user_profile", "Birthdate"),
                       value: f[:birthdate].value,
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:birthdate], :birthdate)}>
-                      <%= with_locale(@language, fn ->
-                        dgettext("user_profile", "Birthdate %{msg}", msg: msg)
-                      end) %>
+                      <%= dgettext("user_profile", "Birthdate %{msg}", msg: msg) %>
                     </.error>
                   </div>
                 </div>
 
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= with_locale(@language, fn ->
-                      dgettext("user_profile", "Language")
-                    end) %>
+                    <%= dgettext("user_profile", "Language") %>
                   </label>
 
                   <div phx-feedback-for={f[:lang].name} class="mt-2">
                     <%= select(f, :lang, @supported_languages,
-                      prompt:
-                        with_locale(@language, fn ->
-                          dgettext("user_profile", "Select Your Language")
-                        end),
+                      prompt: dgettext("user_profile", "Select Your Language"),
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       "phx-debounce": "blur"
                     ) %>
                     <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
-                      <%= with_locale(@language, fn ->
-                        dgettext("user_profile", "Language %{msg}", msg: msg)
-                      end) %>
+                      <%= dgettext("user_profile", "Language %{msg}", msg: msg) %>
                     </.error>
                   </div>
 
                   <div class="mt-6 flex items-center justify-end gap-x-6">
                     <%= submit(
-                      with_locale(@language, fn ->
-                        dgettext("user_profile", "Save Profile")
-                      end),
-                      phx_disable_with:
-                        with_locale(@language, fn ->
-                          dgettext("user_profile", "Saving...")
-                        end),
+                      dgettext("user_profile", "Save Profile"),
+                      phx_disable_with: dgettext("user_profile", "Saving..."),
                       class:
                         "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     ) %>
@@ -293,18 +241,14 @@ defmodule OmedisWeb.EditProfileLive do
             id={"delete-account-#{@current_user.id}"}
             phx-click={JS.push("delete_account", value: %{id: @current_user.id})}
             data-confirm={
-              with_locale(@language, fn ->
-                dgettext(
-                  "user_profile",
-                  "Are you sure you want to delete your account?"
-                )
-              end)
+              dgettext(
+                "user_profile",
+                "Are you sure you want to delete your account?"
+              )
             }
             class="bg-red-600 hover:bg-red-900 text-white px-3 py-2 rounded-md"
           >
-            <%= with_locale(@language, fn ->
-              dgettext("user_profile", "Delete Account")
-            end) %>
+            <%= dgettext("user_profile", "Delete Account") %>
           </.link>
         </div>
       </div>

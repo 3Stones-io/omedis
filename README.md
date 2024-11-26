@@ -75,12 +75,12 @@ Most times system admin work is done with the web GUI. But sometimes it is handy
 
 When developing new features or updating static content in the application, follow the steps below to ensure all user-facing text is translatable using Gettext.
 
-### 1. Use `with_locale/2` in Static HTML
+### 1. Use `dgettext/2` in Static HTML
 
-For any static text added to your templates or views, wrap it with the `with_locale/2` function to ensure it can be translated based on the user's language preference. The syntax is as follows:
+For any static text added to your templates or views, wrap it with the `dgettext/2` function to ensure it can be translated based on the user's language preference. The syntax is as follows:
 
 ```elixir
-with_locale(@language, fn -> gettext("Your New Text Here") end)
+dgettext("Context", "Your New Text Here")
 ```
 
 Make sure that every piece of new static text is wrapped in this function to ensure proper localization.
