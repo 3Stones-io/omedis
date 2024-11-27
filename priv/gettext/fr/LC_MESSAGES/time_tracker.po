@@ -11,12 +11,12 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n>1);\n"
 
-#: lib/omedis_web/live/time_tracker_live/index.ex:50
+#: lib/omedis_web/live/time_tracker_live/index.ex:54
 #, elixir-autogen, elixir-format
 msgid "Start Timer"
 msgstr "Démarrer le timer"
 
-#: lib/omedis_web/live/time_tracker_live/index.ex:335
+#: lib/omedis_web/live/time_tracker_live/index.ex:382
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to perform this action"
 msgstr "Vous n'êtes pas autorisé à effectuer cette action"
