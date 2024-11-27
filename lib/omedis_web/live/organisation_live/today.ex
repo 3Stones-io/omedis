@@ -4,8 +4,9 @@ defmodule OmedisWeb.OrganisationLive.Today do
   alias Omedis.Accounts.Event
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.Project
+  alias OmedisWeb.Endpoint
 
-  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
   @impl true
   def render(assigns) do
@@ -53,10 +54,15 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   @impl true
-  def mount(_params, %{"language" => language} = _session, socket) do
+  def mount(_params, %{"language" => language} = session, socket) do
+    if connected?(socket) do
+      :ok = Endpoint.subscribe("current_activity_#{session["pubsub_topics_unique_id"]}")
+    end
+
     {:ok,
      socket
-     |> assign(:language, language)}
+     |> assign(:language, language)
+     |> assign(:pubsub_topics_unique_id, session["pubsub_topics_unique_id"])}
   end
 
   @impl true
@@ -201,6 +207,14 @@ defmodule OmedisWeb.OrganisationLive.Today do
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
      |> assign(:current_time, current_time)}
+  end
+
+  def handle_info(%Phoenix.Socket.Broadcast{event: "event_started", payload: activity}, socket) do
+    {:noreply, assign(socket, :current_activity_id, activity.id)}
+  end
+
+  def handle_info(%Phoenix.Socket.Broadcast{event: "event_stopped"}, socket) do
+    {:noreply, assign(socket, :current_activity_id, nil)}
   end
 
   defp update_activities_and_current_time_every_minute do
@@ -403,6 +417,13 @@ defmodule OmedisWeb.OrganisationLive.Today do
           tenant: organisation
         )
 
+      :ok =
+        Endpoint.broadcast(
+          "current_activity_#{socket.assigns.pubsub_topics_unique_id}",
+          "event_started",
+          activity
+        )
+
       assign(socket, :current_activity_id, activity_id)
     else
       put_flash(
@@ -424,6 +445,13 @@ defmodule OmedisWeb.OrganisationLive.Today do
         Event.update(event, %{dtend: opts[:event_stop_time]},
           actor: opts[:actor],
           tenant: opts[:tenant]
+        )
+
+      :ok =
+        Endpoint.broadcast(
+          "current_activity_#{socket.assigns.pubsub_topics_unique_id}",
+          "event_stopped",
+          %{}
         )
 
       assign(socket, :current_activity_id, nil)

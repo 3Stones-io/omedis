@@ -1,7 +1,7 @@
 defmodule OmedisWeb.OrganisationLive.Show do
   use OmedisWeb, :live_view
 
-  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
   @impl true
   def render(assigns) do
