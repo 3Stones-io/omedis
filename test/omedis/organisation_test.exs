@@ -216,6 +216,23 @@ defmodule Omedis.OrganisationTest do
         assert users_group_rights.write == false
       end)
     end
+
+    test "creates a default project called Organisation", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [project]} =
+               Omedis.Accounts.Project
+               |> Ash.Query.filter(organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert project.name == "Organisation"
+      assert project.position == "1"
+    end
   end
 
   describe "update/2" do

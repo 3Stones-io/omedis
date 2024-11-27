@@ -82,6 +82,7 @@ defmodule Omedis.Accounts.Organisation do
       primary? true
 
       change Omedis.Accounts.Changes.CreateDefaultGroups
+      change Omedis.Accounts.Organisation.Changes.CreateDefaultProject
     end
 
     update :update do

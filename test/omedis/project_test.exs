@@ -58,8 +58,9 @@ defmodule Omedis.Accounts.ProjectTest do
                  tenant: organisation
                )
 
-      assert length(projects) == 1
-      assert hd(projects).id == project.id
+      # An additional default project called Organisation is created when an organisation is created
+      assert length(projects) == 2
+      assert List.last(projects).id == project.id
     end
 
     test "returns paginated list of projects the user has access to" do
