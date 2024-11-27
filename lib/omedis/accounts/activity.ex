@@ -79,18 +79,6 @@ defmodule Omedis.Accounts.Activity do
       require_atomic? false
     end
 
-    update :decrement_position do
-      accept []
-
-      change atomic_update(:position, expr(position - 1))
-    end
-
-    update :increment_position do
-      accept []
-
-      change atomic_update(:position, expr(position + 1))
-    end
-
     read :read do
       primary? true
 

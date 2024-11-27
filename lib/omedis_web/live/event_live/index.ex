@@ -36,32 +36,21 @@ defmodule OmedisWeb.EventLive.Index do
 
         <.header>
           <span>
-            <%= with_locale(@language, fn -> %>
-              <%= dgettext("event", "Listing Events for") %>
-            <% end) %>
+            <%= dgettext("event", "Listing Events for") %>
           </span>
           <%= @activity.name %>
         </.header>
 
         <.table id="events" rows={@streams.events}>
-          <:col
-            :let={{_id, event}}
-            label={with_locale(@language, fn -> dgettext("event", "Comment") end)}
-          >
+          <:col :let={{_id, event}} label={dgettext("event", "Comment")}>
             <%= event.summary %>
           </:col>
 
-          <:col
-            :let={{_id, event}}
-            label={with_locale(@language, fn -> dgettext("event", "Start at") end)}
-          >
+          <:col :let={{_id, event}} label={dgettext("event", "Start at")}>
             <%= event.dtstart %>
           </:col>
 
-          <:col
-            :let={{_id, event}}
-            label={with_locale(@language, fn -> dgettext("event", "End at") end)}
-          >
+          <:col :let={{_id, event}} label={dgettext("event", "End at")}>
             <%= event.dtend %>
           </:col>
         </.table>
@@ -102,9 +91,7 @@ defmodule OmedisWeb.EventLive.Index do
     socket
     |> assign(
       :page_title,
-      with_locale(socket.assigns.language, fn ->
-        dgettext("event", "Events")
-      end)
+      dgettext("event", "Events")
     )
     |> assign(:event, nil)
     |> PaginationUtils.list_paginated(params, :events, fn offset ->
