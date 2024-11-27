@@ -47,7 +47,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
             phx-click={JS.toggle(to: "#time-tracker-activities-dropdown")}
           >
             <.icon name="hero-play-circle-solid" class="w-5 h-5" />
-            <%= gettext("Start Timer") %>
+            <%= dgettext("time_tracker", "Start Timer") %>
           </button>
 
           <div
@@ -329,7 +329,11 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
        |> assign(:timer_ref, timer_ref)}
     else
       {:noreply,
-       put_flash(socket, :error, gettext("You are not authorized to perform this action"))}
+       put_flash(
+         socket,
+         :error,
+         dgettext("time_tracker", "You are not authorized to perform this action")
+       )}
     end
   end
 

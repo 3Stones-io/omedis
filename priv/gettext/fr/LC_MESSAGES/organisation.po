@@ -168,7 +168,7 @@ msgstr "Sélectionner un groupe"
 msgid "Select Project"
 msgstr "Sélectionner un projet"
 
-#: lib/omedis_web/live/organisation_live/today.ex:38
+#: lib/omedis_web/live/organisation_live/today.ex:39
 #, elixir-autogen, elixir-format
 msgid "Select group and project"
 msgstr "Sélectionner un groupe et un projet"
@@ -231,8 +231,8 @@ msgstr "Site web"
 msgid "You are not authorized to access this page"
 msgstr "Vous n'êtes pas autorisé à accéder à cette page"
 
-#: lib/omedis_web/live/organisation_live/today.ex:411
-#: lib/omedis_web/live/organisation_live/today.ex:434
+#: lib/omedis_web/live/organisation_live/today.ex:420
+#: lib/omedis_web/live/organisation_live/today.ex:450
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to perform this action"
 msgstr "Vous n'êtes pas autorisé à effectuer cette action"
