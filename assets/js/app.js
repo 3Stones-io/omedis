@@ -26,6 +26,7 @@ import Alpine from "alpinejs";
 
 import FlashAutoDisappear from "./hooks/flash_auto_disappear";
 import HideOnNavigate from "./hooks/hide_on_navigate";
+import SlugInput from "./hooks/slug_input";
 
 window.Alpine = Alpine;
 Alpine.start();

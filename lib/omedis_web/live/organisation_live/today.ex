@@ -55,6 +55,10 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
+    if connected?(socket) do
+      :ok = Endpoint.subscribe("current_activity_#{session["pubsub_topics_unique_id"]}")
+    end
+
     {:ok,
      socket
      |> assign(:language, language)
@@ -203,6 +207,14 @@ defmodule OmedisWeb.OrganisationLive.Today do
      |> assign(:start_at, start_at)
      |> assign(:end_at, end_at)
      |> assign(:current_time, current_time)}
+  end
+
+  def handle_info(%Phoenix.Socket.Broadcast{event: "event_started", payload: activity}, socket) do
+    {:noreply, assign(socket, :current_activity_id, activity.id)}
+  end
+
+  def handle_info(%Phoenix.Socket.Broadcast{event: "event_stopped"}, socket) do
+    {:noreply, assign(socket, :current_activity_id, nil)}
   end
 
   defp update_activities_and_current_time_every_minute do

@@ -33,8 +33,7 @@ defmodule OmedisWeb.LiveHelpers do
         :handle_params,
         fn
           %{"slug" => slug} = _params, _uri, socket ->
-            organisation =
-              Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+            organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
 
             :ok = Endpoint.subscribe("time_tracker_live_view_#{pubsub_topics_unique_id}")
 

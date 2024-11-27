@@ -141,6 +141,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
   describe "/organisations/:slug (Time Tracker)" do
     alias Omedis.Accounts.Event
+    alias OmedisWeb.Endpoint
 
     setup %{group: group, organisation: organisation, user: user} do
       {:ok, project} = create_project(organisation)
@@ -189,8 +190,17 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       organisation: organisation,
       user: user
     } do
-      {:ok, organisation_live_view, _html} = live(conn, ~p"/organisations/#{organisation}")
+      pubsub_topics_unique_id = Ash.UUID.generate()
 
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+
+      {:ok, organisation_live_view, _html} =
+        conn
+        |> put_session("pubsub_topics_unique_id", pubsub_topics_unique_id)
+        |> live(~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
       wait_until(fn ->
         html = render(organisation_live_view)
         assert html =~ "Start Timer"
@@ -204,22 +214,23 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       |> element("button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']")
       |> render_click()
 
-      wait_until(fn ->
-        html = render(time_tracker_live_view)
+      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert broadcast_activity_id == activity_1.id
 
-        refute html =~ "Start Timer"
-        assert html =~ "animate-pulse"
+      html = render(time_tracker_live_view)
 
-        assert {:ok, [event]} =
-                 Event.by_activity_today(
-                   %{activity_id: activity_1.id},
-                   actor: user,
-                   tenant: organisation
-                 )
+      refute html =~ "Start Timer"
+      assert html =~ "animate-pulse"
 
-        assert event.activity_id == activity_1.id
-        assert is_nil(event.dtend)
-      end)
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
     end
 
     test "stops timer when clicking active activity", %{
@@ -228,9 +239,17 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       activity_1: activity_1,
       user: user
     } do
-      {:ok, organisation_live_view, _html} = live(conn, ~p"/organisations/#{organisation}")
+      pubsub_topics_unique_id = Ash.UUID.generate()
 
-      # Wait for TimeTrackerLiveView to be mounted
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+
+      {:ok, organisation_live_view, _html} =
+        conn
+        |> put_session("pubsub_topics_unique_id", pubsub_topics_unique_id)
+        |> live(~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
       wait_until(fn ->
         html = render(organisation_live_view)
         assert html =~ "Start Timer"
@@ -247,21 +266,22 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         )
         |> render_click()
 
+      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert broadcast_activity_id == activity_1.id
+
       refute html =~ "Start Timer"
       assert html =~ "animate-pulse"
 
-      wait_until(fn ->
-        # Verify event was stopped
-        assert {:ok, [event]} =
-                 Event.by_activity_today(
-                   %{activity_id: activity_1.id},
-                   actor: user,
-                   tenant: organisation
-                 )
+      # Verify event was started
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
 
-        assert event.activity_id == activity_1.id
-        assert is_nil(event.dtend)
-      end)
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
 
       assert time_tracker_live_view
              |> element("#time-tracker-stop-event")
@@ -272,18 +292,19 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
              |> element("#time-tracker-stop-event")
              |> render_click() =~ "Start Timer"
 
-      wait_until(fn ->
-        # Verify event was stopped
-        assert {:ok, [event]} =
-                 Event.by_activity_today(
-                   %{activity_id: activity_1.id},
-                   actor: user,
-                   tenant: organisation
-                 )
+      assert_broadcast "event_stopped", %{}
+      assert broadcast_activity_id == activity_1.id
 
-        assert event.activity_id == activity_1.id
-        refute is_nil(event.dtend)
-      end)
+      # Verify event was stopped
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      refute is_nil(event.dtend)
     end
 
     test "maintains timer state on page reload", %{
@@ -292,9 +313,17 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       activity_1: activity_1,
       user: user
     } do
-      {:ok, organisation_live_view, _html} = live(conn, ~p"/organisations/#{organisation}")
+      pubsub_topics_unique_id = Ash.UUID.generate()
 
-      # Wait for TimeTrackerLiveView to be mounted
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+
+      {:ok, organisation_live_view, _html} =
+        conn
+        |> put_session("pubsub_topics_unique_id", pubsub_topics_unique_id)
+        |> live(~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
       wait_until(fn ->
         html = render(organisation_live_view)
         assert html =~ "Start Timer"
@@ -311,27 +340,28 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         )
         |> render_click()
 
+      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert broadcast_activity_id == activity_1.id
+
       # Verify timer is running
       refute html =~ "Start Timer"
       assert html =~ "animate-pulse"
 
-      # Verify event is still active
-      wait_until(fn ->
-        assert {:ok, [event]} =
-                 Event.by_activity_today(
-                   %{activity_id: activity_1.id},
-                   actor: user,
-                   tenant: organisation
-                 )
+      # Verify event was started
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
 
-        assert event.activity_id == activity_1.id
-        assert is_nil(event.dtend)
-      end)
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
 
       # Simulate page reload
       {:ok, new_view, _html} = live(conn, ~p"/organisations/#{organisation}")
 
-      # Wait for TimeTrackerLiveView to be mounted
+      # Wait for TimeTrackerLiveView to receive organisation assigns
       wait_until(fn ->
         html = render(new_view)
 

@@ -3,6 +3,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Event
+  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
   alias OmedisWeb.Endpoint
   alias Phoenix.Socket.Broadcast
@@ -15,7 +16,10 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   def render(assigns) do
     ~H"""
-    <div class="absolute top-3 right-[4rem] lg:right-[16rem] z-10 bg-black text-white shadow-lg rounded-lg">
+    <div
+      :if={@current_user && Ash.can?({Event, :create}, @current_user, tenant: @current_organisation)}
+      class="absolute top-3 right-[5rem] lg:right-[17rem] z-10 bg-black text-white shadow-lg rounded-lg"
+    >
       <%= if @current_activity do %>
         <.async_result :let={current_activity} assign={@current_activity}>
           <:loading>
@@ -91,13 +95,11 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   @impl true
   def mount(_params, session, socket) do
+    pubsub_topics_unique_id = session["pubsub_topics_unique_id"]
+
     if connected?(socket) do
-      pubsub_topics_unique_id = session["pubsub_topics_unique_id"]
-
       :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
-
-      :ok =
-        Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
 
       :ok =
         Endpoint.broadcast_from(
@@ -111,14 +113,34 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     {:ok,
      socket
      |> assign(:activities, [])
-     |> assign(:current_activity, nil)
-     |> assign(:current_organisation, nil)
-     |> assign(:current_user, nil)
+     |> assign(:current_organisation, get_current_organisation(session))
      |> assign(:current_user_id, session["current_user_id"])
      |> assign(:elapsed_time, "00:00")
      |> assign(:language, nil)
      |> assign(:load_more_activities_token, nil)
-     |> assign(:timer_ref, nil), layout: false}
+     |> assign(:pubsub_topics_unique_id, pubsub_topics_unique_id)
+     |> assign(:timer_ref, nil)
+     |> maybe_assign_current_user(session["current_user_id"])
+     |> maybe_assign_activities(), layout: false}
+  end
+
+  defp maybe_assign_current_user(socket, current_user_id) do
+    case socket.assigns[:current_organisation] do
+      nil ->
+        assign(socket, :current_user, nil)
+
+      organisation ->
+        current_user = User.by_id!(current_user_id, tenant: organisation)
+
+        assign(socket, :current_user, current_user)
+    end
+  end
+
+  defp get_current_organisation(session) do
+    case session["organisation_id"] do
+      nil -> nil
+      organisation_id -> Organisation.by_id!(organisation_id, authorize?: false)
+    end
   end
 
   @impl true
@@ -133,24 +155,22 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
         },
         socket
       ) do
-    current_user =
-      User.by_id!(socket.assigns.current_user_id,
-        authorize?: false,
-        tenant: organisation
-      )
-
     {:noreply,
      socket
      |> assign(:current_organisation, organisation)
-     |> assign(:current_user, current_user)
+     |> maybe_assign_current_user(socket.assigns.current_user_id)
      |> maybe_assign_activities()}
   end
 
   def handle_info(%Broadcast{event: "event_started", payload: activity}, socket) do
+    {:ok, timer_ref} = start_timer()
+
     {:noreply,
-     assign_async(socket, :current_activity, fn ->
+     socket
+     |> assign_async(:current_activity, fn ->
        {:ok, %{current_activity: activity}}
-     end)}
+     end)
+     |> assign(:timer_ref, timer_ref)}
   end
 
   def handle_info(%Broadcast{event: "event_stopped"}, socket) do
@@ -178,7 +198,19 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
         tenant: socket.assigns.current_organisation
       )
 
+    :ok =
+      Endpoint.broadcast(
+        "current_activity_#{socket.assigns.pubsub_topics_unique_id}",
+        "event_stopped",
+        %{}
+      )
+
     {:noreply, socket}
+  end
+
+  def handle_info({:activity_updated, activity}, socket) do
+    {:noreply,
+     assign_async(socket, :current_activity, fn -> {:ok, %{current_activity: activity}} end)}
   end
 
   defp get_elapsed_time(%Phoenix.LiveView.AsyncResult{result: activity}, opts) do
@@ -190,10 +222,25 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   defp do_get_elapsed_time(activity, opts) do
-    {:ok, updated_activity} =
-      Activity.by_id(activity.id, opts ++ [load: [:events]])
+    updated_activity = get_active_activity(activity, opts)
+    calculate_elapsed_time(updated_activity)
+  end
 
-    case Enum.find(updated_activity.events, &is_nil(&1.dtend)) do
+  # TODO: Possibly refactor these two functions, Enum.find is being called twice.
+  defp get_active_activity(activity, opts) do
+    case Enum.find(activity.events, &is_nil(&1.dtend)) do
+      nil ->
+        {:ok, updated_activity} = Activity.by_id(activity.id, opts ++ [load: [:events]])
+        send(self(), {:activity_updated, updated_activity})
+        updated_activity
+
+      _ ->
+        activity
+    end
+  end
+
+  defp calculate_elapsed_time(activity) do
+    case Enum.find(activity.events, &is_nil(&1.dtend)) do
       nil ->
         "00:00"
 
@@ -285,7 +332,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   defp assign_current_activity(socket, activities) do
     case get_current_activity(activities) do
       nil ->
-        socket
+        assign(socket, :current_activity, nil)
 
       activity ->
         elapsed_time =
@@ -298,10 +345,10 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
         socket
         |> assign(:elapsed_time, elapsed_time)
+        |> assign(:timer_ref, timer_ref)
         |> assign_async(:current_activity, fn ->
           {:ok, %{current_activity: activity}}
         end)
-        |> assign(:timer_ref, timer_ref)
     end
   end
 
@@ -318,15 +365,15 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   @impl true
   def handle_event("select_activity", %{"activity_id" => activity_id}, socket) do
-    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.current_organisation]
+    opts = [
+      actor: socket.assigns.current_user,
+      tenant: socket.assigns.current_organisation,
+      pubsub_topics_unique_id: socket.assigns.pubsub_topics_unique_id
+    ]
 
     if Ash.can?({Event, :create}, opts[:actor], tenant: opts[:tenant]) do
-      {:ok, timer_ref} = start_timer()
-
       {:noreply,
-       socket
-       |> assign_async(:current_activity, fn -> create_event(activity_id, opts) end)
-       |> assign(:timer_ref, timer_ref)}
+       assign_async(socket, :current_activity, fn -> create_event(activity_id, opts) end)}
     else
       {:noreply,
        put_flash(
@@ -352,6 +399,9 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   defp create_event(activity_id, opts) do
+    pubsub_topics_unique_id = opts[:pubsub_topics_unique_id]
+    opts = Keyword.delete(opts, :pubsub_topics_unique_id)
+
     {:ok, activity} = Activity.by_id(activity_id, opts ++ [load: [:events]])
 
     {:ok, _event} =
@@ -363,6 +413,13 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
           user_id: opts[:actor].id
         },
         opts
+      )
+
+    :ok =
+      Endpoint.broadcast(
+        "current_activity_#{pubsub_topics_unique_id}",
+        "event_started",
+        activity
       )
 
     {:ok, %{current_activity: activity}}
