@@ -53,7 +53,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          write: true
+          update: true
         })
 
       {:ok, project} =
@@ -80,7 +80,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          write: true
+          update: true
         })
 
       {:ok, project} =
@@ -124,7 +124,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          write: true
+          update: true
         })
 
       params = %{name: "Test Project"}
@@ -159,7 +159,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          write: true
+          update: true
         })
 
       params = %{name: "Test Project"}
@@ -196,8 +196,7 @@ defmodule OmedisWeb.ProjectLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Project",
-          update: false,
-          write: false
+          update: false
         })
 
       {:ok, project} =

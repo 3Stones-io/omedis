@@ -18,7 +18,8 @@ defmodule Omedis.Accounts.ProjectTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        write: true
+        create: true,
+        update: true
       })
 
     %{
@@ -44,8 +45,7 @@ defmodule Omedis.Accounts.ProjectTest do
         create_access_right(organisation, %{
           group_id: group.id,
           read: true,
-          resource_name: "Project",
-          write: true
+          resource_name: "Project"
         })
 
       {:ok, project} =

@@ -15,8 +15,19 @@ defmodule Omedis.Accounts.GroupTest do
     create_access_right(organisation, %{
       group_id: group.id,
       read: true,
+      resource_name: "Organisation",
+      create: true,
+      destroy: true,
+      update: true
+    })
+
+    create_access_right(organisation, %{
+      group_id: group.id,
+      read: true,
       resource_name: "Group",
-      write: true
+      create: true,
+      destroy: true,
+      update: true
     })
 
     %{user: user, organisation: organisation, authorized_user: authorized_user}
@@ -86,7 +97,6 @@ defmodule Omedis.Accounts.GroupTest do
       create_access_right(organisation, %{
         resource_name: "Group",
         group_id: group.id,
-        write: true,
         update: true
       })
 
@@ -97,7 +107,7 @@ defmodule Omedis.Accounts.GroupTest do
       assert updated_group.name == "Updated Group"
     end
 
-    test "authorised users can create a group", %{
+    test "authorised users can update a group", %{
       authorized_user: authorized_user,
       organisation: organisation
     } do
@@ -125,7 +135,6 @@ defmodule Omedis.Accounts.GroupTest do
       create_access_right(organisation, %{
         resource_name: "Group",
         group_id: group.id,
-        write: false,
         update: false
       })
 
@@ -144,8 +153,7 @@ defmodule Omedis.Accounts.GroupTest do
       create_access_right(organisation, %{
         resource_name: "Group",
         group_id: group.id,
-        write: true,
-        update: true
+        destroy: true
       })
 
       assert :ok =
@@ -163,7 +171,7 @@ defmodule Omedis.Accounts.GroupTest do
                Group.destroy(group, actor: authorized_user, tenant: organisation)
     end
 
-    test "can't delete a group if actor doesn't have write/update access", %{
+    test "can't delete a group if actor doesn't have destroy access", %{
       user: user
     } do
       {:ok, organisation} = create_organisation()
@@ -176,8 +184,7 @@ defmodule Omedis.Accounts.GroupTest do
       create_access_right(organisation, %{
         resource_name: "Group",
         group_id: group.id,
-        write: false,
-        update: false
+        destroy: false
       })
 
       assert_raise Ash.Error.Forbidden, fn ->

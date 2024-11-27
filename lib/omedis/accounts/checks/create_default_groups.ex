@@ -106,7 +106,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
             read: true,
             resource_name: resource_name,
             update: true,
-            write: true
+            destroy: true
           },
           opts
         )
@@ -121,7 +121,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
             read: true,
             resource_name: resource_name,
             update: false,
-            write: false
+            destroy: false
           },
           opts
         )
@@ -138,7 +138,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
             read: true,
             resource_name: resource_name,
             update: false,
-            write: false
+            destroy: false
           },
           opts
         )
@@ -153,7 +153,7 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
             read: true,
             resource_name: resource_name,
             update: false,
-            write: false
+            destroy: false
           },
           opts
         )

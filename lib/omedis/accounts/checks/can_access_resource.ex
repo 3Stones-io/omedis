@@ -16,15 +16,57 @@ defmodule Omedis.Accounts.CanAccessResource do
   def match?(nil, _context, _options), do: false
   def match?(_actor, %{subject: %{tenant: nil}}, _options), do: false
 
-  def match?(actor, %{subject: %{tenant: organisation, resource: resource}} = context, _options) do
+  def match?(
+        actor,
+        %{subject: %{tenant: organisation, resource: resource, action: %{type: :update}}} =
+          _context,
+        _options
+      ) do
     resource_name = get_resource_name(resource)
-    action = get_action(context)
 
     Ash.exists?(
       filter(
         AccessRight,
         resource_name == ^resource_name and
-          (write == true or ^action == true) and
+          update == true and
+          exists(group.group_memberships, user_id == ^actor.id)
+      ),
+      tenant: organisation
+    )
+  end
+
+  def match?(
+        actor,
+        %{subject: %{tenant: organisation, resource: resource, action: %{type: :create}}} =
+          _context,
+        _options
+      ) do
+    resource_name = get_resource_name(resource)
+
+    Ash.exists?(
+      filter(
+        AccessRight,
+        resource_name == ^resource_name and
+          create == true and
+          exists(group.group_memberships, user_id == ^actor.id)
+      ),
+      tenant: organisation
+    )
+  end
+
+  def match?(
+        actor,
+        %{subject: %{tenant: organisation, resource: resource, action: %{type: :destroy}}} =
+          _context,
+        _options
+      ) do
+    resource_name = get_resource_name(resource)
+
+    Ash.exists?(
+      filter(
+        AccessRight,
+        resource_name == ^resource_name and
+          destroy == true and
           exists(group.group_memberships, user_id == ^actor.id)
       ),
       tenant: organisation
@@ -35,12 +77,5 @@ defmodule Omedis.Accounts.CanAccessResource do
     resource
     |> Module.split()
     |> List.last()
-  end
-
-  defp get_action(context) do
-    case context.action do
-      %{type: :create} -> :create
-      _ -> :update
-    end
   end
 end

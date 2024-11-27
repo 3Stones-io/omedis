@@ -31,7 +31,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Organisation",
-        write: true,
         create: true
       })
 
@@ -40,7 +39,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Group",
-        write: true,
         create: true
       })
 
@@ -48,7 +46,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        write: true,
         resource_name: "Invitation"
       })
 

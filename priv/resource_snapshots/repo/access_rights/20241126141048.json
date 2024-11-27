@@ -37,7 +37,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "write",
+      "source": "destroy",
       "type": "boolean"
     },
     {
@@ -144,7 +144,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "C7D8421075B9737D18EBF4228017EFB8626A38D2FD95F3357F999D32B996DFCB",
+  "hash": "E61429FF06B35D916381C34DC309C4109D47909D427CE40D4C25C960345928BE",
   "identities": [],
   "multitenancy": {
     "attribute": "organisation_id",

@@ -18,7 +18,8 @@ defmodule Omedis.GroupMembershipTest do
         group_id: group.id,
         read: true,
         resource_name: "GroupMembership",
-        write: true
+        destroy: true,
+        create: true
       })
 
     {:ok,

@@ -20,7 +20,8 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Project",
-        write: true
+        create: true,
+        update: true
       })
 
     {:ok, _} =

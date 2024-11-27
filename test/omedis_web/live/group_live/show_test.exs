@@ -23,8 +23,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
         create_access_right(organisation, %{
           group_id: group.id,
           resource_name: "Group",
-          read: true,
-          write: true
+          read: true
         })
 
       {:ok, _, html} =
@@ -53,16 +52,14 @@ defmodule OmedisWeb.GroupLive.ShowTest do
         create_access_right(organisation, %{
           group_id: group.id,
           resource_name: "Organisation",
-          read: true,
-          write: true
+          read: true
         })
 
       {:ok, _} =
         create_access_right(organisation, %{
           group_id: group.id,
           resource_name: "Group",
-          read: true,
-          write: true
+          read: true
         })
 
       {:ok, _, html} =
@@ -85,8 +82,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
         create_access_right(organisation, %{
           group_id: group.id,
           resource_name: "Group",
-          read: false,
-          write: false
+          read: false
         })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
