@@ -38,3 +38,5 @@ npm-debug.log
 # Other
 .DS_Store
 
+# Secrets
+.env.prod
