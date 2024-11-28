@@ -1,4 +1,15 @@
 <main>
   <.flash_group flash={@flash} />
+  <div :if={@current_user && assigns[:organisation]}>
+    <%= live_render(@socket, OmedisWeb.TimeTrackerLive.Index,
+      id: "time-tracker-liveview",
+      session: %{
+        "current_user_id" => @current_user.id,
+        "organisation_id" => assigns[:organisation].id,
+        "pubsub_topics_unique_id" => assigns[:pubsub_topics_unique_id]
+      },
+      sticky: true
+    ) %>
+  </div>
   <%= @inner_content %>
 </main>

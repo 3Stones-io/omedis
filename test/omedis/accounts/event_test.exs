@@ -821,7 +821,12 @@ defmodule Omedis.EventTest do
           actor: user
         )
 
-      {:ok, [event_1_from_db, event_2_from_db]} = Event.read(actor: user, tenant: organisation)
+      {:ok, events_from_db} = Event.read(actor: user, tenant: organisation)
+
+      assert length(events_from_db) == 2
+
+      event_1_from_db = Enum.find(events_from_db, fn event -> event.id == event_1.id end)
+      event_2_from_db = Enum.find(events_from_db, fn event -> event.id == event_2.id end)
 
       assert event_1_from_db.id == event_1.id
       assert event_2_from_db.id == event_2.id

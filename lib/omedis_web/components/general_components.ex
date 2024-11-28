@@ -456,7 +456,7 @@ defmodule OmedisWeb.GeneralComponents do
 
         <div class="h-6 w-px bg-gray-900/10 lg:hidden"></div>
         <div class="flex justify-between flex-1">
-          <div class="w-[70%]">
+          <div class="w-[50%] md:w-[70%] lg:w-[50%] 2xl:w-[70%]">
             <input
               id="search-field"
               class="block h-full w-[100%] border-0  text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"

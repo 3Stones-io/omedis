@@ -3,6 +3,8 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
   import Phoenix.LiveViewTest
 
+  require Ash.Query
+
   alias Omedis.Accounts.Event
   alias Omedis.Accounts.Group
 
@@ -10,7 +12,11 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
     {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
     {:ok, group} = create_group(organisation)
-    {:ok, project} = create_project(organisation)
+
+    {:ok, [project]} =
+      Omedis.Accounts.Project
+      |> Ash.Query.filter(name: "Project 1", organisation_id: organisation.id)
+      |> Ash.read(actor: owner, tenant: organisation)
 
     {:ok, activity} =
       create_activity(organisation, %{
