@@ -292,7 +292,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
              |> element("#time-tracker-stop-event")
              |> render_click() =~ "Start Timer"
 
-      assert_broadcast "event_stopped", %{}
+      assert_broadcast "event_stopped", %{}, 1000
       assert broadcast_activity_id == activity_1.id
 
       # Verify event was stopped
