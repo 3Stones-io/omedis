@@ -76,8 +76,11 @@ defmodule Omedis.OrganisationTest do
     require Ash.Query
 
     alias Omedis.Accounts.AccessRight
+    alias Omedis.Accounts.Activity
     alias Omedis.Accounts.Group
     alias Omedis.Accounts.GroupMembership
+    alias Omedis.Accounts.Organisation
+    alias Omedis.Accounts.Project
 
     test "is only allowed for users without an organisation", %{user: user} do
       assert {:error, _} =
@@ -215,6 +218,53 @@ defmodule Omedis.OrganisationTest do
         assert users_group_rights.update == false
         assert users_group_rights.write == false
       end)
+    end
+
+    test "creates a default project", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [project]} =
+               Omedis.Accounts.Project
+               |> Ash.Query.filter(organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert project.name == "Project 1"
+      assert project.position == "1"
+    end
+
+    test "creates a default activity", %{user: user} do
+      params =
+        Organisation
+        |> attrs_for(nil)
+        |> Map.put(:owner_id, user.id)
+
+      assert {:ok, organisation} = Organisation.create(params, actor: user)
+
+      assert {:ok, [users_group]} =
+               Group
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert {:ok, [project]} =
+               Project
+               |> Ash.Query.filter(name: "Project 1", organisation_id: organisation.id)
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert {:ok, [activity]} =
+               Activity
+               |> Ash.Query.filter(
+                 group_id: users_group.id,
+                 project_id: project.id,
+                 slug: "miscellaneous"
+               )
+               |> Ash.read(actor: user, tenant: organisation)
+
+      assert activity.name == "Miscellaneous"
     end
   end
 
