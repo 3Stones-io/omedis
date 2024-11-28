@@ -2,7 +2,7 @@ defmodule OmedisWeb.GroupLive.Show do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Group
 
-  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
   @impl true
   def render(assigns) do

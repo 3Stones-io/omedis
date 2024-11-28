@@ -1,4 +1,4 @@
-name: CI
+name: CI & CD
 
 on:
   pull_request:
@@ -7,6 +7,10 @@ on:
   push:
     branches:
       - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -80,3 +84,57 @@ jobs:
 
       - name: Run Credo
         run: mix credo --strict
+
+  deploy:
+    name: Deploy
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-20.04
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    env:
+      DOCKER_BUILDKIT: 1
+      SERVER_ADDR: "188.34.183.100"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+
+      - name: Set up Docker Buildx for cache
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up SSH connection
+        run: |
+          mkdir -p ~/.ssh && echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          eval $(ssh-agent -s) && ssh-add ~/.ssh/id_rsa
+          ssh-keyscan $SERVER_ADDR >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Install Kamal
+        run: gem install kamal
+
+      - name: Set up environment variables
+        run: |
+          cat > .env.prod << EOL
+          DATABASE_URL=postgres://postgres:${{ secrets.POSTGRES_PASSWORD }}@omedis-db:5432/omedis
+          KAMAL_REGISTRY_PASSWORD=${{ secrets.KAMAL_REGISTRY_PASSWORD }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
+          EOL
+
+      - name: Deploy with Kamal
+        env:
+          DOCKER_BUILDKIT: 1
+          GIT_SHA: ${{ github.sha }}
+        run: |
+          kamal deploy
