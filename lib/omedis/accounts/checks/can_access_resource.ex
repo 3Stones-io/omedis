@@ -16,31 +16,29 @@ defmodule Omedis.Accounts.CanAccessResource do
   def match?(nil, _context, _options), do: false
   def match?(_actor, %{subject: %{tenant: nil}}, _options), do: false
 
-  def match?(actor, %{subject: %{tenant: organisation, resource: resource}} = context, _options) do
+  def match?(
+        actor,
+        %{subject: %{tenant: organisation, resource: resource, action: %{type: action}}} =
+          _context,
+        _options
+      ) do
     resource_name = get_resource_name(resource)
-    action = get_action(context)
 
-    Ash.exists?(
-      filter(
-        AccessRight,
-        resource_name == ^resource_name and
-          (write == true or ^action == true) and
-          exists(group.group_memberships, user_id == ^actor.id)
-      ),
-      tenant: organisation
+    AccessRight
+    |> filter(
+      resource_name == ^resource_name and exists(group.group_memberships, user_id == ^actor.id)
     )
+    |> filter_by_action(action)
+    |> Ash.exists?(tenant: organisation)
   end
+
+  defp filter_by_action(query, :create), do: filter(query, create == true)
+  defp filter_by_action(query, :destroy), do: filter(query, destroy == true)
+  defp filter_by_action(query, :update), do: filter(query, update == true)
 
   defp get_resource_name(resource) do
     resource
     |> Module.split()
     |> List.last()
-  end
-
-  defp get_action(context) do
-    case context.action do
-      %{type: :create} -> :create
-      _ -> :update
-    end
   end
 end

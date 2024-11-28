@@ -20,7 +20,8 @@ defmodule Omedis.Accounts.ActivityTest do
         group_id: group.id,
         read: true,
         resource_name: "Activity",
-        write: true
+        update: true,
+        create: true
       })
 
     {:ok, _} =
@@ -28,7 +29,8 @@ defmodule Omedis.Accounts.ActivityTest do
         group_id: group.id,
         read: true,
         resource_name: "Organisation",
-        write: true
+        update: true,
+        create: true
       })
 
     {:ok, user} = create_user()
@@ -40,7 +42,8 @@ defmodule Omedis.Accounts.ActivityTest do
         group_id: group_2.id,
         read: true,
         resource_name: "Organisation",
-        write: true
+        update: true,
+        create: true
       })
 
     %{

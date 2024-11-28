@@ -243,8 +243,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
           group_id: group.id,
           read: true,
           resource_name: "Organisation",
-          update: false,
-          write: false
+          update: false
         })
 
       assert {:error, {:live_redirect, %{to: path, flash: flash}}} =
