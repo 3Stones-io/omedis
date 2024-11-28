@@ -16,25 +16,15 @@ defmodule Omedis.Accounts.CanUpdateOrganisation do
   def match?(nil, _context, _opts), do: false
   def match?(_actor, %{subject: %{data: nil}}, _opts), do: false
 
-  def match?(actor, %{subject: %{data: organisation, action: %{type: :update}}}, _opts) do
-    Ash.exists?(
-      filter(
-        AccessRight,
-        resource_name == "Organisation" and
-          update && exists(group.group_memberships, user_id == ^actor.id)
-      ),
-      tenant: organisation
+  def match?(actor, %{subject: %{data: organisation, action: %{type: action}}}, _opts) do
+    AccessRight
+    |> filter(
+      resource_name == "Organisation" and exists(group.group_memberships, user_id == ^actor.id)
     )
+    |> filter_by_action(action)
+    |> Ash.exists?(tenant: organisation)
   end
 
-  def match?(actor, %{subject: %{data: organisation, action: %{type: :destroy}}}, _opts) do
-    Ash.exists?(
-      filter(
-        AccessRight,
-        resource_name == "Organisation" and
-          destroy && exists(group.group_memberships, user_id == ^actor.id)
-      ),
-      tenant: organisation
-    )
-  end
+  defp filter_by_action(query, :update), do: filter(query, update == true)
+  defp filter_by_action(query, :destroy), do: filter(query, destroy == true)
 end
