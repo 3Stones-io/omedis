@@ -16,7 +16,7 @@ msgstr ""
 msgid "Start Timer"
 msgstr ""
 
-#: lib/omedis_web/live/time_tracker_live/index.ex:382
+#: lib/omedis_web/live/time_tracker_live/index.ex:381
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to perform this action"
 msgstr ""
