@@ -230,7 +230,7 @@ defmodule Omedis.OrganisationTest do
                |> Ash.Query.filter(organisation_id: organisation.id)
                |> Ash.read(actor: user, tenant: organisation)
 
-      assert project.name == "Organisation"
+      assert project.name == "Project 1"
       assert project.position == "1"
     end
   end

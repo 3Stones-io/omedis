@@ -15,7 +15,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
     {:ok, [project]} =
       Omedis.Accounts.Project
-      |> Ash.Query.filter(name: "Organisation", organisation_id: organisation.id)
+      |> Ash.Query.filter(name: "Project 1", organisation_id: organisation.id)
       |> Ash.read(actor: owner, tenant: organisation)
 
     {:ok, activity} =

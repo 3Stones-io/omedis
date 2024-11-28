@@ -22,7 +22,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateDefaultProject do
     {:ok, _project} =
       Project.create(
         %{
-          name: "Organisation",
+          name: "Project 1",
           position: "1",
           organisation_id: organisation.id
         },
