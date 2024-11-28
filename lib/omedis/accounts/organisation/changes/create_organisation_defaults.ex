@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
+defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
   @moduledoc """
   Creates the following default groups when a new organisation is created.
 
@@ -6,6 +6,8 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
   - `Users` group with just create and read access to `Event` resource, and read-only access to other select resources.
 
   The organisation owner is automatically added to the `Administrators` group.
+
+  Also creates a project called "Project 1" and an activity called "Miscellaneous" in the "Users" group.
   """
 
   use Ash.Resource.Change
@@ -54,6 +56,8 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
       users_group = create_users_group(organisation, opts)
       create_admin_access_rights(administrators_group, opts)
       create_user_access_rights(users_group, opts)
+      project = create_project(organisation, opts)
+      create_activity(project, users_group, opts)
 
       {:ok, organisation}
     end)
@@ -158,5 +162,36 @@ defmodule Omedis.Accounts.Changes.CreateDefaultGroups do
           opts
         )
     end
+  end
+
+  defp create_project(organisation, actor) do
+    {:ok, project} =
+      Accounts.Project.create(
+        %{
+          name: "Project 1",
+          position: "1",
+          organisation_id: organisation.id
+        },
+        actor: actor,
+        tenant: organisation,
+        authorize?: false
+      )
+
+    project
+  end
+
+  defp create_activity(project, users_group, opts) do
+    {:ok, _} =
+      Accounts.Activity.create(
+        %{
+          name: "Miscellaneous",
+          slug: "miscellaneous",
+          group_id: users_group.id,
+          project_id: project.id,
+          is_default: true,
+          color_code: "#808080"
+        },
+        opts
+      )
   end
 end
