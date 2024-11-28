@@ -217,7 +217,7 @@ defmodule Omedis.OrganisationTest do
       end)
     end
 
-    test "creates a default project called Organisation", %{user: user} do
+    test "creates a default project", %{user: user} do
       params =
         Organisation
         |> attrs_for(nil)

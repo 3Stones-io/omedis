@@ -58,7 +58,7 @@ defmodule Omedis.Accounts.ProjectTest do
                  tenant: organisation
                )
 
-      # An additional default project called Organisation is created when an organisation is created
+      # An additional default project is created when an organisation is created
       assert length(projects) == 2
       assert List.last(projects).id == project.id
     end
