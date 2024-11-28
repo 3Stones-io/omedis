@@ -17,7 +17,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     {:ok, group} = create_group(organisation)
     {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
 
-    {:ok, organisation: organisation, group: group}
+    {:ok, organisation: organisation, group: group, user: user}
   end
 
   describe "/organisations/:slug" do
@@ -137,5 +137,278 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       assert html =~ "Organisation saved"
       assert html =~ "Updated Organisation"
     end
+  end
+
+  describe "/organisations/:slug (Time Tracker)" do
+    alias Omedis.Accounts.Event
+    alias OmedisWeb.Endpoint
+
+    setup %{group: group, organisation: organisation, user: user} do
+      {:ok, project} = create_project(organisation)
+
+      {:ok, activity_1} =
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Activity 1",
+          color_code: "#FF0000"
+        })
+
+      {:ok, activity_2} =
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Activity 2",
+          color_code: "#00FF00"
+        })
+
+      %{
+        activity_1: activity_1,
+        activity_2: activity_2,
+        group: group,
+        organisation: organisation,
+        user: user
+      }
+    end
+
+    test "shows time tracker with the Start Timer button when there is no active activity", %{
+      conn: conn,
+      organisation: organisation
+    } do
+      {:ok, view, _html} = live(conn, ~p"/organisations/#{organisation}")
+
+      wait_until(fn ->
+        html = render(view)
+        assert html =~ "Start Timer"
+        assert html =~ "hero-play-circle-solid"
+      end)
+    end
+
+    test "starts timer when activity is selected", %{
+      activity_1: activity_1,
+      conn: conn,
+      organisation: organisation,
+      user: user
+    } do
+      pubsub_topics_unique_id = Ash.UUID.generate()
+
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+
+      {:ok, organisation_live_view, _html} =
+        conn
+        |> put_session("pubsub_topics_unique_id", pubsub_topics_unique_id)
+        |> live(~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
+      wait_until(fn ->
+        html = render(organisation_live_view)
+        assert html =~ "Start Timer"
+      end)
+
+      assert time_tracker_live_view =
+               find_live_child(organisation_live_view, "time-tracker-liveview")
+
+      # Select an activity
+      time_tracker_live_view
+      |> element("button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']")
+      |> render_click()
+
+      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert broadcast_activity_id == activity_1.id
+
+      html = render(time_tracker_live_view)
+
+      refute html =~ "Start Timer"
+      assert html =~ "animate-pulse"
+
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
+    end
+
+    test "stops timer when clicking active activity", %{
+      conn: conn,
+      organisation: organisation,
+      activity_1: activity_1,
+      user: user
+    } do
+      pubsub_topics_unique_id = Ash.UUID.generate()
+
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+
+      {:ok, organisation_live_view, _html} =
+        conn
+        |> put_session("pubsub_topics_unique_id", pubsub_topics_unique_id)
+        |> live(~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
+      wait_until(fn ->
+        html = render(organisation_live_view)
+        assert html =~ "Start Timer"
+      end)
+
+      assert time_tracker_live_view =
+               find_live_child(organisation_live_view, "time-tracker-liveview")
+
+      # Select an activity
+      html =
+        time_tracker_live_view
+        |> element(
+          "button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']"
+        )
+        |> render_click()
+
+      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert broadcast_activity_id == activity_1.id
+
+      refute html =~ "Start Timer"
+      assert html =~ "animate-pulse"
+
+      # Verify event was started
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
+
+      assert time_tracker_live_view
+             |> element("#time-tracker-stop-event")
+             |> has_element?()
+
+      # Stop activity
+      assert time_tracker_live_view
+             |> element("#time-tracker-stop-event")
+             |> render_click() =~ "Start Timer"
+
+      assert_broadcast "event_stopped", %{}
+      assert broadcast_activity_id == activity_1.id
+
+      # Verify event was stopped
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      refute is_nil(event.dtend)
+    end
+
+    test "maintains timer state on page reload", %{
+      conn: conn,
+      organisation: organisation,
+      activity_1: activity_1,
+      user: user
+    } do
+      pubsub_topics_unique_id = Ash.UUID.generate()
+
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+
+      {:ok, organisation_live_view, _html} =
+        conn
+        |> put_session("pubsub_topics_unique_id", pubsub_topics_unique_id)
+        |> live(~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
+      wait_until(fn ->
+        html = render(organisation_live_view)
+        assert html =~ "Start Timer"
+      end)
+
+      assert time_tracker_live_view =
+               find_live_child(organisation_live_view, "time-tracker-liveview")
+
+      # Select an activity
+      html =
+        time_tracker_live_view
+        |> element(
+          "button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']"
+        )
+        |> render_click()
+
+      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert broadcast_activity_id == activity_1.id
+
+      # Verify timer is running
+      refute html =~ "Start Timer"
+      assert html =~ "animate-pulse"
+
+      # Verify event was started
+      assert {:ok, [event]} =
+               Event.by_activity_today(
+                 %{activity_id: activity_1.id},
+                 actor: user,
+                 tenant: organisation
+               )
+
+      assert event.activity_id == activity_1.id
+      assert is_nil(event.dtend)
+
+      # Simulate page reload
+      {:ok, new_view, _html} = live(conn, ~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
+      wait_until(fn ->
+        html = render(new_view)
+
+        # Verify timer is still running
+        refute html =~ "Start Timer"
+        assert html =~ "animate-pulse"
+      end)
+    end
+
+    test "unauthorized user cannot see time tracker", %{
+      conn: conn,
+      group: group,
+      organisation: organisation
+    } do
+      {:ok, unauthorized_user} = create_user()
+
+      {:ok, _} =
+        create_group_membership(organisation, %{group_id: group.id, user_id: unauthorized_user.id})
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: group.id,
+          read: true,
+          resource_name: "Organisation"
+        })
+
+      {:ok, view, html} =
+        conn
+        |> log_in_user(unauthorized_user)
+        |> live(~p"/organisations/#{organisation}")
+
+      refute html =~ "Start Timer"
+
+      refute view
+             |> element("button", "Start Timer")
+             |> has_element?()
+    end
+  end
+
+  defp wait_until(fun), do: wait_until(1_000, fun)
+  defp wait_until(0, fun), do: fun.()
+
+  defp wait_until(timeout, fun) do
+    fun.()
+  rescue
+    ExUnit.AssertionError ->
+      :timer.sleep(10)
+      wait_until(max(0, timeout - 10), fun)
   end
 end

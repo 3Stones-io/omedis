@@ -34,6 +34,9 @@ defmodule OmedisWeb.ConnCase do
       import Phoenix.ConnTest
       import Omedis.Fixtures
       import OmedisWeb.ConnCase
+
+      # Import conveniences for testing with channels
+      import Phoenix.ChannelTest
     end
   end
 

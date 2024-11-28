@@ -7,8 +7,8 @@ defmodule OmedisWeb.ProjectLive.Index do
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
-  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
 
   @impl true
   def render(assigns) do

@@ -40,8 +40,10 @@ defmodule OmedisWeb.Router do
         {OmedisWeb.LiveUserAuth, :live_user_required},
         {OmedisWeb.LiveOrganisation, :assign_current_organisation},
         {OmedisWeb.LiveOrganisation, :assign_organisations_count},
-        {OmedisWeb.LiveHelpers, :assign_locale}
-      ] do
+        {OmedisWeb.LiveHelpers, :assign_locale},
+        {OmedisWeb.LiveHelpers, :assign_pubsub_topics_unique_id}
+      ],
+      session: {OmedisWeb.LiveHelpers, :add_pubsub_topics_unique_id_to_session, []} do
       live "/edit_profile", EditProfileLive, :index
       live "/organisations", OrganisationLive.Index, :index
       live "/organisations/new", OrganisationLive.Index, :new

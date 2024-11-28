@@ -3,7 +3,7 @@ defmodule OmedisWeb.ProjectLive.Show do
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
 
-  on_mount {OmedisWeb.LiveHelpers, :maybe_assign_organisation}
+  on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
   @impl true
   def render(assigns) do
