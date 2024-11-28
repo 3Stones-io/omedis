@@ -18,60 +18,23 @@ defmodule Omedis.Accounts.CanAccessResource do
 
   def match?(
         actor,
-        %{subject: %{tenant: organisation, resource: resource, action: %{type: :update}}} =
+        %{subject: %{tenant: organisation, resource: resource, action: %{type: action}}} =
           _context,
         _options
       ) do
     resource_name = get_resource_name(resource)
 
-    Ash.exists?(
-      filter(
-        AccessRight,
-        resource_name == ^resource_name and
-          update == true and
-          exists(group.group_memberships, user_id == ^actor.id)
-      ),
-      tenant: organisation
+    AccessRight
+    |> filter(
+      resource_name == ^resource_name and exists(group.group_memberships, user_id == ^actor.id)
     )
+    |> filter_by_action(action)
+    |> Ash.exists?(tenant: organisation)
   end
 
-  def match?(
-        actor,
-        %{subject: %{tenant: organisation, resource: resource, action: %{type: :create}}} =
-          _context,
-        _options
-      ) do
-    resource_name = get_resource_name(resource)
-
-    Ash.exists?(
-      filter(
-        AccessRight,
-        resource_name == ^resource_name and
-          create == true and
-          exists(group.group_memberships, user_id == ^actor.id)
-      ),
-      tenant: organisation
-    )
-  end
-
-  def match?(
-        actor,
-        %{subject: %{tenant: organisation, resource: resource, action: %{type: :destroy}}} =
-          _context,
-        _options
-      ) do
-    resource_name = get_resource_name(resource)
-
-    Ash.exists?(
-      filter(
-        AccessRight,
-        resource_name == ^resource_name and
-          destroy == true and
-          exists(group.group_memberships, user_id == ^actor.id)
-      ),
-      tenant: organisation
-    )
-  end
+  defp filter_by_action(query, :create), do: filter(query, create == true)
+  defp filter_by_action(query, :destroy), do: filter(query, destroy == true)
+  defp filter_by_action(query, :update), do: filter(query, update == true)
 
   defp get_resource_name(resource) do
     resource
