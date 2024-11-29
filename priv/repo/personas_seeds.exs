@@ -49,14 +49,17 @@ sequential_create = fn module, list, opts ->
         |> Ash.Query.filter(^identity_attrs)
 
       case Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant)) do
-        {:ok, existing} ->
+        {:ok, [existing]} ->
           {:cont, {:ok, [existing | acc]}}
 
-        {:error, _} ->
+        {:ok, []} ->
           case Ash.create(module, attrs, opts) do
             {:ok, record} -> {:cont, {:ok, [record | acc]}}
             error -> {:halt, error}
           end
+
+        error ->
+          {:halt, error}
       end
     end)
 
@@ -66,7 +69,7 @@ sequential_create = fn module, list, opts ->
   end
 end
 
-%{records: [denis, heidi, _fatima, _ben, _sarah, _lena, _tim, _anna, _marc], status: :success} =
+%{records: [denis, heidi, _fatima, ben, _sarah, _lena, tim, _anna, _marc], status: :success} =
   bulk_create.(
     Accounts.User,
     [
@@ -182,11 +185,13 @@ end
     upsert_identity: :unique_group_membership
   )
 
-%{records: [medical_support], status: :success} =
+%{records: [medical_support, _frau_schmidt, _herr_meier], status: :success} =
   bulk_create.(
     Accounts.Project,
     [
-      %{organisation_id: organisation_1.id, name: "Medical Support"}
+      %{organisation_id: organisation_1.id, name: "Medical Support", position: "1"},
+      %{organisation_id: organisation_1.id, name: "Frau Schmidt", position: "2"},
+      %{organisation_id: organisation_1.id, name: "Herr Meier", position: "3"}
     ],
     tenant: organisation_1,
     upsert_fields: [:name],
@@ -197,7 +202,7 @@ end
   bulk_create.(
     Accounts.Project,
     [
-      %{organisation_id: organisation_2.id, name: "Security Operations", position: "2"}
+      %{organisation_id: organisation_2.id, name: "Security Operations", position: "1"}
     ],
     tenant: organisation_2,
     upsert_fields: [:name],
@@ -208,14 +213,23 @@ end
   bulk_create.(
     Accounts.Project,
     [
-      %{organisation_id: organisation_3.id, name: "Software Development", position: "3"}
+      %{organisation_id: organisation_3.id, name: "Software Development", position: "1"}
     ],
     tenant: organisation_3,
     upsert_fields: [:name],
     upsert_identity: :unique_name
   )
 
-%{records: _records, status: :success} =
+%{
+  records: [
+    visit_patient,
+    _drive_to_patient,
+    administer_medication,
+    follow_up_visit,
+    health_assessment
+  ],
+  status: :success
+} =
   sequential_create.(
     Accounts.Activity,
     [
@@ -264,7 +278,16 @@ end
     upsert_identity: :unique_slug
   )
 
-%{records: _security_activities, status: :success} =
+%{
+  records: [
+    surveillance_building,
+    _drive_to_building,
+    _incident_reporting,
+    _guard_assignment,
+    _alarm_response
+  ],
+  status: :success
+} =
   sequential_create.(
     Accounts.Activity,
     [
@@ -314,7 +337,10 @@ end
     upsert_identity: :unique_slug
   )
 
-%{records: _software_activities, status: :success} =
+%{
+  records: [ui_design, _modeling, _code_review, _talking_to_devs, _testing_features],
+  status: :success
+} =
   sequential_create.(
     Accounts.Activity,
     [
@@ -362,4 +388,164 @@ end
     tenant: organisation_3,
     upsert_fields: [:slug, :group_id],
     upsert_identity: :unique_slug
+  )
+
+# Events for Spitex Bemeda
+%{records: _medical_events, status: :success} =
+  bulk_create.(
+    Accounts.Event,
+    [
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-20 08:00:00Z],
+        dtend: ~U[2024-03-20 09:30:00Z],
+        summary: "Morning patient visit - Frau Schmidt"
+      },
+      %{
+        activity_id: administer_medication.id,
+        user_id: heidi.id,
+        dtstart: ~U[2024-03-20 10:00:00Z],
+        dtend: ~U[2024-03-20 11:00:00Z],
+        summary: "Medication administration - Herr Meier"
+      }
+    ],
+    actor: denis,
+    tenant: organisation_1,
+    upsert_identity: nil
+  )
+
+# Events for ASA Security
+%{records: _security_events, status: :success} =
+  bulk_create.(
+    Accounts.Event,
+    [
+      %{
+        activity_id: surveillance_building.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-20 20:00:00Z],
+        dtend: ~U[2024-03-21 04:00:00Z],
+        summary: "Night shift - Building A"
+      }
+    ],
+    actor: ben,
+    tenant: organisation_2,
+    upsert_identity: nil
+  )
+
+# Events for 3Stones
+%{records: _dev_events, status: :success} =
+  bulk_create.(
+    Accounts.Event,
+    [
+      %{
+        activity_id: ui_design.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-21 09:00:00Z],
+        dtend: ~U[2024-03-21 10:30:00Z],
+        summary: "Sprint Planning Meeting"
+      }
+    ],
+    actor: tim,
+    tenant: organisation_3,
+    upsert_identity: nil
+  )
+
+# Additional events for Spitex Bemeda with varied durations over two weeks
+%{records: _additional_medical_events, status: :success} =
+  bulk_create.(
+    Accounts.Event,
+    [
+      # Week 1
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-18 08:00:00Z],
+        dtend: ~U[2024-03-18 08:01:00Z],
+        summary: "Quick medication check"
+      },
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-18 08:30:00Z],
+        dtend: ~U[2024-03-18 10:45:00Z],
+        summary: "Extended care session - Frau Schmidt"
+      },
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-18 11:00:00Z],
+        dtend: ~U[2024-03-18 11:30:00Z],
+        summary: "Vital signs check - Herr Weber"
+      },
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-18 13:00:00Z],
+        dtend: ~U[2024-03-18 15:30:00Z],
+        summary: "Afternoon rounds"
+      },
+      # Week 1 - Day 2
+      %{
+        activity_id: administer_medication.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-19 08:15:00Z],
+        dtend: ~U[2024-03-19 08:45:00Z],
+        summary: "Morning medication round"
+      },
+      %{
+        activity_id: follow_up_visit.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-19 09:00:00Z],
+        dtend: ~U[2024-03-19 09:05:00Z],
+        summary: "Quick check-in call"
+      },
+      # Edge case: Forgotten to stop tracking
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-19 10:00:00Z],
+        dtend: ~U[2024-03-20 17:45:00Z],
+        summary: "Patient documentation (tracking error)"
+      },
+      # Week 2
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-25 08:00:00Z],
+        dtend: ~U[2024-03-25 11:00:00Z],
+        summary: "Morning patient visits"
+      },
+      %{
+        activity_id: administer_medication.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-25 13:00:00Z],
+        dtend: ~U[2024-03-25 13:15:00Z],
+        summary: "Medication review"
+      },
+      %{
+        activity_id: follow_up_visit.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-26 09:00:00Z],
+        dtend: ~U[2024-03-26 09:45:00Z],
+        summary: "Team meeting"
+      },
+      %{
+        activity_id: follow_up_visit.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-26 10:00:00Z],
+        dtend: ~U[2024-03-26 10:02:00Z],
+        summary: "Quick phone call"
+      },
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: ~U[2024-03-27 08:30:00Z],
+        dtend: ~U[2024-03-27 11:30:00Z],
+        summary: "Complex care case"
+      }
+    ],
+    actor: denis,
+    tenant: organisation_1,
+    upsert_identity: nil
   )
