@@ -49,7 +49,7 @@ defmodule Omedis.Release do
       {:ok, _, _} =
         Ecto.Migrator.with_repo(repo, fn repo ->
           # Run the seed script if it exists
-          seed_script = priv_path_for(repo, "seeds.exs")
+          seed_script = priv_path_for(repo, "personas_seeds.exs")
 
           if File.exists?(seed_script) do
             Code.eval_file(seed_script)
