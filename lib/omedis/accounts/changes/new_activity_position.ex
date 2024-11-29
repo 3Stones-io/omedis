@@ -16,7 +16,14 @@ defmodule Omedis.Accounts.Changes.NewActivityPosition do
         max_position =
           Activity
           |> Ash.Query.filter(group_id == ^group_id)
-          |> Ash.count!(authorize?: false, tenant: organisation)
+          |> Ash.Query.select(:position)
+          |> Ash.Query.sort(position: :desc)
+          |> Ash.Query.limit(1)
+          |> Ash.read!(authorize?: false, tenant: organisation)
+          |> case do
+            [] -> 0
+            [record] -> record.position
+          end
 
         Ash.Changeset.change_attribute(changeset, :position, max_position + 1)
 
