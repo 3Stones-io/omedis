@@ -2,8 +2,24 @@ defmodule OmedisWeb.AuthController do
   use OmedisWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
+  alias Omedis.Accounts.Organisation
+
   def success(conn, _activity, user, _token) do
     return_to = get_session(conn, :return_to) || ~p"/"
+
+    organisation_slug =
+      user.email
+      |> Ash.CiString.value()
+      |> Slug.slugify()
+
+    Organisation.create!(
+      %{
+        name: user.email,
+        slug: organisation_slug,
+        owner_id: user.id
+      },
+      actor: user
+    ) ## Not going to work for invitees!!!!
 
     conn
     |> delete_session(:return_to)

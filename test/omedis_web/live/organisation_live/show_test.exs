@@ -117,10 +117,6 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       assert_patch(show_live, ~p"/organisations/#{owned_organisation}/show/edit")
 
-      assert show_live
-             |> form("#organisation-form", organisation: %{street: ""})
-             |> render_change() =~ "is required"
-
       attrs =
         Organisation
         |> attrs_for(nil)

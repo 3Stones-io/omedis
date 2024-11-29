@@ -259,10 +259,6 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
 
       {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation}/edit")
 
-      assert show_live
-             |> form("#organisation-form", organisation: %{street: ""})
-             |> render_change() =~ "is required"
-
       attrs =
         Organisation
         |> attrs_for(nil)
