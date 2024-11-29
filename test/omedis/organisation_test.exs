@@ -149,7 +149,7 @@ defmodule Omedis.OrganisationTest do
         assert access_right.create == true
         assert access_right.read == true
         assert access_right.update == true
-        assert access_right.write == true
+        assert access_right.destroy == true
       end)
 
       # Special case for resources with read-only access
@@ -162,7 +162,7 @@ defmodule Omedis.OrganisationTest do
         assert user_access_right.create == false
         assert user_access_right.read == true
         assert user_access_right.update == false
-        assert user_access_right.write == false
+        assert user_access_right.destroy == false
       end)
     end
 
@@ -188,7 +188,7 @@ defmodule Omedis.OrganisationTest do
         assert access_right.create == false
         assert access_right.read == true
         assert access_right.update == false
-        assert access_right.write == false
+        assert access_right.destroy == false
       end)
     end
 
@@ -216,7 +216,7 @@ defmodule Omedis.OrganisationTest do
         assert users_group_rights.create == true
         assert users_group_rights.read == true
         assert users_group_rights.update == false
-        assert users_group_rights.write == false
+        assert users_group_rights.destroy == false
       end)
     end
 
@@ -269,7 +269,7 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "update/2" do
-    test "requires write or update access", %{user: user, group: group} do
+    test "requires update access", %{user: user, group: group} do
       {:ok, owned_organisation} = create_organisation(%{owner_id: user.id}, actor: user)
 
       assert {:ok, updated_organisation} =
@@ -284,8 +284,7 @@ defmodule Omedis.OrganisationTest do
         group_id: group.id,
         resource_name: "Organisation",
         read: true,
-        update: false,
-        write: false
+        update: false
       })
 
       assert {:error, _} = Organisation.update(organisation, %{name: "Updated"}, actor: user)
@@ -293,22 +292,7 @@ defmodule Omedis.OrganisationTest do
       create_access_right(organisation, %{
         group_id: group.id,
         resource_name: "Organisation",
-        update: false,
-        write: true
-      })
-
-      assert {:ok, updated_organisation} =
-               Organisation.update(organisation, %{name: "Updated"}, actor: user)
-
-      assert updated_organisation.name == "Updated"
-
-      {:ok, organisation} = create_organisation()
-
-      create_access_right(organisation, %{
-        group_id: group.id,
-        resource_name: "Organisation",
-        update: true,
-        write: false
+        update: true
       })
 
       assert {:ok, updated_organisation} =
@@ -319,7 +303,7 @@ defmodule Omedis.OrganisationTest do
   end
 
   describe "destroy/1" do
-    test "requires write/update access", %{user: user, group: group} do
+    test "requires destroy access", %{user: user, group: group} do
       {:ok, owned_organisation} = create_organisation(%{owner_id: user.id}, actor: user)
 
       assert :ok = Organisation.destroy(owned_organisation, actor: user)
@@ -331,8 +315,7 @@ defmodule Omedis.OrganisationTest do
         group_id: group.id,
         read: true,
         resource_name: "Organisation",
-        update: false,
-        write: false
+        destroy: false
       })
 
       assert {:error, _} = Organisation.destroy(organisation, actor: user)
@@ -340,19 +323,7 @@ defmodule Omedis.OrganisationTest do
       create_access_right(organisation, %{
         group_id: group.id,
         resource_name: "Organisation",
-        update: false,
-        write: true
-      })
-
-      assert :ok = Organisation.destroy(organisation, actor: user)
-
-      {:ok, organisation} = create_organisation()
-
-      create_access_right(organisation, %{
-        group_id: group.id,
-        resource_name: "Organisation",
-        update: true,
-        write: false
+        destroy: true
       })
 
       assert :ok = Organisation.destroy(organisation, actor: user)

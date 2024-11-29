@@ -96,7 +96,9 @@ end
         group_id: group_1.id,
         resource_name: "Project",
         read: true,
-        write: true
+        update: true,
+        create: true,
+        destroy: true
       }
     ],
     nil
@@ -111,31 +113,41 @@ end
         group_id: group_2.id,
         resource_name: "Group",
         read: true,
-        write: true
+        update: true,
+        create: true,
+        destroy: true
       },
       %{
         group_id: group_1.id,
         resource_name: "Group",
         read: true,
-        write: true
+        update: true,
+        create: true,
+        destroy: true
       },
       %{
         group_id: group_2.id,
         resource_name: "Activity",
         read: true,
-        write: true
+        update: true,
+        create: true,
+        destroy: true
       },
       %{
         group_id: group_1.id,
         resource_name: "Activity",
         read: true,
-        write: true
+        update: true,
+        create: true,
+        destroy: true
       },
       %{
         group_id: group_2.id,
         resource_name: "Event",
         read: true,
-        write: true
+        update: true,
+        create: true,
+        destroy: true
       }
     ],
     nil

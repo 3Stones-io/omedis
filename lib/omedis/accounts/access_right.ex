@@ -30,7 +30,7 @@ defmodule Omedis.Accounts.AccessRight do
       accept [
         :resource_name,
         :read,
-        :write,
+        :destroy,
         :update,
         :create,
         :group_id
@@ -40,7 +40,7 @@ defmodule Omedis.Accounts.AccessRight do
     end
 
     update :update do
-      accept [:read, :write, :update, :create]
+      accept [:read, :destroy, :update, :create]
 
       primary? true
     end
@@ -56,7 +56,7 @@ defmodule Omedis.Accounts.AccessRight do
 
     attribute :resource_name, :string, allow_nil?: false
     attribute :read, :boolean, default: false
-    attribute :write, :boolean, default: false
+    attribute :destroy, :boolean, default: false
     attribute :update, :boolean, default: false
     attribute :create, :boolean, default: false
 

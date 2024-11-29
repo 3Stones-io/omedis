@@ -18,7 +18,9 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
         group_id: group.id,
         read: true,
         resource_name: "Activity",
-        write: true
+        create: true,
+        destroy: true,
+        update: true
       })
 
     {:ok, _} =
@@ -213,8 +215,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
           group_id: group2.id,
           read: true,
           resource_name: "Activity",
-          update: false,
-          write: false
+          update: false
         })
 
       {:error, {:live_redirect, %{flash: flash, to: to}}} =

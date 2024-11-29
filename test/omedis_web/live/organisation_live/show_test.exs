@@ -59,7 +59,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       assert html =~ owned_organisation.name
     end
 
-    test "shows edit button when user has write or update access", %{
+    test "shows edit button when user has update access", %{
       group: group,
       organisation: organisation
     } do
@@ -71,8 +71,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
           group_id: group.id,
           read: true,
           resource_name: "Organisation",
-          update: false,
-          write: false
+          update: false
         })
 
       conn =
@@ -83,12 +82,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       refute html =~ "Edit organisation"
 
-      Ash.update!(access_right, %{write: true, update: false})
-
-      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
-      assert html =~ "Edit organisation"
-
-      Ash.update!(access_right, %{write: false, update: true})
+      Ash.update!(access_right, %{update: true})
 
       {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
       assert html =~ "Edit organisation"

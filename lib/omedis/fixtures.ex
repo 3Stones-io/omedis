@@ -60,7 +60,7 @@ defmodule Omedis.Fixtures do
       read: Enum.random([true, false]),
       resource_name: Enum.random(["Organisation"]),
       update: Enum.random([true, false]),
-      write: Enum.random([true, false])
+      destroy: Enum.random([true, false])
     }
   end
 
