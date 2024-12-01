@@ -29,8 +29,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "organisation",
-        write: true
+        resource_name: "Organisation"
       })
 
     {:ok, valid_invitation} =

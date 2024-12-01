@@ -103,10 +103,11 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       refute html =~ "Group 37"
     end
 
-    test "edit and delete actions are hidden is user has no rights to write or update a group", %{
-      conn: conn,
-      owner: owner
-    } do
+    test "edit and delete actions are hidden is user has no rights to destroy or update a group",
+         %{
+           conn: conn,
+           owner: owner
+         } do
       {:ok, organisation} = create_organisation()
 
       {:ok, group} =
@@ -122,7 +123,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         resource_name: "Organisation",
         group_id: group.id,
         read: true,
-        write: false,
+        destroy: false,
         update: false
       })
 
@@ -130,7 +131,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         resource_name: "Group",
         group_id: group.id,
         read: true,
-        write: false,
+        destroy: false,
         update: false
       })
 
@@ -163,8 +164,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         resource_name: "Group",
         group_id: group.id,
         read: true,
-        write: true,
-        update: true
+        destroy: true
       })
 
       {:ok, view, _html} =
@@ -205,7 +205,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         resource_name: "Group",
         group_id: group.id,
         read: true,
-        write: true,
         update: true
       })
 
@@ -254,7 +253,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         resource_name: "Organisation",
         group_id: group.id,
         read: true,
-        write: false,
         update: false
       })
 
@@ -262,7 +260,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         resource_name: "Group",
         group_id: group.id,
         read: true,
-        write: false,
         update: false
       })
 

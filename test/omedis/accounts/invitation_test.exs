@@ -30,7 +30,9 @@ defmodule Omedis.Accounts.InvitationTest do
         resource_name: "Invitation",
         group_id: group.id,
         read: true,
-        write: true
+        create: true,
+        destroy: true,
+        update: true
       })
 
     {:ok, _} =

@@ -20,7 +20,9 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
         group_id: group.id,
         read: true,
         resource_name: "Activity",
-        write: true
+        create: true,
+        destroy: true,
+        update: true
       })
 
     {:ok, _} =
