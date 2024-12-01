@@ -29,7 +29,8 @@ defmodule Omedis.Accounts.User do
         confirmation_required?(false)
 
         register_action_accept([
-          :email
+          :email,
+          :current_organisation_id
         ])
       end
     end

@@ -21,27 +21,10 @@ msgstr "Accettato"
 msgid "Are you sure you want to delete this invitation?"
 msgstr "Sei sicuro di voler eliminare questo invito?"
 
-#: lib/omedis_web/live/invitation_live/show.ex:113
-#, elixir-autogen, elixir-format
-msgid "Birthdate"
-msgstr "Data di nascita"
-
-#: lib/omedis_web/live/invitation_live/show.ex:222
+#: lib/omedis_web/live/invitation_live/show.ex:136
 #, elixir-autogen, elixir-format
 msgid "Complete Registration"
 msgstr "Completa la registrazione"
-
-#: lib/omedis_web/live/invitation_live/show.ex:138
-#: lib/omedis_web/live/invitation_live/show.ex:149
-#, elixir-autogen, elixir-format
-msgid "Daily End Time"
-msgstr "Orario di fine giornaliero"
-
-#: lib/omedis_web/live/invitation_live/show.ex:120
-#: lib/omedis_web/live/invitation_live/show.ex:131
-#, elixir-autogen, elixir-format
-msgid "Daily Start Time"
-msgstr "Orario di inizio giornaliero"
 
 #: lib/omedis_web/live/invitation_live/index.ex:194
 #, elixir-autogen, elixir-format
@@ -50,8 +33,8 @@ msgstr "Elimina"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:127
 #: lib/omedis_web/live/invitation_live/index.ex:147
-#: lib/omedis_web/live/invitation_live/show.ex:52
-#: lib/omedis_web/live/invitation_live/show.ex:55
+#: lib/omedis_web/live/invitation_live/show.ex:51
+#: lib/omedis_web/live/invitation_live/show.ex:54
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "Email"
@@ -60,22 +43,6 @@ msgstr "Email"
 #, elixir-autogen, elixir-format
 msgid "Expires At"
 msgstr "Scade il"
-
-#: lib/omedis_web/live/invitation_live/show.ex:102
-#, elixir-autogen, elixir-format
-msgid "Female"
-msgstr "Femmina"
-
-#: lib/omedis_web/live/invitation_live/show.ex:64
-#: lib/omedis_web/live/invitation_live/show.ex:66
-#, elixir-autogen, elixir-format
-msgid "First Name"
-msgstr "Nome"
-
-#: lib/omedis_web/live/invitation_live/show.ex:99
-#, elixir-autogen, elixir-format
-msgid "Gender"
-msgstr "Genere"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:153
 #, elixir-autogen, elixir-format
@@ -102,21 +69,10 @@ msgstr "Invitato il"
 msgid "Language"
 msgstr "Lingua"
 
-#: lib/omedis_web/live/invitation_live/show.ex:75
-#: lib/omedis_web/live/invitation_live/show.ex:77
-#, elixir-autogen, elixir-format
-msgid "Last Name"
-msgstr "Cognome"
-
 #: lib/omedis_web/live/invitation_live/index.ex:114
 #, elixir-autogen, elixir-format
 msgid "Listing Invitations"
 msgstr "Elenco Inviti"
-
-#: lib/omedis_web/live/invitation_live/show.ex:101
-#, elixir-autogen, elixir-format
-msgid "Male"
-msgstr "Maschio"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:113
 #: lib/omedis_web/live/invitation_live/index.ex:122
@@ -124,8 +80,8 @@ msgstr "Maschio"
 msgid "New Invitation"
 msgstr "Nuovo Invito"
 
-#: lib/omedis_web/live/invitation_live/show.ex:86
-#: lib/omedis_web/live/invitation_live/show.ex:89
+#: lib/omedis_web/live/invitation_live/show.ex:63
+#: lib/omedis_web/live/invitation_live/show.ex:66
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Password"
@@ -145,22 +101,17 @@ msgstr "Registrati"
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
 
-#: lib/omedis_web/live/invitation_live/show.ex:104
-#, elixir-autogen, elixir-format
-msgid "Select Your Gender"
-msgstr "Seleziona il tuo genere"
-
 #: lib/omedis_web/live/invitation_live/form_component.ex:170
 #, elixir-autogen, elixir-format
 msgid "Send Invitation"
 msgstr "Invia Invito"
 
-#: lib/omedis_web/live/invitation_live/show.ex:158
+#: lib/omedis_web/live/invitation_live/show.ex:86
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr "Iscriviti"
 
-#: lib/omedis_web/live/invitation_live/show.ex:159
+#: lib/omedis_web/live/invitation_live/show.ex:87
 #, elixir-autogen, elixir-format
 msgid "Signing up..."
 msgstr "Iscrizione in corso..."
@@ -180,7 +131,7 @@ msgstr "Usa un indirizzo permanente dove puoi ricevere posta."
 msgid "Use this form to invite new members."
 msgstr "Usa questo modulo per invitare nuovi membri."
 
-#: lib/omedis_web/live/invitation_live/show.ex:87
+#: lib/omedis_web/live/invitation_live/show.ex:64
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "nuova password"

@@ -7,19 +7,21 @@ defmodule OmedisWeb.AuthController do
   def success(conn, _activity, user, _token) do
     return_to = get_session(conn, :return_to) || ~p"/"
 
-    organisation_slug =
-      user.email
-      |> Ash.CiString.value()
-      |> Slug.slugify()
+    if !user.current_organisation_id do
+      organisation_slug =
+        user.email
+        |> Ash.CiString.value()
+        |> Slug.slugify()
 
-    Organisation.create!(
-      %{
-        name: user.email,
-        slug: organisation_slug,
-        owner_id: user.id
-      },
-      actor: user
-    ) ## Not going to work for invitees!!!!
+      Organisation.create!(
+        %{
+          name: user.email,
+          slug: organisation_slug,
+          owner_id: user.id
+        },
+        actor: user
+      )
+    end
 
     conn
     |> delete_session(:return_to)

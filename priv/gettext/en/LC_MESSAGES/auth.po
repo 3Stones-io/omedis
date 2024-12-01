@@ -53,7 +53,7 @@ msgstr ""
 msgid "Signing in..."
 msgstr ""
 
-#: lib/omedis_web/controllers/auth_controller.ex:54
+#: lib/omedis_web/controllers/auth_controller.ex:56
 #, elixir-autogen, elixir-format
 msgid "Something went wrong. Try again."
 msgstr ""
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Use your credentials to sign in"
 msgstr ""
 
-#: lib/omedis_web/controllers/auth_controller.ex:40
+#: lib/omedis_web/controllers/auth_controller.ex:42
 #, elixir-autogen, elixir-format
 msgid "Username or password is incorrect"
 msgstr ""

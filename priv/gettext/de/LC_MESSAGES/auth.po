@@ -53,7 +53,7 @@ msgstr "Anmelden"
 msgid "Signing in..."
 msgstr "Anmelden..."
 
-#: lib/omedis_web/controllers/auth_controller.ex:54
+#: lib/omedis_web/controllers/auth_controller.ex:56
 #, elixir-autogen, elixir-format
 msgid "Something went wrong. Try again."
 msgstr "Etwas ist schief gelaufen. Versuchen Sie es erneut."
@@ -68,7 +68,7 @@ msgstr "Verwenden Sie eine permanente Adresse, unter der Sie Post empfangen kön
 msgid "Use your credentials to sign in"
 msgstr "Verwenden Sie Ihre Anmeldedaten, um sich anzumelden"
 
-#: lib/omedis_web/controllers/auth_controller.ex:40
+#: lib/omedis_web/controllers/auth_controller.ex:42
 #, elixir-autogen, elixir-format
 msgid "Username or password is incorrect"
 msgstr "Benutzername oder Passwort ist falsch"

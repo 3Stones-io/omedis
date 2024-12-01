@@ -7,15 +7,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   alias Omedis.Accounts.User
 
   @valid_registration_params %{
-    "first_name" => "John",
-    "last_name" => "Doe",
     "email" => "test@gmail.com",
-    "password" => "12345678",
-    "gender" => "Male",
-    "birthdate" => ~D[1990-01-01],
-    "lang" => "en",
-    "daily_start_at" => "09:00:00",
-    "daily_end_at" => "17:00:00"
+    "password" => "12345678"
   }
 
   setup do
@@ -80,7 +73,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       _conn = submit_form(form, conn)
 
       assert {:ok, user} = User.by_email(@valid_registration_params["email"])
-      assert user.first_name == @valid_registration_params["first_name"]
+      assert Ash.CiString.value(user.email) == @valid_registration_params["email"]
     end
 
     test "form errors are displayed", %{
@@ -113,7 +106,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, _view, html} =
         live(conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
 
-      assert html =~ "Date de naissance"
+      assert html =~ "Mot de passe"
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
     end
 

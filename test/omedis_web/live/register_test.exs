@@ -7,7 +7,8 @@ defmodule OmedisWeb.RegisterTest do
   alias Omedis.Accounts.User
 
   describe "/register" do
-    test "a user can register for an account", %{conn: conn} do
+    test "a user can register for an account and is automatically create an organisation",
+         %{conn: conn} do
       {:ok, view, _html} = live(conn, "/register")
 
       assert has_element?(view, "#basic_user_sign_up_form")

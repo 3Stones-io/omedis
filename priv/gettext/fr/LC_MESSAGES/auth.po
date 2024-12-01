@@ -53,7 +53,7 @@ msgstr "Se connecter"
 msgid "Signing in..."
 msgstr "Connexion en cours..."
 
-#: lib/omedis_web/controllers/auth_controller.ex:54
+#: lib/omedis_web/controllers/auth_controller.ex:56
 #, elixir-autogen, elixir-format
 msgid "Something went wrong. Try again."
 msgstr "Quelque chose s'est mal passé. Réessayez."
@@ -68,7 +68,7 @@ msgstr "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
 msgid "Use your credentials to sign in"
 msgstr "Utilisez vos identifiants pour vous connecter"
 
-#: lib/omedis_web/controllers/auth_controller.ex:40
+#: lib/omedis_web/controllers/auth_controller.ex:42
 #, elixir-autogen, elixir-format
 msgid "Username or password is incorrect"
 msgstr "Nom d'utilisateur ou mot de passe incorrect"
