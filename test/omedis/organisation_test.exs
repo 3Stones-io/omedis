@@ -82,23 +82,28 @@ defmodule Omedis.OrganisationTest do
     alias Omedis.Accounts.Organisation
     alias Omedis.Accounts.Project
 
-    test "is only allowed for users without an organisation", %{user: user} do
-      assert {:error, _} =
-               Organisation.create(%{name: "New Organisation", slug: "new-organisation"},
-                 actor: user
-               )
-
-      {:ok, user_without_organisation} = create_user()
+    test "is only allowed for users without an organisation" do
+      {:ok, user} = create_user()
 
       assert {:ok, _} =
                Organisation
                |> attrs_for(nil)
                |> Map.merge(%{
                  name: "New Organisation",
-                 owner_id: user_without_organisation.id,
+                 owner_id: user.id,
                  slug: "new-organisation"
                })
-               |> Organisation.create(actor: user_without_organisation)
+               |> Organisation.create(actor: user)
+
+      assert {:error, _} =
+               Organisation
+               |> attrs_for(nil)
+               |> Map.merge(%{
+                 name: "Another Organisation",
+                 owner_id: user.id,
+                 slug: "another-organisation"
+               })
+               |> Organisation.create(actor: user)
     end
 
     test "returns an error when attributes are invalid", %{user: user} do
