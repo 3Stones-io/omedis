@@ -1,7 +1,6 @@
 defmodule OmedisWeb.RegisterTest do
   use OmedisWeb.ConnCase, async: false
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
   import Phoenix.LiveViewTest
@@ -122,8 +121,8 @@ defmodule OmedisWeb.RegisterTest do
       conn: conn,
       organisation: organisation
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("user:created")
       {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:#{invitation.id}")
 
       assert {:error, _} = User.by_email("test@user.com")
 
@@ -140,17 +139,12 @@ defmodule OmedisWeb.RegisterTest do
 
       conn = submit_form(form, conn)
 
-      created_user_email = Ash.CiString.new("test@user.com")
-
-      assert_broadcast "register_with_password", %Ash.Notifier.Notification{
-        data: %{email: ^created_user_email}
-      }
+      assert_broadcast "invitation_updated", updated_invitation
 
       {:ok, _index_live, _html} = live(conn, ~p"/organisations")
 
       assert {:ok, user} = User.by_email("test@user.com")
 
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
       assert updated_invitation.user_id == user.id
     end
   end
