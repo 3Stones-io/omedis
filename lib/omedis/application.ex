@@ -7,26 +7,31 @@ defmodule Omedis.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      OmedisWeb.Telemetry,
-      Omedis.Repo,
-      {DNSCluster, query: Application.get_env(:omedis, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Omedis.PubSub},
-      {AshAuthentication.Supervisor, otp_app: :omedis},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: Omedis.Finch},
-      {Oban, Application.fetch_env!(:omedis, Oban)},
-      # Start a worker by calling: Omedis.Worker.start_link(arg)
-      # {Omedis.Worker, arg},
-      # Start to serve requests, typically the last entry
-      OmedisWeb.Endpoint
-    ]
+    children =
+      [
+        OmedisWeb.Telemetry,
+        Omedis.Repo,
+        {DNSCluster, query: Application.get_env(:omedis, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: Omedis.PubSub},
+        {AshAuthentication.Supervisor, otp_app: :omedis},
+        # Start the Finch HTTP client for sending emails
+        {Finch, name: Omedis.Finch},
+        {Oban, Application.fetch_env!(:omedis, Oban)},
+        # Start a worker by calling: Omedis.Worker.start_link(arg)
+        # {Omedis.Worker, arg},
+        # Start to serve requests, typically the last entry
+        OmedisWeb.Endpoint
+      ] ++ more_children()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Omedis.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
+  defp more_children(env \\ Application.get_env(:omedis, :env))
+  defp more_children(:test), do: []
+  defp more_children(_), do: [Omedis.Accounts.InvitationUserLinker]
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.

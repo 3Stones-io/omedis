@@ -23,6 +23,7 @@ defmodule Omedis.Accounts.Invitation do
     define :create
     define :destroy
     define :list_paginated
+    define :update
   end
 
   actions do
@@ -43,9 +44,10 @@ defmodule Omedis.Accounts.Invitation do
     end
 
     update :update do
-      accept [:email, :language, :creator_id, :inserted_at]
+      accept [:email, :language, :creator_id, :inserted_at, :user_id]
 
       primary? true
+      require_atomic? false
     end
 
     create :create do
@@ -61,6 +63,9 @@ defmodule Omedis.Accounts.Invitation do
              )
 
       change Omedis.Accounts.Changes.SendInvitationEmail
+
+      validate {__MODULE__.Validations.ValidateNoPendingInvitation, []}
+      validate {__MODULE__.Validations.ValidateUserNotRegistered, []}
 
       primary? true
     end
