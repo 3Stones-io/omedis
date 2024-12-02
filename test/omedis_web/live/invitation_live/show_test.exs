@@ -4,7 +4,6 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   import Omedis.Fixtures
   import Phoenix.LiveViewTest
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
   setup do
@@ -56,12 +55,13 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       organisation: organisation,
       valid_invitation: valid_invitation
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("user:created")
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:#{valid_invitation.id}")
 
       {:ok, view, _html} =
         live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
 
       valid_registration_params = %{
+        "email" => valid_invitation.email,
         "first_name" => "Testabc",
         "last_name" => "Userxyz",
         "password" => "12345678",
@@ -79,23 +79,14 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
           user: valid_registration_params
         )
 
-      html = render_submit(form)
+      _conn = submit_form(form, conn)
 
-      created_user_email = Ash.CiString.new(valid_invitation.email)
-
-      # TODO: Figure out why we don't get a broadcast for the created user
-      assert_broadcast "register_with_password", %Ash.Notifier.Notification{
-        data: %{email: ^created_user_email}
-      }
-
-      assert html =~ "Testabc"
-      assert html =~ "Userxyz"
+      assert_broadcast "invitation_updated", updated_invitation
 
       assert {:ok, user} = User.by_email(valid_invitation.email)
       assert user.first_name == valid_registration_params["first_name"]
 
       # Verify invitation was updated
-      {:ok, updated_invitation} = Invitation.by_id(valid_invitation.id)
       assert updated_invitation.user_id == user.id
     end
 

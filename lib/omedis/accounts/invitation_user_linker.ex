@@ -49,7 +49,13 @@ defmodule Omedis.Accounts.InvitationUserLinker do
         {:error, :not_found}
 
       {:ok, [invitation]} ->
-        update_invitation(invitation, user.id)
+        {:ok, updated_invitation} = update_invitation(invitation, user.id)
+
+        OmedisWeb.Endpoint.broadcast(
+          "invitation:#{invitation.id}",
+          "invitation_updated",
+          updated_invitation
+        )
 
       {:error, error} ->
         Logger.error("[InvitationUserLinker] error: #{inspect(error)}")

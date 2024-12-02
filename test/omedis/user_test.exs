@@ -3,7 +3,6 @@ defmodule Omedis.FarmersTest do
 
   import Phoenix.ChannelTest
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
   setup do
@@ -42,10 +41,10 @@ defmodule Omedis.FarmersTest do
     end
 
     test "create/1 updates the associated invitation when user is created" do
-      :ok = OmedisWeb.Endpoint.subscribe("user:created")
-
       {:ok, organisation} = create_organisation()
       {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
+
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:#{invitation.id}")
 
       assert {:ok, user} =
                User.create(%{
@@ -57,13 +56,7 @@ defmodule Omedis.FarmersTest do
                  birthdate: "1980-01-01"
                })
 
-      created_user_email = Ash.CiString.new("test@user.com")
-
-      assert_broadcast "create", %Ash.Notifier.Notification{
-        data: %{email: ^created_user_email}
-      }
-
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+      assert_broadcast "invitation_updated", updated_invitation
       assert updated_invitation.user_id == user.id
     end
 
