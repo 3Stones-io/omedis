@@ -11,7 +11,7 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/components/core_components.ex:523
+#: lib/omedis_web/components/core_components.ex:524
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Aktionen"

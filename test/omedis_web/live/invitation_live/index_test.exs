@@ -232,6 +232,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> log_in_user(authorized_user)
         |> live(~p"/organisations/#{organisation}/invitations")
 
+      # TODO: Figure out why this is flaky
       assert index_live
              |> element("#delete_invitation_#{invitation.id}")
              |> has_element?()
