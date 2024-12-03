@@ -1,15 +1,8 @@
 defmodule Omedis.FarmersTest do
   use Omedis.DataCase, async: false
 
-  import Phoenix.ChannelTest
-
+  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
-
-  setup do
-    {:ok, _pid} = start_supervised(Omedis.Accounts.InvitationUserLinker)
-
-    :ok
-  end
 
   describe "User Resource Unit Tests" do
     test "read/0  returns all users" do
@@ -44,8 +37,6 @@ defmodule Omedis.FarmersTest do
       {:ok, organisation} = create_organisation()
       {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
 
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:#{invitation.id}")
-
       assert {:ok, user} =
                User.create(%{
                  email: "test@user.com",
@@ -56,7 +47,8 @@ defmodule Omedis.FarmersTest do
                  birthdate: "1980-01-01"
                })
 
-      assert_broadcast "invitation_updated", updated_invitation
+      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+
       assert updated_invitation.user_id == user.id
     end
 

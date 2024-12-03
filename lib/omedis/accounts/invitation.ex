@@ -47,7 +47,6 @@ defmodule Omedis.Accounts.Invitation do
       accept [:email, :language, :creator_id, :inserted_at, :user_id]
 
       primary? true
-      require_atomic? false
     end
 
     create :create do

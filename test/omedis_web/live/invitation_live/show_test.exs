@@ -4,10 +4,10 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   import Omedis.Fixtures
   import Phoenix.LiveViewTest
 
+  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
   setup do
-    {:ok, _pid} = start_supervised(Omedis.Accounts.InvitationUserLinker)
     {:ok, owner} = create_user()
     {:ok, organisation} = create_organisation(%{owner_id: owner.id})
     {:ok, group} = create_group(organisation)
@@ -81,12 +81,12 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       _conn = submit_form(form, conn)
 
-      assert_broadcast "invitation_updated", updated_invitation
-
       assert {:ok, user} = User.by_email(valid_invitation.email)
       assert user.first_name == valid_registration_params["first_name"]
 
       # Verify invitation was updated
+      {:ok, updated_invitation} = Invitation.by_id(valid_invitation.id)
+
       assert updated_invitation.user_id == user.id
     end
 

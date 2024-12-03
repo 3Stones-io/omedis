@@ -7,8 +7,7 @@ defmodule Omedis.Accounts.User do
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication, AshArchival.Resource],
-    domain: Omedis.Accounts,
-    notifiers: [Ash.Notifier.PubSub]
+    domain: Omedis.Accounts
 
   alias Omedis.Accounts.CanDeleteAccount
   alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
@@ -83,6 +82,8 @@ defmodule Omedis.Accounts.User do
       primary? true
 
       change MaybeAddOrganisationDefaults
+
+      change {Omedis.Accounts.User.Changes.AssociateUserWithInvitation, []}
     end
 
     update :update do
@@ -112,21 +113,18 @@ defmodule Omedis.Accounts.User do
     end
   end
 
-  # TODO: This may not be ideal
-  # if it works, add a FIXME: note, to make it better
-  pub_sub do
-    module OmedisWeb.Endpoint
-    prefix "user"
-    publish :create, ["created"]
-    publish :register_with_password, ["created"]
-  end
-
   preparations do
     prepare build(
               load: [
                 :as_string
               ]
             )
+  end
+
+  changes do
+    change {Omedis.Accounts.User.Changes.AssociateUserWithInvitation, []} do
+      where [action_is(:register_with_password)]
+    end
   end
 
   validations do

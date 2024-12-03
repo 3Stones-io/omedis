@@ -1,6 +1,7 @@
 defmodule OmedisWeb.RegisterTest do
   use OmedisWeb.ConnCase, async: false
 
+  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
   import Phoenix.LiveViewTest
@@ -27,7 +28,6 @@ defmodule OmedisWeb.RegisterTest do
   }
 
   setup do
-    {:ok, _pid} = start_supervised(Omedis.Accounts.InvitationUserLinker)
     {:ok, organisation} = create_organisation(@valid_organisation_params)
     {:ok, %{organisation: organisation}}
   end
@@ -122,7 +122,7 @@ defmodule OmedisWeb.RegisterTest do
       organisation: organisation
     } do
       {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:#{invitation.id}")
+      # :ok = OmedisWeb.Endpoint.subscribe("invitation:#{invitation.id}")
 
       assert {:error, _} = User.by_email("test@user.com")
 
@@ -139,11 +139,11 @@ defmodule OmedisWeb.RegisterTest do
 
       conn = submit_form(form, conn)
 
-      assert_broadcast "invitation_updated", updated_invitation
-
       {:ok, _index_live, _html} = live(conn, ~p"/organisations")
 
       assert {:ok, user} = User.by_email("test@user.com")
+
+      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
 
       assert updated_invitation.user_id == user.id
     end
