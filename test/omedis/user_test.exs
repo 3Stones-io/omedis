@@ -8,7 +8,7 @@ defmodule Omedis.FarmersTest do
       create_user(%{email: "test@gmail.com"})
 
       {:ok, users} = User.read()
-      assert Enum.empty?(users) == false
+      refute Enum.empty?(users)
     end
 
     test "create/1 creates a user given valid attributes" do
@@ -82,7 +82,7 @@ defmodule Omedis.FarmersTest do
       {:ok, _user_2} = create_user(%{email: "test2@gmail.com"})
 
       {:ok, users} = User.read()
-      assert Enum.empty?(users) == false
+      refute Enum.empty?(users)
 
       assert_raise Ash.Error.Forbidden, fn ->
         User.destroy!(user, actor: user)
@@ -129,7 +129,7 @@ defmodule Omedis.FarmersTest do
         create_group_membership(organisation, %{group_id: admin_group.id, user_id: user_2.id})
 
       {:ok, users} = User.read()
-      assert Enum.empty?(users) == false
+      refute Enum.empty?(users)
 
       assert :ok = User.destroy!(user, actor: user)
 
