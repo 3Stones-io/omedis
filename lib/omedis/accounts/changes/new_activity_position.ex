@@ -13,19 +13,18 @@ defmodule Omedis.Accounts.Changes.NewActivityPosition do
   defp generate_activity_position(changeset, organisation) do
     case Ash.Changeset.get_attribute(changeset, :group_id) do
       group_id when is_binary(group_id) ->
-        max_position =
-          Activity
-          |> Ash.Query.filter(group_id == ^group_id)
-          |> Ash.Query.select(:position)
-          |> Ash.Query.sort(position: :desc)
-          |> Ash.Query.limit(1)
-          |> Ash.read!(authorize?: false, tenant: organisation)
-          |> case do
-            [] -> 0
-            [record] -> record.position
+        query = Ash.Query.filter(Activity, group_id == ^group_id)
+
+        position =
+          case Ash.max(query, :position, authorize?: false, tenant: organisation) do
+            {:ok, max_position} when is_integer(max_position) ->
+              max_position + 1
+
+            _ ->
+              1
           end
 
-        Ash.Changeset.change_attribute(changeset, :position, max_position + 1)
+        Ash.Changeset.change_attribute(changeset, :position, position)
 
       _ ->
         Ash.Changeset.add_error(changeset, [:position, "Position is required"])

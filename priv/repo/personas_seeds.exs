@@ -390,6 +390,16 @@ end
     upsert_identity: :unique_slug
   )
 
+# Helper functions for relative dates
+today = DateTime.utc_now() |> DateTime.truncate(:second)
+days_from_today = fn days -> DateTime.add(today, days * 86400, :second) end
+
+time_on_day = fn date, hour, minute ->
+  date
+  |> DateTime.add(hour * 3600 + minute * 60, :second)
+  |> DateTime.truncate(:second)
+end
+
 # Events for Spitex Bemeda
 %{records: _medical_events, status: :success} =
   bulk_create.(
@@ -398,15 +408,15 @@ end
       %{
         activity_id: visit_patient.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-20 08:00:00Z],
-        dtend: ~U[2024-03-20 09:30:00Z],
+        dtstart: time_on_day.(days_from_today.(2), 8, 0),
+        dtend: time_on_day.(days_from_today.(2), 9, 30),
         summary: "Morning patient visit - Frau Schmidt"
       },
       %{
         activity_id: administer_medication.id,
         user_id: heidi.id,
-        dtstart: ~U[2024-03-20 10:00:00Z],
-        dtend: ~U[2024-03-20 11:00:00Z],
+        dtstart: time_on_day.(days_from_today.(2), 10, 0),
+        dtend: time_on_day.(days_from_today.(2), 11, 0),
         summary: "Medication administration - Herr Meier"
       }
     ],
@@ -423,8 +433,8 @@ end
       %{
         activity_id: surveillance_building.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-20 20:00:00Z],
-        dtend: ~U[2024-03-21 04:00:00Z],
+        dtstart: time_on_day.(days_from_today.(2), 20, 0),
+        dtend: time_on_day.(days_from_today.(3), 4, 0),
         summary: "Night shift - Building A"
       }
     ],
@@ -441,8 +451,8 @@ end
       %{
         activity_id: ui_design.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-21 09:00:00Z],
-        dtend: ~U[2024-03-21 10:30:00Z],
+        dtstart: time_on_day.(days_from_today.(3), 9, 0),
+        dtend: time_on_day.(days_from_today.(3), 10, 30),
         summary: "Sprint Planning Meeting"
       }
     ],
@@ -460,88 +470,88 @@ end
       %{
         activity_id: visit_patient.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-18 08:00:00Z],
-        dtend: ~U[2024-03-18 08:01:00Z],
+        dtstart: time_on_day.(days_from_today.(-2), 8, 0),
+        dtend: time_on_day.(days_from_today.(-2), 8, 1),
         summary: "Quick medication check"
       },
       %{
         activity_id: visit_patient.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-18 08:30:00Z],
-        dtend: ~U[2024-03-18 10:45:00Z],
+        dtstart: time_on_day.(days_from_today.(-2), 8, 30),
+        dtend: time_on_day.(days_from_today.(-2), 10, 45),
         summary: "Extended care session - Frau Schmidt"
       },
       %{
         activity_id: health_assessment.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-18 11:00:00Z],
-        dtend: ~U[2024-03-18 11:30:00Z],
+        dtstart: time_on_day.(days_from_today.(-2), 11, 0),
+        dtend: time_on_day.(days_from_today.(-2), 11, 30),
         summary: "Vital signs check - Herr Weber"
       },
       %{
         activity_id: visit_patient.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-18 13:00:00Z],
-        dtend: ~U[2024-03-18 15:30:00Z],
+        dtstart: time_on_day.(days_from_today.(-2), 13, 0),
+        dtend: time_on_day.(days_from_today.(-2), 15, 30),
         summary: "Afternoon rounds"
       },
       # Week 1 - Day 2
       %{
         activity_id: administer_medication.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-19 08:15:00Z],
-        dtend: ~U[2024-03-19 08:45:00Z],
+        dtstart: time_on_day.(days_from_today.(-1), 8, 15),
+        dtend: time_on_day.(days_from_today.(-1), 8, 45),
         summary: "Morning medication round"
       },
       %{
         activity_id: follow_up_visit.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-19 09:00:00Z],
-        dtend: ~U[2024-03-19 09:05:00Z],
+        dtstart: time_on_day.(days_from_today.(-1), 9, 0),
+        dtend: time_on_day.(days_from_today.(-1), 9, 5),
         summary: "Quick check-in call"
       },
       # Edge case: Forgotten to stop tracking
       %{
         activity_id: health_assessment.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-19 10:00:00Z],
-        dtend: ~U[2024-03-20 17:45:00Z],
+        dtstart: time_on_day.(days_from_today.(-1), 10, 0),
+        dtend: time_on_day.(days_from_today.(0), 17, 45),
         summary: "Patient documentation (tracking error)"
       },
       # Week 2
       %{
         activity_id: visit_patient.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-25 08:00:00Z],
-        dtend: ~U[2024-03-25 11:00:00Z],
+        dtstart: time_on_day.(days_from_today.(5), 8, 0),
+        dtend: time_on_day.(days_from_today.(5), 11, 0),
         summary: "Morning patient visits"
       },
       %{
         activity_id: administer_medication.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-25 13:00:00Z],
-        dtend: ~U[2024-03-25 13:15:00Z],
+        dtstart: time_on_day.(days_from_today.(5), 13, 0),
+        dtend: time_on_day.(days_from_today.(5), 13, 15),
         summary: "Medication review"
       },
       %{
         activity_id: follow_up_visit.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-26 09:00:00Z],
-        dtend: ~U[2024-03-26 09:45:00Z],
+        dtstart: time_on_day.(days_from_today.(6), 9, 0),
+        dtend: time_on_day.(days_from_today.(6), 9, 45),
         summary: "Team meeting"
       },
       %{
         activity_id: follow_up_visit.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-26 10:00:00Z],
-        dtend: ~U[2024-03-26 10:02:00Z],
+        dtstart: time_on_day.(days_from_today.(6), 10, 0),
+        dtend: time_on_day.(days_from_today.(6), 10, 2),
         summary: "Quick phone call"
       },
       %{
         activity_id: health_assessment.id,
         user_id: denis.id,
-        dtstart: ~U[2024-03-27 08:30:00Z],
-        dtend: ~U[2024-03-27 11:30:00Z],
+        dtstart: time_on_day.(days_from_today.(7), 8, 30),
+        dtend: time_on_day.(days_from_today.(7), 11, 30),
         summary: "Complex care case"
       }
     ],
