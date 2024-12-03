@@ -21,27 +21,10 @@ msgstr "Akzeptiert"
 msgid "Are you sure you want to delete this invitation?"
 msgstr "Sind Sie sicher, dass Sie diese Einladung löschen möchten?"
 
-#: lib/omedis_web/live/invitation_live/show.ex:113
-#, elixir-autogen, elixir-format
-msgid "Birthdate"
-msgstr "Geburtsdatum"
-
-#: lib/omedis_web/live/invitation_live/show.ex:222
+#: lib/omedis_web/live/invitation_live/show.ex:136
 #, elixir-autogen, elixir-format
 msgid "Complete Registration"
 msgstr "Registrierung abschließen"
-
-#: lib/omedis_web/live/invitation_live/show.ex:138
-#: lib/omedis_web/live/invitation_live/show.ex:149
-#, elixir-autogen, elixir-format
-msgid "Daily End Time"
-msgstr "Tägliche Endzeit"
-
-#: lib/omedis_web/live/invitation_live/show.ex:120
-#: lib/omedis_web/live/invitation_live/show.ex:131
-#, elixir-autogen, elixir-format
-msgid "Daily Start Time"
-msgstr "Tägliche Startzeit"
 
 #: lib/omedis_web/live/invitation_live/index.ex:194
 #, elixir-autogen, elixir-format
@@ -50,8 +33,8 @@ msgstr "Löschen"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:127
 #: lib/omedis_web/live/invitation_live/index.ex:147
-#: lib/omedis_web/live/invitation_live/show.ex:52
-#: lib/omedis_web/live/invitation_live/show.ex:55
+#: lib/omedis_web/live/invitation_live/show.ex:51
+#: lib/omedis_web/live/invitation_live/show.ex:54
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "E-Mail"
@@ -60,22 +43,6 @@ msgstr "E-Mail"
 #, elixir-autogen, elixir-format
 msgid "Expires At"
 msgstr "Läuft ab am"
-
-#: lib/omedis_web/live/invitation_live/show.ex:102
-#, elixir-autogen, elixir-format
-msgid "Female"
-msgstr "Weiblich"
-
-#: lib/omedis_web/live/invitation_live/show.ex:64
-#: lib/omedis_web/live/invitation_live/show.ex:66
-#, elixir-autogen, elixir-format
-msgid "First Name"
-msgstr "Vorname"
-
-#: lib/omedis_web/live/invitation_live/show.ex:99
-#, elixir-autogen, elixir-format
-msgid "Gender"
-msgstr "Geschlecht"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:153
 #, elixir-autogen, elixir-format
@@ -102,21 +69,10 @@ msgstr "Eingeladen am"
 msgid "Language"
 msgstr "Sprache"
 
-#: lib/omedis_web/live/invitation_live/show.ex:75
-#: lib/omedis_web/live/invitation_live/show.ex:77
-#, elixir-autogen, elixir-format
-msgid "Last Name"
-msgstr "Nachname"
-
 #: lib/omedis_web/live/invitation_live/index.ex:114
 #, elixir-autogen, elixir-format
 msgid "Listing Invitations"
 msgstr "Einladungen auflisten"
-
-#: lib/omedis_web/live/invitation_live/show.ex:101
-#, elixir-autogen, elixir-format
-msgid "Male"
-msgstr "Männlich"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:113
 #: lib/omedis_web/live/invitation_live/index.ex:122
@@ -124,8 +80,8 @@ msgstr "Männlich"
 msgid "New Invitation"
 msgstr "Neue Einladung"
 
-#: lib/omedis_web/live/invitation_live/show.ex:86
-#: lib/omedis_web/live/invitation_live/show.ex:89
+#: lib/omedis_web/live/invitation_live/show.ex:63
+#: lib/omedis_web/live/invitation_live/show.ex:66
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Passwort"
@@ -145,22 +101,17 @@ msgstr "Registrieren"
 msgid "Saving..."
 msgstr "Speichern..."
 
-#: lib/omedis_web/live/invitation_live/show.ex:104
-#, elixir-autogen, elixir-format
-msgid "Select Your Gender"
-msgstr "Wählen Sie Ihr Geschlecht"
-
 #: lib/omedis_web/live/invitation_live/form_component.ex:170
 #, elixir-autogen, elixir-format
 msgid "Send Invitation"
 msgstr "Einladung senden"
 
-#: lib/omedis_web/live/invitation_live/show.ex:158
+#: lib/omedis_web/live/invitation_live/show.ex:86
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr "Registrieren"
 
-#: lib/omedis_web/live/invitation_live/show.ex:159
+#: lib/omedis_web/live/invitation_live/show.ex:87
 #, elixir-autogen, elixir-format
 msgid "Signing up..."
 msgstr "Registrierung läuft..."
@@ -180,7 +131,7 @@ msgstr "Verwenden Sie eine permanente Adresse, unter der Sie Post empfangen kön
 msgid "Use this form to invite new members."
 msgstr "Verwenden Sie dieses Formular, um neue Mitglieder einzuladen."
 
-#: lib/omedis_web/live/invitation_live/show.ex:87
+#: lib/omedis_web/live/invitation_live/show.ex:64
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "neues Passwort"
