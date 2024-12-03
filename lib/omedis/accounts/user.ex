@@ -82,6 +82,8 @@ defmodule Omedis.Accounts.User do
       primary? true
 
       change MaybeAddOrganisationDefaults
+
+      change {Omedis.Accounts.User.Changes.AssociateUserWithInvitation, []}
     end
 
     update :update do
@@ -117,6 +119,12 @@ defmodule Omedis.Accounts.User do
                 :as_string
               ]
             )
+  end
+
+  changes do
+    change {Omedis.Accounts.User.Changes.AssociateUserWithInvitation, []} do
+      where [action_is(:register_with_password)]
+    end
   end
 
   validations do

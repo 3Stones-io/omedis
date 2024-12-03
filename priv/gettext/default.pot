@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 
-#: lib/omedis_web/components/core_components.ex:523
+#: lib/omedis_web/components/core_components.ex:524
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""

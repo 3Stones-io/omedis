@@ -22,6 +22,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       create_access_right(organisation, %{
         resource_name: "Invitation",
         create: true,
+        destroy: true,
         group_id: group.id,
         read: true
       })
@@ -30,8 +31,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Organisation",
-        create: true
+        resource_name: "Organisation"
       })
 
     {:ok, _} =
@@ -40,20 +40,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         read: true,
         resource_name: "Group",
         create: true
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: group.id,
-        read: true,
-        resource_name: "Invitation"
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: group.id,
-        read: true,
-        resource_name: "Organisation"
       })
 
     {:ok, unauthorized_user} = create_user()
@@ -232,6 +218,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> log_in_user(authorized_user)
         |> live(~p"/organisations/#{organisation}/invitations")
 
+      # TODO: Figure out why this is flaky
       assert index_live
              |> element("#delete_invitation_#{invitation.id}")
              |> has_element?()

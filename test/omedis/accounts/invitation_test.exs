@@ -140,6 +140,63 @@ defmodule Omedis.Accounts.InvitationTest do
       refute_enqueued(worker: InvitationEmailWorker)
     end
 
+    test "can create invitation for same email if there is an expired invitation",
+         %{
+           group: group,
+           organisation: organisation,
+           owner: owner
+         } do
+      {:ok, _} =
+        create_invitation(organisation, %{
+          email: "test@example.com",
+          creator_id: owner.id,
+          expires_at: DateTime.add(DateTime.utc_now(), -1, :second)
+        })
+
+      attrs = %{
+        email: "test@example.com",
+        language: "en",
+        creator_id: owner.id,
+        groups: [group.id]
+      }
+
+      assert {:ok, invitation} = Invitation.create(attrs, actor: owner, tenant: organisation)
+      assert invitation.email == "test@example.com"
+    end
+
+    test "deletes existing pending invitation and creates a new one",
+         %{
+           group: group,
+           organisation: organisation,
+           owner: owner
+         } do
+      one_second_ago = DateTime.add(DateTime.utc_now(), -1, :second)
+
+      {:ok, existing_invitation} =
+        create_invitation(
+          organisation,
+          %{
+            email: "test@example.com",
+            creator_id: owner.id
+          },
+          context: %{created_at: one_second_ago}
+        )
+
+      attrs = %{
+        email: "test@example.com",
+        language: "en",
+        creator_id: owner.id,
+        groups: [group.id]
+      }
+
+      assert {:ok, new_invitation} =
+               Invitation.create(attrs, actor: owner, tenant: organisation)
+
+      assert new_invitation.email == "test@example.com"
+
+      assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(existing_invitation.id)
+    end
+
     test "validates required attributes", %{
       organisation: organisation,
       owner: owner,
