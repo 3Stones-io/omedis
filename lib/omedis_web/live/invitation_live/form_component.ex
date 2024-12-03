@@ -124,13 +124,19 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:email]} type="email" label={dgettext("invitation", "Email")} />
+        <.input
+          field={@form[:email]}
+          type="email"
+          label={dgettext("invitation", "Email")}
+          phx-debounce="blur"
+        />
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
             <%= dgettext("invitation", "Language") %>
           </label>
-          <div class="flex space-x-4">
+
+          <div class="flex space-x-4" phx-feedback-for={@form[:language].name}>
             <%= for {_language, code} <- @supported_languages do %>
               <label class="cursor-pointer">
                 <input
@@ -146,6 +152,9 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
               </label>
             <% end %>
           </div>
+          <.error :for={error <- @form[:language].errors}>
+            <%= translate_error(error) %>
+          </.error>
         </div>
 
         <div class="space-y-2">
@@ -161,6 +170,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
                 name={@form.name <> "[groups][#{group.id}]"}
                 id={@form.id <> "_groups_#{group.id}"}
                 checked={group.id in @checked_groups}
+                phx-debounce="blur"
               />
             <% end %>
           </div>

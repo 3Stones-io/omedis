@@ -48,7 +48,7 @@ msgstr "Tägliche Startzeit"
 msgid "Delete"
 msgstr "Löschen"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:127
+#: lib/omedis_web/live/invitation_live/form_component.ex:130
 #: lib/omedis_web/live/invitation_live/index.ex:147
 #: lib/omedis_web/live/invitation_live/show.ex:52
 #: lib/omedis_web/live/invitation_live/show.ex:55
@@ -77,7 +77,7 @@ msgstr "Vorname"
 msgid "Gender"
 msgstr "Geschlecht"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:153
+#: lib/omedis_web/live/invitation_live/form_component.ex:162
 #, elixir-autogen, elixir-format
 msgid "Groups"
 msgstr "Gruppen"
@@ -97,7 +97,7 @@ msgstr "Einladung erfolgreich gelöscht"
 msgid "Invited At"
 msgstr "Eingeladen am"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:131
+#: lib/omedis_web/live/invitation_live/form_component.ex:136
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Sprache"
@@ -140,7 +140,7 @@ msgstr "Ausstehend"
 msgid "Register"
 msgstr "Registrieren"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:169
+#: lib/omedis_web/live/invitation_live/form_component.ex:179
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Speichern..."
@@ -150,7 +150,7 @@ msgstr "Speichern..."
 msgid "Select Your Gender"
 msgstr "Wählen Sie Ihr Geschlecht"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:170
+#: lib/omedis_web/live/invitation_live/form_component.ex:180
 #, elixir-autogen, elixir-format
 msgid "Send Invitation"
 msgstr "Einladung senden"
