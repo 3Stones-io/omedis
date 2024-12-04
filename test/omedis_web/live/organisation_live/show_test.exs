@@ -161,6 +161,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         activity_2: activity_2,
         group: group,
         organisation: organisation,
+        project: project,
         user: user
       }
     end
@@ -225,6 +226,58 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       assert event.activity_id == activity_1.id
       assert is_nil(event.dtend)
+    end
+
+    test "infinite scroll works in both directions", %{
+      conn: conn,
+      group: group,
+      organisation: organisation,
+      project: project
+    } do
+      for i <- 1..15 do
+        {:ok, _activity} =
+          create_activity(organisation, %{
+            group_id: group.id,
+            project_id: project.id,
+            name: "Activity #{i}"
+          })
+      end
+
+      pubsub_topics_unique_id = Ash.UUID.generate()
+
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+
+      {:ok, organisation_live_view, _html} =
+        conn
+        |> put_session("pubsub_topics_unique_id", pubsub_topics_unique_id)
+        |> live(~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
+      wait_until(fn ->
+        html = render(organisation_live_view)
+        assert html =~ "Start Timer"
+      end)
+
+      assert time_tracker_live_view =
+               find_live_child(organisation_live_view, "time-tracker-liveview")
+
+      html = render(time_tracker_live_view)
+
+      refute html =~ "Activity 15"
+      refute html =~ "Activity 13"
+
+      html_2 = render_hook(time_tracker_live_view, "next-page")
+
+      assert html_2 =~ "Activity 15"
+      assert html_2 =~ "Activity 13"
+
+      html_3 = render_hook(time_tracker_live_view, "previous-page")
+
+      refute html_3 =~ "Activity 15"
+      refute html_3 =~ "Activity 13"
+      assert html_3 =~ "Activity 4"
+      assert html_3 =~ "Activity 2"
     end
 
     test "stops timer when clicking active activity", %{
