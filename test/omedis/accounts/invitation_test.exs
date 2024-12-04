@@ -293,12 +293,10 @@ defmodule Omedis.Accounts.InvitationTest do
         |> Map.put(:language, "en")
 
       {:ok, invitation} = create_invitation(organisation, create_attrs)
-      {:ok, user} = create_user()
 
       update_attrs = %{
         email: "test+1@example.com",
-        language: "it",
-        user_id: user.id
+        language: "it"
       }
 
       assert {:ok, updated_invitation} =
@@ -306,7 +304,6 @@ defmodule Omedis.Accounts.InvitationTest do
 
       assert updated_invitation.email == "test+1@example.com"
       assert updated_invitation.language == "it"
-      assert updated_invitation.user_id == user.id
     end
   end
 
