@@ -14,8 +14,7 @@ defmodule Omedis.Workers.InvitationExpirationWorker do
         :ok
 
       {:ok, [invitation]} ->
-        {:ok, invitation} = Invitation.expire(invitation, authorize?: false)
-
+        {:ok, _invitation} = Invitation.expire(invitation, authorize?: false)
 
         :ok
     end
