@@ -1,5 +1,5 @@
 defmodule OmedisWeb.RegisterTest do
-  use OmedisWeb.ConnCase, async: false
+  use OmedisWeb.ConnCase, async: true
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User

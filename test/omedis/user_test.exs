@@ -1,5 +1,5 @@
 defmodule Omedis.FarmersTest do
-  use Omedis.DataCase, async: false
+  use Omedis.DataCase, async: true
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
