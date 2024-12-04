@@ -6,7 +6,8 @@ defmodule Omedis.Accounts.Invitation do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Accounts,
+    extensions: [AshStateMachine]
 
   postgres do
     table "invitations"
@@ -17,11 +18,24 @@ defmodule Omedis.Accounts.Invitation do
     end
   end
 
+  state_machine do
+    initial_states([:accepted, :expired, :pending])
+    default_initial_state(:pending)
+    state_attribute(:status)
+
+    transitions do
+      transition(:accept, from: :pending, to: [:accepted])
+      transition(:expire, from: :pending, to: [:expired])
+    end
+  end
+
   code_interface do
     domain Omedis.Accounts
+    define :accept
     define :by_id, get_by: [:id]
     define :create
     define :destroy
+    define :expire
     define :list_paginated
     define :update
   end
@@ -43,6 +57,14 @@ defmodule Omedis.Accounts.Invitation do
       prepare build(sort: [inserted_at: arg(:sort_order)])
     end
 
+    update :accept do
+      change transition_state(:accepted)
+    end
+
+    update :expire do
+      change transition_state(:expired)
+    end
+
     update :update do
       accept [:email, :language, :creator_id, :inserted_at, :user_id]
 
@@ -62,6 +84,7 @@ defmodule Omedis.Accounts.Invitation do
              )
 
       change Omedis.Accounts.Changes.SendInvitationEmail
+      change Omedis.Accounts.Invitation.Changes.ScheduleInvitationExpiration
 
       validate {__MODULE__.Validations.ValidateNoPendingInvitation, []}
       validate {__MODULE__.Validations.ValidateUserNotRegistered, []}
@@ -75,6 +98,10 @@ defmodule Omedis.Accounts.Invitation do
   policies do
     policy action_type([:create, :destroy]) do
       authorize_if Omedis.Accounts.CanAccessResource
+    end
+
+    policy action_type([:create, :update]) do
+      authorize_if AshStateMachine.Checks.ValidNextState
     end
 
     policy action(:by_id) do

@@ -13,6 +13,7 @@ defmodule Omedis.Accounts.User do
   alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupMembership
+  alias Omedis.Accounts.User.Changes.AssociateUserWithInvitation
   alias Omedis.Validations
 
   postgres do
@@ -82,8 +83,6 @@ defmodule Omedis.Accounts.User do
       primary? true
 
       change MaybeAddOrganisationDefaults
-
-      change {Omedis.Accounts.User.Changes.AssociateUserWithInvitation, []}
     end
 
     update :update do
@@ -122,7 +121,11 @@ defmodule Omedis.Accounts.User do
   end
 
   changes do
-    change {Omedis.Accounts.User.Changes.AssociateUserWithInvitation, []} do
+    change {AssociateUserWithInvitation, []} do
+      where [action_is(:create)]
+    end
+
+    change {AssociateUserWithInvitation, []} do
       where [action_is(:register_with_password)]
     end
   end

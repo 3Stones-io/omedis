@@ -24,8 +24,12 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
   defp maybe_update_invitation(email, user_id) do
     case get_invitation(email) do
       {:ok, invitation} ->
-        %{status: :success} =
-          Invitation.update(invitation, %{user_id: user_id}, authorize?: false)
+        Omedis.Repo.transaction(fn ->
+          %{status: :success} =
+            Invitation.update(invitation, %{user_id: user_id}, authorize?: false)
+
+          %{status: :success} = Invitation.accept(invitation, authorize?: false)
+        end)
 
       _ ->
         :ok
