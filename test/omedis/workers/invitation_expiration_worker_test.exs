@@ -40,8 +40,9 @@ defmodule Omedis.Workers.InvitationExpirationWorkerTest do
     end
 
     test "handles already accepted invitations gracefully", %{invitation: invitation} do
+      {:ok, user} = create_user()
       # First accept the invitation
-      {:ok, _} = Invitation.accept(invitation, authorize?: false)
+      {:ok, _} = Invitation.accept(invitation, actor: user, authorize?: false)
 
       # Try to expire it through the worker
       assert :ok = perform_job(InvitationExpirationWorker, %{"invitation_id" => invitation.id})

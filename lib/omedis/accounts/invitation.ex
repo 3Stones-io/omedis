@@ -58,7 +58,10 @@ defmodule Omedis.Accounts.Invitation do
     end
 
     update :accept do
+      require_atomic? false
+
       change transition_state(:accepted)
+      change relate_actor(:user)
     end
 
     update :expire do

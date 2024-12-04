@@ -13,7 +13,7 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
   def change(%{attributes: %{email: email}} = changeset, _opts, _context) do
     Ash.Changeset.after_action(changeset, fn
       _changeset, user ->
-        maybe_update_invitation(email, user.id)
+        maybe_update_invitation(email, user)
 
         {:ok, user}
     end)
@@ -21,15 +21,10 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
 
   def change(changeset, _opts, _context), do: changeset
 
-  defp maybe_update_invitation(email, user_id) do
+  defp maybe_update_invitation(email, user) do
     case get_invitation(email) do
       {:ok, invitation} ->
-        Omedis.Repo.transaction(fn ->
-          %{status: :success} =
-            Invitation.update(invitation, %{user_id: user_id}, authorize?: false)
-
-          %{status: :success} = Invitation.accept(invitation, authorize?: false)
-        end)
+        %{status: :success} = Invitation.accept(invitation, actor: user, authorize?: false)
 
       _ ->
         :ok
