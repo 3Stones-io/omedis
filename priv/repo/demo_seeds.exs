@@ -148,6 +148,14 @@ end
         update: true,
         create: true,
         destroy: true
+      },
+      %{
+        group_id: group_1.id,
+        resource_name: "Invitation",
+        read: true,
+        update: true,
+        create: true,
+        destroy: true
       }
     ],
     nil
