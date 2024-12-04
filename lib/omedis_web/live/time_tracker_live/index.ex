@@ -315,19 +315,22 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     first_activity = List.first(activities)
     last_activity = List.last(activities)
 
-    case last_activity do
-      nil ->
-        socket
-        |> stream(:activities, activities)
-        |> assign(:load_more_activities_token, nil)
-
-      _ ->
-        socket
-        |> stream(:activities, activities, reset: true)
-        |> assign(:first_activity_token, first_activity.__metadata__.keyset)
-        |> assign(:last_activity_token, last_activity.__metadata__.keyset)
-    end
+    socket
+    |> stream(:activities, activities, reset: true)
+    |> assign_activity_token({:first, first_activity})
+    |> assign_activity_token({:last, last_activity})
   end
+
+  defp assign_activity_token({:first, nil}, socket),
+    do: assign(socket, :first_activity_token, nil)
+
+  defp assign_activity_token({:first, activity}, socket),
+    do: assign(socket, :first_activity_token, activity.__metadata__.keyset)
+
+  defp assign_activity_token({:last, nil}, socket), do: assign(socket, :last_activity_token, nil)
+
+  defp assign_activity_token({:last, activity}, socket),
+    do: assign(socket, :last_activity_token, activity.__metadata__.keyset)
 
   defp assign_current_activity(socket, activities) do
     case get_current_activity(activities) do
