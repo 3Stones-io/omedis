@@ -59,33 +59,39 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
             class="hidden absolute right-0 mt-1 w-fit max-w-56 h-fit max-h-56 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
             phx-click-away={JS.hide(to: "#time-tracker-activities-dropdown")}
             phx-hook="HideOnNavigate"
+            phx-viewport-bottom={@last_activity_token && JS.push("next-page")}
+            phx-viewport-top={@first_activity_token && JS.push("previous-page")}
           >
-            <%= if Enum.empty?(@activities) do %>
-              <div class="pt-3 pb-1">
-                <p class="text-black text-center">No activities to show</p>
-              </div>
-            <% else %>
-              <div class="py-1" id="time-tracker-activities-dropdown-list" role="menu">
-                <%= for activity <- @activities do %>
-                  <button
-                    phx-click="select_activity"
-                    phx-value-activity_id={activity.id}
-                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    role="menuitem"
-                  >
-                    <div class="flex items-center gap-x-2">
-                      <div
-                        class="w-3 min-w-3 h-3 rounded-full"
-                        style={"background-color: #{activity.color_code}"}
-                      />
-                      <span class="truncate">
-                        <%= activity.name %>
-                      </span>
-                    </div>
-                  </button>
-                <% end %>
-              </div>
-            <% end %>
+            <div class="pt-3 pb-1 only:block hidden" id="activities-empty">
+              <p class="text-black text-center">No activities to show</p>
+            </div>
+
+            <div
+              class="py-1"
+              id="time-tracker-activities-dropdown-list"
+              role="menu"
+              phx-update="stream"
+            >
+              <%= for {dom_id, activity} <- @streams.activities do %>
+                <button
+                  phx-click="select_activity"
+                  phx-value-activity_id={activity.id}
+                  class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                  id={dom_id}
+                >
+                  <div class="flex items-center gap-x-2">
+                    <div
+                      class="w-3 min-w-3 h-3 rounded-full"
+                      style={"background-color: #{activity.color_code}"}
+                    />
+                    <span class="truncate">
+                      <%= activity.name %>
+                    </span>
+                  </div>
+                </button>
+              <% end %>
+            </div>
           </div>
         </div>
       <% end %>
@@ -112,12 +118,13 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
     {:ok,
      socket
-     |> assign(:activities, [])
+     |> stream(:activities, [], reset: true)
      |> assign(:current_organisation, get_current_organisation(session))
      |> assign(:current_user_id, session["current_user_id"])
      |> assign(:elapsed_time, "00:00")
      |> assign(:language, nil)
-     |> assign(:load_more_activities_token, nil)
+     |> assign(:last_activity_token, nil)
+     |> assign(:first_activity_token, nil)
      |> assign(:pubsub_topics_unique_id, pubsub_topics_unique_id)
      |> assign(:timer_ref, nil)
      |> maybe_assign_current_user(session["current_user_id"])
@@ -293,40 +300,33 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   defp maybe_assign_activities(socket) do
-    opts = build_opts(socket)
-
-    {:ok, activities} = Activity.read(opts)
+    {:ok, %Ash.Page.Offset{results: activities}} =
+      Activity.read(
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.current_organisation
+      )
 
     socket
     |> assign_activities_and_token(activities)
     |> assign_current_activity(activities)
   end
 
-  defp build_opts(socket) do
-    base_opts = [
-      actor: socket.assigns.current_user,
-      tenant: socket.assigns.current_organisation,
-      load: [:events]
-    ]
-
-    load_more_token = socket.assigns.load_more_activities_token
-
-    if load_more_token do
-      Keyword.put(base_opts, :page, after: load_more_token)
-    else
-      base_opts
-    end
-  end
-
   defp assign_activities_and_token(socket, activities) do
-    load_more_activities_token =
-      with last_activity when not is_nil(last_activity) <- List.last(activities) do
-        last_activity.__metadata__.keyset
-      end
+    first_activity = List.first(activities)
+    last_activity = List.last(activities)
 
-    socket
-    |> assign(:activities, activities)
-    |> assign(:load_more_activities_token, load_more_activities_token)
+    case last_activity do
+      nil ->
+        socket
+        |> stream(:activities, activities)
+        |> assign(:load_more_activities_token, nil)
+
+      _ ->
+        socket
+        |> stream(:activities, activities, reset: true)
+        |> assign(:first_activity_token, first_activity.__metadata__.keyset)
+        |> assign(:last_activity_token, last_activity.__metadata__.keyset)
+    end
   end
 
   defp assign_current_activity(socket, activities) do
@@ -394,8 +394,30 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
      |> assign(:timer_ref, nil)}
   end
 
-  def handle_event("load-more-activities", _params, socket) do
-    {:noreply, maybe_assign_activities(socket)}
+  def handle_event("next-page", _params, socket) do
+    {:ok, %Ash.Page.Keyset{results: activities}} =
+      Activity.read(
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.current_organisation,
+        page: [limit: 10, after: socket.assigns.last_activity_token]
+      )
+
+    {:noreply, assign_activities_and_token(socket, activities)}
+  end
+
+  def handle_event("previous-page", %{"_overran" => true}, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("previous-page", _params, socket) do
+    {:ok, %Ash.Page.Keyset{results: activities}} =
+      Activity.read(
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.current_organisation,
+        page: [limit: 10, before: socket.assigns.first_activity_token]
+      )
+
+    {:noreply, assign_activities_and_token(socket, activities)}
   end
 
   defp create_event(activity_id, opts) do
