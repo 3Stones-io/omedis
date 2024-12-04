@@ -14,6 +14,7 @@
     "*.{heex,ex,exs}",
     "{config,lib,test}/**/*.{heex,ex,exs}",
     "priv/*/demo_seeds.exs",
+    "priv/*/personas_seeds.exs",
     "priv/*/seeds.exs"
   ]
 ]
