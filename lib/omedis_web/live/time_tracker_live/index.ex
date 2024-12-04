@@ -321,15 +321,15 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     |> assign_activity_token({:last, last_activity})
   end
 
-  defp assign_activity_token({:first, nil}, socket),
+  defp assign_activity_token(socket, {:first, nil}),
     do: assign(socket, :first_activity_token, nil)
 
-  defp assign_activity_token({:first, activity}, socket),
+  defp assign_activity_token(socket, {:first, activity}),
     do: assign(socket, :first_activity_token, activity.__metadata__.keyset)
 
-  defp assign_activity_token({:last, nil}, socket), do: assign(socket, :last_activity_token, nil)
+  defp assign_activity_token(socket, {:last, nil}), do: assign(socket, :last_activity_token, nil)
 
-  defp assign_activity_token({:last, activity}, socket),
+  defp assign_activity_token(socket, {:last, activity}),
     do: assign(socket, :last_activity_token, activity.__metadata__.keyset)
 
   defp assign_current_activity(socket, activities) do
