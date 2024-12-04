@@ -11,12 +11,12 @@
 msgid ""
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:169
+#: lib/omedis_web/live/invitation_live/index.ex:156
 #, elixir-autogen, elixir-format
 msgid "Accepted"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:214
+#: lib/omedis_web/live/invitation_live/index.ex:201
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this invitation?"
 msgstr ""
@@ -43,19 +43,19 @@ msgstr ""
 msgid "Daily Start Time"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:218
+#: lib/omedis_web/live/invitation_live/index.ex:205
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:127
-#: lib/omedis_web/live/invitation_live/index.ex:160
+#: lib/omedis_web/live/invitation_live/index.ex:147
 #: lib/omedis_web/live/invitation_live/show.ex:54
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:202
+#: lib/omedis_web/live/invitation_live/index.ex:189
 #, elixir-autogen, elixir-format
 msgid "Expires At"
 msgstr ""
@@ -86,12 +86,12 @@ msgstr ""
 msgid "Invitation created successfully"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:75
+#: lib/omedis_web/live/invitation_live/index.ex:70
 #, elixir-autogen, elixir-format
 msgid "Invitation deleted successfully"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:189
+#: lib/omedis_web/live/invitation_live/index.ex:176
 #, elixir-autogen, elixir-format
 msgid "Invited At"
 msgstr ""
@@ -107,7 +107,7 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:127
+#: lib/omedis_web/live/invitation_live/index.ex:114
 #, elixir-autogen, elixir-format
 msgid "Listing Invitations"
 msgstr ""
@@ -118,7 +118,7 @@ msgid "Male"
 msgstr ""
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:113
-#: lib/omedis_web/live/invitation_live/index.ex:135
+#: lib/omedis_web/live/invitation_live/index.ex:122
 #, elixir-autogen, elixir-format
 msgid "New Invitation"
 msgstr ""
@@ -129,7 +129,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:176
+#: lib/omedis_web/live/invitation_live/index.ex:163
 #, elixir-autogen, elixir-format
 msgid "Pending"
 msgstr ""
@@ -164,7 +164,7 @@ msgstr ""
 msgid "Signing up..."
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:164
+#: lib/omedis_web/live/invitation_live/index.ex:151
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr ""
@@ -194,7 +194,7 @@ msgstr ""
 msgid "User already registered"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/index.ex:183
+#: lib/omedis_web/live/invitation_live/index.ex:170
 #, elixir-autogen, elixir-format
 msgid "Expired"
 msgstr ""
