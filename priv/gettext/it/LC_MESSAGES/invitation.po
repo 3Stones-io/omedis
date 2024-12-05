@@ -76,7 +76,7 @@ msgstr "Nome"
 msgid "Gender"
 msgstr "Genere"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:162
+#: lib/omedis_web/live/invitation_live/form_component.ex:161
 #, elixir-autogen, elixir-format
 msgid "Groups"
 msgstr "Gruppi"
@@ -96,7 +96,7 @@ msgstr "Invito eliminato con successo"
 msgid "Invited At"
 msgstr "Invitato il"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:136
+#: lib/omedis_web/live/invitation_live/form_component.ex:131
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Lingua"
@@ -139,7 +139,7 @@ msgstr "In sospeso"
 msgid "Register"
 msgstr "Registrati"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:179
+#: lib/omedis_web/live/invitation_live/form_component.ex:178
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
@@ -149,7 +149,7 @@ msgstr "Salvataggio in corso..."
 msgid "Select Your Gender"
 msgstr "Seleziona il tuo genere"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:180
+#: lib/omedis_web/live/invitation_live/form_component.ex:179
 #, elixir-autogen, elixir-format
 msgid "Send Invitation"
 msgstr "Invia Invito"
