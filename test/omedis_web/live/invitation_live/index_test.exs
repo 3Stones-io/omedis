@@ -364,10 +364,9 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert path == ~p"/organisations/#{organisation}/invitations"
     end
 
-    test "shows validation errors if language is not selected", %{
+    test "preselects language of current user", %{
       authorized_user: authorized_user,
       conn: conn,
-      group: group,
       organisation: organisation
     } do
       {:ok, view, _html} =
@@ -375,17 +374,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> log_in_user(authorized_user)
         |> live(~p"/organisations/#{organisation}/invitations/new")
 
-      html =
-        view
-        |> form("#invitation-form",
-          invitation: %{
-            email: "test@example.com",
-            groups: %{group.id => true}
-          }
-        )
-        |> render_change()
-
-      assert html =~ "is required"
+      # Verify the current user's language is preselected
+      assert has_element?(view, "input[type='radio'][value='#{authorized_user.lang}'][checked]")
     end
 
     test "shows validation errors while preserving group selection", %{
