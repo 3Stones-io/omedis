@@ -56,8 +56,6 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       organisation: organisation,
       valid_invitation: valid_invitation
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:#{valid_invitation.id}")
-
       {:ok, view, _html} =
         live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
 

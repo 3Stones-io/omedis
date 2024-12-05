@@ -212,7 +212,7 @@ defmodule OmedisWeb.InvitationLive.Show do
     case get_invitation(id) do
       {:error, %Ash.Error.Query.NotFound{}} ->
         socket
-        |> put_flash(:error, dgettext("invitation", "Invitation expired"))
+        |> put_flash(:error, dgettext("invitation", "Invitation expired or not found"))
         |> redirect(to: ~p"/login")
 
       {:error, :user_already_registered} ->

@@ -122,7 +122,6 @@ defmodule OmedisWeb.RegisterTest do
       organisation: organisation
     } do
       {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
-      # :ok = OmedisWeb.Endpoint.subscribe("invitation:#{invitation.id}")
 
       assert {:error, _} = User.by_email("test@user.com")
 
