@@ -131,7 +131,6 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
           <label class="block text-sm font-medium leading-6 text-gray-900">
             <%= dgettext("invitation", "Language") %>
           </label>
-
           <div class="flex space-x-4">
             <%= for {_language, code} <- @supported_languages do %>
               <div>

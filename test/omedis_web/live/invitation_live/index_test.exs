@@ -364,7 +364,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert path == ~p"/organisations/#{organisation}/invitations"
     end
 
-    test "preselects language of current user", %{
+    test "preselects current user's language", %{
       authorized_user: authorized_user,
       conn: conn,
       organisation: organisation
