@@ -76,7 +76,7 @@ msgstr "Vorname"
 msgid "Gender"
 msgstr "Geschlecht"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:162
+#: lib/omedis_web/live/invitation_live/form_component.ex:161
 #, elixir-autogen, elixir-format
 msgid "Groups"
 msgstr "Gruppen"
@@ -139,7 +139,7 @@ msgstr "Ausstehend"
 msgid "Register"
 msgstr "Registrieren"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:179
+#: lib/omedis_web/live/invitation_live/form_component.ex:178
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Speichern..."
@@ -149,7 +149,7 @@ msgstr "Speichern..."
 msgid "Select Your Gender"
 msgstr "Wählen Sie Ihr Geschlecht"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:180
+#: lib/omedis_web/live/invitation_live/form_component.ex:179
 #, elixir-autogen, elixir-format
 msgid "Send Invitation"
 msgstr "Einladung senden"
