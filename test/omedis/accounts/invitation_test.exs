@@ -183,7 +183,7 @@ defmodule Omedis.Accounts.InvitationTest do
       )
     end
 
-    test "schedules invitation expiration to run immediately if expiration time is in the past",
+    test "does not create invitation if expiration time is in the past",
          %{
            organisation: organisation,
            owner: owner
@@ -194,13 +194,18 @@ defmodule Omedis.Accounts.InvitationTest do
         |> Map.put(:creator_id, owner.id)
         |> Map.put(:expires_at, DateTime.add(DateTime.utc_now(), -1, :second))
 
-      assert {:ok, invitation} = Invitation.create(attrs, actor: owner, tenant: organisation)
+      assert {:error, %Ash.Error.Invalid{errors: errors}} =
+               Invitation.create(attrs, actor: owner, tenant: organisation)
 
-      assert_enqueued(
-        worker: Omedis.Workers.InvitationExpirationWorker,
-        args: %{"invitation_id" => invitation.id},
-        scheduled_at: DateTime.utc_now()
-      )
+      assert [
+               _,
+               %Ash.Error.Changes.InvalidChanges{
+                 message: "expiration time must be in the future"
+               }
+             ] =
+               errors
+
+      refute_enqueued(worker: Omedis.Workers.InvitationExpirationWorker)
     end
 
     test "deletes existing pending invitation and creates a new one",

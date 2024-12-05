@@ -75,7 +75,7 @@ defmodule Omedis.Accounts.Invitation do
     end
 
     create :create do
-      accept [:email, :language, :creator_id, :expires_at]
+      accept [:email, :language, :creator_id, :expires_at, :status]
 
       argument :groups, {:array, :uuid}, allow_nil?: false
 
@@ -87,6 +87,7 @@ defmodule Omedis.Accounts.Invitation do
              )
 
       change Omedis.Accounts.Changes.SendInvitationEmail
+      change Omedis.Accounts.Invitation.Changes.EnsureExpirationIsInFuture
       change Omedis.Accounts.Invitation.Changes.ScheduleInvitationExpiration
 
       validate {__MODULE__.Validations.ValidateNoPendingInvitation, []}

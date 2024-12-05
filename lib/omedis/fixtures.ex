@@ -125,7 +125,8 @@ defmodule Omedis.Fixtures do
       end,
       email: Faker.Internet.email(),
       groups: [],
-      language: "en"
+      language: "en",
+      status: :pending
     }
   end
 
