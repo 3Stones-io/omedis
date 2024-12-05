@@ -7,9 +7,15 @@ defmodule Omedis.Repo.Migrations.AddStatusToInvitations do
 
   use Ecto.Migration
 
+  @status_types ~w(accepted expired pending)
+
   def up do
+    execute(
+      "CREATE TYPE invitation_status AS ENUM (#{Enum.map_join(@status_types, ", ", &"'#{&1}'")})"
+    )
+
     alter table(:invitations) do
-      add :status, :text, null: false, default: "pending"
+      add :status, :invitation_status, null: false, default: "pending"
     end
   end
 
@@ -17,5 +23,7 @@ defmodule Omedis.Repo.Migrations.AddStatusToInvitations do
     alter table(:invitations) do
       remove :status
     end
+
+    execute("DROP TYPE invitation_status")
   end
 end
