@@ -1,6 +1,7 @@
 defmodule Omedis.FarmersTest do
-  use Omedis.DataCase
+  use Omedis.DataCase, async: true
 
+  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
   describe "User Resource Unit Tests" do
@@ -8,7 +9,7 @@ defmodule Omedis.FarmersTest do
       create_user(%{email: "test@gmail.com"})
 
       {:ok, users} = User.read()
-      assert Enum.empty?(users) == false
+      refute Enum.empty?(users)
     end
 
     test "create/1 creates a user given valid attributes" do
@@ -32,6 +33,25 @@ defmodule Omedis.FarmersTest do
                })
     end
 
+    test "create/1 updates the associated invitation when user is created" do
+      {:ok, organisation} = create_organisation()
+      {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
+
+      assert {:ok, user} =
+               User.create(%{
+                 email: "test@user.com",
+                 hashed_password: Bcrypt.hash_pwd_salt("password"),
+                 first_name: "Stefan",
+                 last_name: "Wintermeyer",
+                 gender: "Male",
+                 birthdate: "1980-01-01"
+               })
+
+      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+
+      assert updated_invitation.user_id == user.id
+    end
+
     test "update/2 updates a user given valid attributes" do
       {:ok, user} =
         create_user(%{email: "test@gmail.com"})
@@ -44,15 +64,94 @@ defmodule Omedis.FarmersTest do
       assert user.first_name == "Stefan"
     end
 
-    test "only the organisation owner can delete their account" do
+    test "an organisation owner cannot delete their account if they are the only admin" do
       {:ok, user} = create_user(%{email: "test@gmail.com"})
-      {:ok, _} = create_organisation(%{owner_id: user.id})
+      {:ok, organisation} = create_organisation(%{owner_id: user.id})
+
+      {:ok, admin_group} =
+        create_group(organisation, %{
+          name: "Administrators",
+          slug: "administrators",
+          user_id: user.id
+        })
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: admin_group.id,
+          read: true,
+          resource_name: "Organisation"
+        })
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: admin_group.id,
+          read: true,
+          resource_name: "Group"
+        })
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: admin_group.id,
+          read: true,
+          resource_name: "GroupMembership"
+        })
+
+      {:ok, _} =
+        create_group_membership(organisation, %{group_id: admin_group.id, user_id: user.id})
+
       {:ok, _user_2} = create_user(%{email: "test2@gmail.com"})
 
       {:ok, users} = User.read()
-      assert Enum.empty?(users) == false
+      refute Enum.empty?(users)
 
-      assert :ok = User.destroy(user, actor: user)
+      assert_raise Ash.Error.Forbidden, fn ->
+        User.destroy!(user, actor: user)
+      end
+    end
+
+    test "an organisation owner can delete their account if they are not the only admin" do
+      {:ok, user} = create_user(%{email: "test@gmail.com"})
+      {:ok, user_2} = create_user(%{email: "test2@gmail.com"})
+      {:ok, organisation} = create_organisation(%{owner_id: user.id})
+
+      {:ok, admin_group} =
+        create_group(organisation, %{
+          name: "Administrators",
+          slug: "administrators",
+          user_id: user.id
+        })
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: admin_group.id,
+          read: true,
+          resource_name: "Organisation"
+        })
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: admin_group.id,
+          read: true,
+          resource_name: "Group"
+        })
+
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: admin_group.id,
+          read: true,
+          resource_name: "GroupMembership"
+        })
+
+      {:ok, _} =
+        create_group_membership(organisation, %{group_id: admin_group.id, user_id: user.id})
+
+      {:ok, _} =
+        create_group_membership(organisation, %{group_id: admin_group.id, user_id: user_2.id})
+
+      {:ok, users} = User.read()
+      refute Enum.empty?(users)
+
+      assert :ok = User.destroy!(user, actor: user)
 
       assert_raise Ash.Error.Invalid, fn ->
         Ash.get!(User, user.id)

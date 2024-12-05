@@ -25,8 +25,8 @@ defmodule Omedis.Fixtures do
     fixture(Accounts.Event, organisation, attrs, opts)
   end
 
-  def create_invitation(organisation, attrs \\ %{}) do
-    fixture(Accounts.Invitation, organisation, attrs)
+  def create_invitation(organisation, attrs \\ %{}, opts \\ []) do
+    fixture(Accounts.Invitation, organisation, attrs, opts)
   end
 
   def create_invitation_group(organisation, attrs \\ %{}) do
@@ -125,7 +125,8 @@ defmodule Omedis.Fixtures do
       end,
       email: Faker.Internet.email(),
       groups: [],
-      language: "en"
+      language: "en",
+      status: :pending
     }
   end
 
