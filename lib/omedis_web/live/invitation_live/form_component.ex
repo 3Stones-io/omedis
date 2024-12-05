@@ -65,6 +65,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         as: "invitation",
         actor: socket.assigns.current_user,
         tenant: socket.assigns.organisation,
+        params: %{"language" => socket.assigns.current_user.lang},
         prepare_params: &prepare_params/2
       )
 
