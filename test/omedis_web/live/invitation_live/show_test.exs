@@ -38,7 +38,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
     {:ok, expired_invitation} =
       create_invitation(organisation, %{
         creator_id: owner.id,
-        expires_at: expired_at
+        expires_at: expired_at,
+        status: :expired
       })
 
     %{
@@ -124,7 +125,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
     end
 
-    test "invitee with an expired invitation sees a not found page", %{
+    test "shows error for expired invitation", %{
       conn: conn,
       expired_invitation: expired_invitation,
       organisation: organisation
@@ -134,7 +135,12 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         |> live(~p"/organisations/#{organisation}/invitations/#{expired_invitation.id}")
         |> follow_redirect(conn)
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invitation expired"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
+               "Invitation expired or not found"
+
+      assert conn.request_path == "/login"
+    end
+
       assert conn.request_path == "/login"
     end
   end

@@ -150,7 +150,7 @@ defmodule Omedis.Accounts.InvitationTest do
         create_invitation(organisation, %{
           email: "test@example.com",
           creator_id: owner.id,
-          expires_at: DateTime.add(DateTime.utc_now(), -1, :second)
+          status: :expired
         })
 
       attrs = %{
@@ -328,7 +328,8 @@ defmodule Omedis.Accounts.InvitationTest do
       {:ok, invitation} =
         create_invitation(organisation, %{
           creator_id: owner.id,
-          expires_at: expired_at
+          expires_at: expired_at,
+          status: :expired
         })
 
       assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(invitation.id)
