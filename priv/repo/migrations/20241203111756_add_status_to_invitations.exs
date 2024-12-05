@@ -1,4 +1,4 @@
-defmodule Omedis.Repo.Migrations.AddStateToInvitations do
+defmodule Omedis.Repo.Migrations.AddStatusToInvitations do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
