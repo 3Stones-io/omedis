@@ -73,7 +73,7 @@ msgstr "Gruppi"
 #: lib/omedis_web/live/event_live/index.ex:23
 #: lib/omedis_web/live/group_live/index.ex:23
 #: lib/omedis_web/live/group_live/show.ex:19
-#: lib/omedis_web/live/invitation_live/index.ex:105
+#: lib/omedis_web/live/invitation_live/index.ex:106
 #: lib/omedis_web/live/organisation_live/index.ex:22
 #: lib/omedis_web/live/organisation_live/show.ex:18
 #: lib/omedis_web/live/organisation_live/today.ex:23
@@ -83,7 +83,7 @@ msgstr "Gruppi"
 msgid "Home"
 msgstr "Home"
 
-#: lib/omedis_web/live/invitation_live/index.ex:108
+#: lib/omedis_web/live/invitation_live/index.ex:109
 #, elixir-autogen, elixir-format
 msgid "Invitations"
 msgstr "Inviti"
@@ -111,7 +111,7 @@ msgstr "Nuovo Progetto"
 #: lib/omedis_web/live/event_live/index.ex:24
 #: lib/omedis_web/live/group_live/index.ex:24
 #: lib/omedis_web/live/group_live/show.ex:20
-#: lib/omedis_web/live/invitation_live/index.ex:106
+#: lib/omedis_web/live/invitation_live/index.ex:107
 #: lib/omedis_web/live/organisation_live/index.ex:23
 #: lib/omedis_web/live/organisation_live/show.ex:19
 #: lib/omedis_web/live/organisation_live/today.ex:24

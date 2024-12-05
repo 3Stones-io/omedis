@@ -146,6 +146,16 @@
       "size": null,
       "source": "user_id",
       "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "\"pending\"",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "status",
+      "type": "text"
     }
   ],
   "base_filter": null,
@@ -153,7 +163,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "2384D6C3B959414405E234CFCDC3DA8A62276CD58BBEE277741E1C23EA01B8D7",
+  "hash": "C1749BE2677FCC0F259C10732F7B7C05978EEE90B55972AFD0AA202021A1BE09",
   "identities": [],
   "multitenancy": {
     "attribute": "organisation_id",
