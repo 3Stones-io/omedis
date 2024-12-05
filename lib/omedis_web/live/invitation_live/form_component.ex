@@ -124,37 +124,36 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input
-          field={@form[:email]}
-          type="email"
-          label={dgettext("invitation", "Email")}
-          phx-debounce="blur"
-        />
+        <.input field={@form[:email]} type="email" label={dgettext("invitation", "Email")} />
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
             <%= dgettext("invitation", "Language") %>
           </label>
 
-          <div class="flex space-x-4" phx-feedback-for={@form[:language].name}>
+          <div class="flex space-x-4">
             <%= for {_language, code} <- @supported_languages do %>
-              <label class="cursor-pointer">
-                <input
-                  type="radio"
-                  name="invitation[language]"
-                  value={code}
-                  class="hidden invitation-language-input"
-                  checked={input_value(@form, :language) == code}
-                />
-                <span class="cursor-pointer text-2xl px-2 lang-flag">
-                  <%= language_to_flag(code) %>
-                </span>
-              </label>
+              <div>
+                <label class="cursor-pointer">
+                  <input
+                    type="radio"
+                    name={@form[:language].name}
+                    value={code}
+                    class="hidden invitation-language-input"
+                    checked={input_value(@form, :language) == code}
+                  />
+                  <span class="cursor-pointer text-2xl px-2 lang-flag">
+                    <%= language_to_flag(code) %>
+                  </span>
+                </label>
+              </div>
             <% end %>
           </div>
-          <.error :for={error <- @form[:language].errors}>
-            <%= translate_error(error) %>
-          </.error>
+          <div phx-feedback-for={@form[:language].name}>
+            <.error :for={error <- @form[:language].errors}>
+              <%= translate_error(error) %>
+            </.error>
+          </div>
         </div>
 
         <div class="space-y-2">
