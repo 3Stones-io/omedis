@@ -139,6 +139,35 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert conn.request_path == "/login"
     end
 
+    test "shows error for invalid invitation ID", %{
+      conn: conn,
+      organisation: organisation
+    } do
+      invalid_id = Ash.UUID.generate()
+
+      {:ok, conn} =
+        conn
+        |> live(~p"/organisations/#{organisation}/invitations/#{invalid_id}")
+        |> follow_redirect(conn)
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invitation expired or not found"
+      assert conn.request_path == "/login"
+    end
+
+    test "shows error when user is already registered", %{
+      conn: conn,
+      organisation: organisation,
+      valid_invitation: invitation
+    } do
+      # First create a user with the invitation email
+      {:ok, _user} = create_user(%{email: invitation.email})
+
+      {:ok, conn} =
+        conn
+        |> live(~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+        |> follow_redirect(conn)
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "User already registered"
       assert conn.request_path == "/login"
     end
   end
