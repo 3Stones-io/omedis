@@ -33,10 +33,13 @@ defmodule Omedis.Accounts.Project do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :by_organisation_id
+    define :latest_by_organisation_id
     define :list_paginated
   end
 
   actions do
+    defaults [:destroy]
+
     create :create do
       accept [
         :name,
@@ -55,6 +58,16 @@ defmodule Omedis.Accounts.Project do
 
       primary? true
       require_atomic? false
+
+      change fn changeset, _context ->
+        case changeset.context do
+          %{updated_at: updated_at} ->
+            Ash.Changeset.change_attribute(changeset, :updated_at, updated_at)
+
+          _ ->
+            changeset
+        end
+      end
     end
 
     read :read do
@@ -67,6 +80,16 @@ defmodule Omedis.Accounts.Project do
       end
 
       prepare build(load: [:organisation])
+      filter expr(organisation_id == ^arg(:organisation_id))
+    end
+
+    read :latest_by_organisation_id do
+      argument :organisation_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(sort: [updated_at: :desc], limit: 1)
+
       filter expr(organisation_id == ^arg(:organisation_id))
     end
 
@@ -110,7 +133,7 @@ defmodule Omedis.Accounts.Project do
     attribute :position, :string, allow_nil?: false, public?: true
 
     create_timestamp :created_at
-    update_timestamp :updated_at
+    update_timestamp :updated_at, writable?: true
   end
 
   relationships do

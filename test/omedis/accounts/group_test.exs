@@ -312,6 +312,40 @@ defmodule Omedis.Accounts.GroupTest do
     end
   end
 
+  describe "latest_by_organisation_id/1" do
+    test "returns the latest group for an organisation", %{
+      authorized_user: authorized_user,
+      organisation: organisation
+    } do
+      {:ok, group_1} =
+        create_group(organisation, %{name: "Group 01"})
+
+      past_datetime = DateTime.add(DateTime.utc_now(), -1, :second)
+
+      {:ok, _updated_group_1} =
+        Group.update(
+          group_1,
+          %{},
+          context: %{updated_at: past_datetime},
+          actor: authorized_user,
+          tenant: organisation
+        )
+
+      {:ok, group_2} =
+        create_group(organisation, %{name: "Group 02"})
+
+      assert {:ok, [latest_group]} =
+               Group.latest_by_organisation_id(
+                 %{organisation_id: organisation.id},
+                 actor: authorized_user,
+                 tenant: organisation
+               )
+
+      assert latest_group.id == group_2.id
+      assert latest_group.name == "Group 02"
+    end
+  end
+
   describe "by_slug!/1" do
     test "returns a group given a valid slug and actor has read access", %{
       user: user,
