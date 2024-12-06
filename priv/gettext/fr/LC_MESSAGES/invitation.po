@@ -48,7 +48,7 @@ msgstr "Heure de début quotidienne"
 msgid "Delete"
 msgstr "Supprimer"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:127
+#: lib/omedis_web/live/invitation_live/form_component.ex:128
 #: lib/omedis_web/live/invitation_live/index.ex:148
 #: lib/omedis_web/live/invitation_live/show.ex:54
 #, elixir-autogen, elixir-format
@@ -76,7 +76,7 @@ msgstr "Prénom"
 msgid "Gender"
 msgstr "Genre"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:153
+#: lib/omedis_web/live/invitation_live/form_component.ex:161
 #, elixir-autogen, elixir-format
 msgid "Groups"
 msgstr "Groupes"
@@ -96,7 +96,7 @@ msgstr "Invitation supprimée avec succès"
 msgid "Invited At"
 msgstr "Invité le"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:131
+#: lib/omedis_web/live/invitation_live/form_component.ex:132
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Langue"
@@ -117,7 +117,7 @@ msgstr "Liste des invitations"
 msgid "Male"
 msgstr "Homme"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:113
+#: lib/omedis_web/live/invitation_live/form_component.ex:114
 #: lib/omedis_web/live/invitation_live/index.ex:123
 #, elixir-autogen, elixir-format
 msgid "New Invitation"
@@ -139,7 +139,7 @@ msgstr "En attente"
 msgid "Register"
 msgstr "S'inscrire"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:169
+#: lib/omedis_web/live/invitation_live/form_component.ex:178
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Enregistrement..."
@@ -149,7 +149,7 @@ msgstr "Enregistrement..."
 msgid "Select Your Gender"
 msgstr "Sélectionnez votre genre"
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:170
+#: lib/omedis_web/live/invitation_live/form_component.ex:179
 #, elixir-autogen, elixir-format
 msgid "Send Invitation"
 msgstr "Envoyer l'invitation"
@@ -174,7 +174,7 @@ msgstr "Statut"
 msgid "Use a permanent address where you can receive mail."
 msgstr "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
 
-#: lib/omedis_web/live/invitation_live/form_component.ex:116
+#: lib/omedis_web/live/invitation_live/form_component.ex:117
 #, elixir-autogen, elixir-format
 msgid "Use this form to invite new members."
 msgstr "Utilisez ce formulaire pour inviter de nouveaux membres."

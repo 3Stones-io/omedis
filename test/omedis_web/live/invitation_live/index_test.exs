@@ -364,6 +364,20 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert path == ~p"/organisations/#{organisation}/invitations"
     end
 
+    test "preselects current user's language", %{
+      authorized_user: authorized_user,
+      conn: conn,
+      organisation: organisation
+    } do
+      {:ok, view, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      # Verify the current user's language is preselected
+      assert has_element?(view, "input[type='radio'][value='#{authorized_user.lang}'][checked]")
+    end
+
     test "shows validation errors while preserving group selection", %{
       conn: conn,
       group: group,
