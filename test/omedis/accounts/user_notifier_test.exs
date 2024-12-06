@@ -3,12 +3,13 @@ defmodule Omedis.Accounts.UserNotifierTest do
 
   import Omedis.Fixtures
   import Swoosh.TestAssertions
+  import Omedis.TestUtils
 
   require Ash.Query
 
   setup do
     {:ok, user} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    organisation = fetch_users_organisation(user.id)
     {:ok, group} = create_group(organisation)
 
     {:ok, invitation} =

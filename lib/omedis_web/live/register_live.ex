@@ -29,7 +29,6 @@ defmodule OmedisWeb.RegisterLive do
      |> assign(:supported_languages, @supported_languages)
      |> assign(trigger_action: false)
      |> assign(:page_title, dgettext("auth", "Register"))
-     |> assign(:action, "/auth/user/password/register/")
      |> assign_form()}
   end
 
@@ -135,7 +134,7 @@ defmodule OmedisWeb.RegisterLive do
           class="space-y-2 group"
           phx-change="validate"
           phx-submit="submit"
-          action={@action}
+          action={~p"/auth/user/password/register/"}
           phx-trigger-action={@trigger_action}
           method="POST"
         >

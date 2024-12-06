@@ -81,7 +81,7 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "\"en\"",
       "generated?": false,
       "primary_key?": false,
@@ -146,7 +146,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "80D416061F4F5513BFAF62A5629FD0F5651C4A736DD4ABAEEB96FB059E135669",
+  "hash": "F174D26ACB7255C55362BE9346E0D87512CBE213D4A95248067657C7004FA1DB",
   "identities": [
     {
       "all_tenants?": false,

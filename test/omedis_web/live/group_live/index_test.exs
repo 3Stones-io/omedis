@@ -3,12 +3,13 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
   import Phoenix.LiveViewTest
   import Omedis.Fixtures
+  import Omedis.TestUtils
 
   setup do
     {:ok, owner} = create_user()
     {:ok, another_user} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, organisation_2} = create_organisation(%{owner_id: another_user.id})
+    organisation = fetch_users_organisation(owner.id)
+    organisation_2 = fetch_users_organisation(another_user.id)
 
     %{
       another_user: another_user,
@@ -85,7 +86,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       assert html =~ "Listing Groups"
       assert html =~ "New Group"
       assert html =~ "Group 1"
-      assert html =~ "Group 10"
+      assert html =~ "Group 8"
       refute html =~ "Group 11"
 
       assert view |> element("nav[aria-label=Pagination]") |> has_element?()
@@ -94,13 +95,19 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       |> element("nav[aria-label=Pagination] a", "3")
       |> render_click()
 
-      # # There is no next page
-      refute view |> element("nav[aria-label=Pagination] a", "4") |> has_element?()
+      assert view |> element("nav[aria-label=Pagination] a", "4") |> has_element?()
+
+      view
+      |> element("nav[aria-label=Pagination] a", "4")
+      |> render_click()
 
       html = render(view)
-      assert html =~ "Group 21"
-      refute html =~ "Group 16"
+      assert html =~ "Group 29"
+      refute html =~ "Group 21"
       refute html =~ "Group 37"
+
+      # There is no next page
+      refute view |> element("nav[aria-label=Pagination] a", "5") |> has_element?()
     end
 
     test "edit and delete actions are hidden is user has no rights to destroy or update a group",

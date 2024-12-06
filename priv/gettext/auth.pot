@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:97
+#: lib/omedis_web/live/register_live.ex:96
 #, elixir-autogen, elixir-format
 msgid "Change language"
 msgstr ""
@@ -19,8 +19,8 @@ msgstr ""
 #: lib/omedis_web/live/login_live.ex:95
 #: lib/omedis_web/live/login_live.ex:101
 #: lib/omedis_web/live/login_live.ex:108
-#: lib/omedis_web/live/register_live.ex:148
-#: lib/omedis_web/live/register_live.ex:151
+#: lib/omedis_web/live/register_live.ex:147
+#: lib/omedis_web/live/register_live.ex:150
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
@@ -28,15 +28,15 @@ msgstr ""
 #: lib/omedis_web/live/login_live.ex:115
 #: lib/omedis_web/live/login_live.ex:122
 #: lib/omedis_web/live/login_live.ex:128
-#: lib/omedis_web/live/register_live.ex:159
-#: lib/omedis_web/live/register_live.ex:162
+#: lib/omedis_web/live/register_live.ex:158
+#: lib/omedis_web/live/register_live.ex:161
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr ""
 
 #: lib/omedis_web/live/register_live.ex:31
-#: lib/omedis_web/live/register_live.ex:88
-#: lib/omedis_web/live/register_live.ex:172
+#: lib/omedis_web/live/register_live.ex:87
+#: lib/omedis_web/live/register_live.ex:171
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr ""
@@ -53,12 +53,12 @@ msgstr ""
 msgid "Signing in..."
 msgstr ""
 
-#: lib/omedis_web/controllers/auth_controller.ex:56
+#: lib/omedis_web/controllers/auth_controller.ex:38
 #, elixir-autogen, elixir-format
 msgid "Something went wrong. Try again."
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:91
+#: lib/omedis_web/live/register_live.ex:90
 #, elixir-autogen, elixir-format
 msgid "Use a permanent address where you can receive mail."
 msgstr ""
@@ -68,13 +68,13 @@ msgstr ""
 msgid "Use your credentials to sign in"
 msgstr ""
 
-#: lib/omedis_web/controllers/auth_controller.ex:42
+#: lib/omedis_web/controllers/auth_controller.ex:24
 #, elixir-autogen, elixir-format
 msgid "Username or password is incorrect"
 msgstr ""
 
 #: lib/omedis_web/live/login_live.ex:124
-#: lib/omedis_web/live/register_live.ex:160
+#: lib/omedis_web/live/register_live.ex:159
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr ""

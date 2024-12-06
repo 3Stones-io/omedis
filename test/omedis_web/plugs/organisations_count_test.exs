@@ -14,7 +14,6 @@ defmodule OmedisWeb.Plugs.OrganisationsCountTest do
       {:ok, organisation_1} = create_organisation()
       {:ok, organisation_2} = create_organisation()
       {:ok, organisation_3} = create_organisation()
-      {:ok, _organisation_4} = create_organisation(%{owner_id: user_1.id})
 
       {:ok, group_1} = create_group(organisation_1)
       {:ok, group_2} = create_group(organisation_2)

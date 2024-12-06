@@ -21,7 +21,7 @@ msgstr "Accepté"
 msgid "Are you sure you want to delete this invitation?"
 msgstr "Êtes-vous sûr de vouloir supprimer cette invitation ?"
 
-#: lib/omedis_web/live/invitation_live/show.ex:136
+#: lib/omedis_web/live/invitation_live/show.ex:124
 #, elixir-autogen, elixir-format
 msgid "Complete Registration"
 msgstr "Compléter l'inscription"
@@ -106,12 +106,12 @@ msgstr "Enregistrement..."
 msgid "Send Invitation"
 msgstr "Envoyer l'invitation"
 
-#: lib/omedis_web/live/invitation_live/show.ex:86
+#: lib/omedis_web/live/invitation_live/show.ex:74
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr "S'inscrire"
 
-#: lib/omedis_web/live/invitation_live/show.ex:87
+#: lib/omedis_web/live/invitation_live/show.ex:75
 #, elixir-autogen, elixir-format
 msgid "Signing up..."
 msgstr "Inscription en cours..."

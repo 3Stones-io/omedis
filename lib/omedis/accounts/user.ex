@@ -11,6 +11,7 @@ defmodule Omedis.Accounts.User do
 
   alias Omedis.Accounts.CanDeleteAccount
   alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
+  alias Omedis.Accounts.Changes.MaybeCreateOrganisation
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupMembership
   alias Omedis.Validations
@@ -29,8 +30,7 @@ defmodule Omedis.Accounts.User do
         confirmation_required?(false)
 
         register_action_accept([
-          :email,
-          :current_organisation_id
+          :email
         ])
       end
     end
@@ -112,6 +112,16 @@ defmodule Omedis.Accounts.User do
             )
   end
 
+  changes do
+    change {MaybeCreateOrganisation, []} do
+      where [action_is(:create)]
+    end
+
+    change {MaybeCreateOrganisation, []} do
+      where [action_is(:register_with_password)]
+    end
+  end
+
   validations do
     validate {Validations.Language, attribute: :lang}
   end
@@ -125,7 +135,7 @@ defmodule Omedis.Accounts.User do
     attribute :gender, :string, allow_nil?: true, public?: true
     attribute :birthdate, :date, allow_nil?: true, public?: true
     attribute :current_organisation_id, :uuid, allow_nil?: true, public?: false
-    attribute :lang, :string, allow_nil?: true, public?: true, default: "en"
+    attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
     attribute :daily_start_at, :time, allow_nil?: true, public?: true
     attribute :daily_end_at, :time, allow_nil?: true, public?: true
     attribute :archived_at, :utc_datetime_usec, allow_nil?: true, public?: false

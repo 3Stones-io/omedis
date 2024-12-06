@@ -56,7 +56,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                 />
               </div>
 
-              <div class="mt-8 sm:col-span-3">
+              <div class="mt-8  sm:col-span-3">
                 <.input
                   type="password"
                   field={f[:password]}
@@ -65,18 +65,6 @@ defmodule OmedisWeb.InvitationLive.Show do
                   required
                   label={dgettext("invitation", "Password")}
                   phx-debounce="blur"
-                />
-              </div>
-            </div>
-
-            <div class="sm:col-span-3">
-              <div>
-                <.input
-                  type="hidden"
-                  id="select_organisation"
-                  field={f[:current_organisation_id]}
-                  value={@organisation.id}
-                  required
                 />
               </div>
             </div>

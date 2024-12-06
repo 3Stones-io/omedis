@@ -2,17 +2,14 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
+  import Omedis.TestUtils
 
   alias Omedis.Accounts.Organisation
 
   setup [:register_and_log_in_user]
 
   setup %{user: user} do
-    {:ok, organisation} =
-      create_organisation(
-        %{name: "Test Organisation", slug: "test-organisation", owner_id: user.id},
-        actor: user
-      )
+    organisation = fetch_users_organisation(user.id)
 
     {:ok, group} = create_group(organisation)
     {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
@@ -46,17 +43,13 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       end
     end
 
-    test "shows organisation page for owner without access rights", %{conn: conn, user: user} do
-      {:ok, owned_organisation} =
-        create_organisation(%{
-          name: "Owned Organisation",
-          slug: "owned-organisation",
-          owner_id: user.id
-        })
+    test "shows organisation page for owner without access rights", %{
+      conn: conn,
+      organisation: organisation
+    } do
+      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
 
-      {:ok, _show_live, html} = live(conn, ~p"/organisations/#{owned_organisation}")
-
-      assert html =~ owned_organisation.name
+      assert html =~ organisation.name
     end
 
     test "shows edit button when user has update access", %{
@@ -110,6 +103,13 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
                "Edit Organisation"
 
       assert_patch(show_live, ~p"/organisations/#{owned_organisation}/show/edit")
+
+      html =
+        show_live
+        |> form("#organisation-form", organisation: %{name: "", slug: ""})
+        |> render_change()
+
+      assert html =~ "is required"
 
       attrs =
         Organisation

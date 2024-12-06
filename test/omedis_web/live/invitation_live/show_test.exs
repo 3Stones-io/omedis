@@ -3,6 +3,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
   import Omedis.Fixtures
   import Phoenix.LiveViewTest
+  import Omedis.TestUtils
 
   alias Omedis.Accounts.User
 
@@ -13,7 +14,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    organisation = fetch_users_organisation(owner.id)
     {:ok, group} = create_group(organisation)
     {:ok, _} = create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
