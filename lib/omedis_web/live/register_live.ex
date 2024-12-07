@@ -103,6 +103,7 @@ defmodule OmedisWeb.RegisterLive do
                 class="flex items-center space-x-2 cursor-pointer"
                 action={~p"/change_language"}
                 phx-trigger-action={@change_language_trigger}
+                phx-change="change_language"
               >
                 <%= for {language, lang_code} <- @supported_languages do %>
                   <.input
@@ -113,7 +114,6 @@ defmodule OmedisWeb.RegisterLive do
                     checked={input_value(f, :lang) == language}
                     label_type="custom_label"
                     input_class="hidden"
-                    phx-change="change_language"
                   >
                     <:custom_label>
                       <span class="text-2xl cursor-pointer">

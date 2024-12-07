@@ -36,6 +36,26 @@ defmodule OmedisWeb.RegisterTest do
       assert organisation.name == "test@gmail.com"
     end
 
+    test "cannot register with existing email", %{conn: conn} do
+      {:ok, user} = create_user()
+
+      {:ok, view, _html} = live(conn, "/register")
+
+      assert has_element?(view, "#basic_user_sign_up_form")
+
+      form =
+        form(view, "#basic_user_sign_up_form",
+          user: %{
+            email: user.email,
+            password: "12345678"
+          }
+        )
+
+      conn = submit_form(form, conn)
+      assert conn.status == 302
+      assert conn.assigns.errors
+    end
+
     test "render form errors", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/register")
 
@@ -97,3 +117,5 @@ defmodule OmedisWeb.RegisterTest do
     end
   end
 end
+
+# language update
