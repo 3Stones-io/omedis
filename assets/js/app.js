@@ -26,6 +26,7 @@ import Alpine from "alpinejs";
 
 import FlashAutoDisappear from "./hooks/flash_auto_disappear";
 import HideOnNavigate from "./hooks/hide_on_navigate";
+import phxFeedbackDom from "./phx_feedback_dom";
 import SlugInput from "./hooks/slug_input";
 
 window.Alpine = Alpine;
@@ -42,13 +43,13 @@ let csrfToken = document
   .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  dom: {
+  dom: phxFeedbackDom({
     onBeforeElUpdated(from, to) {
-      if (from._x_dataStack) {
-        window.Alpine.clone(from, to);
+      if (from.__x) {
+        window.Alpine.clone(from.__x, to);
       }
     },
-  },
+  }),
   hooks: Hooks,
   params: { _csrf_token: csrfToken },
 });

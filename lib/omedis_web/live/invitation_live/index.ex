@@ -4,6 +4,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Invitation
+  alias OmedisWeb.InvitationLive.InvitationStatusComponent
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -149,15 +150,7 @@ defmodule OmedisWeb.InvitationLive.Index do
             </:col>
 
             <:col :let={{_id, invitation}} label={dgettext("invitation", "Status")}>
-              <%= if invitation.user_id do %>
-                <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                  <%= dgettext("invitation", "Accepted") %>
-                </span>
-              <% else %>
-                <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-600/20">
-                  <%= dgettext("invitation", "Pending") %>
-                </span>
-              <% end %>
+              <InvitationStatusComponent.status status={invitation.status} />
             </:col>
 
             <:col

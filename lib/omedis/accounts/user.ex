@@ -14,6 +14,7 @@ defmodule Omedis.Accounts.User do
   alias Omedis.Accounts.Changes.MaybeCreateOrganisation
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupMembership
+  alias Omedis.Accounts.User.Changes.AssociateUserWithInvitation
   alias Omedis.Validations
 
   postgres do
@@ -118,6 +119,14 @@ defmodule Omedis.Accounts.User do
     end
 
     change {MaybeCreateOrganisation, []} do
+      where [action_is(:register_with_password)]
+    end
+
+    change {AssociateUserWithInvitation, []} do
+      where [action_is(:create)]
+    end
+
+    change {AssociateUserWithInvitation, []} do
       where [action_is(:register_with_password)]
     end
   end

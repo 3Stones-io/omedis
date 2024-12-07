@@ -23,6 +23,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       create_access_right(organisation, %{
         resource_name: "Invitation",
         create: true,
+        destroy: true,
         group_id: group.id,
         read: true
       })
@@ -31,8 +32,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Organisation",
-        create: true
+        resource_name: "Organisation"
       })
 
     {:ok, _} =
@@ -41,20 +41,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         read: true,
         resource_name: "Group",
         create: true
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: group.id,
-        read: true,
-        resource_name: "Invitation"
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: group.id,
-        read: true,
-        resource_name: "Organisation"
       })
 
     {:ok, unauthorized_user} = create_user()
@@ -377,6 +363,20 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
                |> live(~p"/organisations/#{organisation}/invitations/new")
 
       assert path == ~p"/organisations/#{organisation}/invitations"
+    end
+
+    test "preselects current user's language", %{
+      authorized_user: authorized_user,
+      conn: conn,
+      organisation: organisation
+    } do
+      {:ok, view, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      # Verify the current user's language is preselected
+      assert has_element?(view, "input[type='radio'][value='#{authorized_user.lang}'][checked]")
     end
 
     test "shows validation errors while preserving group selection", %{

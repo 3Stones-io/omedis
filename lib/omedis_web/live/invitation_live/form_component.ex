@@ -65,6 +65,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         as: "invitation",
         actor: socket.assigns.current_user,
         tenant: socket.assigns.organisation,
+        params: %{"language" => socket.assigns.current_user.lang},
         prepare_params: &prepare_params/2
       )
 
@@ -132,19 +133,26 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
           </label>
           <div class="flex space-x-4">
             <%= for {_language, code} <- @supported_languages do %>
-              <label class="cursor-pointer">
-                <input
-                  type="radio"
-                  name="invitation[language]"
-                  value={code}
-                  class="hidden invitation-language-input"
-                  checked={input_value(@form, :language) == code}
-                />
-                <span class="cursor-pointer text-2xl px-2 lang-flag">
-                  <%= language_to_flag(code) %>
-                </span>
-              </label>
+              <div>
+                <label class="cursor-pointer">
+                  <input
+                    type="radio"
+                    name={@form[:language].name}
+                    value={code}
+                    class="hidden invitation-language-input"
+                    checked={input_value(@form, :language) == code}
+                  />
+                  <span class="cursor-pointer text-2xl px-2 lang-flag">
+                    <%= language_to_flag(code) %>
+                  </span>
+                </label>
+              </div>
             <% end %>
+          </div>
+          <div phx-feedback-for={@form[:language].name}>
+            <.error :for={error <- @form[:language].errors}>
+              <%= translate_error(error) %>
+            </.error>
           </div>
         </div>
 
@@ -161,6 +169,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
                 name={@form.name <> "[groups][#{group.id}]"}
                 id={@form.id <> "_groups_#{group.id}"}
                 checked={group.id in @checked_groups}
+                phx-debounce="blur"
               />
             <% end %>
           </div>
