@@ -3,13 +3,19 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
   import Omedis.Fixtures
   import Phoenix.LiveViewTest
+  import Omedis.TestUtils
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
+  @valid_registration_params %{
+    "email" => "test@gmail.com",
+    "password" => "12345678"
+  }
+
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
+    organisation = fetch_users_organisation(owner.id)
     {:ok, group} = create_group(organisation)
     {:ok, _} = create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
@@ -18,7 +24,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         resource_name: "Invitation",
         create: true,
         group_id: group.id,
-        read: true
+        read: true,
+        update: true
       })
 
     {:ok, _} =
@@ -30,7 +37,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
     {:ok, valid_invitation} =
       create_invitation(organisation, %{
-        creator_id: owner.id
+        creator_id: owner.id,
+        email: "test@gmail.com"
       })
 
     expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
@@ -59,29 +67,17 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, view, _html} =
         live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
 
-      valid_registration_params = %{
-        "email" => valid_invitation.email,
-        "first_name" => "Testabc",
-        "last_name" => "Userxyz",
-        "password" => "12345678",
-        "gender" => "Male",
-        "birthdate" => ~D[1990-01-01],
-        "lang" => "en",
-        "daily_start_at" => "09:00:00",
-        "daily_end_at" => "17:00:00"
-      }
-
       form =
         form(
           view,
           "#invitation_user_sign_up_form",
-          user: valid_registration_params
+          user: @valid_registration_params
         )
 
       _conn = submit_form(form, conn)
 
-      assert {:ok, user} = User.by_email(valid_invitation.email)
-      assert user.first_name == valid_registration_params["first_name"]
+      assert {:ok, user} = User.by_email(@valid_registration_params["email"])
+      assert Ash.CiString.value(user.email) == @valid_registration_params["email"]
 
       # Verify invitation was updated
       {:ok, updated_invitation} = Invitation.by_id(valid_invitation.id)
@@ -119,7 +115,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, _view, html} =
         live(conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
 
-      assert html =~ "Date de naissance"
+      assert html =~ "Mot de passe"
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
     end
 

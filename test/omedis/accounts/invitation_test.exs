@@ -2,6 +2,7 @@ defmodule Omedis.Accounts.InvitationTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
+  import Omedis.TestUtils
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.InvitationGroup
@@ -11,7 +12,7 @@ defmodule Omedis.Accounts.InvitationTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
+    organisation = fetch_users_organisation(owner.id)
     {:ok, authorized_user} = create_user()
     {:ok, group} = create_group(organisation)
 

@@ -267,17 +267,10 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
 
   defp assign_form(%{assigns: %{organisation: organisation}} = socket) do
     form =
-      if organisation do
-        AshPhoenix.Form.for_update(organisation, :update,
-          as: "organisation",
-          actor: socket.assigns.current_user
-        )
-      else
-        AshPhoenix.Form.for_create(Omedis.Accounts.Organisation, :create,
-          as: "organisation",
-          actor: socket.assigns.current_user
-        )
-      end
+      AshPhoenix.Form.for_update(organisation, :update,
+        as: "organisation",
+        actor: socket.assigns.current_user
+      )
 
     assign(socket, form: to_form(form))
   end
@@ -287,5 +280,4 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
   end
 
   defp path_for(:edit, organisation), do: ~p"/organisations/#{organisation}"
-  defp path_for(:new, _organisation), do: ~p"/organisations"
 end

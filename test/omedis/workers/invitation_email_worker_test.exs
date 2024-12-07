@@ -3,12 +3,13 @@ defmodule Omedis.Workers.InvitationEmailWorkerTest do
 
   import Omedis.Fixtures
   import Swoosh.TestAssertions
+  import Omedis.TestUtils
 
   alias Omedis.Workers.InvitationEmailWorker
 
   setup do
     {:ok, user} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: user.id}, actor: user)
+    organisation = fetch_users_organisation(user.id)
     {:ok, group} = create_group(organisation)
 
     {:ok, invitation} =

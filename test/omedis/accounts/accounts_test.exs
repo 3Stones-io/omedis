@@ -2,6 +2,7 @@ defmodule Omedis.AccountsTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
+  import Omedis.TestUtils
 
   alias Omedis.Accounts
   alias Omedis.Accounts.Activity
@@ -9,7 +10,7 @@ defmodule Omedis.AccountsTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
+    organisation = fetch_users_organisation(owner.id)
     {:ok, group} = create_group(organisation)
     {:ok, project} = create_project(organisation)
     {:ok, authorized_user} = create_user()
