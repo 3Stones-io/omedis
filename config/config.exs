@@ -68,7 +68,7 @@ config :omedis, Omedis.Mailer, adapter: Swoosh.Adapters.Local
 # Oban
 config :omedis, Oban,
   engine: Oban.Engines.Basic,
-  queues: [default: 10, invitation: 20],
+  queues: [default: 10, invitation: 20, invitation_expiration: 20],
   repo: Omedis.Repo
 
 # Configure esbuild (the version is required)

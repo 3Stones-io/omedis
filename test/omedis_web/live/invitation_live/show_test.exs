@@ -4,19 +4,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   import Omedis.Fixtures
   import Phoenix.LiveViewTest
 
+  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
-
-  @valid_registration_params %{
-    "first_name" => "John",
-    "last_name" => "Doe",
-    "email" => "test@gmail.com",
-    "password" => "12345678",
-    "gender" => "Male",
-    "birthdate" => ~D[1990-01-01],
-    "lang" => "en",
-    "daily_start_at" => "09:00:00",
-    "daily_end_at" => "17:00:00"
-  }
 
   setup do
     {:ok, owner} = create_user()
@@ -49,7 +38,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
     {:ok, expired_invitation} =
       create_invitation(organisation, %{
         creator_id: owner.id,
-        expires_at: expired_at
+        expires_at: expired_at,
+        status: :expired
       })
 
     %{
@@ -69,17 +59,34 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, view, _html} =
         live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
 
+      valid_registration_params = %{
+        "email" => valid_invitation.email,
+        "first_name" => "Testabc",
+        "last_name" => "Userxyz",
+        "password" => "12345678",
+        "gender" => "Male",
+        "birthdate" => ~D[1990-01-01],
+        "lang" => "en",
+        "daily_start_at" => "09:00:00",
+        "daily_end_at" => "17:00:00"
+      }
+
       form =
         form(
           view,
           "#invitation_user_sign_up_form",
-          user: @valid_registration_params
+          user: valid_registration_params
         )
 
       _conn = submit_form(form, conn)
 
-      assert {:ok, user} = User.by_email(@valid_registration_params["email"])
-      assert user.first_name == @valid_registration_params["first_name"]
+      assert {:ok, user} = User.by_email(valid_invitation.email)
+      assert user.first_name == valid_registration_params["first_name"]
+
+      # Verify invitation was updated
+      {:ok, updated_invitation} = Invitation.by_id(valid_invitation.id)
+
+      assert updated_invitation.user_id == user.id
     end
 
     test "form errors are displayed", %{
@@ -116,14 +123,52 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
     end
 
-    test "invitee with an expired invitation sees a not found page", %{
+    test "shows error for expired invitation", %{
       conn: conn,
       expired_invitation: expired_invitation,
       organisation: organisation
     } do
-      assert_raise Ash.Error.Query.NotFound, fn ->
-        live(conn, ~p"/organisations/#{organisation}/invitations/#{expired_invitation.id}")
-      end
+      {:ok, conn} =
+        conn
+        |> live(~p"/organisations/#{organisation}/invitations/#{expired_invitation.id}")
+        |> follow_redirect(conn)
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
+               "Invitation expired or not found"
+
+      assert conn.request_path == "/login"
+    end
+
+    test "shows error for invalid invitation ID", %{
+      conn: conn,
+      organisation: organisation
+    } do
+      invalid_id = Ash.UUID.generate()
+
+      {:ok, conn} =
+        conn
+        |> live(~p"/organisations/#{organisation}/invitations/#{invalid_id}")
+        |> follow_redirect(conn)
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invitation expired or not found"
+      assert conn.request_path == "/login"
+    end
+
+    test "shows error when user is already registered", %{
+      conn: conn,
+      organisation: organisation,
+      valid_invitation: invitation
+    } do
+      # First create a user with the invitation email
+      {:ok, _user} = create_user(%{email: invitation.email})
+
+      {:ok, conn} =
+        conn
+        |> live(~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+        |> follow_redirect(conn)
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "User already registered"
+      assert conn.request_path == "/login"
     end
   end
 end

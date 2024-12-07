@@ -1,5 +1,7 @@
 defmodule OmedisWeb.RegisterTest do
-  use OmedisWeb.ConnCase
+  use OmedisWeb.ConnCase, async: true
+
+  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
   import Phoenix.LiveViewTest
@@ -113,6 +115,36 @@ defmodule OmedisWeb.RegisterTest do
 
       assert {:ok, user} = User.by_email("test@user.com")
       assert user.first_name == "Mary"
+    end
+
+    test "updates the associated invitation when user is created", %{
+      conn: conn,
+      organisation: organisation
+    } do
+      {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
+
+      assert {:error, _} = User.by_email("test@user.com")
+
+      {:ok, view, _html} = live(conn, "/register")
+
+      view
+      |> form("#basic_user_sign_up_form")
+      |> render_change(user: %{current_organisation_id: organisation.id})
+
+      updated_params = Map.put(@valid_registration_params, "email", "test@user.com")
+
+      form =
+        form(view, "#basic_user_sign_up_form", user: updated_params)
+
+      conn = submit_form(form, conn)
+
+      {:ok, _index_live, _html} = live(conn, ~p"/organisations")
+
+      assert {:ok, user} = User.by_email("test@user.com")
+
+      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+
+      assert updated_invitation.user_id == user.id
     end
   end
 end

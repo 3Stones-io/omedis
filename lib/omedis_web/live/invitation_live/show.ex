@@ -49,8 +49,7 @@ defmodule OmedisWeb.InvitationLive.Show do
                   <.input
                     type="email"
                     field={f[:email]}
-                    placeholder={dgettext("invitation", "Email")}
-                    autocomplete="email"
+                    readonly
                     required
                     label={dgettext("invitation", "Email")}
                     value={@invitation.email}
@@ -200,7 +199,8 @@ defmodule OmedisWeb.InvitationLive.Show do
   end
 
   def handle_event("submit", %{"user" => user_params}, socket) do
-    form = Form.validate(socket.assigns.form, user_params)
+    updated_params = Map.replace(user_params, "email", socket.assigns.invitation.email)
+    form = Form.validate(socket.assigns.form, updated_params)
 
     {:noreply,
      socket
@@ -210,19 +210,44 @@ defmodule OmedisWeb.InvitationLive.Show do
   end
 
   defp apply_action(socket, :show, %{"id" => id}) do
-    invitation = %Invitation{} = Invitation.by_id!(id)
+    case get_invitation(id) do
+      {:error, %Ash.Error.Query.NotFound{}} ->
+        socket
+        |> put_flash(:error, dgettext("invitation", "Invitation expired or not found"))
+        |> redirect(to: ~p"/login")
 
-    organisation = Organisation.by_id!(invitation.organisation_id, authorize?: false)
-    Gettext.put_locale(OmedisWeb.Gettext, invitation.language)
+      {:error, :user_already_registered} ->
+        socket
+        |> put_flash(:error, dgettext("invitation", "User already registered"))
+        |> redirect(to: ~p"/login")
 
-    socket
-    |> assign(:invitation, invitation)
-    |> assign(:language, invitation.language)
-    |> assign(:organisation, organisation)
-    |> assign(:page_title, dgettext("invitation", "Complete Registration"))
-    |> assign(:action, "/auth/user/password/register/")
-    |> assign(:trigger_action, false)
-    |> assign_form()
+      invitation ->
+        organisation = Organisation.by_id!(invitation.organisation_id, authorize?: false)
+        Gettext.put_locale(OmedisWeb.Gettext, invitation.language)
+
+        socket
+        |> assign(:invitation, invitation)
+        |> assign(:language, invitation.language)
+        |> assign(:organisation, organisation)
+        |> assign(:page_title, dgettext("invitation", "Complete Registration"))
+        |> assign(:action, "/auth/user/password/register/")
+        |> assign(:trigger_action, false)
+        |> assign_form()
+    end
+  end
+
+  defp get_invitation(id) do
+    with {:ok, invitation} <- Invitation.by_id(id),
+         :ok <- invited_user_not_registered?(invitation.email) do
+      invitation
+    end
+  end
+
+  defp invited_user_not_registered?(email) do
+    case User.by_email(email) do
+      {:ok, _} -> {:error, :user_already_registered}
+      _ -> :ok
+    end
   end
 
   defp assign_form(socket) do
