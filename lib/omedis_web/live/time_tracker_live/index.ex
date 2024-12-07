@@ -118,7 +118,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
     {:ok,
      socket
-     |> stream(:activities, [], reset: true)
+     |> stream(:activities, [])
      |> assign(:current_organisation, get_current_organisation(session))
      |> assign(:current_user_id, session["current_user_id"])
      |> assign(:elapsed_time, "00:00")
@@ -316,7 +316,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     last_activity = List.last(activities)
 
     socket
-    |> stream(:activities, activities, reset: true)
+    |> stream(:activities, activities)
     |> assign_activity_token({:first, first_activity})
     |> assign_activity_token({:last, last_activity})
   end

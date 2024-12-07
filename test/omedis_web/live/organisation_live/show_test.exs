@@ -274,8 +274,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       html_3 = render_hook(time_tracker_live_view, "previous-page")
 
-      refute html_3 =~ "Activity 15"
-      refute html_3 =~ "Activity 13"
+      assert html_3 =~ "Activity 15"
       assert html_3 =~ "Activity 4"
       assert html_3 =~ "Activity 2"
     end
