@@ -85,6 +85,21 @@ defmodule OmedisWeb.RegisterTest do
       assert html =~ "length must be greater than or equal to 8"
     end
 
+    test "user can select language", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/register")
+
+      assert has_element?(view, "#language-form")
+
+      form = form(view, "#language-form", %{"lang" => "de"})
+      conn = submit_form(form, conn)
+
+      {:ok, _view, html} = live(conn, ~p"/register")
+
+      assert html =~ "Registrieren"
+      assert html =~ "Passwort"
+      assert html =~ "Verwenden Sie eine permanente Adresse, unter der Sie Post empfangen können."
+    end
+
     test "updates the associated invitation when user is created", %{
       conn: conn
     } do
@@ -117,5 +132,3 @@ defmodule OmedisWeb.RegisterTest do
     end
   end
 end
-
-# language update

@@ -98,12 +98,12 @@ defmodule OmedisWeb.RegisterLive do
             <div class="flex items-center space-x-2">
               <.form
                 :let={f}
-                id="language_form"
+                id="language-form"
                 for={@select_language_form}
                 class="flex items-center space-x-2 cursor-pointer"
                 action={~p"/change_language"}
                 phx-trigger-action={@change_language_trigger}
-                phx-change="change_language"
+                phx-submit="change_language"
               >
                 <%= for {language, lang_code} <- @supported_languages do %>
                   <.input
@@ -114,6 +114,7 @@ defmodule OmedisWeb.RegisterLive do
                     checked={input_value(f, :lang) == language}
                     label_type="custom_label"
                     input_class="hidden"
+                    phx-change={JS.dispatch("click", to: "#language-form-submit")}
                   >
                     <:custom_label>
                       <span class="text-2xl cursor-pointer">
@@ -122,6 +123,8 @@ defmodule OmedisWeb.RegisterLive do
                     </:custom_label>
                   </.input>
                 <% end %>
+
+                <button id="language-form-submit" type="submit" class="hidden">Submit</button>
               </.form>
             </div>
           </div>

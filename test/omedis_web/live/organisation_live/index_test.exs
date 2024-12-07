@@ -42,20 +42,6 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
     end
   end
 
-  describe "/organisations/new" do
-    setup [:register_and_log_in_user]
-
-    test "redirects when user can't create an organisation", %{conn: conn} do
-      # Create an organisation for the user to make them ineligible for creating another
-
-      assert {:error, {:live_redirect, %{to: path, flash: flash}}} =
-               live(conn, ~p"/organisations/new")
-
-      assert path == ~p"/organisations"
-      assert flash["error"] =~ "You are not authorized to access this page"
-    end
-  end
-
   describe "/organisations/:slug/edit" do
     setup [:register_and_log_in_user]
 
@@ -87,6 +73,31 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
 
       assert path == ~p"/organisations"
       assert flash["error"] == "You are not authorized to access this page"
+    end
+
+    test "an organisation slug is generated when the name is changed", %{conn: conn, user: user} do
+      organisation = fetch_users_organisation(user.id)
+
+      {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation}/edit")
+
+      html =
+        show_live
+        |> form("#organisation-form", organisation: %{name: "Updated Organisation"})
+        |> render_change()
+
+      assert html =~ Slug.slugify("Updated Organisation")
+    end
+
+    test "shows form errors", %{conn: conn, user: user} do
+      organisation = fetch_users_organisation(user.id)
+      {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation}/edit")
+
+      html =
+        show_live
+        |> form("#organisation-form", organisation: %{name: ""})
+        |> render_submit()
+
+      assert html =~ "is required"
     end
 
     test "edits the organisation when user has access", %{conn: conn, user: user} do

@@ -19,8 +19,8 @@ msgstr "Changer de langue"
 #: lib/omedis_web/live/login_live.ex:95
 #: lib/omedis_web/live/login_live.ex:101
 #: lib/omedis_web/live/login_live.ex:108
-#: lib/omedis_web/live/register_live.ex:147
 #: lib/omedis_web/live/register_live.ex:150
+#: lib/omedis_web/live/register_live.ex:153
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "E-mail"
@@ -28,15 +28,15 @@ msgstr "E-mail"
 #: lib/omedis_web/live/login_live.ex:115
 #: lib/omedis_web/live/login_live.ex:122
 #: lib/omedis_web/live/login_live.ex:128
-#: lib/omedis_web/live/register_live.ex:158
 #: lib/omedis_web/live/register_live.ex:161
+#: lib/omedis_web/live/register_live.ex:164
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Mot de passe"
 
 #: lib/omedis_web/live/register_live.ex:31
 #: lib/omedis_web/live/register_live.ex:87
-#: lib/omedis_web/live/register_live.ex:171
+#: lib/omedis_web/live/register_live.ex:174
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "S'inscrire"
@@ -74,7 +74,7 @@ msgid "Username or password is incorrect"
 msgstr "Nom d'utilisateur ou mot de passe incorrect"
 
 #: lib/omedis_web/live/login_live.ex:124
-#: lib/omedis_web/live/register_live.ex:159
+#: lib/omedis_web/live/register_live.ex:162
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "nouveau mot de passe"
