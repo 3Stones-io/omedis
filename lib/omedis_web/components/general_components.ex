@@ -132,13 +132,11 @@ defmodule OmedisWeb.GeneralComponents do
         current_organisation={@current_organisation}
         current_user={@current_user}
         language={@language}
-        organisations_count={@organisations_count}
       />
 
       <.desktop_sidebar
         current_organisation={@current_organisation}
         current_user={@current_user}
-        organisations_count={@organisations_count}
         language={@language}
       />
       <%= render_slot(@inner_block) %>
@@ -435,7 +433,6 @@ defmodule OmedisWeb.GeneralComponents do
               <.mobile_sidebar
                 current_organisation={@current_organisation}
                 current_user={@current_user}
-                organisations_count={@organisations_count}
                 language={@language}
               />
               <button

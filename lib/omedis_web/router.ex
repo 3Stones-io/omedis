@@ -12,7 +12,6 @@ defmodule OmedisWeb.Router do
     plug :load_from_session
     plug OmedisWeb.Plugs.Locale
     plug OmedisWeb.Plugs.CurrentOrganisation
-    plug OmedisWeb.Plugs.OrganisationsCount
   end
 
   pipeline :api do
@@ -39,7 +38,7 @@ defmodule OmedisWeb.Router do
       on_mount: [
         {OmedisWeb.LiveUserAuth, :live_user_required},
         {OmedisWeb.LiveOrganisation, :assign_current_organisation},
-        {OmedisWeb.LiveOrganisation, :assign_organisations_count},
+        # {OmedisWeb.LiveOrganisation, :assign_organisations_count},
         {OmedisWeb.LiveHelpers, :assign_locale},
         {OmedisWeb.LiveHelpers, :assign_pubsub_topics_unique_id}
       ],
