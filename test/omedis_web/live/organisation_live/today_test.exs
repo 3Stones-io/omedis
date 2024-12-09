@@ -2,6 +2,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
+  import Omedis.TestUtils
 
   require Ash.Query
 
@@ -11,7 +12,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
+    organisation = fetch_users_organisation(owner.id)
     {:ok, group} = create_group(organisation)
 
     {:ok, [project]} =

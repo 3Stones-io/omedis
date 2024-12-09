@@ -1,11 +1,13 @@
 defmodule Omedis.Accounts.ProjectTest do
   use Omedis.DataCase, async: true
 
+  import Omedis.TestUtils
+
   alias Omedis.Accounts.Project
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
+    organisation = fetch_users_organisation(owner.id)
     {:ok, group} = create_group(organisation)
     {:ok, authorized_user} = create_user()
     {:ok, user} = create_user()
@@ -35,7 +37,7 @@ defmodule Omedis.Accounts.ProjectTest do
     test "returns projects if user is the organisation owner" do
       {:ok, owner} = create_user()
       {:ok, another_user} = create_user()
-      {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
+      organisation = fetch_users_organisation(owner.id)
       {:ok, group} = create_group(organisation)
 
       {:ok, _} =

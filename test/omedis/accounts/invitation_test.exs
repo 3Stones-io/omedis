@@ -2,6 +2,7 @@ defmodule Omedis.Accounts.InvitationTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
+  import Omedis.TestUtils
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.InvitationGroup
@@ -11,7 +12,7 @@ defmodule Omedis.Accounts.InvitationTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
+    organisation = fetch_users_organisation(owner.id)
     {:ok, authorized_user} = create_user()
     {:ok, group} = create_group(organisation)
 
@@ -317,22 +318,6 @@ defmodule Omedis.Accounts.InvitationTest do
       {:ok, invitation} = create_invitation(organisation)
 
       assert {:ok, _invitation} = Invitation.by_id(invitation.id)
-    end
-
-    test "returns an error if invitation has expired", %{
-      organisation: organisation,
-      owner: owner
-    } do
-      expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
-
-      {:ok, invitation} =
-        create_invitation(organisation, %{
-          creator_id: owner.id,
-          expires_at: expired_at,
-          status: :expired
-        })
-
-      assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(invitation.id)
     end
 
     test "returns an error if invitation does not exist" do

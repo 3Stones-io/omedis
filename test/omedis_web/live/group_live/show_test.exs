@@ -2,10 +2,11 @@ defmodule OmedisWeb.GroupLive.ShowTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
+  import Omedis.TestUtils
 
   setup do
     {:ok, user} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    organisation = fetch_users_organisation(user.id)
 
     %{organisation: organisation, user: user}
   end
