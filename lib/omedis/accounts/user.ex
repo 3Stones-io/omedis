@@ -13,8 +13,8 @@ defmodule Omedis.Accounts.User do
   alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupMembership
-  alias Omedis.Accounts.User.Changes.AssociateUserWithInvitation
   alias Omedis.Accounts.User.Changes.AddUserToUsersGroup
+  alias Omedis.Accounts.User.Changes.AssociateUserWithInvitation
   alias Omedis.Validations
 
   postgres do
