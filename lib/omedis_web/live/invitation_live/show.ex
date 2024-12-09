@@ -221,7 +221,7 @@ defmodule OmedisWeb.InvitationLive.Show do
         |> put_flash(:error, dgettext("invitation", "User already registered"))
         |> redirect(to: ~p"/login")
 
-      invitation ->
+      %Invitation{} = invitation ->
         organisation = Organisation.by_id!(invitation.organisation_id, authorize?: false)
         Gettext.put_locale(OmedisWeb.Gettext, invitation.language)
 
