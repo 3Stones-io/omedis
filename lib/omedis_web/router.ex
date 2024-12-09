@@ -38,7 +38,6 @@ defmodule OmedisWeb.Router do
       on_mount: [
         {OmedisWeb.LiveUserAuth, :live_user_required},
         {OmedisWeb.LiveOrganisation, :assign_current_organisation},
-        # {OmedisWeb.LiveOrganisation, :assign_organisations_count},
         {OmedisWeb.LiveHelpers, :assign_locale},
         {OmedisWeb.LiveHelpers, :assign_pubsub_topics_unique_id}
       ],
