@@ -11,35 +11,35 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/project_live/show.ex:58
+#: lib/omedis_web/live/project_live/show.ex:57
 #, elixir-autogen, elixir-format
 msgid "Back to projects"
 msgstr "Torna ai progetti"
 
-#: lib/omedis_web/live/project_live/index.ex:75
+#: lib/omedis_web/live/project_live/index.ex:74
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr "Modifica"
 
-#: lib/omedis_web/live/project_live/index.ex:200
-#: lib/omedis_web/live/project_live/show.ex:133
+#: lib/omedis_web/live/project_live/index.ex:199
+#: lib/omedis_web/live/project_live/show.ex:132
 #, elixir-autogen, elixir-format
 msgid "Edit Project"
 msgstr "Modifica progetto"
 
-#: lib/omedis_web/live/project_live/index.ex:34
+#: lib/omedis_web/live/project_live/index.ex:33
 #, elixir-autogen, elixir-format
 msgid "Listing Projects"
 msgstr "Elenco progetti"
 
 #: lib/omedis_web/live/project_live/form_component.ex:25
-#: lib/omedis_web/live/project_live/index.ex:56
-#: lib/omedis_web/live/project_live/show.ex:48
+#: lib/omedis_web/live/project_live/index.ex:55
+#: lib/omedis_web/live/project_live/show.ex:47
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "Nome"
 
-#: lib/omedis_web/live/project_live/index.ex:184
+#: lib/omedis_web/live/project_live/index.ex:183
 #, elixir-autogen, elixir-format
 msgid "New Project"
 msgstr "Nuovo progetto"
@@ -55,14 +55,14 @@ msgid "Please correct the errors below."
 msgstr "Correggi gli errori qui sotto."
 
 #: lib/omedis_web/live/project_live/form_component.ex:44
-#: lib/omedis_web/live/project_live/index.ex:60
-#: lib/omedis_web/live/project_live/show.ex:52
+#: lib/omedis_web/live/project_live/index.ex:59
+#: lib/omedis_web/live/project_live/show.ex:51
 #, elixir-autogen, elixir-format
 msgid "Position"
 msgstr "Posizione"
 
-#: lib/omedis_web/live/project_live/show.ex:30
-#: lib/omedis_web/live/project_live/show.ex:131
+#: lib/omedis_web/live/project_live/show.ex:29
+#: lib/omedis_web/live/project_live/show.ex:130
 #, elixir-autogen, elixir-format
 msgid "Project"
 msgstr "Progetto"
@@ -72,8 +72,8 @@ msgstr "Progetto"
 msgid "Project saved."
 msgstr "Progetto salvato."
 
-#: lib/omedis_web/live/project_live/index.ex:158
-#: lib/omedis_web/live/project_live/index.ex:215
+#: lib/omedis_web/live/project_live/index.ex:157
+#: lib/omedis_web/live/project_live/index.ex:214
 #, elixir-autogen, elixir-format
 msgid "Projects"
 msgstr "Progetti"
@@ -88,12 +88,12 @@ msgstr "Salva progetto"
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
 
-#: lib/omedis_web/live/project_live/index.ex:67
+#: lib/omedis_web/live/project_live/index.ex:66
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr "Mostra"
 
-#: lib/omedis_web/live/project_live/show.ex:32
+#: lib/omedis_web/live/project_live/show.ex:31
 #, elixir-autogen, elixir-format
 msgid "This is a project record from your database."
 msgstr "Questo è un record di progetto dal tuo database."
@@ -103,8 +103,8 @@ msgstr "Questo è un record di progetto dal tuo database."
 msgid "Use this form to manage project records in your database."
 msgstr "Usa questo modulo per gestire i record di progetto nel tuo database."
 
-#: lib/omedis_web/live/project_live/index.ex:221
-#: lib/omedis_web/live/project_live/show.ex:124
+#: lib/omedis_web/live/project_live/index.ex:220
+#: lib/omedis_web/live/project_live/show.ex:123
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr "Non sei autorizzato ad accedere a questa pagina"

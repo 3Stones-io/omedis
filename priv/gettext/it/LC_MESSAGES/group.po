@@ -11,48 +11,48 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/group_live/index.ex:67
+#: lib/omedis_web/live/group_live/index.ex:66
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Azioni"
 
-#: lib/omedis_web/live/group_live/index.ex:92
+#: lib/omedis_web/live/group_live/index.ex:91
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Elimina"
 
-#: lib/omedis_web/live/group_live/index.ex:80
+#: lib/omedis_web/live/group_live/index.ex:79
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr "Modifica"
 
-#: lib/omedis_web/live/group_live/index.ex:152
-#: lib/omedis_web/live/group_live/show.ex:102
+#: lib/omedis_web/live/group_live/index.ex:151
+#: lib/omedis_web/live/group_live/show.ex:101
 #, elixir-autogen, elixir-format
 msgid "Edit Group"
 msgstr "Modifica Gruppo"
 
-#: lib/omedis_web/live/group_live/index.ex:225
+#: lib/omedis_web/live/group_live/index.ex:224
 #, elixir-autogen, elixir-format
 msgid "Group deleted"
 msgstr "Gruppo eliminato"
 
-#: lib/omedis_web/live/group_live/index.ex:37
-#: lib/omedis_web/live/group_live/index.ex:190
+#: lib/omedis_web/live/group_live/index.ex:36
+#: lib/omedis_web/live/group_live/index.ex:189
 #, elixir-autogen, elixir-format
 msgid "Listing Groups"
 msgstr "Elenco Gruppi"
 
 #: lib/omedis_web/live/group_live/form_component.ex:27
 #: lib/omedis_web/live/group_live/form_component.ex:33
-#: lib/omedis_web/live/group_live/index.ex:59
-#: lib/omedis_web/live/group_live/show.ex:42
+#: lib/omedis_web/live/group_live/index.ex:58
+#: lib/omedis_web/live/group_live/show.ex:41
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "Nome"
 
-#: lib/omedis_web/live/group_live/index.ex:46
-#: lib/omedis_web/live/group_live/index.ex:173
+#: lib/omedis_web/live/group_live/index.ex:45
+#: lib/omedis_web/live/group_live/index.ex:172
 #, elixir-autogen, elixir-format
 msgid "New Group"
 msgstr "Nuovo Gruppo"
@@ -67,15 +67,15 @@ msgstr "Salva Gruppo"
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
 
-#: lib/omedis_web/live/group_live/show.ex:99
+#: lib/omedis_web/live/group_live/show.ex:98
 #, elixir-autogen, elixir-format
 msgid "Show Group"
 msgstr "Mostra Gruppo"
 
 #: lib/omedis_web/live/group_live/form_component.ex:28
 #: lib/omedis_web/live/group_live/form_component.ex:34
-#: lib/omedis_web/live/group_live/index.ex:63
-#: lib/omedis_web/live/group_live/show.ex:45
+#: lib/omedis_web/live/group_live/index.ex:62
+#: lib/omedis_web/live/group_live/show.ex:44
 #, elixir-autogen, elixir-format
 msgid "Slug"
 msgstr "Slug"
@@ -85,13 +85,13 @@ msgstr "Slug"
 msgid "Use this form to manage group records in your database."
 msgstr "Usa questo modulo per gestire i record dei gruppi nel tuo database."
 
-#: lib/omedis_web/live/group_live/index.ex:159
-#: lib/omedis_web/live/group_live/index.ex:180
+#: lib/omedis_web/live/group_live/index.ex:158
+#: lib/omedis_web/live/group_live/index.ex:179
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr "Non sei autorizzato ad accedere a questa pagina"
 
-#: lib/omedis_web/live/group_live/index.ex:231
+#: lib/omedis_web/live/group_live/index.ex:230
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to delete this group"
 msgstr "Non sei autorizzato a eliminare questo gruppo"
