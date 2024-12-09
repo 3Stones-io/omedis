@@ -4,7 +4,6 @@ defmodule OmedisWeb.EditProfileTest do
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Group
   alias Omedis.Accounts.User
 
   require Ash.Query
@@ -79,10 +78,7 @@ defmodule OmedisWeb.EditProfileTest do
 
     {:ok, user_2} = create_user(%{email: "test2@gmail.com"})
 
-    admin_group =
-      Group
-      |> Ash.Query.filter(name: "Administrators")
-      |> Ash.read_one!(tenant: organisation.id, authorize?: false)
+    admin_group = admin_group(organisation.id)
 
     {:ok, _} =
       create_group_membership(organisation, %{group_id: admin_group.id, user_id: user_2.id})

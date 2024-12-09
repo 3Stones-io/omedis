@@ -1,6 +1,7 @@
 defmodule Omedis.TestUtils do
   @moduledoc false
 
+  alias Omedis.Accounts.Group
   alias Omedis.Accounts.Organisation
 
   require Ash.Query
@@ -16,5 +17,11 @@ defmodule Omedis.TestUtils do
     Organisation
     |> Ash.Query.filter(owner_id: user_id)
     |> Ash.read_one!(authorize?: false)
+  end
+
+  def admin_group(organisation_id) do
+    Group
+    |> Ash.Query.filter(name: "Administrators")
+    |> Ash.read_one!(tenant: organisation_id, authorize?: false)
   end
 end

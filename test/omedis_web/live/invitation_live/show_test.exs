@@ -72,7 +72,9 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
           user: @valid_registration_params
         )
 
-      _conn = submit_form(form, conn)
+      conn = submit_form(form, conn)
+
+      assert redirected_to(conn) == ~p"/edit_profile"
 
       assert {:ok, user} = User.by_email(@valid_registration_params["email"])
       assert Ash.CiString.value(user.email) == @valid_registration_params["email"]

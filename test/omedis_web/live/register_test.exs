@@ -28,7 +28,8 @@ defmodule OmedisWeb.RegisterTest do
           }
         )
 
-      _conn = submit_form(form, conn)
+      conn = submit_form(form, conn)
+      assert redirected_to(conn) == ~p"/edit_profile"
 
       assert {:ok, user} = User.by_email("test@gmail.com")
       assert [organisation] = Ash.read!(Organisation, actor: user)
