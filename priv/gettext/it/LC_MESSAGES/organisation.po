@@ -224,8 +224,8 @@ msgstr "Sito web"
 msgid "You are not authorized to access this page"
 msgstr "Non sei autorizzato ad accedere a questa pagina"
 
-#: lib/omedis_web/live/organisation_live/today.ex:432
-#: lib/omedis_web/live/organisation_live/today.ex:462
+#: lib/omedis_web/live/organisation_live/today.ex:450
+#: lib/omedis_web/live/organisation_live/today.ex:480
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to perform this action"
 msgstr "Non sei autorizzato ad eseguire questa azione"
