@@ -7,6 +7,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
   alias Omedis.Accounts.Event
   alias Omedis.Accounts.Group
+  alias Omedis.Accounts.Project
 
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
@@ -44,14 +45,16 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Project"
+        resource_name: "Project",
+        update: true
       })
 
     {:ok, _} =
       create_access_right(organisation, %{
         group_id: group.id,
         read: true,
-        resource_name: "Group"
+        resource_name: "Group",
+        update: true
       })
 
     {:ok, _} =
@@ -80,13 +83,11 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
            owner: owner,
            project: project
          } do
-      {:ok, %{results: groups}} =
-        Group.by_organisation_id(%{organisation_id: organisation.id},
+      {:ok, [latest_group]} =
+        Group.latest_by_organisation_id(%{organisation_id: organisation.id},
           actor: owner,
           tenant: organisation
         )
-
-      latest_group = Enum.min_by(groups, & &1.created_at)
 
       {:error, {:live_redirect, %{to: path}}} =
         conn
@@ -95,6 +96,103 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       assert path ==
                ~p"/organisations/#{organisation}/today?group_id=#{latest_group.id}&project_id=#{project.id}"
+    end
+
+    test "redirects to group creation page when no groups exist", %{
+      conn: conn,
+      organisation: organisation,
+      owner: owner
+    } do
+      {:ok, %{results: groups}} =
+        Group.by_organisation_id(%{organisation_id: organisation.id},
+          actor: owner,
+          tenant: organisation
+        )
+
+      # Delete all groups
+      Enum.each(groups, fn group ->
+        :ok = Group.destroy(group, authorize?: false)
+      end)
+
+      {:error, {:live_redirect, %{to: path, flash: flash}}} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/organisations/#{organisation}/today")
+
+      assert path == ~p"/organisations/#{organisation}/groups/new"
+      assert flash["error"] == "No group found. Please create one first."
+    end
+
+    test "redirects to project creation page when no projects exist", %{
+      conn: conn,
+      organisation: organisation,
+      owner: owner
+    } do
+      {:ok, projects} =
+        Project.by_organisation_id(%{organisation_id: organisation.id},
+          actor: owner,
+          tenant: organisation
+        )
+
+      # Delete all projects
+      Enum.each(projects, fn project ->
+        :ok = Ash.destroy(project, authorize?: false)
+      end)
+
+      {:error, {:live_redirect, %{to: path, flash: flash}}} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/organisations/#{organisation}/today")
+
+      assert path == ~p"/organisations/#{organisation}/projects/new"
+      assert flash["error"] == "No project found. Please create one first."
+    end
+
+    test "updates timestamps for selected group and project", %{
+      conn: conn,
+      group: group,
+      organisation: organisation,
+      owner: owner,
+      project: project
+    } do
+      past_datetime = DateTime.add(DateTime.utc_now(), -1, :second)
+
+      # Backdate the updated_at fields to ensure we can detect changes
+      {:ok, backdated_group} =
+        Group.update(
+          group,
+          %{},
+          context: %{updated_at: past_datetime},
+          authorize?: false,
+          actor: owner,
+          tenant: organisation
+        )
+
+      {:ok, backdated_project} =
+        Project.update(
+          project,
+          %{},
+          context: %{updated_at: past_datetime},
+          authorize?: false,
+          actor: owner,
+          tenant: organisation
+        )
+
+      {:ok, _lv, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(
+          ~p"/organisations/#{organisation}/today?group_id=#{backdated_group.id}&project_id=#{backdated_project.id}"
+        )
+
+      # Fetch updated records
+      {:ok, updated_group} = Group.by_id(backdated_group.id, actor: owner, tenant: organisation)
+
+      {:ok, updated_project} =
+        Project.by_id(backdated_project.id, actor: owner, tenant: organisation)
+
+      assert DateTime.compare(updated_group.updated_at, backdated_group.updated_at) == :gt
+      assert DateTime.compare(updated_project.updated_at, backdated_project.updated_at) == :gt
     end
 
     test "shows a drop down list of groups and navigates to group today page when different group is selected",
@@ -345,14 +443,16 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         create_access_right(organisation, %{
           group_id: group2.id,
           read: true,
-          resource_name: "Project"
+          resource_name: "Project",
+          update: true
         })
 
       {:ok, _} =
         create_access_right(organisation, %{
           group_id: group2.id,
           read: true,
-          resource_name: "Group"
+          resource_name: "Group",
+          update: true
         })
 
       {:ok, _} =

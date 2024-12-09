@@ -37,6 +37,7 @@ defmodule Omedis.Accounts.Group do
     define :destroy
     define :by_organisation_id
     define :by_slug, get_by: [:slug], action: :read
+    define :latest_by_organisation_id
   end
 
   actions do
@@ -58,6 +59,16 @@ defmodule Omedis.Accounts.Group do
 
       primary? true
       require_atomic? false
+
+      change fn changeset, _context ->
+        case changeset.context do
+          %{updated_at: updated_at} ->
+            Ash.Changeset.change_attribute(changeset, :updated_at, updated_at)
+
+          _ ->
+            changeset
+        end
+      end
     end
 
     read :read do
@@ -81,6 +92,16 @@ defmodule Omedis.Accounts.Group do
                  default_limit: Application.compile_env(:omedis, :pagination_default_limit)
 
       prepare build(sort: :created_at)
+
+      filter expr(organisation_id == ^arg(:organisation_id))
+    end
+
+    read :latest_by_organisation_id do
+      argument :organisation_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(sort: [updated_at: :desc], limit: 1)
 
       filter expr(organisation_id == ^arg(:organisation_id))
     end
@@ -115,7 +136,7 @@ defmodule Omedis.Accounts.Group do
     attribute :slug, :ci_string, allow_nil?: true, public?: true
 
     create_timestamp :created_at
-    update_timestamp :updated_at
+    update_timestamp :updated_at, writable?: true
   end
 
   relationships do
