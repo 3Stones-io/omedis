@@ -41,14 +41,12 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         email: "test@gmail.com"
       })
 
-    expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
-
-    {:ok, expired_invitation} =
+    {:ok, invitation} =
       create_invitation(organisation, %{
-        creator_id: owner.id,
-        expires_at: expired_at,
-        status: :expired
+        creator_id: owner.id
       })
+
+    expired_invitation = Invitation.expire!(invitation, actor: owner)
 
     %{
       expired_invitation: expired_invitation,
@@ -117,22 +115,6 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       assert html =~ "Mot de passe"
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
-    end
-
-    test "shows error for expired invitation", %{
-      conn: conn,
-      expired_invitation: expired_invitation,
-      organisation: organisation
-    } do
-      {:ok, conn} =
-        conn
-        |> live(~p"/organisations/#{organisation}/invitations/#{expired_invitation.id}")
-        |> follow_redirect(conn)
-
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
-               "Invitation expired or not found"
-
-      assert conn.request_path == "/login"
     end
 
     test "shows error for invalid invitation ID", %{

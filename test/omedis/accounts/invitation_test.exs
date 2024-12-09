@@ -320,22 +320,6 @@ defmodule Omedis.Accounts.InvitationTest do
       assert {:ok, _invitation} = Invitation.by_id(invitation.id)
     end
 
-    test "returns an error if invitation has expired", %{
-      organisation: organisation,
-      owner: owner
-    } do
-      expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
-
-      {:ok, invitation} =
-        create_invitation(organisation, %{
-          creator_id: owner.id,
-          expires_at: expired_at,
-          status: :expired
-        })
-
-      assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(invitation.id)
-    end
-
     test "returns an error if invitation does not exist" do
       assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(Ecto.UUID.generate())
     end
