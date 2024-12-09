@@ -1,5 +1,7 @@
 defmodule OmedisWeb.EditProfileTest do
   use OmedisWeb.ConnCase
+
+  alias Omedis.Accounts.Group
   alias Omedis.Accounts.User
 
   import Phoenix.LiveViewTest
@@ -52,38 +54,7 @@ defmodule OmedisWeb.EditProfileTest do
 
   test "One cannot delete an account if they are the sole admin", %{conn: conn} do
     {:ok, user} = create_user(%{email: "test@gmail.com"})
-    {:ok, organisation} = create_organisation(%{owner_id: user.id})
-
-    {:ok, admin_group} =
-      create_group(organisation, %{
-        name: "Administrators",
-        slug: "administrators",
-        user_id: user.id
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: admin_group.id,
-        read: true,
-        resource_name: "Organisation"
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: admin_group.id,
-        read: true,
-        resource_name: "Group"
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: admin_group.id,
-        read: true,
-        resource_name: "GroupMembership"
-      })
-
-    {:ok, _} =
-      create_group_membership(organisation, %{group_id: admin_group.id, user_id: user.id})
+    {:ok, _organisation} = create_organisation(%{owner_id: user.id})
 
     assert {:ok, index_live, _html} =
              conn
@@ -101,35 +72,7 @@ defmodule OmedisWeb.EditProfileTest do
     {:ok, organisation} = create_organisation(%{owner_id: user.id})
 
     {:ok, admin_group} =
-      create_group(organisation, %{
-        name: "Administrators",
-        slug: "administrators",
-        user_id: user.id
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: admin_group.id,
-        read: true,
-        resource_name: "Organisation"
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: admin_group.id,
-        read: true,
-        resource_name: "Group"
-      })
-
-    {:ok, _} =
-      create_access_right(organisation, %{
-        group_id: admin_group.id,
-        read: true,
-        resource_name: "GroupMembership"
-      })
-
-    {:ok, _} =
-      create_group_membership(organisation, %{group_id: admin_group.id, user_id: user.id})
+      Group.by_slug("administrators", authorize?: false, tenant: organisation)
 
     {:ok, _} =
       create_group_membership(organisation, %{group_id: admin_group.id, user_id: user_2.id})
