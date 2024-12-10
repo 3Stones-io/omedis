@@ -6,6 +6,8 @@ defmodule Omedis.FarmersTest do
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
 
+  require Ash.Query
+
   describe "User Resource Unit Tests" do
     test "read/0  returns all users" do
       create_user(%{email: "test@gmail.com"})
