@@ -111,12 +111,15 @@ defmodule Omedis.Accounts.ProjectTest do
                  tenant: organisation
                )
 
-      assert length(paginated_result.results) == 10
-      assert paginated_result.count == 10
+      # An additional default project is created when an organisation is created
+      assert length(paginated_result.results) == 11
+      assert paginated_result.count == 11
       assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation.id))
 
+      projects_with_user_access = tl(paginated_result.results)
+
       assert Enum.all?(
-               paginated_result.results,
+               projects_with_user_access,
                &String.starts_with?(&1.name, "Accessible Project")
              )
 
@@ -207,8 +210,9 @@ defmodule Omedis.Accounts.ProjectTest do
                  tenant: organisation_1
                )
 
-      assert length(paginated_result.results) == 5
-      assert paginated_result.count == 5
+      # An additional default project is created when an organisation is created
+      assert length(paginated_result.results) == 6
+      assert paginated_result.count == 6
       assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation_1.id))
 
       assert {:ok, paginated_result} =
@@ -218,8 +222,9 @@ defmodule Omedis.Accounts.ProjectTest do
                  tenant: organisation_2
                )
 
-      assert length(paginated_result.results) == 3
-      assert paginated_result.count == 3
+      # An additional default project is created when an organisation is created
+      assert length(paginated_result.results) == 4
+      assert paginated_result.count == 4
       assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation_2.id))
     end
 

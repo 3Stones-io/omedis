@@ -11,62 +11,94 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/activity_live/index.ex:32
-#: lib/omedis_web/live/activity_live/show.ex:27
-#: lib/omedis_web/live/event_live/index.ex:28
-#: lib/omedis_web/live/group_live/show.ex:35
+#: lib/omedis_web/live/activity_live/index.ex:31
+#: lib/omedis_web/live/activity_live/show.ex:26
+#: lib/omedis_web/live/event_live/index.ex:27
+#: lib/omedis_web/live/group_live/show.ex:34
 #, elixir-autogen, elixir-format
 msgid "Activities"
 msgstr "Attività"
 
-#: lib/omedis_web/live/group_live/index.ex:33
+#: lib/omedis_web/live/group_live/index.ex:32
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Indietro"
 
-#: lib/omedis_web/live/group_live/show.ex:51
+#: lib/omedis_web/live/group_live/show.ex:50
 #, elixir-autogen, elixir-format
 msgid "Back to groups"
 msgstr "Torna ai gruppi"
 
-#: lib/omedis_web/components/general_components.ex:281
-#: lib/omedis_web/components/general_components.ex:669
+#: lib/omedis_web/components/general_components.ex:277
+#: lib/omedis_web/components/general_components.ex:662
 #, elixir-autogen, elixir-format
 msgid "Calendar"
 msgstr "Calendario"
 
-#: lib/omedis_web/components/general_components.ex:871
-#, elixir-autogen, elixir-format
-msgid "Create first organisation"
-msgstr "Crea la prima organizzazione"
-
-#: lib/omedis_web/components/general_components.ex:303
-#: lib/omedis_web/components/general_components.ex:691
+#: lib/omedis_web/components/general_components.ex:299
+#: lib/omedis_web/components/general_components.ex:684
 #, elixir-autogen, elixir-format
 msgid "Documents"
 msgstr "Documenti"
 
-#: lib/omedis_web/components/general_components.ex:803
+#: lib/omedis_web/components/general_components.ex:796
 #, elixir-autogen, elixir-format
 msgid "Edit Profile"
 msgstr "Modifica Profilo"
 
-#: lib/omedis_web/live/event_live/index.ex:32
+#: lib/omedis_web/live/event_live/index.ex:31
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr "Eventi"
 
-#: lib/omedis_web/components/general_components.ex:349
-#: lib/omedis_web/components/general_components.ex:737
-#: lib/omedis_web/live/activity_live/index.ex:30
-#: lib/omedis_web/live/activity_live/show.ex:25
-#: lib/omedis_web/live/event_live/index.ex:26
-#: lib/omedis_web/live/group_live/index.ex:26
-#: lib/omedis_web/live/group_live/show.ex:22
-#: lib/omedis_web/live/organisation_live/today.ex:26
+#: lib/omedis_web/components/general_components.ex:345
+#: lib/omedis_web/components/general_components.ex:730
+#: lib/omedis_web/live/activity_live/index.ex:29
+#: lib/omedis_web/live/activity_live/show.ex:24
+#: lib/omedis_web/live/event_live/index.ex:25
+#: lib/omedis_web/live/group_live/index.ex:25
+#: lib/omedis_web/live/group_live/show.ex:21
+#: lib/omedis_web/live/organisation_live/today.ex:25
 #, elixir-autogen, elixir-format
 msgid "Groups"
 msgstr "Gruppi"
+
+#: lib/omedis_web/live/activity_live/index.ex:26
+#: lib/omedis_web/live/activity_live/show.ex:21
+#: lib/omedis_web/live/event_live/index.ex:22
+#: lib/omedis_web/live/group_live/index.ex:22
+#: lib/omedis_web/live/group_live/show.ex:18
+#: lib/omedis_web/live/invitation_live/index.ex:105
+#: lib/omedis_web/live/organisation_live/index.ex:21
+#: lib/omedis_web/live/organisation_live/show.ex:17
+#: lib/omedis_web/live/organisation_live/today.ex:22
+#: lib/omedis_web/live/project_live/index.ex:24
+#: lib/omedis_web/live/project_live/show.ex:19
+#, elixir-autogen, elixir-format
+msgid "Home"
+msgstr "Home"
+
+#: lib/omedis_web/live/invitation_live/index.ex:108
+#, elixir-autogen, elixir-format
+msgid "Invitations"
+msgstr "Inviti"
+
+#: lib/omedis_web/components/general_components.ex:500
+#: lib/omedis_web/components/general_components.ex:805
+#, elixir-autogen, elixir-format
+msgid "Login"
+msgstr "Accedi"
+
+#: lib/omedis_web/components/general_components.ex:26
+#: lib/omedis_web/components/general_components.ex:46
+#, elixir-autogen, elixir-format
+msgid "Navigation Breadcrumb"
+msgstr "Navigazione Breadcrumb"
+
+#: lib/omedis_web/live/project_live/index.ex:40
+#, elixir-autogen, elixir-format
+msgid "New Project"
+msgstr "Nuovo Progetto"
 
 #: lib/omedis_web/live/activity_live/index.ex:27
 #: lib/omedis_web/live/activity_live/show.ex:22
@@ -80,105 +112,72 @@ msgstr "Gruppi"
 #: lib/omedis_web/live/project_live/index.ex:25
 #: lib/omedis_web/live/project_live/show.ex:20
 #, elixir-autogen, elixir-format
-msgid "Home"
-msgstr "Home"
-
-#: lib/omedis_web/live/invitation_live/index.ex:109
-#, elixir-autogen, elixir-format
-msgid "Invitations"
-msgstr "Inviti"
-
-#: lib/omedis_web/components/general_components.ex:505
-#: lib/omedis_web/components/general_components.ex:812
-#, elixir-autogen, elixir-format
-msgid "Login"
-msgstr "Accedi"
-
-#: lib/omedis_web/components/general_components.ex:26
-#: lib/omedis_web/components/general_components.ex:46
-#, elixir-autogen, elixir-format
-msgid "Navigation Breadcrumb"
-msgstr "Navigazione Breadcrumb"
-
-#: lib/omedis_web/live/project_live/index.ex:41
-#, elixir-autogen, elixir-format
-msgid "New Project"
-msgstr "Nuovo Progetto"
-
-#: lib/omedis_web/components/general_components.ex:874
-#: lib/omedis_web/live/activity_live/index.ex:28
-#: lib/omedis_web/live/activity_live/show.ex:23
-#: lib/omedis_web/live/event_live/index.ex:24
-#: lib/omedis_web/live/group_live/index.ex:24
-#: lib/omedis_web/live/group_live/show.ex:20
-#: lib/omedis_web/live/invitation_live/index.ex:107
-#: lib/omedis_web/live/organisation_live/index.ex:23
-#: lib/omedis_web/live/organisation_live/show.ex:19
-#: lib/omedis_web/live/organisation_live/today.ex:24
-#: lib/omedis_web/live/project_live/index.ex:26
-#: lib/omedis_web/live/project_live/show.ex:21
-#, elixir-autogen, elixir-format
 msgid "Organisations"
 msgstr "Organizzazioni"
 
-#: lib/omedis_web/components/general_components.ex:259
-#: lib/omedis_web/components/general_components.ex:362
-#: lib/omedis_web/components/general_components.ex:647
-#: lib/omedis_web/components/general_components.ex:750
-#: lib/omedis_web/live/project_live/index.ex:28
-#: lib/omedis_web/live/project_live/show.ex:23
+#: lib/omedis_web/components/general_components.ex:255
+#: lib/omedis_web/components/general_components.ex:358
+#: lib/omedis_web/components/general_components.ex:640
+#: lib/omedis_web/components/general_components.ex:743
+#: lib/omedis_web/live/project_live/index.ex:27
+#: lib/omedis_web/live/project_live/show.ex:22
 #, elixir-autogen, elixir-format
 msgid "Projects"
 msgstr "Progetti"
 
-#: lib/omedis_web/components/general_components.ex:511
-#: lib/omedis_web/components/general_components.ex:815
+#: lib/omedis_web/components/general_components.ex:506
+#: lib/omedis_web/components/general_components.ex:808
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "Registrati"
 
-#: lib/omedis_web/components/general_components.ex:330
-#: lib/omedis_web/components/general_components.ex:718
+#: lib/omedis_web/components/general_components.ex:326
+#: lib/omedis_web/components/general_components.ex:711
 #, elixir-autogen, elixir-format
 msgid "Reports"
 msgstr "Report"
 
-#: lib/omedis_web/components/general_components.ex:463
+#: lib/omedis_web/components/general_components.ex:458
 #, elixir-autogen, elixir-format
 msgid "Search..."
 msgstr "Cerca..."
 
-#: lib/omedis_web/components/general_components.ex:806
+#: lib/omedis_web/components/general_components.ex:799
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Esci"
 
-#: lib/omedis_web/components/general_components.ex:237
-#: lib/omedis_web/components/general_components.ex:625
+#: lib/omedis_web/components/general_components.ex:233
+#: lib/omedis_web/components/general_components.ex:618
 #, elixir-autogen, elixir-format
 msgid "Team"
 msgstr "Squadra"
 
-#: lib/omedis_web/live/organisation_live/today.ex:28
+#: lib/omedis_web/live/organisation_live/today.ex:27
 #, elixir-autogen, elixir-format
 msgid "Today"
 msgstr "Oggi"
 
-#: lib/omedis_web/components/general_components.ex:184
-#: lib/omedis_web/components/general_components.ex:214
-#: lib/omedis_web/components/general_components.ex:574
-#: lib/omedis_web/components/general_components.ex:603
+#: lib/omedis_web/components/general_components.ex:182
+#: lib/omedis_web/components/general_components.ex:210
+#: lib/omedis_web/components/general_components.ex:569
+#: lib/omedis_web/components/general_components.ex:596
 #, elixir-autogen, elixir-format
 msgid "Today's Time Tracker"
 msgstr "Tracciatore del tempo di oggi"
 
-#: lib/omedis_web/components/general_components.ex:392
-#: lib/omedis_web/components/general_components.ex:780
+#: lib/omedis_web/components/general_components.ex:388
+#: lib/omedis_web/components/general_components.ex:773
 #, elixir-autogen, elixir-format
 msgid "Your Profile"
 msgstr "Il tuo profilo"
 
-#: lib/omedis_web/live/project_live/show.ex:41
+#: lib/omedis_web/live/project_live/show.ex:40
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Edit Project"
 msgstr "Modifica progetto"
+
+#: lib/omedis_web/components/general_components.ex:851
+#, elixir-autogen, elixir-format
+msgid "Create new organisation"
+msgstr "Crea nuova organizzazione"
