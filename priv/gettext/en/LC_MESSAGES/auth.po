@@ -11,70 +11,60 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/register_live.ex:96
+#: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "Change language"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:90
-#: lib/omedis_web/live/login_live.ex:96
-#: lib/omedis_web/live/login_live.ex:103
-#: lib/omedis_web/live/register_live.ex:150
-#: lib/omedis_web/live/register_live.ex:153
+#: lib/omedis_web/live/login_live.ex
+#: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:110
-#: lib/omedis_web/live/login_live.ex:117
-#: lib/omedis_web/live/login_live.ex:123
-#: lib/omedis_web/live/register_live.ex:161
-#: lib/omedis_web/live/register_live.ex:164
+#: lib/omedis_web/live/login_live.ex
+#: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:31
-#: lib/omedis_web/live/register_live.ex:87
-#: lib/omedis_web/live/register_live.ex:174
+#: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:32
-#: lib/omedis_web/live/login_live.ex:82
+#: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:130
-#: lib/omedis_web/live/login_live.ex:131
+#: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Signing in..."
 msgstr ""
 
-#: lib/omedis_web/controllers/auth_controller.ex:38
+#: lib/omedis_web/controllers/auth_controller.ex
 #, elixir-autogen, elixir-format
 msgid "Something went wrong. Try again."
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex:90
+#: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "Use a permanent address where you can receive mail."
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:85
+#: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Use your credentials to sign in"
 msgstr ""
 
-#: lib/omedis_web/controllers/auth_controller.ex:24
+#: lib/omedis_web/controllers/auth_controller.ex
 #, elixir-autogen, elixir-format
 msgid "Username or password is incorrect"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:119
-#: lib/omedis_web/live/register_live.ex:162
+#: lib/omedis_web/live/login_live.ex
+#: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr ""
