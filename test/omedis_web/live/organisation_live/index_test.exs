@@ -136,20 +136,6 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       assert html =~ owned_organisation.name
     end
 
-    test "shows organisations count", %{conn: conn, organisations: organisations, user_1: user_1} do
-      owned_organisation = Enum.at(organisations, 15)
-
-      {:ok, _} =
-        Organisation.update(owned_organisation, %{owner_id: user_1.id}, authorize?: false)
-
-      {:ok, _index_live, html} =
-        conn
-        |> log_in_user(user_1)
-        |> live(~p"/organisations")
-
-      assert html =~ "Organisations (16)"
-    end
-
     test "shows create button when user does not have an organisation", %{conn: conn} do
       {:ok, user} = create_user()
 

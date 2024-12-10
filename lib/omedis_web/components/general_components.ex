@@ -132,13 +132,11 @@ defmodule OmedisWeb.GeneralComponents do
         current_organisation={@current_organisation}
         current_user={@current_user}
         language={@language}
-        organisations_count={@organisations_count}
       />
 
       <.desktop_sidebar
         current_organisation={@current_organisation}
         current_user={@current_user}
-        organisations_count={@organisations_count}
         language={@language}
       />
       <%= render_slot(@inner_block) %>
@@ -184,17 +182,15 @@ defmodule OmedisWeb.GeneralComponents do
                     <%= dgettext("navigation", "Today's Time Tracker") %>
                   </a>
                 </li>
-                <li>
-                  <.organisations_link
-                    organisations_count={@organisations_count}
-                    language={@language}
-                  />
-                </li>
+                <.organisation_link
+                  current_organisation={@current_organisation}
+                  current_user={@current_user}
+                />
 
                 <li>
                   <.link
                     :if={@current_organisation}
-                    navigate={get_current_organisation_path(@current_organisation)}
+                    navigate={~p"/organisations/#{@current_organisation}/today"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -437,7 +433,6 @@ defmodule OmedisWeb.GeneralComponents do
               <.mobile_sidebar
                 current_organisation={@current_organisation}
                 current_user={@current_user}
-                organisations_count={@organisations_count}
                 language={@language}
               />
               <button
@@ -574,16 +569,14 @@ defmodule OmedisWeb.GeneralComponents do
                     <%= dgettext("navigation", "Today's Time Tracker") %>
                   </a>
                 </li>
-                <li>
-                  <.organisations_link
-                    organisations_count={@organisations_count}
-                    language={@language}
-                  />
-                </li>
+                <.organisation_link
+                  current_organisation={@current_organisation}
+                  current_user={@current_user}
+                />
                 <li>
                   <.link
                     :if={@current_organisation}
-                    navigate={get_current_organisation_path(@current_organisation)}
+                    navigate={~p"/organisations/#{@current_organisation}/today"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -834,44 +827,59 @@ defmodule OmedisWeb.GeneralComponents do
     """
   end
 
-  defp get_current_organisation_path(nil), do: ~p"/organisations"
-
-  defp get_current_organisation_path(current_organisation) do
-    ~p"/organisations/#{current_organisation}"
-  end
-
-  defp organisations_link(assigns) do
+  defp organisation_link(%{current_organisation: nil} = assigns) do
     ~H"""
-    <.link
-      navigate={organisations_link_path(@organisations_count)}
-      class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-    >
-      <svg
-        class="h-6 w-6 shrink-0"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        aria-hidden="true"
+    <li :if={Ash.can?({Omedis.Accounts.Organisation, :create}, @current_user)}>
+      <.link
+        navigate={~p"/organisations/new"}
+        class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-        />
-      </svg>
-      <%= organisations_link_text(@organisations_count) %>
-    </.link>
+        <svg
+          class="h-6 w-6 shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+          />
+        </svg>
+        <%= dgettext("navigation", "Create new organisation") %>
+      </.link>
+    </li>
     """
   end
 
-  defp organisations_link_path(0), do: ~p"/organisations/new"
-  defp organisations_link_path(_organisations_count), do: ~p"/organisations"
-
-  defp organisations_link_text(0), do: dgettext("navigation", "Create first organisation")
-
-  defp organisations_link_text(organisations_count),
-    do: "#{dgettext("navigation", "Organisations")} (#{organisations_count})"
+  defp organisation_link(assigns) do
+    ~H"""
+    <li>
+      <.link
+        navigate={~p"/organisations/#{@current_organisation}"}
+        class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+      >
+        <svg
+          class="h-6 w-6 shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+          />
+        </svg>
+        <%= @current_organisation.name %>
+      </.link>
+    </li>
+    """
+  end
 
   attr :class, :string, default: nil
   attr :color, :string, required: true

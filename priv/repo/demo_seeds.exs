@@ -196,11 +196,11 @@ end
     [
       %{
         name: "Demo Project 1",
-        position: "1"
+        position: "3"
       },
       %{
         name: "Demo Project 2",
-        position: "2"
+        position: "4"
       }
     ],
     :unique_name
@@ -213,7 +213,7 @@ end
     [
       %{
         name: "Demo Project 3",
-        position: "1"
+        position: "2"
       }
     ],
     :unique_name
