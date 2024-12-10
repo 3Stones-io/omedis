@@ -36,11 +36,6 @@ msgstr ""
 
 #: lib/omedis_web/components/general_components.ex
 #, elixir-autogen, elixir-format
-msgid "Create first organisation"
-msgstr ""
-
-#: lib/omedis_web/components/general_components.ex
-#, elixir-autogen, elixir-format
 msgid "Documents"
 msgstr ""
 
@@ -100,7 +95,6 @@ msgstr ""
 msgid "New Project"
 msgstr ""
 
-#: lib/omedis_web/components/general_components.ex
 #: lib/omedis_web/live/activity_live/index.ex
 #: lib/omedis_web/live/activity_live/show.ex
 #: lib/omedis_web/live/event_live/index.ex
@@ -166,4 +160,9 @@ msgstr ""
 #: lib/omedis_web/live/project_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Edit Project"
+msgstr ""
+
+#: lib/omedis_web/components/general_components.ex
+#, elixir-autogen, elixir-format
+msgid "Create new organisation"
 msgstr ""

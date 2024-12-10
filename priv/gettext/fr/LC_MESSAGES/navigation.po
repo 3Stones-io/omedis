@@ -36,11 +36,6 @@ msgstr "Calendrier"
 
 #: lib/omedis_web/components/general_components.ex
 #, elixir-autogen, elixir-format
-msgid "Create first organisation"
-msgstr "Créer la première organisation"
-
-#: lib/omedis_web/components/general_components.ex
-#, elixir-autogen, elixir-format
 msgid "Documents"
 msgstr "Documents"
 
@@ -100,7 +95,6 @@ msgstr "Fil d'Ariane"
 msgid "New Project"
 msgstr "Nouveau projet"
 
-#: lib/omedis_web/components/general_components.ex
 #: lib/omedis_web/live/activity_live/index.ex
 #: lib/omedis_web/live/activity_live/show.ex
 #: lib/omedis_web/live/event_live/index.ex
@@ -167,3 +161,8 @@ msgstr "Votre profil"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Edit Project"
 msgstr "Modifier le projet"
+
+#: lib/omedis_web/components/general_components.ex
+#, elixir-autogen, elixir-format
+msgid "Create new organisation"
+msgstr "Créer une nouvelle organisation"
