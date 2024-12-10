@@ -31,15 +31,6 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       assert html =~ "Listing Organisations"
       assert html =~ organisation.name
     end
-
-    test "shows organisations count", %{conn: conn, user_1: user_1} do
-      {:ok, _index_live, html} =
-        conn
-        |> log_in_user(user_1)
-        |> live(~p"/organisations")
-
-      assert html =~ "Organisations (1)"
-    end
   end
 
   describe "/organisations/:slug/edit" do

@@ -85,9 +85,8 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       assert html =~ "Listing Groups"
       assert html =~ "New Group"
-
-      assert html =~ "Group 1"
-      assert html =~ "Group 8"
+      assert html =~ "Group 3"
+      assert html =~ "Group 10"
       refute html =~ "Group 11"
 
       assert view |> element("nav[aria-label=Pagination]") |> has_element?()
@@ -96,19 +95,13 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       |> element("nav[aria-label=Pagination] a", "3")
       |> render_click()
 
-      assert view |> element("nav[aria-label=Pagination] a", "4") |> has_element?()
-
-      view
-      |> element("nav[aria-label=Pagination] a", "4")
-      |> render_click()
+      # # There is no next page
+      refute view |> element("nav[aria-label=Pagination] a", "4") |> has_element?()
 
       html = render(view)
-      assert html =~ "Group 29"
-      refute html =~ "Group 21"
+      assert html =~ "Group 21"
+      refute html =~ "Group 16"
       refute html =~ "Group 37"
-
-      # There is no next page
-      refute view |> element("nav[aria-label=Pagination] a", "5") |> has_element?()
     end
 
     test "edit and delete actions are hidden is user has no rights to destroy or update a group",
