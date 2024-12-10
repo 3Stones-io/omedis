@@ -11,14 +11,12 @@
 msgid ""
 msgstr ""
 
-#: lib/omedis_web/components/general_components.ex:157
-#: lib/omedis_web/components/general_components.ex:548
+#: lib/omedis_web/components/general_components.ex
 #, elixir-autogen, elixir-format
 msgid "Company logo"
 msgstr ""
 
-#: lib/omedis_web/components/general_components.ex:161
-#: lib/omedis_web/components/general_components.ex:551
+#: lib/omedis_web/components/general_components.ex
 #, elixir-autogen, elixir-format
 msgid "Main navigation"
 msgstr ""
