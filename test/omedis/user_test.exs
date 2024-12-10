@@ -56,6 +56,57 @@ defmodule Omedis.FarmersTest do
       assert updated_invitation.user_id == user.id
     end
 
+    test "create/1 adds the invited user to the users group" do
+      {:ok, organisation_owner} = create_user()
+
+      {:ok, organisation} =
+        create_organisation(%{owner_id: organisation_owner.id}, actor: organisation_owner)
+
+      {:ok, _invitation} = create_invitation(organisation, %{email: "test@user.com"})
+
+      assert {:ok, user} =
+               User.create(%{
+                 current_organisation_id: organisation.id,
+                 email: "test@user.com",
+                 hashed_password: Bcrypt.hash_pwd_salt("password"),
+                 first_name: "Stefan",
+                 last_name: "Wintermeyer",
+                 gender: "Male",
+                 birthdate: "1980-01-01"
+               })
+
+      assert {:ok, [users_group]} =
+               Omedis.Accounts.Group
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+               |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
+
+      assert List.first(users_group.group_memberships).user_id == user.id
+    end
+
+    test "create/1 does not add the user to the users group if the user is not an invitee" do
+      {:ok, organisation_owner} = create_user()
+
+      {:ok, organisation} =
+        create_organisation(%{owner_id: organisation_owner.id}, actor: organisation_owner)
+
+      assert {:ok, _user} =
+               User.create(%{
+                 email: "test@user.com",
+                 hashed_password: Bcrypt.hash_pwd_salt("password"),
+                 first_name: "Stefan",
+                 last_name: "Wintermeyer",
+                 gender: "Male",
+                 birthdate: "1980-01-01"
+               })
+
+      assert {:ok, [users_group]} =
+               Omedis.Accounts.Group
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+               |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
+
+      assert [] = users_group.group_memberships
+    end
+
     test "update/2 updates a user given valid attributes" do
       {:ok, user} =
         create_user(%{email: "test@gmail.com"})

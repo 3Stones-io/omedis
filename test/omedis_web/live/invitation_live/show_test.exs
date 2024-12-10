@@ -16,6 +16,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   setup do
     {:ok, owner} = create_user()
     organisation = fetch_users_organisation(owner.id)
+
     {:ok, group} = create_group(organisation)
     {:ok, _} = create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
 
@@ -57,6 +58,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   end
 
   describe "/organisations/:slug/invitations/:id" do
+    require Ash.Query
+
     test "invitee with a valid invitation can register for an account", %{
       conn: conn,
       organisation: organisation,
@@ -83,6 +86,14 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, updated_invitation} = Invitation.by_id(valid_invitation.id)
 
       assert updated_invitation.user_id == user.id
+
+      # Verify user is added to the users group
+      assert {:ok, [users_group]} =
+               Omedis.Accounts.Group
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+               |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
+
+      assert List.first(users_group.group_memberships).user_id == user.id
     end
 
     test "form errors are displayed", %{

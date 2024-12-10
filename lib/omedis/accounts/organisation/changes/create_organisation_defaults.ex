@@ -45,13 +45,9 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
   @user_create_resources ["Event"]
 
   @impl true
-  def change(changeset, _, %{actor: nil}), do: changeset
-
-  def change(changeset, _, context) do
-    actor = Map.get(context, :actor)
-
+  def change(changeset, _, _context) do
     Ash.Changeset.after_action(changeset, fn _changeset, organisation ->
-      opts = [actor: actor, authorize?: false, tenant: organisation]
+      opts = [authorize?: false, tenant: organisation]
       administrators_group = create_admins_group(organisation, opts)
       users_group = create_users_group(organisation, opts)
       create_admin_access_rights(administrators_group, opts)

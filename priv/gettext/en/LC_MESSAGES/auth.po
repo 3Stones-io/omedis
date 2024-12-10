@@ -16,18 +16,18 @@ msgstr ""
 msgid "Change language"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:95
-#: lib/omedis_web/live/login_live.ex:101
-#: lib/omedis_web/live/login_live.ex:108
+#: lib/omedis_web/live/login_live.ex:90
+#: lib/omedis_web/live/login_live.ex:96
+#: lib/omedis_web/live/login_live.ex:103
 #: lib/omedis_web/live/register_live.ex:150
 #: lib/omedis_web/live/register_live.ex:153
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:115
-#: lib/omedis_web/live/login_live.ex:122
-#: lib/omedis_web/live/login_live.ex:128
+#: lib/omedis_web/live/login_live.ex:110
+#: lib/omedis_web/live/login_live.ex:117
+#: lib/omedis_web/live/login_live.ex:123
 #: lib/omedis_web/live/register_live.ex:161
 #: lib/omedis_web/live/register_live.ex:164
 #, elixir-autogen, elixir-format
@@ -42,13 +42,13 @@ msgid "Register"
 msgstr ""
 
 #: lib/omedis_web/live/login_live.ex:32
-#: lib/omedis_web/live/login_live.ex:87
+#: lib/omedis_web/live/login_live.ex:82
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:135
-#: lib/omedis_web/live/login_live.ex:136
+#: lib/omedis_web/live/login_live.ex:130
+#: lib/omedis_web/live/login_live.ex:131
 #, elixir-autogen, elixir-format
 msgid "Signing in..."
 msgstr ""
@@ -63,7 +63,7 @@ msgstr ""
 msgid "Use a permanent address where you can receive mail."
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:90
+#: lib/omedis_web/live/login_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "Use your credentials to sign in"
 msgstr ""
@@ -73,7 +73,7 @@ msgstr ""
 msgid "Username or password is incorrect"
 msgstr ""
 
-#: lib/omedis_web/live/login_live.ex:124
+#: lib/omedis_web/live/login_live.ex:119
 #: lib/omedis_web/live/register_live.ex:162
 #, elixir-autogen, elixir-format
 msgid "new password"
