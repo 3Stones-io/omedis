@@ -26,7 +26,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       organisation: organisation,
       organisation_2: organisation_2
     } do
-      Enum.each(1..15, fn i ->
+      Enum.each(3..15, fn i ->
         {:ok, group} =
           create_group(organisation, %{
             user_id: owner.id,
@@ -84,7 +84,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       assert html =~ "Listing Groups"
       assert html =~ "New Group"
-      assert html =~ "Group 1"
+      assert html =~ "Group 3"
       assert html =~ "Group 10"
       refute html =~ "Group 11"
 

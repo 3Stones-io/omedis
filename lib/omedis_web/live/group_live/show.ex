@@ -11,7 +11,6 @@ defmodule OmedisWeb.GroupLive.Show do
       current_user={@current_user}
       current_organisation={@current_organisation}
       language={@language}
-      organisations_count={@organisations_count}
     >
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb

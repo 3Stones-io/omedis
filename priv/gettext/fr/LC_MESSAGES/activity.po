@@ -11,7 +11,7 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n>1);\n"
 
-#: lib/omedis_web/live/activity_live/show.ex:35
+#: lib/omedis_web/live/activity_live/show.ex:34
 #, elixir-autogen, elixir-format
 msgid "Activity"
 msgstr ""
@@ -21,24 +21,24 @@ msgstr ""
 msgid "Activity saved successfully"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:82
+#: lib/omedis_web/live/activity_live/show.ex:81
 #, elixir-autogen, elixir-format
 msgid "Back to activities"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:98
+#: lib/omedis_web/live/activity_live/index.ex:97
 #, elixir-autogen, elixir-format
 msgid "Default"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:116
+#: lib/omedis_web/live/activity_live/index.ex:115
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:214
-#: lib/omedis_web/live/activity_live/show.ex:52
-#: lib/omedis_web/live/activity_live/show.ex:157
+#: lib/omedis_web/live/activity_live/index.ex:213
+#: lib/omedis_web/live/activity_live/show.ex:51
+#: lib/omedis_web/live/activity_live/show.ex:156
 #, elixir-autogen, elixir-format
 msgid "Edit Activity"
 msgstr ""
@@ -53,20 +53,20 @@ msgstr ""
 msgid "Enter custom color"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:38
-#: lib/omedis_web/live/activity_live/index.ex:256
+#: lib/omedis_web/live/activity_live/index.ex:37
+#: lib/omedis_web/live/activity_live/index.ex:255
 #, elixir-autogen, elixir-format
 msgid "Listing Activities"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:61
-#: lib/omedis_web/live/activity_live/show.ex:68
+#: lib/omedis_web/live/activity_live/index.ex:60
+#: lib/omedis_web/live/activity_live/show.ex:67
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:46
-#: lib/omedis_web/live/activity_live/index.ex:237
+#: lib/omedis_web/live/activity_live/index.ex:45
+#: lib/omedis_web/live/activity_live/index.ex:236
 #, elixir-autogen, elixir-format
 msgid "New Activity"
 msgstr ""
@@ -76,8 +76,8 @@ msgstr ""
 msgid "Please correct the errors below"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:67
-#: lib/omedis_web/live/activity_live/show.ex:76
+#: lib/omedis_web/live/activity_live/index.ex:66
+#: lib/omedis_web/live/activity_live/show.ex:75
 #, elixir-autogen, elixir-format
 msgid "Position"
 msgstr ""
@@ -92,34 +92,34 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:108
+#: lib/omedis_web/live/activity_live/index.ex:107
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:154
+#: lib/omedis_web/live/activity_live/show.ex:153
 #, elixir-autogen, elixir-format
 msgid "Show Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:38
+#: lib/omedis_web/live/activity_live/show.ex:37
 #, elixir-autogen, elixir-format
 msgid "This is an activity record from your database."
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:61
+#: lib/omedis_web/live/activity_live/show.ex:60
 #, elixir-autogen, elixir-format
 msgid "View Events"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/index.ex:221
-#: lib/omedis_web/live/activity_live/index.ex:244
-#: lib/omedis_web/live/activity_live/show.ex:170
+#: lib/omedis_web/live/activity_live/index.ex:220
+#: lib/omedis_web/live/activity_live/index.ex:243
+#: lib/omedis_web/live/activity_live/show.ex:169
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/show.ex:72
+#: lib/omedis_web/live/activity_live/show.ex:71
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Color Code"
 msgstr ""

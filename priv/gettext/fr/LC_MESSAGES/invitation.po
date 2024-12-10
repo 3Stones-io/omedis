@@ -16,7 +16,7 @@ msgstr ""
 msgid "Accepted"
 msgstr "Accepté"
 
-#: lib/omedis_web/live/invitation_live/index.ex:183
+#: lib/omedis_web/live/invitation_live/index.ex:182
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this invitation?"
 msgstr "Êtes-vous sûr de vouloir supprimer cette invitation ?"
@@ -43,19 +43,19 @@ msgstr "Heure de fin quotidienne"
 msgid "Daily Start Time"
 msgstr "Heure de début quotidienne"
 
-#: lib/omedis_web/live/invitation_live/index.ex:187
+#: lib/omedis_web/live/invitation_live/index.ex:186
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Supprimer"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:128
-#: lib/omedis_web/live/invitation_live/index.ex:148
+#: lib/omedis_web/live/invitation_live/index.ex:147
 #: lib/omedis_web/live/invitation_live/show.ex:54
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "E-mail"
 
-#: lib/omedis_web/live/invitation_live/index.ex:171
+#: lib/omedis_web/live/invitation_live/index.ex:170
 #, elixir-autogen, elixir-format
 msgid "Expires At"
 msgstr "Expire le"
@@ -91,7 +91,7 @@ msgstr "Invitation créée avec succès"
 msgid "Invitation deleted successfully"
 msgstr "Invitation supprimée avec succès"
 
-#: lib/omedis_web/live/invitation_live/index.ex:158
+#: lib/omedis_web/live/invitation_live/index.ex:157
 #, elixir-autogen, elixir-format
 msgid "Invited At"
 msgstr "Invité le"
@@ -107,7 +107,7 @@ msgstr "Langue"
 msgid "Last Name"
 msgstr "Nom de famille"
 
-#: lib/omedis_web/live/invitation_live/index.ex:115
+#: lib/omedis_web/live/invitation_live/index.ex:114
 #, elixir-autogen, elixir-format
 msgid "Listing Invitations"
 msgstr "Liste des invitations"
@@ -118,7 +118,7 @@ msgid "Male"
 msgstr "Homme"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex:114
-#: lib/omedis_web/live/invitation_live/index.ex:123
+#: lib/omedis_web/live/invitation_live/index.ex:122
 #, elixir-autogen, elixir-format
 msgid "New Invitation"
 msgstr "Nouvelle invitation"
@@ -164,7 +164,7 @@ msgstr "S'inscrire"
 msgid "Signing up..."
 msgstr "Inscription en cours..."
 
-#: lib/omedis_web/live/invitation_live/index.ex:152
+#: lib/omedis_web/live/invitation_live/index.ex:151
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Statut"

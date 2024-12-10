@@ -10,6 +10,6 @@ defmodule Omedis.Accounts.InvitationNotExpiredFilter do
   end
 
   def filter(_actor, _context, _options) do
-    expr(status != ^:expired or expires_at > ^DateTime.utc_now())
+    expr(status != ^:expired)
   end
 end

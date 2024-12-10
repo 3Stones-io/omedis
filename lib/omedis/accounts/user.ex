@@ -13,6 +13,7 @@ defmodule Omedis.Accounts.User do
   alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupMembership
+  alias Omedis.Accounts.User.Changes.AddUserToUsersGroup
   alias Omedis.Accounts.User.Changes.AssociateUserWithInvitation
   alias Omedis.Validations
 
@@ -126,6 +127,14 @@ defmodule Omedis.Accounts.User do
     end
 
     change {AssociateUserWithInvitation, []} do
+      where [action_is(:register_with_password)]
+    end
+
+    change {AddUserToUsersGroup, []} do
+      where [action_is(:create)]
+    end
+
+    change {AddUserToUsersGroup, []} do
       where [action_is(:register_with_password)]
     end
   end

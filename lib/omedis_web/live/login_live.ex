@@ -63,12 +63,7 @@ defmodule OmedisWeb.LoginLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={nil}
-      language={@language}
-      organisations_count={@organisations_count}
-    >
+    <.side_and_topbar current_user={@current_user} current_organisation={nil} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.form
           :let={f}
