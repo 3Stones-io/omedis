@@ -11,24 +11,22 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/components/pagination_component.ex:32
-#: lib/omedis_web/components/pagination_component.ex:99
+#: lib/omedis_web/components/pagination_component.ex
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr "Nächste"
 
-#: lib/omedis_web/components/pagination_component.ex:23
-#: lib/omedis_web/components/pagination_component.ex:54
+#: lib/omedis_web/components/pagination_component.ex
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr "Vorherige"
 
-#: lib/omedis_web/components/pagination_component.ex:38
+#: lib/omedis_web/components/pagination_component.ex
 #, elixir-autogen, elixir-format
 msgid "Showing page"
 msgstr "Seite anzeigen"
 
-#: lib/omedis_web/components/pagination_component.ex:40
+#: lib/omedis_web/components/pagination_component.ex
 #, elixir-autogen, elixir-format
 msgid "of"
 msgstr "von"

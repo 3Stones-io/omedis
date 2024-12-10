@@ -323,12 +323,9 @@ defmodule Omedis.Accounts.InvitationTest do
       organisation: organisation,
       owner: owner
     } do
-      expired_at = DateTime.utc_now() |> DateTime.add(-7, :day)
-
       {:ok, invitation} =
         create_invitation(organisation, %{
           creator_id: owner.id,
-          expires_at: expired_at,
           status: :expired
         })
 

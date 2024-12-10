@@ -111,12 +111,15 @@ defmodule Omedis.Accounts.ProjectTest do
                  tenant: organisation
                )
 
-      assert length(paginated_result.results) == 10
-      assert paginated_result.count == 10
+      # An additional default project is created when an organisation is created
+      assert length(paginated_result.results) == 11
+      assert paginated_result.count == 11
       assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation.id))
 
+      projects_with_user_access = tl(paginated_result.results)
+
       assert Enum.all?(
-               paginated_result.results,
+               projects_with_user_access,
                &String.starts_with?(&1.name, "Accessible Project")
              )
 
@@ -207,8 +210,9 @@ defmodule Omedis.Accounts.ProjectTest do
                  tenant: organisation_1
                )
 
-      assert length(paginated_result.results) == 5
-      assert paginated_result.count == 5
+      # An additional default project is created when an organisation is created
+      assert length(paginated_result.results) == 6
+      assert paginated_result.count == 6
       assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation_1.id))
 
       assert {:ok, paginated_result} =
@@ -218,8 +222,9 @@ defmodule Omedis.Accounts.ProjectTest do
                  tenant: organisation_2
                )
 
-      assert length(paginated_result.results) == 3
-      assert paginated_result.count == 3
+      # An additional default project is created when an organisation is created
+      assert length(paginated_result.results) == 4
+      assert paginated_result.count == 4
       assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation_2.id))
     end
 
@@ -290,6 +295,40 @@ defmodule Omedis.Accounts.ProjectTest do
 
       assert Enum.empty?(paginated_result.results)
       assert paginated_result.count == 0
+    end
+  end
+
+  describe "latest_by_organisation_id/1" do
+    test "returns the latest project for an organisation", %{
+      authorized_user: authorized_user,
+      organisation: organisation
+    } do
+      {:ok, project_1} =
+        create_project(organisation, %{name: "Project 01"})
+
+      past_datetime = DateTime.add(DateTime.utc_now(), -1, :second)
+
+      {:ok, _updated_project_1} =
+        Project.update(
+          project_1,
+          %{},
+          context: %{updated_at: past_datetime},
+          actor: authorized_user,
+          tenant: organisation
+        )
+
+      {:ok, project_2} =
+        create_project(organisation, %{name: "Project 02"})
+
+      assert {:ok, [latest_project]} =
+               Project.latest_by_organisation_id(
+                 %{organisation_id: organisation.id},
+                 actor: authorized_user,
+                 tenant: organisation
+               )
+
+      assert latest_project.id == project_2.id
+      assert latest_project.name == "Project 02"
     end
   end
 
