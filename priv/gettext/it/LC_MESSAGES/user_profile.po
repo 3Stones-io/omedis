@@ -11,116 +11,112 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/edit_profile.ex:190
-#: lib/omedis_web/live/edit_profile.ex:197
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Birthdate"
 msgstr "Data di nascita"
 
-#: lib/omedis_web/live/edit_profile.ex:202
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Birthdate %{msg}"
 msgstr "Data di nascita %{msg}"
 
-#: lib/omedis_web/live/edit_profile.ex:129
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Edit your profile details"
 msgstr "Modifica i dettagli del tuo profilo"
 
-#: lib/omedis_web/live/edit_profile.ex:134
-#: lib/omedis_web/live/edit_profile.ex:141
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "First Name"
 msgstr "Nome"
 
-#: lib/omedis_web/live/edit_profile.ex:146
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "First Name %{msg}"
 msgstr "Nome %{msg}"
 
-#: lib/omedis_web/live/edit_profile.ex:171
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Gender"
 msgstr "Genere"
 
-#: lib/omedis_web/live/edit_profile.ex:183
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Gender %{msg}"
 msgstr "Genere %{msg}"
 
-#: lib/omedis_web/live/edit_profile.ex:209
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Lingua"
 
-#: lib/omedis_web/live/edit_profile.ex:220
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Language %{msg}"
 msgstr "Lingua %{msg}"
 
-#: lib/omedis_web/live/edit_profile.ex:153
-#: lib/omedis_web/live/edit_profile.ex:159
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Last Name"
 msgstr "Cognome"
 
-#: lib/omedis_web/live/edit_profile.ex:164
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Last Name %{msg}"
 msgstr "Cognome %{msg}"
 
-#: lib/omedis_web/live/edit_profile.ex:75
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Profile update failed"
 msgstr "Aggiornamento del profilo fallito"
 
-#: lib/omedis_web/live/edit_profile.ex:62
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully"
 msgstr "Profilo aggiornato con successo"
 
-#: lib/omedis_web/live/edit_profile.ex:226
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Save Profile"
 msgstr "Salva profilo"
 
-#: lib/omedis_web/live/edit_profile.ex:227
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
 
-#: lib/omedis_web/live/edit_profile.ex:176
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Select Gender"
 msgstr "Seleziona genere"
 
-#: lib/omedis_web/live/edit_profile.ex:214
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Select Your Language"
 msgstr "Seleziona la tua lingua"
 
-#: lib/omedis_web/live/edit_profile.ex:38
-#: lib/omedis_web/live/edit_profile.ex:126
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Update Profile"
 msgstr "Aggiorna profilo"
 
-#: lib/omedis_web/live/edit_profile.ex:88
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Account deleted successfully"
 msgstr "Account eliminato con successo"
 
-#: lib/omedis_web/live/edit_profile.ex:244
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete your account?"
 msgstr "Sei sicuro di voler eliminare il tuo account?"
 
-#: lib/omedis_web/live/edit_profile.ex:251
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Delete Account"
 msgstr "Elimina account"
 
-#: lib/omedis_web/live/edit_profile.ex:96
+#: lib/omedis_web/live/edit_profile.ex
 #, elixir-autogen, elixir-format
 msgid "Failed to delete account! Please try again."
 msgstr "Eliminazione dell'account non riuscita! Per favore riprova."
