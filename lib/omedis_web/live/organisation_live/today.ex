@@ -71,6 +71,22 @@ defmodule OmedisWeb.OrganisationLive.Today do
     group = Group.by_id!(id, tenant: organisation, actor: current_user)
     project = Project.by_id!(project_id, tenant: organisation, actor: current_user)
 
+    # Update the timestamps for the group and project,
+    # so they become the latest ones
+    {:ok, updated_group} =
+      Group.update(group,
+        actor: current_user,
+        context: %{updated_at: DateTime.utc_now()},
+        tenant: organisation
+      )
+
+    {:ok, updated_project} =
+      Project.update(project,
+        actor: current_user,
+        context: %{updated_at: DateTime.utc_now()},
+        tenant: organisation
+      )
+
     {:ok, %{results: events}} =
       Event.list_paginated_today(actor: current_user, tenant: organisation)
 
@@ -109,8 +125,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
      |> assign(:end_at, end_at)
      |> assign(:groups, groups_for_an_organisation(organisation, current_user))
      |> assign(:projects, projects_for_an_organisation(organisation, current_user))
-     |> assign(:group, group)
-     |> assign(:project, project)
+     |> assign(:group, updated_group)
+     |> assign(:project, updated_project)
      |> assign(:events, events)
      |> assign_current_activity(activities)
      |> assign(:activities, activities)}
@@ -118,15 +134,17 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
   @impl true
   def handle_params(_params, _, socket) do
-    organisation = socket.assigns.organisation
-    group = latest_group_for_an_organisation(organisation, socket.assigns.current_user)
-    project = latest_project_for_an_organisation(organisation, socket.assigns.current_user)
+    opts = [actor: socket.assigns.current_user, tenant: socket.assigns.organisation]
 
-    {:noreply,
-     socket
-     |> push_navigate(
-       to: ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-     )}
+    with {:ok, group} <- latest_group_for_an_organisation(socket, opts),
+         {:ok, project} <- latest_project_for_an_organisation(socket, opts) do
+      {:noreply,
+       socket
+       |> push_navigate(
+         to:
+           ~p"/organisations/#{socket.assigns.organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
+       )}
+    end
   end
 
   # Defaults to German Timezone
@@ -466,33 +484,33 @@ defmodule OmedisWeb.OrganisationLive.Today do
     end
   end
 
-  defp latest_group_for_an_organisation(organisation, current_user) do
-    case Group.by_organisation_id(%{organisation_id: organisation.id},
-           actor: current_user,
-           tenant: organisation
-         ) do
-      {:ok, %{results: groups}} ->
-        Enum.min_by(groups, & &1.created_at)
+  defp latest_group_for_an_organisation(socket, opts) do
+    organisation = socket.assigns.organisation
 
-      _ ->
-        %{
-          id: ""
-        }
+    case Group.latest_by_organisation_id(%{organisation_id: organisation.id}, opts) do
+      {:ok, [group]} ->
+        {:ok, group}
+
+      {:ok, []} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, dgettext("group", "No group found. Please create one first."))
+         |> push_navigate(to: ~p"/organisations/#{organisation}/groups/new")}
     end
   end
 
-  defp latest_project_for_an_organisation(organisation, current_user) do
-    case Project.by_organisation_id(%{organisation_id: organisation.id},
-           actor: current_user,
-           tenant: organisation
-         ) do
-      {:ok, projects} ->
-        Enum.min_by(projects, & &1.created_at)
+  defp latest_project_for_an_organisation(socket, opts) do
+    organisation = socket.assigns.organisation
 
-      _ ->
-        %{
-          id: ""
-        }
+    case Project.latest_by_organisation_id(%{organisation_id: organisation.id}, opts) do
+      {:ok, [project]} ->
+        {:ok, project}
+
+      {:ok, []} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, dgettext("project", "No project found. Please create one first."))
+         |> push_navigate(to: ~p"/organisations/#{organisation}/projects/new")}
     end
   end
 

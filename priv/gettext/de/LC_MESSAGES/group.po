@@ -95,3 +95,8 @@ msgstr "Sie sind nicht berechtigt, auf diese Seite zuzugreifen"
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to delete this group"
 msgstr "Sie sind nicht berechtigt, diese Gruppe zu löschen"
+
+#: lib/omedis_web/live/organisation_live/today.ex:497
+#, elixir-autogen, elixir-format
+msgid "No group found. Please create one first."
+msgstr "Keine Gruppe gefunden. Bitte erstellen Sie zuerst eine."

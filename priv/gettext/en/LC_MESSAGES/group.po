@@ -95,3 +95,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to delete this group"
 msgstr ""
+
+#: lib/omedis_web/live/organisation_live/today.ex:497
+#, elixir-autogen, elixir-format
+msgid "No group found. Please create one first."
+msgstr ""

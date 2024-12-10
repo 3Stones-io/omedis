@@ -108,3 +108,8 @@ msgstr "Verwenden Sie dieses Formular, um Projekte in Ihrer Datenbank zu verwalt
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr "Sie sind nicht berechtigt, auf diese Seite zuzugreifen"
+
+#: lib/omedis_web/live/organisation_live/today.ex:512
+#, elixir-autogen, elixir-format
+msgid "No project found. Please create one first."
+msgstr "Kein Projekt gefunden. Bitte erstellen Sie zuerst eines."

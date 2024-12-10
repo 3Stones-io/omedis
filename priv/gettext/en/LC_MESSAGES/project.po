@@ -108,3 +108,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
 msgstr ""
+
+#: lib/omedis_web/live/organisation_live/today.ex:512
+#, elixir-autogen, elixir-format
+msgid "No project found. Please create one first."
+msgstr ""
