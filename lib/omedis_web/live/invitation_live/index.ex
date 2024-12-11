@@ -4,19 +4,39 @@ defmodule OmedisWeb.InvitationLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Invitation
+  alias Omedis.Accounts.Organisation
+  alias OmedisWeb.Endpoint
   alias OmedisWeb.InvitationLive.InvitationStatusComponent
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
+  alias Phoenix.Socket.Broadcast
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      maybe_subscribe_to_invitation_updates(socket.assigns.current_organisation)
+    end
+
     {:ok,
      socket
      |> assign(:sort_order, :desc)
      |> stream(:invitations, [])}
+  end
+
+  defp maybe_subscribe_to_invitation_updates(current_organisation) do
+    case current_organisation do
+      nil ->
+        :ok
+
+      %Organisation{id: current_organisation_id} ->
+        :ok = Endpoint.subscribe("invitation:accepted:#{current_organisation_id}")
+        :ok = Endpoint.subscribe("invitation:created:#{current_organisation_id}")
+        :ok = Endpoint.subscribe("invitation:destroyed:#{current_organisation_id}")
+        :ok = Endpoint.subscribe("invitation:expired:#{current_organisation_id}")
+    end
   end
 
   @impl true
@@ -89,6 +109,28 @@ defmodule OmedisWeb.InvitationLive.Index do
        )
      end)
      |> assign(:sort_order, new_sort_order)}
+  end
+
+  @impl true
+  # TODO: Figure out why we don't get this broadcast yet the invitation gets accepted
+  def handle_info(%Broadcast{event: "accept"} = broadcast, socket) do
+    accepted_invitation = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :invitations, accepted_invitation)}
+  end
+
+  def handle_info(%Broadcast{event: "create"} = broadcast, socket) do
+    created_invitation = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :invitations, created_invitation)}
+  end
+
+  def handle_info(%Broadcast{event: "destroy"} = broadcast, socket) do
+    deleted_invitation = Map.get(broadcast.payload, :data)
+    {:noreply, stream_delete(socket, :invitations, deleted_invitation)}
+  end
+
+  def handle_info(%Broadcast{event: "expire"} = broadcast, socket) do
+    expired_invitation = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :invitations, expired_invitation)}
   end
 
   @impl true

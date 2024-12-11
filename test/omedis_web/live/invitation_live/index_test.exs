@@ -13,7 +13,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
 
     {:ok, group} = create_group(organisation)
-    {:ok, authorized_user} = create_user()
+    {:ok, authorized_user} = create_user(%{"current_organisation_id" => organisation.id})
 
     {:ok, _} =
       create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
@@ -58,6 +58,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
   end
 
   describe "/organisations/:slug/invitations" do
+    alias Omedis.Accounts.User
+
     setup %{owner: owner, authorized_user: authorized_user, organisation: organisation} do
       # Create invitations (15 for owner, 5 for user_2)
       invitations =
@@ -182,6 +184,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       invitations: invitations
     } do
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
       invitation = Enum.at(invitations, 15)
 
       {:ok, index_live, _html} =
@@ -198,6 +201,13 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> element("#delete_invitation_#{invitation.id}")
         |> render_click()
 
+      assert_broadcast "destroy", broadcast_payload
+
+      assert %Ash.Notifier.Notification{resource: Invitation, data: deleted_invitation} =
+               broadcast_payload
+
+      assert deleted_invitation.id == invitation.id
+
       assert html =~ "Invitation deleted successfully"
       refute html =~ invitation.email
 
@@ -211,6 +221,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       invitations: invitations
     } do
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
       invitation = Enum.at(invitations, 15)
 
       {:ok, index_live, _html} =
@@ -226,6 +237,13 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         index_live
         |> element("#delete_invitation_#{invitation.id}")
         |> render_click()
+
+      assert_broadcast "destroy", broadcast_payload
+
+      assert %Ash.Notifier.Notification{resource: Invitation, data: deleted_invitation} =
+               broadcast_payload
+
+      assert deleted_invitation.id == invitation.id
 
       assert html =~ "Invitation deleted successfully"
       refute html =~ invitation.email
@@ -258,6 +276,201 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       html = render(index_live)
       assert html =~ oldest_invitation.email
       refute html =~ newest_invitation.email
+    end
+
+    test "invitation acceptance is propagated to the UI using PubSub", %{
+      authorized_user: authorized_user,
+      conn: conn,
+      organisation: organisation
+    } do
+      invitation_params =
+        Invitation
+        |> attrs_for(organisation)
+        |> Map.put(:email, "test001@example.com")
+
+      {:ok, invitation} = create_invitation(organisation, invitation_params)
+
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:accepted:#{organisation.id}")
+
+      {:ok, invitation_live, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/invitations")
+
+      assert invitation_live
+             |> element("nav[aria-label=Pagination]")
+             |> has_element?()
+
+      # Navigate to the page with the invitation
+      invitation_live
+      |> element("nav[aria-label=Pagination] a", "3")
+      |> render_click()
+
+      html = render(invitation_live)
+
+      assert html =~ "test001@example.com"
+      assert html =~ "Pending"
+
+      # Ensure the user does not exist yet
+      {:error, _} = User.by_email("test001@example.com")
+
+      # Accept invitation, by registering for a user account,
+      # using the same email as used in the invitation
+      new_conn = build_conn()
+
+      {:ok, register_live, _html} =
+        live(new_conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+
+      params = %{
+        "current_organisation_id" => organisation.id,
+        "email" => "test001@example.com",
+        "first_name" => "Invited",
+        "last_name" => "User001",
+        "password" => "12345678",
+        "gender" => "Male",
+        "birthdate" => ~D[1990-01-01],
+        "lang" => "en",
+        "daily_start_at" => "09:00:00",
+        "daily_end_at" => "17:00:00"
+      }
+
+      form =
+        form(
+          register_live,
+          "#invitation_user_sign_up_form",
+          user: params
+        )
+
+      _conn = submit_form(form, new_conn)
+
+      # Verify user was created
+      assert {:ok, invited_user} = User.by_email("test001@example.com")
+
+      # Verify invitation was updated
+      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+
+      assert updated_invitation.id == invitation.id
+      assert updated_invitation.status == :accepted
+      assert updated_invitation.user_id == invited_user.id
+
+      # TODO: Fix this; we don't get the broadcast for some reason
+      assert_broadcast "accept", broadcast_payload
+
+      assert %Ash.Notifier.Notification{resource: Invitation, data: accepted_invitation} =
+               broadcast_payload
+
+      assert accepted_invitation.id == updated_invitation.id
+
+      # Ensure the invitation is accepted
+      html = render(invitation_live)
+
+      assert html =~ "test001@example.com"
+      assert html =~ "Accepted"
+    end
+
+    test "invitation expiry is propagated to the UI using PubSub", %{
+      authorized_user: authorized_user,
+      conn: conn,
+      organisation: organisation
+    } do
+      invitation_params =
+        Invitation
+        |> attrs_for(organisation)
+        |> Map.put(:email, "test001@example.com")
+
+      {:ok, invitation} = create_invitation(organisation, invitation_params)
+
+      assert invitation.status == :pending
+
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:expired:#{organisation.id}")
+
+      {:ok, invitation_live, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/invitations")
+
+      assert invitation_live
+             |> element("nav[aria-label=Pagination]")
+             |> has_element?()
+
+      # Navigate to the page with the invitation
+      invitation_live
+      |> element("nav[aria-label=Pagination] a", "3")
+      |> render_click()
+
+      html = render(invitation_live)
+
+      assert html =~ "test001@example.com"
+      assert html =~ "Pending"
+
+      # Expire the invitation
+      {:ok, _} = Invitation.expire(invitation, authorize?: false)
+
+      assert_broadcast "expire", broadcast_payload
+
+      assert %Ash.Notifier.Notification{resource: Invitation, data: expired_invitation} =
+               broadcast_payload
+
+      assert expired_invitation.id == invitation.id
+      assert expired_invitation.status == :expired
+
+      # Verify the invitation is shown as expired
+      html = render(invitation_live)
+
+      assert html =~ "test001@example.com"
+      assert html =~ "Expired"
+      refute html =~ "Pending"
+    end
+
+    test "invitation deletion is propagated to the UI using PubSub", %{
+      authorized_user: authorized_user,
+      conn: conn,
+      organisation: organisation
+    } do
+      invitation_params =
+        Invitation
+        |> attrs_for(organisation)
+        |> Map.put(:email, "test001@example.com")
+
+      {:ok, invitation} = create_invitation(organisation, invitation_params)
+
+      assert invitation.status == :pending
+
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
+
+      {:ok, invitation_live, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/invitations")
+
+      assert invitation_live
+             |> element("nav[aria-label=Pagination]")
+             |> has_element?()
+
+      # Navigate to the page with the invitation
+      invitation_live
+      |> element("nav[aria-label=Pagination] a", "3")
+      |> render_click()
+
+      html = render(invitation_live)
+
+      assert html =~ "test001@example.com"
+      assert html =~ "Pending"
+
+      # Delete the invitation
+      :ok = Invitation.destroy!(invitation, actor: authorized_user, tenant: organisation)
+
+      assert_broadcast "destroy", broadcast_payload
+
+      assert %Ash.Notifier.Notification{resource: Invitation, data: deleted_invitation} =
+               broadcast_payload
+
+      assert deleted_invitation.id == invitation.id
+
+      # Verify the invitation is removed from the UI
+      html = render(invitation_live)
+
+      refute html =~ "test001@example.com"
     end
   end
 
@@ -306,6 +519,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       authorized_user: authorized_user,
       organisation: organisation
     } do
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:created:#{organisation.id}")
+
       assert {:ok, view, _html} =
                conn
                |> log_in_user(authorized_user)
@@ -324,18 +539,27 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert_patch(view, ~p"/organisations/#{organisation}/invitations")
 
-      assert html =~ "Invitation created successfully"
+      assert_broadcast "create", broadcast_payload
 
-      assert [invitation] =
+      assert %Ash.Notifier.Notification{resource: Invitation, data: created_invitation} =
+               broadcast_payload
+
+      assert created_invitation.status == :pending
+      assert created_invitation.email == "test@example.com"
+      assert created_invitation.language == "en"
+      assert created_invitation.creator_id == authorized_user.id
+      assert created_invitation.organisation_id == organisation.id
+
+      assert html =~ "Invitation created successfully"
+      assert html =~ created_invitation.email
+
+      assert [invitation_from_db] =
                Invitation
                |> Ash.Query.filter(email: "test@example.com")
                |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
 
-      assert invitation.email == "test@example.com"
-      assert invitation.language == "en"
-      assert invitation.creator_id == authorized_user.id
-      assert invitation.organisation_id == organisation.id
-      assert Enum.map(invitation.groups, & &1.id) == [group.id]
+      assert invitation_from_db.id == created_invitation.id
+      assert Enum.map(invitation_from_db.groups, & &1.id) == [group.id]
     end
 
     test "unauthorized user cannot access new invitation page", %{
@@ -403,6 +627,55 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert html =~
                ~s(type="checkbox" id="invitation_groups_#{group.id}" name="invitation[groups][#{group.id}]" value="true" checked="checked")
+    end
+
+    test "invitation creation is propagated to the UI using PubSub", %{
+      authorized_user: authorized_user,
+      conn: conn,
+      organisation: organisation,
+      group: group
+    } do
+      :ok = OmedisWeb.Endpoint.subscribe("invitation:created:#{organisation.id}")
+
+      {:ok, invitation_live, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      html =
+        invitation_live
+        |> form("#invitation-form",
+          invitation: %{
+            email: "test004@example.com",
+            language: "en",
+            groups: %{group.id => true}
+          }
+        )
+        |> render_submit()
+
+      assert_patch(invitation_live, ~p"/organisations/#{organisation}/invitations")
+
+      assert html =~ "Invitation created successfully"
+
+      assert_broadcast "create", broadcast_payload
+
+      assert %Ash.Notifier.Notification{resource: Invitation, data: created_invitation} =
+               broadcast_payload
+
+      assert [invitation_from_db] =
+               Invitation
+               |> Ash.Query.filter(email: "test004@example.com")
+               |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
+
+      assert created_invitation.id == invitation_from_db.id
+      assert created_invitation.email == "test004@example.com"
+      assert created_invitation.status == :pending
+
+      # Ensure the invitation appears in the UI
+      html = render(invitation_live)
+
+      assert html =~ "test004@example.com"
+      assert html =~ "Pending"
     end
   end
 end
