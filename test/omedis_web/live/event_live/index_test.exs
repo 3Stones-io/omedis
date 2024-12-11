@@ -2,10 +2,11 @@ defmodule OmedisWeb.EventLive.IndexTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
+  import Omedis.TestUtils
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
+    organisation = fetch_users_organisation(owner.id)
     {:ok, group} = create_group(organisation)
     {:ok, project} = create_project(organisation)
     {:ok, activity} = create_activity(organisation, %{group_id: group.id, project_id: project.id})

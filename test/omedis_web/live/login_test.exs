@@ -32,5 +32,22 @@ defmodule OmedisWeb.LoginTest do
 
       assert {:ok, _index_live, _html} = live(conn, ~p"/organisations")
     end
+
+    test "shows errors when wrong credentials are entered", %{conn: conn} do
+      {:ok, user} = User.create(@valid_create_params)
+
+      {:ok, lv, _html} = live(conn, ~p"/login")
+
+      form =
+        form(lv, "#basic_user_sign_in_form",
+          user: %{email: user.email, password: "invalid_password"}
+        )
+
+      conn = submit_form(form, conn)
+
+      assert {:ok, _index_live, html} = live(conn, ~p"/login")
+
+      assert html =~ "Username or password is incorrect"
+    end
   end
 end

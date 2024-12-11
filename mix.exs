@@ -17,7 +17,8 @@ defmodule Omedis.MixProject do
         "coveralls.detail": :test,
         "coveralls.html": :test
       ],
-      test_coverage: [tool: ExCoveralls]
+      test_coverage: [tool: ExCoveralls],
+      gettext: [write_reference_line_numbers: false]
     ]
   end
 

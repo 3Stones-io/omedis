@@ -2,12 +2,12 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
-
+  import Omedis.TestUtils
   alias Omedis.Accounts.Activity
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id}, actor: owner)
+    organisation = fetch_users_organisation(owner.id)
     {:ok, group} = create_group(organisation)
     {:ok, project} = create_project(organisation)
     {:ok, authorized_user} = create_user()

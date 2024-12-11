@@ -11,27 +11,27 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/omedis_web/live/event_live/index.ex:44
+#: lib/omedis_web/live/event_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Comment"
 msgstr "Commento"
 
-#: lib/omedis_web/live/event_live/index.ex:52
+#: lib/omedis_web/live/event_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "End at"
 msgstr "Termina alle"
 
-#: lib/omedis_web/live/event_live/index.ex:93
+#: lib/omedis_web/live/event_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr "Eventi"
 
-#: lib/omedis_web/live/event_live/index.ex:38
+#: lib/omedis_web/live/event_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Listing Events for"
 msgstr "Elenco eventi per"
 
-#: lib/omedis_web/live/event_live/index.ex:48
+#: lib/omedis_web/live/event_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Start at"
 msgstr "Inizia alle"

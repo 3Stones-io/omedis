@@ -1,7 +1,6 @@
 defmodule OmedisWeb.RegisterLive do
   alias AshPhoenix.Form
   alias Omedis.Accounts
-  alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
 
   @supported_languages [
@@ -15,72 +14,37 @@ defmodule OmedisWeb.RegisterLive do
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
-    organisations = Ash.read!(Organisation, authorize?: false)
     Gettext.put_locale(OmedisWeb.Gettext, language)
 
     select_language_fields = %{"lang" => ""}
 
-    socket =
-      socket
-      |> assign(current_user: nil)
-      |> assign(:select_language_form, to_form(select_language_fields))
-      |> assign(:language, language)
-      |> assign(:selected_organisation_id, nil)
-      |> assign(:supported_languages, @supported_languages)
-      |> assign(:organisations, organisations)
-      |> assign(:organisations_count, 0)
-      |> assign(trigger_action: false)
-      |> assign(:change_language_trigger, false)
-      |> assign(:errors, [])
-
-    {:ok, socket}
-  end
-
-  @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(
-      :page_title,
-      dgettext("auth", "Register")
-    )
-    |> assign(:action, "/auth/user/password/register/")
-    |> assign(
-      :form,
-      Form.for_create(User, :register_with_password, api: Accounts, as: "user")
-    )
+    {:ok,
+     socket
+     |> assign(:change_language_trigger, false)
+     |> assign(current_user: nil)
+     |> assign(:errors, [])
+     |> assign(:language, language)
+     |> assign(:organisations_count, 0)
+     |> assign(:select_language_form, to_form(select_language_fields))
+     |> assign(:supported_languages, @supported_languages)
+     |> assign(trigger_action: false)
+     |> assign(:page_title, dgettext("auth", "Register"))
+     |> assign_form()}
   end
 
   @impl true
   def handle_event(
         "validate",
-        %{"user" => %{"current_organisation_id" => organisation_id} = user_params},
+        %{"user" => user_params},
         socket
       ) do
-    case organisation_id do
-      "" ->
-        {:noreply, assign(socket, selected_organisation_id: nil)}
+    form = Form.validate(socket.assigns.form, user_params, errors: true)
 
-      organisation_id ->
-        organisation = Enum.find(socket.assigns.organisations, &(&1.id == organisation_id))
-
-        updated_user_params = update_user_params(user_params, organisation)
-
-        form = Form.validate(socket.assigns.form, updated_user_params, errors: true)
-
-        {:noreply,
-         socket
-         |> assign(:selected_organisation_id, organisation_id)
-         |> assign(:form, form)}
-    end
+    {:noreply, assign(socket, :form, form)}
   end
 
-  @impl true
-  def handle_event("submit", %{"user" => user}, socket) do
-    form = Form.validate(socket.assigns.form, user)
+  def handle_event("submit", %{"user" => user_params}, socket) do
+    form = Form.validate(socket.assigns.form, user_params, errors: true)
 
     {:noreply,
      socket
@@ -93,21 +57,11 @@ defmodule OmedisWeb.RegisterLive do
     {:noreply, assign(socket, change_language_trigger: true)}
   end
 
-  defp update_user_params(user_params, organisation) do
-    Map.merge(
-      user_params,
-      %{
-        "daily_start_at" => organisation.default_daily_start_at,
-        "daily_end_at" => organisation.default_daily_end_at
-      },
-      fn _k, v1, v2 ->
-        if Map.has_key?(user_params, "_unused_daily_start_at") ||
-             Map.has_key?(user_params, "_unused_daily_end_at") do
-          v2
-        else
-          v1
-        end
-      end
+  defp assign_form(socket) do
+    assign(
+      socket,
+      :form,
+      Form.for_create(User, :register_with_password, api: Accounts, as: "user")
     )
   end
 
@@ -121,16 +75,12 @@ defmodule OmedisWeb.RegisterLive do
     end
   end
 
-  defp get_field_errors(field, _name) do
-    Enum.map(field.errors, &translate_error(&1))
-  end
-
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar current_user={@current_user} current_organisation={nil} language={@language}>
-      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
-        <div class="flex justify-stretch w-full">
+    <section class="min-h-screen grid place-items-center py-3">
+      <div class="md:w-[60%] w-[90%] mt-3 rounded-lg p-10">
+        <div class="md:flex justify-stretch w-full">
           <div class="w-full">
             <div class="lg:col-span-3 flex flex-col">
               <h2 class="text-base font-semibold leading-7 text-gray-900">
@@ -141,18 +91,19 @@ defmodule OmedisWeb.RegisterLive do
               </p>
             </div>
           </div>
-          <div class="w-full px-1">
+          <div class="mt-2 md:mt-0 w-full px-1">
             <p class="text-base font-semibold leading-7 text-gray-900">
               <%= dgettext("auth", "Change language") %>
             </p>
             <div class="flex items-center space-x-2">
               <.form
                 :let={f}
-                id="language_form"
+                id="language-form"
                 for={@select_language_form}
                 class="flex items-center space-x-2 cursor-pointer"
                 action={~p"/change_language"}
                 phx-trigger-action={@change_language_trigger}
+                phx-submit="change_language"
               >
                 <%= for {language, lang_code} <- @supported_languages do %>
                   <.input
@@ -163,7 +114,7 @@ defmodule OmedisWeb.RegisterLive do
                     checked={input_value(f, :lang) == language}
                     label_type="custom_label"
                     input_class="hidden"
-                    phx-change="change_language"
+                    phx-change={JS.dispatch("click", to: "#language-form-submit")}
                   >
                     <:custom_label>
                       <span class="text-2xl cursor-pointer">
@@ -172,176 +123,61 @@ defmodule OmedisWeb.RegisterLive do
                     </:custom_label>
                   </.input>
                 <% end %>
+
+                <button id="language-form-submit" type="submit" class="hidden">Submit</button>
               </.form>
             </div>
           </div>
         </div>
+
         <.form
           :let={f}
           id="basic_user_sign_up_form"
           for={@form}
-          action={@action}
-          phx-trigger-action={@trigger_action}
-          method="POST"
           class="space-y-2 group"
           phx-change="validate"
           phx-submit="submit"
+          action={~p"/auth/user/password/register/"}
+          phx-trigger-action={@trigger_action}
+          method="POST"
         >
           <div class="space-y-6">
             <div class="border-b border-gray-900/10 pb-12">
-              <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div class="sm:col-span-3">
-                  <div>
-                    <.input
-                      type="select"
-                      id="select_organisation"
-                      field={f[:current_organisation_id]}
-                      label={dgettext("auth", "Select an Organisation")}
-                      options={Enum.map(@organisations, &{&1.name, &1.id})}
-                      prompt={dgettext("auth", "Select an Organisation")}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
-                  <.input
-                    type="email"
-                    disabled={@selected_organisation_id == nil}
-                    field={f[:email]}
-                    placeholder={dgettext("auth", "Email")}
-                    autocomplete="email"
-                    required
-                    label={dgettext("auth", "Email")}
-                  />
-                </div>
-
-                <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
-                  <.input
-                    type="text"
-                    disabled={@selected_organisation_id == nil}
-                    field={f[:first_name]}
-                    placeholder={dgettext("auth", "First Name")}
-                    required
-                    label={dgettext("auth", "First Name")}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
-                  <.input
-                    type="text"
-                    disabled={@selected_organisation_id == nil}
-                    field={f[:last_name]}
-                    placeholder={dgettext("auth", "Last Name")}
-                    required
-                    label={dgettext("auth", "Last Name")}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
-                  <.input
-                    type="password"
-                    disabled={@selected_organisation_id == nil}
-                    field={f[:password]}
-                    placeholder={dgettext("auth", "Password")}
-                    autocomplete={dgettext("auth", "new password")}
-                    required
-                    label={dgettext("auth", "Password")}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
-                  <.input
-                    type="select"
-                    disabled={@selected_organisation_id == nil}
-                    field={f[:gender]}
-                    required
-                    label={dgettext("auth", "Gender")}
-                    options={[
-                      dgettext("auth", "Male"),
-                      dgettext("auth", "Female")
-                    ]}
-                    prompt={dgettext("auth", "Select Your Gender")}
-                  />
-                </div>
-
-                <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
-                  <.input
-                    type="date"
-                    disabled={@selected_organisation_id == nil}
-                    field={f[:birthdate]}
-                    required
-                    label={dgettext("auth", "Birthdate")}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
-                  <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("auth", "Daily Start Time") %>
-                  </label>
-
-                  <div phx-feedback-for={f[:daily_start_at].name} class="mt-2">
-                    <%= time_input(f, :daily_start_at,
-                      class:
-                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      value: f[:daily_start_at].value,
-                      disabled: @selected_organisation_id == nil,
-                      "phx-debounce": "blur"
-                    ) %>
-                    <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
-                      <%= dgettext("auth", "Daily Start Time") <> " " <> msg %>
-                    </.error>
-                  </div>
-                </div>
-
-                <div class={["sm:col-span-3", @selected_organisation_id == nil && "opacity-50"]}>
-                  <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("auth", "Daily End Time") %>
-                  </label>
-
-                  <div phx-feedback-for={f[:daily_end_at].name} class="mt-2">
-                    <%= time_input(f, :daily_end_at,
-                      class:
-                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      value: f[:daily_end_at].value,
-                      disabled: @selected_organisation_id == nil,
-                      "phx-debounce": "blur"
-                    ) %>
-                    <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
-                      <%= dgettext("auth", "Daily End Time") <> " " <> msg %>
-                    </.error>
-                  </div>
-                </div>
+              <div class="sm:col-span-3">
+                <.input
+                  type="email"
+                  field={f[:email]}
+                  placeholder={dgettext("auth", "Email")}
+                  autocomplete="email"
+                  required
+                  label={dgettext("auth", "Email")}
+                />
               </div>
 
-              <div class="w-[100%] flex mt-6 justify-between items-center">
-                <.link navigate="/login">
-                  <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
-                    <%= dgettext("auth", "Don't have an account? Sign up") %>
-                  </p>
-                </.link>
+              <div class="sm:col-span-3 mt-8">
+                <.input
+                  type="password"
+                  field={f[:password]}
+                  placeholder={dgettext("auth", "Password")}
+                  autocomplete={dgettext("auth", "new password")}
+                  required
+                  label={dgettext("auth", "Password")}
+                  phx-debounce="blur"
+                />
               </div>
             </div>
-
             <div class="mt-6 flex items-center justify-end gap-x-6">
-              <%= submit(
-                dgettext("auth", "Sign up"),
-                phx_disable_with: dgettext("auth", "Signing up..."),
-                disabled: @selected_organisation_id == nil,
-                class:
-                  "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              ) %>
+              <button
+                type="submit"
+                class="rounded-md bg-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= dgettext("auth", "Register") %>
+              </button>
             </div>
           </div>
-
-          <.input type="hidden" field={f[:lang]} value={@language} />
         </.form>
       </div>
-    </.side_and_topbar>
+    </section>
     """
   end
 end

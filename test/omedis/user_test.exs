@@ -1,11 +1,12 @@
 defmodule Omedis.FarmersTest do
   use Omedis.DataCase, async: true
 
-  require Ash.Query
+  import Omedis.TestUtils
 
-  alias Omedis.Accounts.Group
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
+
+  require Ash.Query
 
   describe "User Resource Unit Tests" do
     test "read/0  returns all users" do
@@ -120,7 +121,6 @@ defmodule Omedis.FarmersTest do
 
     test "an organisation owner cannot delete their account if they are the only admin" do
       {:ok, user} = create_user(%{email: "test@gmail.com"})
-      {:ok, _organisation} = create_organisation(%{owner_id: user.id})
 
       {:ok, _user_2} = create_user(%{email: "test2@gmail.com"})
 
@@ -134,11 +134,16 @@ defmodule Omedis.FarmersTest do
 
     test "an organisation owner can delete their account if they are not the only admin" do
       {:ok, user} = create_user(%{email: "test@gmail.com"})
-      {:ok, user_2} = create_user(%{email: "test2@gmail.com"})
-      {:ok, organisation} = create_organisation(%{owner_id: user.id})
+      organisation = fetch_users_organisation(user.id)
 
-      {:ok, admin_group} =
-        Group.by_slug("administrators", authorize?: false, tenant: organisation)
+      create_invitation(organisation, %{
+        creator_id: user.id,
+        email: "test2@gmail.com"
+      })
+
+      {:ok, user_2} = create_user(%{email: "test2@gmail.com"})
+
+      admin_group = admin_group(organisation.id)
 
       {:ok, _} =
         create_group_membership(organisation, %{group_id: admin_group.id, user_id: user_2.id})
@@ -158,7 +163,6 @@ defmodule Omedis.FarmersTest do
 
     test "unauthorised users cannot delete accounts" do
       {:ok, user} = create_user(%{email: "test@gmail.com"})
-      {:ok, _} = create_organisation(%{owner_id: user.id})
       {:ok, user2} = create_user(%{email: "test2@gmail.com"})
 
       assert_raise Ash.Error.Forbidden, fn ->

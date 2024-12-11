@@ -1,10 +1,12 @@
 defmodule OmedisWeb.EditProfileTest do
   use OmedisWeb.ConnCase
 
-  alias Omedis.Accounts.Group
+  import Phoenix.LiveViewTest
+  import Omedis.TestUtils
+
   alias Omedis.Accounts.User
 
-  import Phoenix.LiveViewTest
+  require Ash.Query
 
   describe "Tests the Edit Profile Feature" do
     test "You can log in with valid data and go to the edit profile page", %{conn: conn} do
@@ -54,7 +56,6 @@ defmodule OmedisWeb.EditProfileTest do
 
   test "One cannot delete an account if they are the sole admin", %{conn: conn} do
     {:ok, user} = create_user(%{email: "test@gmail.com"})
-    {:ok, _organisation} = create_organisation(%{owner_id: user.id})
 
     assert {:ok, index_live, _html} =
              conn
@@ -68,11 +69,16 @@ defmodule OmedisWeb.EditProfileTest do
 
   test "You can delete your own account if you are not the only admin", %{conn: conn} do
     {:ok, user} = create_user(%{email: "test@gmail.com"})
-    {:ok, user_2} = create_user(%{email: "test2@gmail.com"})
-    {:ok, organisation} = create_organisation(%{owner_id: user.id})
+    organisation = fetch_users_organisation(user.id)
 
-    {:ok, admin_group} =
-      Group.by_slug("administrators", authorize?: false, tenant: organisation)
+    create_invitation(organisation, %{
+      creator_id: user.id,
+      email: "test2@gmail.com"
+    })
+
+    {:ok, user_2} = create_user(%{email: "test2@gmail.com"})
+
+    admin_group = admin_group(organisation.id)
 
     {:ok, _} =
       create_group_membership(organisation, %{group_id: admin_group.id, user_id: user_2.id})
@@ -96,7 +102,6 @@ defmodule OmedisWeb.EditProfileTest do
 
   test "unauthorised users cannot delete an account", %{conn: conn} do
     {:ok, user} = create_user()
-    {:ok, _} = create_organisation(%{owner_id: user.id})
     {:ok, unauthorised_user} = create_user()
 
     assert {:ok, index_live, _html} =

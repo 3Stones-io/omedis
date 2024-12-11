@@ -181,18 +181,18 @@ defmodule Omedis.Accounts.Organisation do
     attribute :name, :string, allow_nil?: false, public?: true
 
     attribute :additional_info, :string, allow_nil?: true, public?: true
-    attribute :street, :string, allow_nil?: false, public?: true
+    attribute :street, :string, allow_nil?: true, public?: true
     attribute :street2, :string, allow_nil?: true, public?: true
 
     attribute :po_box, :string, allow_nil?: true, public?: true
 
-    attribute :zip_code, :string, allow_nil?: false, public?: true
+    attribute :zip_code, :string, allow_nil?: true, public?: true
 
-    attribute :city, :string, allow_nil?: false, public?: true
+    attribute :city, :string, allow_nil?: true, public?: true
 
     attribute :canton, :string, allow_nil?: true, public?: true
 
-    attribute :country, :string, allow_nil?: false, public?: true
+    attribute :country, :string, allow_nil?: true, public?: true
     attribute :description, :string, allow_nil?: true, public?: true
 
     attribute :owner_id, :uuid, allow_nil?: true, public?: true
