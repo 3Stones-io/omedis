@@ -102,7 +102,11 @@ defmodule OmedisWeb.InvitationLive.Show do
   end
 
   def handle_event("submit", %{"user" => user_params}, socket) do
-    updated_params = Map.replace(user_params, "email", socket.assigns.invitation.email)
+    updated_params =
+      user_params
+      |> Map.replace("email", socket.assigns.invitation.email)
+      |> Map.put("current_organisation_id", socket.assigns.invitation.organisation_id)
+
     form = Form.validate(socket.assigns.form, updated_params)
 
     {:noreply,

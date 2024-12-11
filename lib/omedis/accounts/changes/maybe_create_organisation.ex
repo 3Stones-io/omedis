@@ -5,13 +5,16 @@ defmodule Omedis.Accounts.Changes.MaybeCreateOrganisation do
 
   alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.Organisation
+  alias Omedis.Accounts.User
 
   def change(changeset, _opts, _context) do
     Ash.Changeset.after_action(changeset, fn _changeset, user ->
       if invitee?(user.email) do
         user
       else
-        create_organisation(user)
+        user
+        |> create_organisation()
+        |> update_user_current_organisation(user)
       end
 
       {:ok, user}
@@ -38,5 +41,9 @@ defmodule Omedis.Accounts.Changes.MaybeCreateOrganisation do
       },
       actor: user
     )
+  end
+
+  defp update_user_current_organisation(organisation, user) do
+    User.update!(user.id, %{current_organisation_id: organisation.id})
   end
 end

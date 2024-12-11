@@ -67,11 +67,18 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, view, _html} =
         live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
 
+      valid_invitation_params =
+        Map.put(
+          @valid_registration_params,
+          "current_organisation_id",
+          organisation.id
+        )
+
       form =
         form(
           view,
           "#invitation_user_sign_up_form",
-          user: @valid_registration_params
+          user: valid_invitation_params
         )
 
       conn = submit_form(form, conn)
@@ -86,13 +93,13 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       assert updated_invitation.user_id == user.id
 
-      # TODO: Verify user is added to the users group
-      # assert {:ok, [users_group]} =
-      #          Omedis.Accounts.Group
-      #          |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
-      #          |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
+      # Verify user is added to the users group
+      assert {:ok, [users_group]} =
+               Omedis.Accounts.Group
+               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+               |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
 
-      # assert List.first(users_group.group_memberships).user_id == user.id
+      assert List.first(users_group.group_memberships).user_id == user.id
     end
 
     test "form errors are displayed", %{

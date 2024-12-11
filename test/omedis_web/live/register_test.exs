@@ -35,6 +35,7 @@ defmodule OmedisWeb.RegisterTest do
       assert [organisation] = Ash.read!(Organisation, actor: user)
       assert organisation.owner_id == user.id
       assert organisation.name == "test@gmail.com"
+      assert user.current_organisation_id == organisation.id
     end
 
     test "cannot register with existing email", %{conn: conn} do
