@@ -13,59 +13,14 @@ msgstr ""
 
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
-msgid "Birthdate"
-msgstr "Geburtsdatum"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
 msgid "Change language"
 msgstr "Sprache ändern"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Daily End Time"
-msgstr "Tägliche Endzeit"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Daily Start Time"
-msgstr "Tägliche Startzeit"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Don't have an account? Sign up"
-msgstr "Noch kein Konto? Registrieren"
 
 #: lib/omedis_web/live/login_live.ex
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "E-Mail"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Female"
-msgstr "Weiblich"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "First Name"
-msgstr "Vorname"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Gender"
-msgstr "Geschlecht"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Last Name"
-msgstr "Nachname"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Male"
-msgstr "Männlich"
 
 #: lib/omedis_web/live/login_live.ex
 #: lib/omedis_web/live/register_live.ex
@@ -78,35 +33,15 @@ msgstr "Passwort"
 msgid "Register"
 msgstr "Registrieren"
 
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Select Your Gender"
-msgstr "Wählen Sie Ihr Geschlecht"
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Select an Organisation"
-msgstr "Wählen Sie eine Organisation"
-
 #: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Anmelden"
 
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Sign up"
-msgstr "Registrieren"
-
 #: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Signing in..."
 msgstr "Anmelden..."
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Signing up..."
-msgstr "Registrieren..."
 
 #: lib/omedis_web/controllers/auth_controller.ex
 #, elixir-autogen, elixir-format

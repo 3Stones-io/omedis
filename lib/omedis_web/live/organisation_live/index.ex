@@ -26,16 +26,6 @@ defmodule OmedisWeb.OrganisationLive.Index do
 
         <.header>
           <%= dgettext("organisation", "Listing Organisations") %>
-          <:actions>
-            <.link
-              :if={Ash.can?({Organisation, :create}, @current_user)}
-              patch={~p"/organisations/new"}
-            >
-              <.button>
-                <%= dgettext("organisation", "New Organisation") %>
-              </.button>
-            </.link>
-          </:actions>
         </.header>
 
         <div class="overflow-x-auto">
@@ -89,14 +79,14 @@ defmodule OmedisWeb.OrganisationLive.Index do
         </div>
 
         <.modal
-          :if={@live_action in [:new, :edit]}
+          :if={@live_action == :edit}
           id="organisation-modal"
           show
           on_cancel={JS.patch(~p"/organisations")}
         >
           <.live_component
             module={OmedisWeb.OrganisationLive.FormComponent}
-            id={(@organisation && @organisation.slug) || :new}
+            id={@organisation && @organisation.slug}
             title={@page_title}
             action={@live_action}
             organisation={@organisation}
@@ -137,27 +127,6 @@ defmodule OmedisWeb.OrganisationLive.Index do
         :page_title,
         dgettext("organisation", "Edit Organisation")
       )
-    else
-      socket
-      |> put_flash(
-        :error,
-        dgettext(
-          "organisation",
-          "You are not authorized to access this page"
-        )
-      )
-      |> push_navigate(to: ~p"/organisations")
-    end
-  end
-
-  defp apply_action(socket, :new, _params) do
-    if Ash.can?({Organisation, :create}, socket.assigns.current_user) do
-      socket
-      |> assign(
-        :page_title,
-        dgettext("organisation", "New Organisation")
-      )
-      |> assign(:organisation, nil)
     else
       socket
       |> put_flash(

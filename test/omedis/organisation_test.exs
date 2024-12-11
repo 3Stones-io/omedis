@@ -1,6 +1,8 @@
 defmodule Omedis.OrganisationTest do
   use Omedis.DataCase, async: true
 
+  import Omedis.TestUtils
+
   alias Omedis.Accounts.Organisation
 
   @admin_full_access_resources [
@@ -55,7 +57,7 @@ defmodule Omedis.OrganisationTest do
         resource_name: "Organisation"
       })
 
-      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
+      owned_organisation = fetch_users_organisation(user.id)
 
       {:ok, organisations} = Organisation.read(actor: user)
       assert length(organisations) == 2
@@ -64,7 +66,7 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "returns only owned organisations when user has no read access", %{user: user} do
-      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
+      owned_organisation = fetch_users_organisation(user.id)
 
       {:ok, organisations} = Organisation.read(actor: user)
       assert length(organisations) == 1
@@ -82,23 +84,20 @@ defmodule Omedis.OrganisationTest do
     alias Omedis.Accounts.Organisation
     alias Omedis.Accounts.Project
 
-    test "is only allowed for users without an organisation", %{user: user} do
+    test "users can only have one organisation" do
+      {:ok, user} = create_user()
+
+      assert fetch_users_organisation(user.id)
+
       assert {:error, _} =
-               Organisation.create(%{name: "New Organisation", slug: "new-organisation"},
+               Organisation.create(
+                 %{
+                   name: "New Organisation",
+                   slug: "new-organisation",
+                   owner_id: user.id
+                 },
                  actor: user
                )
-
-      {:ok, user_without_organisation} = create_user()
-
-      assert {:ok, _} =
-               Organisation
-               |> attrs_for(nil)
-               |> Map.merge(%{
-                 name: "New Organisation",
-                 owner_id: user_without_organisation.id,
-                 slug: "new-organisation"
-               })
-               |> Organisation.create(actor: user_without_organisation)
     end
 
     test "returns an error when attributes are invalid", %{user: user} do
@@ -106,12 +105,7 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "creates administrators group and adds organisation owner to it", %{user: user} do
-      params =
-        Organisation
-        |> attrs_for(nil)
-        |> Map.put(:owner_id, user.id)
-
-      assert {:ok, organisation} = Organisation.create(params, actor: user)
+      organisation = fetch_users_organisation(user.id)
 
       assert {:ok, [admins_group]} =
                Group
@@ -128,12 +122,7 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "creates administrators group with full access rights to select resources", %{user: user} do
-      params =
-        Organisation
-        |> attrs_for(nil)
-        |> Map.put(:owner_id, user.id)
-
-      assert {:ok, organisation} = Organisation.create(params, actor: user)
+      organisation = fetch_users_organisation(user.id)
 
       assert {:ok, [admins_group]} =
                Group
@@ -167,12 +156,7 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "creates users group with read-only access rights to select resources", %{user: user} do
-      params =
-        Organisation
-        |> attrs_for(nil)
-        |> Map.put(:owner_id, user.id)
-
-      assert {:ok, organisation} = Organisation.create(params, actor: user)
+      organisation = fetch_users_organisation(user.id)
 
       assert {:ok, [users_group]} =
                Group
@@ -195,12 +179,7 @@ defmodule Omedis.OrganisationTest do
     test "creates users group with create-only create access to select resources", %{
       user: user
     } do
-      params =
-        Organisation
-        |> attrs_for(nil)
-        |> Map.put(:owner_id, user.id)
-
-      assert {:ok, organisation} = Organisation.create(params, actor: user)
+      organisation = fetch_users_organisation(user.id)
 
       assert {:ok, [users_group]} =
                Group
@@ -221,12 +200,7 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "creates a default project", %{user: user} do
-      params =
-        Organisation
-        |> attrs_for(nil)
-        |> Map.put(:owner_id, user.id)
-
-      assert {:ok, organisation} = Organisation.create(params, actor: user)
+      organisation = fetch_users_organisation(user.id)
 
       assert {:ok, [project]} =
                Omedis.Accounts.Project
@@ -238,12 +212,7 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "creates a default activity", %{user: user} do
-      params =
-        Organisation
-        |> attrs_for(nil)
-        |> Map.put(:owner_id, user.id)
-
-      assert {:ok, organisation} = Organisation.create(params, actor: user)
+      organisation = fetch_users_organisation(user.id)
 
       assert {:ok, [users_group]} =
                Group
@@ -270,7 +239,7 @@ defmodule Omedis.OrganisationTest do
 
   describe "update/2" do
     test "requires update access", %{user: user, group: group} do
-      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id}, actor: user)
+      owned_organisation = fetch_users_organisation(user.id)
 
       assert {:ok, updated_organisation} =
                Organisation.update(owned_organisation, %{name: "Updated"}, actor: user)
@@ -304,7 +273,7 @@ defmodule Omedis.OrganisationTest do
 
   describe "destroy/1" do
     test "requires destroy access", %{user: user, group: group} do
-      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id}, actor: user)
+      owned_organisation = fetch_users_organisation(user.id)
 
       assert :ok = Organisation.destroy(owned_organisation, actor: user)
 
@@ -351,7 +320,7 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "returns an organisation for the owner without access rights", %{user: user} do
-      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
+      owned_organisation = fetch_users_organisation(user.id)
 
       assert {:ok, fetched_organisation} = Organisation.by_id(owned_organisation.id, actor: user)
       assert owned_organisation.id == fetched_organisation.id
@@ -379,7 +348,7 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "returns an organisation for the owner without access rights", %{user: user} do
-      {:ok, owned_organisation} = create_organisation(%{owner_id: user.id})
+      owned_organisation = fetch_users_organisation(user.id)
 
       assert {:ok, fetched_organisation} =
                Organisation.by_slug(owned_organisation.slug, actor: user)
@@ -390,7 +359,7 @@ defmodule Omedis.OrganisationTest do
 
   describe "by_owner_id/1" do
     test "returns an organisation for a specific user", %{user: user} do
-      {:ok, organisation} = create_organisation(%{slug: "organisation-one", owner_id: user.id})
+      organisation = fetch_users_organisation(user.id)
 
       assert {:ok, [fetched_organisation]} =
                Organisation.by_owner_id(%{owner_id: user.id}, actor: user)
@@ -399,7 +368,16 @@ defmodule Omedis.OrganisationTest do
     end
 
     test "returns an empty list when user owns no organisations", %{user: user} do
-      assert {:ok, []} = Organisation.by_owner_id(%{owner_id: user.id}, actor: user)
+      organisation = fetch_users_organisation(user.id)
+
+      create_invitation(organisation, %{
+        creator_id: user.id,
+        email: "test2@gmail.com"
+      })
+
+      {:ok, user_2} = create_user(%{email: "test2@gmail.com"})
+
+      assert {:ok, []} = Organisation.by_owner_id(%{owner_id: user_2.id}, actor: user)
     end
   end
 
@@ -420,12 +398,13 @@ defmodule Omedis.OrganisationTest do
                Organisation.list_paginated(actor: user, page: [limit: 10, offset: 0])
 
       assert length(organisations) == 10
-      assert total_count == 15
+      # Also includes the owned organisation created when user creates an organisation
+      assert total_count == 16
 
       assert {:ok, %{results: next_page}} =
                Organisation.list_paginated(actor: user, page: [limit: 10, offset: 10])
 
-      assert length(next_page) == 5
+      assert length(next_page) == 6
     end
   end
 end

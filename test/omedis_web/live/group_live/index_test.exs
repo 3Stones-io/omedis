@@ -3,12 +3,13 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
   import Phoenix.LiveViewTest
   import Omedis.Fixtures
+  import Omedis.TestUtils
 
   setup do
     {:ok, owner} = create_user()
     {:ok, another_user} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: owner.id})
-    {:ok, organisation_2} = create_organisation(%{owner_id: another_user.id})
+    organisation = fetch_users_organisation(owner.id)
+    organisation_2 = fetch_users_organisation(another_user.id)
 
     %{
       another_user: another_user,

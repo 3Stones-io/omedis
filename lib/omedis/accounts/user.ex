@@ -11,6 +11,7 @@ defmodule Omedis.Accounts.User do
 
   alias Omedis.Accounts.CanDeleteAccount
   alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
+  alias Omedis.Accounts.Changes.MaybeCreateOrganisation
   alias Omedis.Accounts.Group
   alias Omedis.Accounts.GroupMembership
   alias Omedis.Accounts.User.Changes.AddUserToUsersGroup
@@ -31,15 +32,8 @@ defmodule Omedis.Accounts.User do
         confirmation_required?(false)
 
         register_action_accept([
-          :current_organisation_id,
           :email,
-          :first_name,
-          :last_name,
-          :gender,
-          :birthdate,
-          :lang,
-          :daily_start_at,
-          :daily_end_at
+          :current_organisation_id
         ])
       end
     end
@@ -122,6 +116,14 @@ defmodule Omedis.Accounts.User do
   end
 
   changes do
+    change {MaybeCreateOrganisation, []} do
+      where [action_is(:create)]
+    end
+
+    change {MaybeCreateOrganisation, []} do
+      where [action_is(:register_with_password)]
+    end
+
     change {AssociateUserWithInvitation, []} do
       where [action_is(:create)]
     end
@@ -147,10 +149,10 @@ defmodule Omedis.Accounts.User do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-    attribute :first_name, :string, allow_nil?: false, public?: true
-    attribute :last_name, :string, allow_nil?: false, public?: true
+    attribute :first_name, :string, allow_nil?: true, public?: true
+    attribute :last_name, :string, allow_nil?: true, public?: true
     attribute :gender, :string, allow_nil?: true, public?: true
-    attribute :birthdate, :date, allow_nil?: false, public?: true
+    attribute :birthdate, :date, allow_nil?: true, public?: true
     attribute :current_organisation_id, :uuid, allow_nil?: true, public?: false
     attribute :lang, :string, allow_nil?: false, public?: true, default: "en"
     attribute :daily_start_at, :time, allow_nil?: true, public?: true

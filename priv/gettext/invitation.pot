@@ -23,22 +23,7 @@ msgstr ""
 
 #: lib/omedis_web/live/invitation_live/show.ex
 #, elixir-autogen, elixir-format
-msgid "Birthdate"
-msgstr ""
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
 msgid "Complete Registration"
-msgstr ""
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Daily End Time"
-msgstr ""
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Daily Start Time"
 msgstr ""
 
 #: lib/omedis_web/live/invitation_live/index.ex
@@ -56,21 +41,6 @@ msgstr ""
 #: lib/omedis_web/live/invitation_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Expires At"
-msgstr ""
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Female"
-msgstr ""
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "First Name"
-msgstr ""
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Gender"
 msgstr ""
 
 #: lib/omedis_web/live/invitation_live/form_component.ex
@@ -98,19 +68,9 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Last Name"
-msgstr ""
-
 #: lib/omedis_web/live/invitation_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Listing Invitations"
-msgstr ""
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Male"
 msgstr ""
 
 #: lib/omedis_web/live/invitation_live/form_component.ex
@@ -137,11 +97,6 @@ msgstr ""
 #: lib/omedis_web/live/invitation_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Saving..."
-msgstr ""
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Select Your Gender"
 msgstr ""
 
 #: lib/omedis_web/live/invitation_live/form_component.ex
@@ -179,11 +134,6 @@ msgstr ""
 msgid "new password"
 msgstr ""
 
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "User already registered"
-msgstr ""
-
 #: lib/omedis_web/live/invitation_live/invitation_status_component.ex
 #, elixir-autogen, elixir-format
 msgid "Expired"
@@ -192,4 +142,9 @@ msgstr ""
 #: lib/omedis_web/live/invitation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Invitation expired or not found"
+msgstr ""
+
+#: lib/omedis_web/live/invitation_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "User already registered"
 msgstr ""
