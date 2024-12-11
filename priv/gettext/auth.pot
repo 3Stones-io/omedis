@@ -13,58 +13,13 @@ msgstr ""
 
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
-msgid "Birthdate"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
 msgid "Change language"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Daily End Time"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Daily Start Time"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Don't have an account? Sign up"
 msgstr ""
 
 #: lib/omedis_web/live/login_live.ex
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "Email"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Female"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "First Name"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Gender"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Last Name"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Male"
 msgstr ""
 
 #: lib/omedis_web/live/login_live.ex
@@ -78,34 +33,14 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Select Your Gender"
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Select an Organisation"
-msgstr ""
-
 #: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Sign up"
-msgstr ""
-
 #: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Signing in..."
-msgstr ""
-
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Signing up..."
 msgstr ""
 
 #: lib/omedis_web/controllers/auth_controller.ex

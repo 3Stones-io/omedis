@@ -2,12 +2,13 @@ defmodule Omedis.Accounts.GroupTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
+  import Omedis.TestUtils
 
   alias Omedis.Accounts.Group
 
   setup do
     {:ok, user} = create_user()
-    {:ok, organisation} = create_organisation(%{owner_id: user.id}, actor: user)
+    organisation = fetch_users_organisation(user.id)
     {:ok, authorized_user} = create_user()
     {:ok, group} = create_group(organisation)
     create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})

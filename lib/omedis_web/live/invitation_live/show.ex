@@ -44,111 +44,28 @@ defmodule OmedisWeb.InvitationLive.Show do
         >
           <div class="space-y-6">
             <div class="border-b border-gray-900/10 pb-12">
-              <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div class="sm:col-span-3">
-                  <.input
-                    type="email"
-                    field={f[:email]}
-                    readonly
-                    required
-                    label={dgettext("invitation", "Email")}
-                    value={@invitation.email}
-                  />
-                </div>
+              <div class="sm:col-span-3">
+                <.input
+                  type="email"
+                  field={f[:email]}
+                  placeholder={dgettext("invitation", "Email")}
+                  autocomplete="email"
+                  required
+                  label={dgettext("invitation", "Email")}
+                  value={@invitation.email}
+                />
+              </div>
 
-                <div class="sm:col-span-3">
-                  <.input
-                    type="text"
-                    field={f[:first_name]}
-                    placeholder={dgettext("invitation", "First Name")}
-                    required
-                    label={dgettext("invitation", "First Name")}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class="sm:col-span-3">
-                  <.input
-                    type="text"
-                    field={f[:last_name]}
-                    placeholder={dgettext("invitation", "Last Name")}
-                    required
-                    label={dgettext("invitation", "Last Name")}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class="sm:col-span-3">
-                  <.input
-                    type="password"
-                    field={f[:password]}
-                    placeholder={dgettext("invitation", "Password")}
-                    autocomplete={dgettext("invitation", "new password")}
-                    required
-                    label={dgettext("invitation", "Password")}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class="sm:col-span-3">
-                  <.input
-                    type="select"
-                    field={f[:gender]}
-                    required
-                    label={dgettext("invitation", "Gender")}
-                    options={[
-                      dgettext("invitation", "Male"),
-                      dgettext("invitation", "Female")
-                    ]}
-                    prompt={dgettext("invitation", "Select Your Gender")}
-                  />
-                </div>
-
-                <div class="sm:col-span-3">
-                  <.input
-                    type="date"
-                    field={f[:birthdate]}
-                    required
-                    label={dgettext("invitation", "Birthdate")}
-                    phx-debounce="blur"
-                  />
-                </div>
-
-                <div class="sm:col-span-3">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("invitation", "Daily Start Time") %>
-                  </label>
-
-                  <div phx-feedback-for={f[:daily_start_at].name} class="mt-2">
-                    <%= time_input(f, :daily_start_at,
-                      class:
-                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      value: f[:daily_start_at].value || @organisation.default_daily_start_at,
-                      "phx-debounce": "blur"
-                    ) %>
-                    <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_start_at)}>
-                      <%= dgettext("invitation", "Daily Start Time") <> " " <> msg %>
-                    </.error>
-                  </div>
-                </div>
-
-                <div class="sm:col-span-3">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("invitation", "Daily End Time") %>
-                  </label>
-
-                  <div phx-feedback-for={f[:daily_end_at].name} class="mt-2">
-                    <%= time_input(f, :daily_end_at,
-                      class:
-                        "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      value: f[:daily_end_at].value || @organisation.default_daily_end_at,
-                      "phx-debounce": "blur"
-                    ) %>
-                    <.error :for={msg <- get_field_errors(f[:daily_start_at], :daily_end_at)}>
-                      <%= dgettext("invitation", "Daily End Time") <> " " <> msg %>
-                    </.error>
-                  </div>
-                </div>
+              <div class="mt-8  sm:col-span-3">
+                <.input
+                  type="password"
+                  field={f[:password]}
+                  placeholder={dgettext("invitation", "Password")}
+                  autocomplete={dgettext("invitation", "new password")}
+                  required
+                  label={dgettext("invitation", "Password")}
+                  phx-debounce="blur"
+                />
               </div>
             </div>
 
@@ -161,20 +78,6 @@ defmodule OmedisWeb.InvitationLive.Show do
               ) %>
             </div>
           </div>
-
-          <div class="sm:col-span-3">
-            <div>
-              <.input
-                type="hidden"
-                id="select_organisation"
-                field={f[:current_organisation_id]}
-                value={@organisation.id}
-                required
-              />
-            </div>
-          </div>
-
-          <.input type="hidden" field={f[:lang]} value={@invitation.language} />
         </.form>
       </div>
     </.side_and_topbar>
@@ -199,7 +102,11 @@ defmodule OmedisWeb.InvitationLive.Show do
   end
 
   def handle_event("submit", %{"user" => user_params}, socket) do
-    updated_params = Map.replace(user_params, "email", socket.assigns.invitation.email)
+    updated_params =
+      user_params
+      |> Map.replace("email", socket.assigns.invitation.email)
+      |> Map.put("current_organisation_id", socket.assigns.invitation.organisation_id)
+
     form = Form.validate(socket.assigns.form, updated_params)
 
     {:noreply,
@@ -260,9 +167,5 @@ defmodule OmedisWeb.InvitationLive.Show do
       )
 
     assign(socket, :form, form)
-  end
-
-  defp get_field_errors(field, _name) do
-    Enum.map(field.errors, &translate_error(&1))
   end
 end

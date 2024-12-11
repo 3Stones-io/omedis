@@ -23,23 +23,8 @@ msgstr "Sei sicuro di voler eliminare questo invito?"
 
 #: lib/omedis_web/live/invitation_live/show.ex
 #, elixir-autogen, elixir-format
-msgid "Birthdate"
-msgstr "Data di nascita"
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
 msgid "Complete Registration"
 msgstr "Completa la registrazione"
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Daily End Time"
-msgstr "Orario di fine giornaliero"
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Daily Start Time"
-msgstr "Orario di inizio giornaliero"
 
 #: lib/omedis_web/live/invitation_live/index.ex
 #, elixir-autogen, elixir-format
@@ -57,21 +42,6 @@ msgstr "Email"
 #, elixir-autogen, elixir-format
 msgid "Expires At"
 msgstr "Scade il"
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Female"
-msgstr "Femmina"
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "First Name"
-msgstr "Nome"
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Gender"
-msgstr "Genere"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex
 #, elixir-autogen, elixir-format
@@ -98,20 +68,10 @@ msgstr "Invitato il"
 msgid "Language"
 msgstr "Lingua"
 
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Last Name"
-msgstr "Cognome"
-
 #: lib/omedis_web/live/invitation_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Listing Invitations"
 msgstr "Elenco Inviti"
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Male"
-msgstr "Maschio"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex
 #: lib/omedis_web/live/invitation_live/index.ex
@@ -138,11 +98,6 @@ msgstr "Registrati"
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
-
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Select Your Gender"
-msgstr "Seleziona il tuo genere"
 
 #: lib/omedis_web/live/invitation_live/form_component.ex
 #, elixir-autogen, elixir-format
@@ -179,17 +134,17 @@ msgstr "Usa questo modulo per invitare nuovi membri."
 msgid "new password"
 msgstr "nuova password"
 
-#: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "User already registered"
-msgstr "Utente già registrato"
-
 #: lib/omedis_web/live/invitation_live/invitation_status_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Expired"
 msgstr "Scade il"
 
 #: lib/omedis_web/live/invitation_live/show.ex
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Invitation expired or not found"
-msgstr "Invito scaduto"
+msgstr ""
+
+#: lib/omedis_web/live/invitation_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "User already registered"
+msgstr ""

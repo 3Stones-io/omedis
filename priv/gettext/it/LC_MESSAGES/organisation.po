@@ -120,11 +120,6 @@ msgstr "Elenco delle organizzazioni"
 msgid "Name"
 msgstr "Nome"
 
-#: lib/omedis_web/live/organisation_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "New Organisation"
-msgstr "Nuova organizzazione"
-
 #: lib/omedis_web/live/organisation_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Organisation saved."

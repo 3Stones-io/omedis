@@ -31,7 +31,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -61,7 +61,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -71,7 +71,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -91,7 +91,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -345,7 +345,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "D8FF94163048F4AA264E29F5158433A9BCE3BD8BFE00023CD8292C7EDA7F27F9",
+  "hash": "89ECB5DDA237C4404C7484CD120929A64C1D21D17E015B66AEA1C5FA2E035404",
   "identities": [
     {
       "all_tenants?": false,
