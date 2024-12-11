@@ -82,7 +82,12 @@ defmodule Omedis.Accounts.Activity do
     read :read do
       primary? true
 
-      pagination offset?: true, keyset?: true, required?: false
+      pagination offset?: true,
+                 countable: :by_default,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 keyset?: true
+
+      prepare build(load: [:events], sort: [position: :asc])
     end
 
     read :list_paginated do

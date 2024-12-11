@@ -99,12 +99,15 @@ defmodule Omedis.Accounts do
   end
 
   defp get_max_position_by_group_id(group_id, opts) do
-    Activity
-    |> Ash.Query.filter(group_id: group_id)
-    |> Ash.Query.sort(position: :desc)
-    |> Ash.Query.limit(1)
-    |> Ash.Query.select([:position])
-    |> Ash.read!(opts)
+    {:ok, %Ash.Page.Offset{results: activities}} =
+      Activity
+      |> Ash.Query.filter(group_id: group_id)
+      |> Ash.Query.sort(position: :desc)
+      |> Ash.Query.limit(1)
+      |> Ash.Query.select([:position])
+      |> Ash.read(opts)
+
+    activities
     |> Enum.at(0)
     |> case do
       nil -> 0
@@ -113,9 +116,11 @@ defmodule Omedis.Accounts do
   end
 
   defp get_color_code_for_an_organisation(organisation) do
-    Activity
-    |> Ash.Query.select([:color_code])
-    |> Ash.read!(authorize?: false, tenant: organisation)
-    |> Enum.map(& &1.color_code)
+    {:ok, %Ash.Page.Offset{results: activities}} =
+      Activity
+      |> Ash.Query.select([:color_code])
+      |> Ash.read(authorize?: false, tenant: organisation)
+
+    Enum.map(activities, & &1.color_code)
   end
 end

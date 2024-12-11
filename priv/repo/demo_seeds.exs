@@ -2,6 +2,8 @@ import Omedis.Fixtures
 
 alias Omedis.Accounts
 
+require Ash.Query
+
 bulk_create = fn module, organisation, list, upsert_identity ->
   list
   |> Stream.map(fn attrs ->
@@ -20,6 +22,49 @@ bulk_create = fn module, organisation, list, upsert_identity ->
     upsert_fields: [],
     upsert_identity: upsert_identity
   )
+end
+
+sequential_create = fn module, list, opts ->
+  opts = Keyword.merge([authorize?: false, upsert?: true], opts)
+
+  result =
+    Enum.reduce_while(list, {:ok, []}, fn attrs, {:ok, acc} ->
+      attrs =
+        module
+        |> attrs_for(Keyword.get(opts, :tenant))
+        |> Map.merge(attrs)
+
+      # First check if record exists using the upsert_identity
+      identity = Keyword.get(opts, :upsert_identity)
+      identity_attrs = Map.take(attrs, Ash.Resource.Info.identity(module, identity).keys)
+
+      query =
+        module
+        |> Ash.Query.new()
+        |> Ash.Query.filter(^identity_attrs)
+
+      case Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant)) do
+        {:ok, %Ash.Page.Offset{results: [existing]}} ->
+          {:cont, {:ok, [existing | acc]}}
+
+        {:ok, [existing]} ->
+          {:cont, {:ok, [existing | acc]}}
+
+        {:ok, %Ash.Page.Offset{results: []}} ->
+          case Ash.create(module, attrs, opts) do
+            {:ok, record} -> {:cont, {:ok, [record | acc]}}
+            error -> {:halt, error}
+          end
+
+        error ->
+          {:halt, error}
+      end
+    end)
+
+  case result do
+    {:ok, records} -> %{records: Enum.reverse(records), status: :success}
+    error -> error
+  end
 end
 
 %{records: [user_1, user_2, user_3], status: :success} =
@@ -219,23 +264,21 @@ end
     :unique_name
   )
 
+activities =
+  for i <- 1..30 do
+    %{
+      group_id: if(rem(i, 2) == 0, do: group_1.id, else: group_2.id),
+      project_id: if(rem(i, 2) == 0, do: project_1.id, else: project_2.id),
+      name: "Demo Activity #{i}"
+    }
+  end
+
 %{records: _records, status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.Activity,
-    organisation_1,
-    [
-      %{
-        group_id: group_1.id,
-        project_id: project_1.id,
-        name: "Demo Activity 1"
-      },
-      %{
-        group_id: group_2.id,
-        project_id: project_2.id,
-        name: "Demo Activity 2"
-      }
-    ],
-    :unique_slug
+    activities,
+    tenant: organisation_1,
+    upsert_identity: :unique_slug
   )
 
 %{records: [invitation_1 | _rest], status: :success} =
