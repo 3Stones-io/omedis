@@ -95,7 +95,6 @@ defmodule Omedis.Accounts.Activity do
       prepare build(load: [:events], sort: [position: :asc])
     end
 
-
     read :list_paginated do
       argument :group_id, :uuid do
         allow_nil? false
