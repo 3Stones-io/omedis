@@ -398,12 +398,8 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   def handle_event("next-page", _params, socket) do
-    {:ok, %Ash.Page.Keyset{results: activities}} =
-      Activity.list_keyset_paginated(
-        actor: socket.assigns.current_user,
-        tenant: socket.assigns.current_organisation,
-        page: [limit: 10, after: socket.assigns.last_activity_token]
-      )
+    activities =
+      fetch_activities(socket, after: socket.assigns.last_activity_token)
 
     {:noreply, assign_activities_and_token(socket, activities)}
   end
@@ -413,14 +409,21 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   def handle_event("previous-page", _params, socket) do
+    activities =
+      fetch_activities(socket, before: socket.assigns.first_activity_token)
+
+    {:noreply, assign_activities_and_token(socket, activities)}
+  end
+
+  defp fetch_activities(socket, page_opts) do
     {:ok, %Ash.Page.Keyset{results: activities}} =
       Activity.list_keyset_paginated(
         actor: socket.assigns.current_user,
         tenant: socket.assigns.current_organisation,
-        page: [limit: 10, before: socket.assigns.first_activity_token]
+        page: [limit: 10] ++ page_opts
       )
 
-    {:noreply, assign_activities_and_token(socket, activities)}
+    activities
   end
 
   defp create_event(activity_id, opts) do
