@@ -263,6 +263,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
   end
 
   describe "/organisations/:slug/invitations/new" do
+    alias Omedis.Accounts.Group
+
     test "organisation owner can create an invitation", %{
       conn: conn,
       group: group,
@@ -298,7 +300,15 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert invitation.language == "en"
       assert invitation.creator_id == owner.id
       assert invitation.organisation_id == organisation.id
-      assert Enum.map(invitation.groups, & &1.id) == [group.id]
+      assert group.id in Enum.map(invitation.groups, & &1.id)
+
+      # Verify Users group_id is in invitation groups
+      {:ok, [users_group]} =
+        Group
+        |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+        |> Ash.read(authorize?: false, tenant: organisation)
+
+      assert users_group.id in Enum.map(invitation.groups, & &1.id)
     end
 
     test "authorized user can create an invitation", %{
@@ -336,7 +346,15 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert invitation.language == "en"
       assert invitation.creator_id == authorized_user.id
       assert invitation.organisation_id == organisation.id
-      assert Enum.map(invitation.groups, & &1.id) == [group.id]
+      assert group.id in Enum.map(invitation.groups, & &1.id)
+
+      # Verify Users group_id is in invitation groups
+      {:ok, [users_group]} =
+        Group
+        |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+        |> Ash.read(authorize?: false, tenant: organisation)
+
+      assert users_group.id in Enum.map(invitation.groups, & &1.id)
     end
 
     test "unauthorized user cannot access new invitation page", %{
