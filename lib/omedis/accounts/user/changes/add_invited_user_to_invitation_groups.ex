@@ -41,10 +41,7 @@ defmodule Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups do
               user_id: user.id
             },
             authorize?: false,
-            tenant: current_organisation,
-            upsert_identity: :unique_group_membership,
-            upsert?: true,
-            upsert_fields: []
+            tenant: current_organisation
           )
       end)
     end

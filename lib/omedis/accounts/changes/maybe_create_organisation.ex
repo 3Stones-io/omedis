@@ -39,10 +39,7 @@ defmodule Omedis.Accounts.Changes.MaybeCreateOrganisation do
         slug: organisation_slug,
         owner_id: user.id
       },
-      authorize?: false,
-      upsert?: true,
-      upsert_fields: [],
-      upsert_identity: :unique_slug
+      actor: user
     )
   end
 

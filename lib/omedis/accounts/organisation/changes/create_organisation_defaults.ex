@@ -47,12 +47,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
   @impl true
   def change(changeset, _, _context) do
     Ash.Changeset.after_action(changeset, fn _changeset, organisation ->
-      opts = [
-        authorize?: false,
-        tenant: organisation,
-        upsert?: true
-      ]
-
+      opts = [authorize?: false, tenant: organisation]
       administrators_group = create_admins_group(organisation, opts)
       users_group = create_users_group(organisation, opts)
       create_admin_access_rights(administrators_group, opts)
@@ -72,7 +67,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
           slug: "administrators",
           user_id: organisation.owner_id
         },
-        opts ++ [upsert_identity: :unique_slug_per_organisation]
+        opts
       )
 
     {:ok, _} =
@@ -81,7 +76,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
           group_id: administrators_group.id,
           user_id: organisation.owner_id
         },
-        opts ++ [upsert_identity: :unique_group_membership]
+        opts
       )
 
     administrators_group
@@ -95,7 +90,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
           slug: "users",
           user_id: organisation.owner_id
         },
-        opts ++ [upsert_identity: :unique_slug_per_organisation]
+        opts
       )
 
     users_group
@@ -175,10 +170,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
         },
         actor: actor,
         tenant: organisation,
-        authorize?: false,
-        upsert?: true,
-        upsert_fields: [:name],
-        upsert_identity: :unique_name
+        authorize?: false
       )
 
     project
@@ -195,11 +187,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
           is_default: true,
           color_code: "#808080"
         },
-        opts ++
-          [
-            upsert_identity: :unique_slug,
-            upsert_fields: [:name, :slug, :color_code, :group_id, :project_id]
-          ]
+        opts
       )
   end
 end
