@@ -301,7 +301,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp maybe_assign_activities(socket) do
     {:ok, %Ash.Page.Offset{results: activities}} =
-      Activity.read(
+      Activity.list_keyset_paginated(
         actor: socket.assigns.current_user,
         tenant: socket.assigns.current_organisation
       )
@@ -399,7 +399,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   def handle_event("next-page", _params, socket) do
     {:ok, %Ash.Page.Keyset{results: activities}} =
-      Activity.read(
+      Activity.list_keyset_paginated(
         actor: socket.assigns.current_user,
         tenant: socket.assigns.current_organisation,
         page: [limit: 10, after: socket.assigns.last_activity_token]
@@ -414,7 +414,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   def handle_event("previous-page", _params, socket) do
     {:ok, %Ash.Page.Keyset{results: activities}} =
-      Activity.read(
+      Activity.list_keyset_paginated(
         actor: socket.assigns.current_user,
         tenant: socket.assigns.current_organisation,
         page: [limit: 10, before: socket.assigns.first_activity_token]

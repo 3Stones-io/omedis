@@ -39,7 +39,10 @@ defmodule Omedis.Accounts.User.Changes.AddUserToUsersGroup do
           user_id: user.id
         },
         authorize?: false,
-        tenant: current_organisation
+        tenant: current_organisation,
+        upsert_identity: :unique_group_membership,
+        upsert?: true,
+        upsert_fields: []
       )
     end
   end

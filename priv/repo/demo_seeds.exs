@@ -4,23 +4,28 @@ alias Omedis.Accounts
 
 require Ash.Query
 
-bulk_create = fn module, organisation, list, upsert_identity ->
+bulk_create = fn module, list, opts ->
   list
   |> Stream.map(fn attrs ->
     module
-    |> attrs_for(organisation)
+    |> attrs_for(Keyword.get(opts, :tenant))
     |> Map.merge(attrs)
   end)
-  |> Ash.bulk_create(module, :create,
-    authorize?: false,
-    return_errors?: true,
-    return_records?: true,
-    sorted?: true,
-    tenant: organisation,
-    transaction: :all,
-    upsert?: true,
-    upsert_fields: [],
-    upsert_identity: upsert_identity
+  |> Ash.bulk_create(
+    module,
+    :create,
+    Keyword.merge(
+      [
+        authorize?: false,
+        return_errors?: true,
+        return_records?: true,
+        sorted?: true,
+        transaction: :all,
+        upsert?: true,
+        upsert_fields: []
+      ],
+      opts
+    )
   )
 end
 
@@ -44,13 +49,10 @@ sequential_create = fn module, list, opts ->
         |> Ash.Query.filter(^identity_attrs)
 
       case Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant)) do
-        {:ok, %Ash.Page.Offset{results: [existing]}} ->
-          {:cont, {:ok, [existing | acc]}}
-
         {:ok, [existing]} ->
           {:cont, {:ok, [existing | acc]}}
 
-        {:ok, %Ash.Page.Offset{results: []}} ->
+        {:ok, []} ->
           case Ash.create(module, attrs, opts) do
             {:ok, record} -> {:cont, {:ok, [record | acc]}}
             error -> {:halt, error}
@@ -70,174 +72,72 @@ end
 %{records: [user_1, user_2, user_3], status: :success} =
   bulk_create.(
     Accounts.User,
-    nil,
     [
       %{email: "user@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")},
       %{email: "user2@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")},
       %{email: "user3@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")}
     ],
-    :unique_email
+    upsert_identity: :unique_email
   )
 
-%{records: [organisation_1, organisation_2], status: :success} =
-  bulk_create.(
-    Accounts.Organisation,
-    nil,
-    [
-      %{owner_id: user_1.id, slug: "demo-organisation"},
-      %{owner_id: user_2.id, slug: "demo-organisation-2"}
-    ],
-    :unique_slug
-  )
+[organisation_1, organisation_2, _organisation_3] =
+  Ash.read!(Accounts.Organisation, authorize?: false)
+
+# %{records: [organisation_1, organisation_2], status: :success} =
+#   bulk_create.(
+#     Accounts.Organisation,
+#     [
+#       %{owner_id: user_1.id, slug: "demo-organisation"},
+#       %{owner_id: user_2.id, slug: "demo-organisation-2"}
+#     ],
+#     upsert_identity: :unique_slug
+#   )
 
 %{records: [group_1, group_2], status: :success} =
   bulk_create.(
     Accounts.Group,
-    organisation_1,
     [
       %{name: "Demo Group", slug: "demo-group"},
       %{name: "Demo Group 2", slug: "demo-group2"}
     ],
-    :unique_slug_per_organisation
+    tenant: organisation_1,
+    upsert_identity: :unique_slug_per_organisation
   )
 
 %{records: [group_3], status: :success} =
   bulk_create.(
     Accounts.Group,
-    organisation_2,
     [
       %{name: "Demo Group 3", slug: "demo-group3"}
     ],
-    :unique_slug_per_organisation
+    tenant: organisation_2,
+    upsert_identity: :unique_slug_per_organisation
   )
 
 %{records: _records, status: :success} =
   bulk_create.(
     Accounts.GroupMembership,
-    organisation_1,
     [
       %{group_id: group_1.id, user_id: user_1.id},
       %{group_id: group_2.id, user_id: user_2.id}
     ],
-    :unique_group_membership
+    tenant: organisation_1,
+    upsert_identity: :unique_group_membership
   )
 
 %{records: _records, status: :success} =
   bulk_create.(
     Accounts.GroupMembership,
-    organisation_2,
     [
       %{group_id: group_3.id, user_id: user_3.id}
     ],
-    :unique_group_membership
-  )
-
-%{records: _records, status: :success} =
-  bulk_create.(
-    Accounts.AccessRight,
-    organisation_1,
-    [
-      %{
-        group_id: group_1.id,
-        resource_name: "Project",
-        read: true,
-        update: true,
-        create: true,
-        destroy: true
-      }
-    ],
-    nil
-  )
-
-%{records: _records, status: :success} =
-  bulk_create.(
-    Accounts.AccessRight,
-    organisation_1,
-    [
-      %{
-        group_id: group_2.id,
-        resource_name: "Group",
-        read: true,
-        update: true,
-        create: true,
-        destroy: true
-      },
-      %{
-        group_id: group_1.id,
-        resource_name: "Group",
-        read: true,
-        update: true,
-        create: true,
-        destroy: true
-      },
-      %{
-        group_id: group_2.id,
-        resource_name: "Activity",
-        read: true,
-        update: true,
-        create: true,
-        destroy: true
-      },
-      %{
-        group_id: group_1.id,
-        resource_name: "Activity",
-        read: true,
-        update: true,
-        create: true,
-        destroy: true
-      },
-      %{
-        group_id: group_2.id,
-        resource_name: "Event",
-        read: true,
-        update: true,
-        create: true,
-        destroy: true
-      },
-      %{
-        group_id: group_1.id,
-        resource_name: "Invitation",
-        read: true,
-        update: true,
-        create: true,
-        destroy: true
-      }
-    ],
-    nil
-  )
-
-%{records: _records, status: :success} =
-  bulk_create.(
-    Accounts.AccessRight,
-    organisation_1,
-    [
-      %{
-        group_id: group_1.id,
-        read: true,
-        resource_name: "Organisation"
-      }
-    ],
-    nil
-  )
-
-%{records: _records, status: :success} =
-  bulk_create.(
-    Accounts.AccessRight,
-    organisation_2,
-    [
-      %{
-        group_id: group_3.id,
-        read: true,
-        resource_name: "Organisation"
-      }
-    ],
-    nil
+    tenant: organisation_2,
+    upsert_identity: :unique_group_membership
   )
 
 %{records: [project_1, project_2], status: :success} =
   bulk_create.(
     Accounts.Project,
-    organisation_1,
     [
       %{
         name: "Demo Project 1",
@@ -248,20 +148,23 @@ end
         position: "4"
       }
     ],
-    :unique_name
+    tenant: organisation_1,
+    upsert_fields: [:name],
+    upsert_identity: :unique_name
   )
 
 %{records: _records, status: :success} =
   bulk_create.(
     Accounts.Project,
-    organisation_2,
     [
       %{
         name: "Demo Project 3",
         position: "2"
       }
     ],
-    :unique_name
+    tenant: organisation_2,
+    upsert_fields: [:name],
+    upsert_identity: :unique_name
   )
 
 activities =
@@ -284,20 +187,18 @@ activities =
 %{records: [invitation_1 | _rest], status: :success} =
   bulk_create.(
     Accounts.Invitation,
-    organisation_1,
     [
       %{creator_id: user_1.id},
       %{creator_id: user_2.id}
     ],
-    nil
+    tenant: organisation_1
   )
 
 %{records: _records, status: :success} =
   bulk_create.(
     Accounts.InvitationGroup,
-    organisation_1,
     [
       %{invitation_id: invitation_1.id, group_id: group_1.id}
     ],
-    nil
+    tenant: organisation_1
   )

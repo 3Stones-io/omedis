@@ -224,7 +224,7 @@ defmodule Omedis.OrganisationTest do
                |> Ash.Query.filter(name: "Project 1", organisation_id: organisation.id)
                |> Ash.read(actor: user, tenant: organisation)
 
-      assert {:ok, %Ash.Page.Offset{results: [activity]}} =
+      assert {:ok, [activity]} =
                Activity
                |> Ash.Query.filter(
                  group_id: users_group.id,
