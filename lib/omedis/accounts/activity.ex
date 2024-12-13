@@ -34,6 +34,7 @@ defmodule Omedis.Accounts.Activity do
     define :update_position
     define :by_id, get_by: [:id], action: :read
     define :list_paginated
+    define :list_keyset_paginated
     define :by_group_id_and_project_id
   end
 
@@ -83,6 +84,15 @@ defmodule Omedis.Accounts.Activity do
       primary? true
 
       pagination offset?: true, keyset?: true, required?: false
+    end
+
+    read :list_keyset_paginated do
+      pagination offset?: true,
+                 countable: :by_default,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 keyset?: true
+
+      prepare build(load: [:events], sort: [position: :asc])
     end
 
     read :list_paginated do
