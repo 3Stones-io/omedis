@@ -330,7 +330,10 @@ defmodule OmedisWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0 cursor-pointer"
+          class={[
+            "rounded border-zinc-300 text-zinc-900 focus:ring-0",
+            !@rest[:disabled] && "cursor-pointer"
+          ]}
           {@rest}
         />
         <%= @label %>

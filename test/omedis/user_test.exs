@@ -56,31 +56,42 @@ defmodule Omedis.FarmersTest do
       assert updated_invitation.user_id == user.id
     end
 
-    test "create/1 adds the invited user to the users group" do
-      {:ok, organisation_owner} = create_user()
+    test "create/1 adds the invited user to the selected groups" do
+      {:ok, organisation} = create_organisation()
+      {:ok, group_1} = create_group(organisation, %{name: "Group 1"})
+      {:ok, group_2} = create_group(organisation, %{name: "Group 2"})
 
-      {:ok, organisation} =
-        create_organisation(%{owner_id: organisation_owner.id}, actor: organisation_owner)
+      {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
 
-      {:ok, _invitation} = create_invitation(organisation, %{email: "test@user.com"})
+      {:ok, _} =
+        create_invitation_group(organisation, %{
+          group_id: group_1.id,
+          invitation_id: invitation.id
+        })
 
-      assert {:ok, user} =
-               User.create(%{
-                 current_organisation_id: organisation.id,
-                 email: "test@user.com",
-                 hashed_password: Bcrypt.hash_pwd_salt("password"),
-                 first_name: "Stefan",
-                 last_name: "Wintermeyer",
-                 gender: "Male",
-                 birthdate: "1980-01-01"
-               })
+      {:ok, _} =
+        create_invitation_group(organisation, %{
+          group_id: group_2.id,
+          invitation_id: invitation.id
+        })
 
-      assert {:ok, [users_group]} =
-               Omedis.Accounts.Group
-               |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
-               |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
+      params =
+        User
+        |> attrs_for(nil)
+        |> Map.put(:current_organisation_id, organisation.id)
+        |> Map.put(:email, "test@user.com")
 
-      assert List.first(users_group.group_memberships).user_id == user.id
+      assert {:ok, user} = User.create(params)
+
+      assert {:ok, user_group_memberships} =
+               Omedis.Accounts.GroupMembership
+               |> Ash.Query.filter(user_id: user.id)
+               |> Ash.read(authorize?: false, tenant: organisation)
+
+      assert length(user_group_memberships) == 2
+      assert user.id in Enum.map(user_group_memberships, & &1.user_id)
+      assert group_1.id in Enum.map(user_group_memberships, & &1.group_id)
+      assert group_2.id in Enum.map(user_group_memberships, & &1.group_id)
     end
 
     test "create/1 does not add the user to the users group if the user is not an invitee" do
