@@ -59,6 +59,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   describe "/organisations/:slug/invitations/:id" do
     require Ash.Query
 
+    alias Omedis.Accounts.AccessRight
+
     test "invitee with a valid invitation can register for an account", %{
       conn: conn,
       organisation: organisation,
@@ -92,14 +94,216 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, updated_invitation} = Invitation.by_id(valid_invitation.id)
 
       assert updated_invitation.user_id == user.id
+    end
 
-      # Verify user is added to the users group
+    test "adds the invited user to the selected groups", %{
+      conn: conn,
+      organisation: organisation,
+      owner: owner
+    } do
+      {:ok, group_1} = create_group(organisation, %{name: "Test Group 1"})
+      {:ok, group_2} = create_group(organisation, %{name: "Test Group 2"})
+
+      # Create invitation via the actual user flow
+      {:ok, view, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      html =
+        view
+        |> form("#invitation-form",
+          invitation: %{
+            email: "test@gmail.com",
+            language: "en",
+            groups: %{group_1.id => true, group_2.id => true}
+          }
+        )
+        |> render_submit()
+
+      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+      assert html =~ "Invitation created successfully"
+
+      assert {:ok, [invitation]} =
+               Invitation
+               |> Ash.Query.filter(email: "test@gmail.com")
+               |> Ash.read(authorize?: false, load: [:groups], tenant: organisation)
+
+      assert invitation.email == "test@gmail.com"
+
+      {:ok, [users_group]} =
+        Omedis.Accounts.Group
+        |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+        |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
+
+      assert group_1.id in Enum.map(invitation.groups, & &1.id)
+      assert group_2.id in Enum.map(invitation.groups, & &1.id)
+      assert users_group.id in Enum.map(invitation.groups, & &1.id)
+
+      # Verify invitation_groups were created
+      assert {:ok, invitation_groups} =
+               Omedis.Accounts.InvitationGroup
+               |> Ash.Query.filter(invitation_id: invitation.id, organisation_id: organisation.id)
+               |> Ash.read(authorize?: false, tenant: organisation)
+
+      assert length(invitation_groups) == 3
+      assert group_1.id in Enum.map(invitation_groups, & &1.group_id)
+      assert group_2.id in Enum.map(invitation_groups, & &1.group_id)
+      assert users_group.id in Enum.map(invitation_groups, & &1.group_id)
+
+      # Now accept the invitation
+      new_conn = build_conn()
+
+      {:ok, view, _html} =
+        live(new_conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+
+      valid_invitation_params =
+        @valid_registration_params
+        |> Map.put("current_organisation_id", organisation.id)
+        |> Map.put("email", "test@gmail.com")
+
+      form = form(view, "#invitation_user_sign_up_form", user: valid_invitation_params)
+      conn = submit_form(form, new_conn)
+
+      assert redirected_to(conn) == ~p"/edit_profile"
+
+      # Verify invitation was updated
+      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+
+      assert updated_invitation.status == :accepted
+      assert {:ok, user} = User.by_email(@valid_registration_params["email"])
+      assert user.id == updated_invitation.user_id
+
+      # Verify user is added to the invited groups
+      assert {:ok, user_group_memberships} =
+               Omedis.Accounts.GroupMembership
+               |> Ash.Query.filter(user_id: user.id)
+               |> Ash.read(authorize?: false, tenant: organisation)
+
+      assert length(user_group_memberships) == 3
+      assert group_1.id in Enum.map(user_group_memberships, & &1.group_id)
+      assert group_2.id in Enum.map(user_group_memberships, & &1.group_id)
+      assert users_group.id in Enum.map(user_group_memberships, & &1.group_id)
+    end
+
+    test "creates access rights for the invited user", %{
+      conn: conn,
+      organisation: organisation,
+      owner: owner
+    } do
+      # Create invitation via the actual user flow
+      {:ok, view, _html} =
+        conn
+        |> log_in_user(owner)
+        |> live(~p"/organisations/#{organisation}/invitations/new")
+
+      html =
+        view
+        |> form("#invitation-form",
+          invitation: %{
+            email: "test@gmail.com",
+            language: "en"
+          }
+        )
+        |> render_submit()
+
+      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+      assert html =~ "Invitation created successfully"
+
+      assert {:ok, [invitation]} =
+               Invitation
+               |> Ash.Query.filter(email: "test@gmail.com")
+               |> Ash.read(authorize?: false, load: [:groups], tenant: organisation)
+
+      assert invitation.email == "test@gmail.com"
+
       assert {:ok, [users_group]} =
                Omedis.Accounts.Group
                |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
                |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
 
-      assert List.first(users_group.group_memberships).user_id == user.id
+      assert users_group.id in Enum.map(invitation.groups, & &1.id)
+
+      # Verify invitation_groups were created
+      assert {:ok, invitation_groups} =
+               Omedis.Accounts.InvitationGroup
+               |> Ash.Query.filter(invitation_id: invitation.id, organisation_id: organisation.id)
+               |> Ash.read(authorize?: false, tenant: organisation)
+
+      assert length(invitation_groups) == 1
+      assert users_group.id in Enum.map(invitation_groups, & &1.group_id)
+
+      # Now accept the invitation
+      new_conn = build_conn()
+
+      {:ok, view, _html} =
+        live(new_conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+
+      valid_invitation_params =
+        @valid_registration_params
+        |> Map.put("current_organisation_id", organisation.id)
+        |> Map.put("email", "test@gmail.com")
+
+      form = form(view, "#invitation_user_sign_up_form", user: valid_invitation_params)
+      conn = submit_form(form, new_conn)
+
+      assert redirected_to(conn) == ~p"/edit_profile"
+
+      assert {:ok, user} = User.by_email(@valid_registration_params["email"])
+
+      # Verify invitation was updated
+      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+
+      assert updated_invitation.status == :accepted
+      assert updated_invitation.user_id == user.id
+
+      # Verify invited user access rights
+      user_create_resources = ["Event"]
+
+      user_read_only_resources = [
+        "AccessRight",
+        "Activity",
+        "Group",
+        "GroupMembership",
+        "Invitation",
+        "InvitationGroup",
+        "Organisation",
+        "Project",
+        "Token",
+        "User"
+      ]
+
+      for resource <- user_read_only_resources do
+        assert {:ok, [access_right]} =
+                 AccessRight
+                 |> Ash.Query.filter(
+                   resource_name: resource,
+                   group_id: users_group.id,
+                   organisation_id: organisation.id
+                 )
+                 |> Ash.read(authorize?: false, tenant: organisation)
+
+        assert access_right.create == false
+        assert access_right.destroy == false
+        assert access_right.read == true
+        assert access_right.update == false
+      end
+
+      for resource <- user_create_resources do
+        assert {:ok, [access_right]} =
+                 AccessRight
+                 |> Ash.Query.filter(
+                   resource_name: resource,
+                   group_id: users_group.id,
+                   organisation_id: organisation.id
+                 )
+                 |> Ash.read(authorize?: false, tenant: organisation)
+
+        assert access_right.create == true
+        assert access_right.destroy == false
+        assert access_right.read == true
+        assert access_right.update == false
+      end
     end
 
     test "form errors are displayed", %{
