@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.InvitationGroup do
+defmodule Omedis.Invitations.InvitationGroup do
   @moduledoc """
   Represents a group in an invitation.
   """
@@ -46,7 +46,7 @@ defmodule Omedis.Accounts.InvitationGroup do
   end
 
   relationships do
-    belongs_to :invitation, Omedis.Accounts.Invitation do
+    belongs_to :invitation, Omedis.Invitations.Invitation do
       allow_nil? false
       primary_key? true
     end

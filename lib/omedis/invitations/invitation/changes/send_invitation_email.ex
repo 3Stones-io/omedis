@@ -1,8 +1,8 @@
-defmodule Omedis.Accounts.Changes.SendInvitationEmail do
+defmodule Omedis.Invitations.Invitation.Changes.SendInvitationEmail do
   @moduledoc false
   use Ash.Resource.Change
 
-  alias Omedis.Workers.InvitationEmailWorker
+  alias Omedis.Invitations.Invitation.Workers.InvitationEmailWorker
 
   def change(changeset, _opts, _context) do
     Ash.Changeset.after_transaction(changeset, fn

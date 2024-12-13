@@ -1,9 +1,9 @@
 defmodule OmedisWeb.RegisterTest do
   use OmedisWeb.ConnCase, async: true
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
+  alias Omedis.Invitations.Invitation
 
   import Phoenix.LiveViewTest
   import Omedis.TestUtils

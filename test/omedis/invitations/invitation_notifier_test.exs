@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.UserNotifierTest do
+defmodule Omedis.Invitations.InvitationNotifierTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
@@ -46,7 +46,7 @@ defmodule Omedis.Accounts.UserNotifierTest do
            invitation: invitation,
            organisation: organisation
          } do
-      Omedis.Accounts.deliver_invitation_email(invitation, "INVITATION_URL")
+      Omedis.Invitations.deliver_invitation_email(invitation, "INVITATION_URL")
 
       assert_email_sent(
         from: {"Omedis", "contact@omedis.com"},
@@ -71,7 +71,7 @@ defmodule Omedis.Accounts.UserNotifierTest do
 
       invitation = Ash.load!(invitation, :organisation, authorize?: false)
 
-      Omedis.Accounts.deliver_invitation_email(invitation, "INVITATION_URL")
+      Omedis.Invitations.deliver_invitation_email(invitation, "INVITATION_URL")
 
       assert_email_sent(
         from: {"Omedis", "contact@omedis.com"},

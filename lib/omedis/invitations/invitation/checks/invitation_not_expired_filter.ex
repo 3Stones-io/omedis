@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.InvitationNotExpiredFilter do
+defmodule Omedis.Invitations.Invitation.Checks.InvitationNotExpiredFilter do
   @moduledoc """
   A policy that checks if an invitation has not expired.
   """

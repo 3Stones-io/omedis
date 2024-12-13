@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.UserNotifier do
+defmodule Omedis.Invitations.Invitation.InvitationNotifier do
   @moduledoc false
 
   use Gettext, backend: OmedisWeb.Gettext

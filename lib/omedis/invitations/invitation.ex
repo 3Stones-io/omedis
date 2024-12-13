@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Invitation do
+defmodule Omedis.Invitations.Invitation do
   @moduledoc """
   Represents an invitation to join an organisation.
   """
@@ -86,12 +86,12 @@ defmodule Omedis.Accounts.Invitation do
                on_missing: :unrelate
              )
 
-      change Omedis.Accounts.Changes.SendInvitationEmail
-      change Omedis.Accounts.Invitation.Changes.EnsureExpirationIsInFuture
-      change Omedis.Accounts.Invitation.Changes.ScheduleInvitationExpiration
+      change Omedis.Invitations.Invitation.Changes.SendInvitationEmail
+      change Omedis.Invitations.Invitation.Changes.EnsureExpirationIsInFuture
+      change Omedis.Invitations.Invitation.Changes.ScheduleInvitationExpiration
 
-      validate {__MODULE__.Validations.ValidateNoPendingInvitation, []}
-      validate {__MODULE__.Validations.ValidateUserNotRegistered, []}
+      validate {Omedis.Invitations.Invitation.Validations.ValidateNoPendingInvitation, []}
+      validate {Omedis.Invitations.Invitation.Validations.ValidateUserNotRegistered, []}
 
       primary? true
     end
@@ -109,7 +109,7 @@ defmodule Omedis.Accounts.Invitation do
     end
 
     policy action(:by_id) do
-      authorize_if Omedis.Accounts.InvitationNotExpiredFilter
+      authorize_if Omedis.Invitations.Invitation.Checks.InvitationNotExpiredFilter
     end
 
     policy action([:list_paginated, :read]) do
@@ -164,11 +164,11 @@ defmodule Omedis.Accounts.Invitation do
     end
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.Invitation.Relationships.InvitationAccessRights
+      manual Omedis.Invitations.Invitation.Relationships.InvitationAccessRights
     end
 
     many_to_many :groups, Omedis.Accounts.Group do
-      through Omedis.Accounts.InvitationGroup
+      through Omedis.Invitations.InvitationGroup
     end
   end
 end

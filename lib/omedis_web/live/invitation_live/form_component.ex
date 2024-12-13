@@ -3,7 +3,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
   alias AshPhoenix.Form
   alias Omedis.Accounts.Group
-  alias Omedis.Accounts.Invitation
+  alias Omedis.Invitations.Invitation
 
   @supported_languages [
     {"English", "en"},

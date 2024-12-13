@@ -1,10 +1,10 @@
-defmodule Omedis.Workers.InvitationExpirationWorker do
+defmodule Omedis.Invitations.Invitation.Workers.InvitationExpirationWorker do
   @moduledoc false
   use Oban.Worker, queue: :invitation_expiration
 
   require Ash.Query
 
-  alias Omedis.Accounts.Invitation
+  alias Omedis.Invitations.Invitation
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"invitation_id" => invitation_id}}) do

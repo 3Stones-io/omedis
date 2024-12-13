@@ -1,12 +1,12 @@
-defmodule Omedis.Workers.InvitationEmailWorker do
+defmodule Omedis.Invitations.Invitation.Workers.InvitationEmailWorker do
   @moduledoc false
   use Oban.Worker, queue: :invitation
 
   use OmedisWeb, :verified_routes
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
+  alias Omedis.Invitations.Invitation
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: args}) do
@@ -26,7 +26,7 @@ defmodule Omedis.Workers.InvitationEmailWorker do
           ~p"/organisations/#{organisation}/invitations/#{invitation}"
         )
 
-      Omedis.Accounts.deliver_invitation_email(invitation, url)
+      Omedis.Invitations.deliver_invitation_email(invitation, url)
     end
 
     :ok

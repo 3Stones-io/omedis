@@ -4,6 +4,7 @@ defmodule Omedis.Fixtures do
   """
 
   alias Omedis.Accounts
+  alias Omedis.Invitations
 
   def create_access_right(organisation, attrs \\ %{}) do
     fixture(Accounts.AccessRight, organisation, attrs)
@@ -26,11 +27,11 @@ defmodule Omedis.Fixtures do
   end
 
   def create_invitation(organisation, attrs \\ %{}, opts \\ []) do
-    fixture(Accounts.Invitation, organisation, attrs, opts)
+    fixture(Invitations.Invitation, organisation, attrs, opts)
   end
 
   def create_invitation_group(organisation, attrs \\ %{}) do
-    fixture(Accounts.InvitationGroup, organisation, attrs)
+    fixture(Invitations.InvitationGroup, organisation, attrs)
   end
 
   def create_project(organisation, attrs \\ %{}) do
@@ -117,7 +118,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.Invitation, _organisation) do
+  def attrs_for(Invitations.Invitation, _organisation) do
     %{
       creator_id: fn ->
         {:ok, user} = create_user()
@@ -130,7 +131,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.InvitationGroup, organisation) do
+  def attrs_for(Invitations.InvitationGroup, organisation) do
     %{
       group_id: fn ->
         {:ok, group} = create_group(organisation)

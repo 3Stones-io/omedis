@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Invitation.Validations.ValidateNoPendingInvitation do
+defmodule Omedis.Invitations.Invitation.Validations.ValidateNoPendingInvitation do
   @moduledoc """
   Validates that no pending invitation exists for the email address being used for the invitation.
 
@@ -9,7 +9,7 @@ defmodule Omedis.Accounts.Invitation.Validations.ValidateNoPendingInvitation do
 
   require Ash.Query
 
-  alias Omedis.Accounts.Invitation
+  alias Omedis.Invitations.Invitation
 
   @impl true
   def validate(changeset, _opts, context) do

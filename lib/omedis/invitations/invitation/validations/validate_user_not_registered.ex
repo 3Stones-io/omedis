@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Invitation.Validations.ValidateUserNotRegistered do
+defmodule Omedis.Invitations.Invitation.Validations.ValidateUserNotRegistered do
   @moduledoc """
   Validates that no user account exists with the email address being used for the invitation.
 
