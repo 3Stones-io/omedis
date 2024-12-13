@@ -6,7 +6,7 @@ defmodule Omedis.Invitations.InvitationGroup do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Invitations
 
   postgres do
     table "invitation_groups"

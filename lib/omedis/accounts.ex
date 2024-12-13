@@ -28,8 +28,6 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.Event
     resource Omedis.Accounts.Group
     resource Omedis.Accounts.GroupMembership
-    resource Omedis.Invitations.Invitation
-    resource Omedis.Invitations.InvitationGroup
     resource Omedis.Accounts.Organisation
     resource Omedis.Accounts.Project
     resource Omedis.Accounts.Token

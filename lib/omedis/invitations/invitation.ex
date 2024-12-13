@@ -6,7 +6,7 @@ defmodule Omedis.Invitations.Invitation do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts,
+    domain: Omedis.Invitations,
     extensions: [AshStateMachine]
 
   postgres do
@@ -30,7 +30,7 @@ defmodule Omedis.Invitations.Invitation do
   end
 
   code_interface do
-    domain Omedis.Accounts
+    domain Omedis.Invitations
     define :accept
     define :by_id, get_by: [:id]
     define :create
