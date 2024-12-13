@@ -1,10 +1,10 @@
-defmodule Omedis.Accounts.Invitation.Changes.ScheduleInvitationExpiration do
+defmodule Omedis.Invitations.Invitation.Changes.ScheduleInvitationExpiration do
   @moduledoc """
   Schedules an Oban job to expire the invitation at the specified expiration time.
   """
   use Ash.Resource.Change
 
-  alias Omedis.Workers.InvitationExpirationWorker
+  alias Omedis.Invitations.Invitation.Workers.InvitationExpirationWorker
 
   def change(changeset, _opts, _context) do
     Ash.Changeset.after_action(changeset, fn _changeset, invitation ->

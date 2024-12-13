@@ -5,8 +5,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
+  alias Omedis.Invitations.Invitation
 
   @valid_registration_params %{
     "email" => "test@gmail.com",
@@ -142,7 +142,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       # Verify invitation_groups were created
       assert {:ok, invitation_groups} =
-               Omedis.Accounts.InvitationGroup
+               Omedis.Invitations.InvitationGroup
                |> Ash.Query.filter(invitation_id: invitation.id, organisation_id: organisation.id)
                |> Ash.read(authorize?: false, tenant: organisation)
 
@@ -226,7 +226,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       # Verify invitation_groups were created
       assert {:ok, invitation_groups} =
-               Omedis.Accounts.InvitationGroup
+               Omedis.Invitations.InvitationGroup
                |> Ash.Query.filter(invitation_id: invitation.id, organisation_id: organisation.id)
                |> Ash.read(authorize?: false, tenant: organisation)
 

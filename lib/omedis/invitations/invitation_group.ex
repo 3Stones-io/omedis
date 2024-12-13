@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.InvitationGroup do
+defmodule Omedis.Invitations.InvitationGroup do
   @moduledoc """
   Represents a group in an invitation.
   """
@@ -6,7 +6,7 @@ defmodule Omedis.Accounts.InvitationGroup do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Invitations
 
   postgres do
     table "invitation_groups"
@@ -46,7 +46,7 @@ defmodule Omedis.Accounts.InvitationGroup do
   end
 
   relationships do
-    belongs_to :invitation, Omedis.Accounts.Invitation do
+    belongs_to :invitation, Omedis.Invitations.Invitation do
       allow_nil? false
       primary_key? true
     end

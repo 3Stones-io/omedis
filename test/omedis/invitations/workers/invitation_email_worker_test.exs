@@ -5,7 +5,7 @@ defmodule Omedis.Workers.InvitationEmailWorkerTest do
   import Swoosh.TestAssertions
   import Omedis.TestUtils
 
-  alias Omedis.Workers.InvitationEmailWorker
+  alias Omedis.Invitations.Invitation.Workers.InvitationEmailWorker
 
   setup do
     {:ok, user} = create_user()

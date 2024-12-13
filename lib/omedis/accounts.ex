@@ -28,19 +28,11 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.Event
     resource Omedis.Accounts.Group
     resource Omedis.Accounts.GroupMembership
-    resource Omedis.Accounts.Invitation
-    resource Omedis.Accounts.InvitationGroup
     resource Omedis.Accounts.Organisation
     resource Omedis.Accounts.Project
     resource Omedis.Accounts.Token
     resource Omedis.Accounts.User
   end
-
-  defdelegate deliver_invitation_email(
-                invitation,
-                invitation_url
-              ),
-              to: Omedis.Accounts.UserNotifier
 
   def move_activity_up(activity, opts \\ []) do
     case activity.position do

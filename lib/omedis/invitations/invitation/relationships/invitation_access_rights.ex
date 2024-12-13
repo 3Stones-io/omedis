@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Invitation.Relationships.InvitationAccessRights do
+defmodule Omedis.Invitations.Invitation.Relationships.InvitationAccessRights do
   @moduledoc """
   A relationship that allows us to access the invitation access rights.
   """

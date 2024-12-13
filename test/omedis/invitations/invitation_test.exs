@@ -1,12 +1,13 @@
-defmodule Omedis.Accounts.InvitationTest do
+defmodule Omedis.Invitations.InvitationTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Invitation
-  alias Omedis.Accounts.InvitationGroup
-  alias Omedis.Workers.InvitationEmailWorker
+  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations.Invitation.Workers.InvitationEmailWorker
+  alias Omedis.Invitations.Invitation.Workers.InvitationExpirationWorker
+  alias Omedis.Invitations.InvitationGroup
 
   @params %{email: "test@example.com", language: "en"}
 
@@ -178,7 +179,7 @@ defmodule Omedis.Accounts.InvitationTest do
       assert {:ok, invitation} = Invitation.create(attrs, actor: owner, tenant: organisation)
 
       assert_enqueued(
-        worker: Omedis.Workers.InvitationExpirationWorker,
+        worker: InvitationExpirationWorker,
         args: %{"invitation_id" => invitation.id},
         scheduled_at: invitation.expires_at
       )
@@ -206,7 +207,7 @@ defmodule Omedis.Accounts.InvitationTest do
              ] =
                errors
 
-      refute_enqueued(worker: Omedis.Workers.InvitationExpirationWorker)
+      refute_enqueued(worker: InvitationExpirationWorker)
     end
 
     test "deletes existing pending invitation and creates a new one",
@@ -256,7 +257,7 @@ defmodule Omedis.Accounts.InvitationTest do
       assert {:error, %Ash.Error.Invalid{}} =
                Invitation.create(attrs, actor: owner, tenant: organisation)
 
-      refute_enqueued(worker: Omedis.Workers.InvitationExpirationWorker)
+      refute_enqueued(worker: InvitationExpirationWorker)
     end
   end
 

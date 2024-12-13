@@ -6,7 +6,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
   require Ash.Query
 
-  alias Omedis.Accounts.Invitation
+  alias Omedis.Invitations.Invitation
 
   setup do
     {:ok, owner} = create_user()

@@ -3,9 +3,9 @@ defmodule Omedis.Accounts.Changes.MaybeCreateOrganisation do
 
   use Ash.Resource.Change
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
+  alias Omedis.Invitations.Invitation
 
   def change(changeset, _opts, _context) do
     Ash.Changeset.after_action(changeset, fn _changeset, user ->

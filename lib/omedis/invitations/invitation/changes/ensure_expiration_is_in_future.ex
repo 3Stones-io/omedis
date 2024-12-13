@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Invitation.Changes.EnsureExpirationIsInFuture do
+defmodule Omedis.Invitations.Invitation.Changes.EnsureExpirationIsInFuture do
   @moduledoc """
   Ensures that the expiration time is in the future.
   """

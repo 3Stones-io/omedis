@@ -1,8 +1,8 @@
 defmodule Omedis.Workers.InvitationExpirationWorkerTest do
   use Omedis.DataCase, async: true
 
-  alias Omedis.Accounts.Invitation
-  alias Omedis.Workers.InvitationExpirationWorker
+  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations.Invitation.Workers.InvitationExpirationWorker
 
   setup do
     {:ok, user} = create_user()

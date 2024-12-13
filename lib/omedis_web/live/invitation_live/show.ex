@@ -2,9 +2,9 @@ defmodule OmedisWeb.InvitationLive.Show do
   use OmedisWeb, :live_view
 
   alias AshPhoenix.Form
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
+  alias Omedis.Invitations.Invitation
 
   @impl true
   def render(assigns) do

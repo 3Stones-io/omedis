@@ -3,8 +3,8 @@ defmodule Omedis.FarmersTest do
 
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.User
+  alias Omedis.Invitations.Invitation
 
   require Ash.Query
 
