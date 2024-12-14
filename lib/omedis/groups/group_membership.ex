@@ -8,8 +8,9 @@ defmodule Omedis.Groups.GroupMembership do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Groups
 
-  alias Omedis.Accounts.AccessFilter
-  alias Omedis.Accounts.CanAccessResource
+  alias Omedis.AccessRights.AccessRight.Checks.AccessFilter
+  alias Omedis.AccessRights.AccessRight.Checks.CanAccessResource
+  alias Omedis.Accounts.Group
   alias Omedis.Accounts.User
   alias Omedis.Groups.Group
 
@@ -63,7 +64,7 @@ defmodule Omedis.Groups.GroupMembership do
     belongs_to :group, Group, primary_key?: true, allow_nil?: false
     belongs_to :user, User, primary_key?: true, allow_nil?: false
 
-    has_many :access_rights, Omedis.Accounts.AccessRight do
+    has_many :access_rights, Omedis.AccessRights.AccessRight do
       manual Omedis.Groups.GroupMembership.Relationships.GroupMembershipAccessRights
     end
 

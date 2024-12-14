@@ -1,10 +1,10 @@
-defmodule Omedis.Accounts.AccessRight do
+defmodule Omedis.AccessRights.AccessRight do
   @moduledoc """
   Represents an access right for a resource.
   """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.AccessRights
 
   postgres do
     table "access_rights"

@@ -77,7 +77,7 @@ defmodule Omedis.OrganisationTest do
   describe "create/1" do
     require Ash.Query
 
-    alias Omedis.Accounts.AccessRight
+    alias Omedis.AccessRights.AccessRight
     alias Omedis.Accounts.Activity
     alias Omedis.Accounts.Organisation
     alias Omedis.Accounts.Project

@@ -7,7 +7,7 @@ defmodule Omedis.Accounts.CanUpdateOrganisation do
 
   import Ash.Query
 
-  alias Omedis.Accounts.AccessRight
+  alias Omedis.AccessRights.AccessRight
 
   def describe(_options) do
     "User can update or destroy an organisation if they are the owner or have access through a group."

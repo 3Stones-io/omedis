@@ -59,7 +59,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   describe "/organisations/:slug/invitations/:id" do
     require Ash.Query
 
-    alias Omedis.Accounts.AccessRight
+    alias Omedis.AccessRights.AccessRight
 
     test "invitee with a valid invitation can register for an account", %{
       conn: conn,

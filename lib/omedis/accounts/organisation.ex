@@ -247,7 +247,7 @@ defmodule Omedis.Accounts.Organisation do
   end
 
   relationships do
-    has_many :access_rights, Omedis.Accounts.AccessRight
+    has_many :access_rights, Omedis.AccessRights.AccessRight
 
     belongs_to :owner, Omedis.Accounts.User do
       allow_nil? true

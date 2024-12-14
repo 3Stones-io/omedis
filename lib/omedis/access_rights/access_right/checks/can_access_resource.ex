@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.CanAccessResource do
+defmodule Omedis.AccessRights.AccessRight.Checks.CanAccessResource do
   @moduledoc """
   A policy that checks if a user can access a resource.
   """
@@ -7,7 +7,7 @@ defmodule Omedis.Accounts.CanAccessResource do
 
   import Ash.Query
 
-  alias Omedis.Accounts.AccessRight
+  alias Omedis.AccessRights.AccessRight
 
   def describe(_options) do
     "User can access a resource if they have the access right through a group"

@@ -51,6 +51,7 @@ config :omedis, OmedisWeb.Endpoint,
 
 config :omedis,
   ash_domains: [
+    Omedis.AccessRights,
     Omedis.Accounts,
     Omedis.Groups,
     Omedis.Invitations
