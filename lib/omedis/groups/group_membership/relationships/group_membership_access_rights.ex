@@ -6,7 +6,7 @@ defmodule Omedis.Groups.GroupMembership.Relationships.GroupMembershipAccessRight
   use Ash.Resource.ManualRelationship
   use AshPostgres.ManualRelationship
 
-  alias Omedis.AccessRights.ResourceAccessRights
+  alias Omedis.AccessRights.AccessRight.Relationships.ResourceAccessRights
 
   def load(resources, opts, context) do
     ResourceAccessRights.load("GroupMembership", resources, opts, context)

@@ -6,7 +6,7 @@ defmodule Omedis.Accounts.Event.Relationships.EventAccessRights do
   use Ash.Resource.ManualRelationship
   use AshPostgres.ManualRelationship
 
-  alias Omedis.AccessRights.ResourceAccessRights
+  alias Omedis.AccessRights.AccessRight.Relationships.ResourceAccessRights
 
   def load(resources, opts, context) do
     ResourceAccessRights.load("Event", resources, opts, context)
