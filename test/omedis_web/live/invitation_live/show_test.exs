@@ -132,7 +132,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert invitation.email == "test@gmail.com"
 
       {:ok, [users_group]} =
-        Omedis.Accounts.Group
+        Omedis.Groups.Group
         |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
         |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
 
@@ -176,7 +176,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       # Verify user is added to the invited groups
       assert {:ok, user_group_memberships} =
-               Omedis.Accounts.GroupMembership
+               Omedis.Groups.GroupMembership
                |> Ash.Query.filter(user_id: user.id)
                |> Ash.read(authorize?: false, tenant: organisation)
 
@@ -218,7 +218,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert invitation.email == "test@gmail.com"
 
       assert {:ok, [users_group]} =
-               Omedis.Accounts.Group
+               Omedis.Groups.Group
                |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
                |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
 

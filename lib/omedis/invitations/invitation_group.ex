@@ -51,7 +51,7 @@ defmodule Omedis.Invitations.InvitationGroup do
       primary_key? true
     end
 
-    belongs_to :group, Omedis.Accounts.Group do
+    belongs_to :group, Omedis.Groups.Group do
       allow_nil? false
       primary_key? true
     end

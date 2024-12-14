@@ -4,9 +4,9 @@ defmodule Omedis.Accounts.Organisation do
   """
   alias Omedis.Accounts.CanCreateOrganisation
   alias Omedis.Accounts.CanUpdateOrganisation
-  alias Omedis.Accounts.Group
   alias Omedis.Accounts.OrganisationsAccessFilter
   alias Omedis.Accounts.Project
+  alias Omedis.Groups.Group
   alias Omedis.Validations
 
   require Ash.Query
@@ -15,9 +15,6 @@ defmodule Omedis.Accounts.Organisation do
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
-
-  alias Omedis.Accounts.Group
-  alias Omedis.Accounts.OrganisationsAccessFilter
 
   @derive {Phoenix.Param, key: :slug}
 

@@ -2,7 +2,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   use OmedisWeb, :live_component
 
   alias AshPhoenix.Form
-  alias Omedis.Accounts.Group
+  alias Omedis.Groups.Group
   alias Omedis.Invitations.Invitation
 
   @supported_languages [

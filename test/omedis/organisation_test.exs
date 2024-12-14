@@ -79,10 +79,10 @@ defmodule Omedis.OrganisationTest do
 
     alias Omedis.Accounts.AccessRight
     alias Omedis.Accounts.Activity
-    alias Omedis.Accounts.Group
-    alias Omedis.Accounts.GroupMembership
     alias Omedis.Accounts.Organisation
     alias Omedis.Accounts.Project
+    alias Omedis.Groups.Group
+    alias Omedis.Groups.GroupMembership
 
     test "users can only have one organisation" do
       {:ok, user} = create_user()

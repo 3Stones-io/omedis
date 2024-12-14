@@ -26,8 +26,6 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.AccessRight
     resource Omedis.Accounts.Activity
     resource Omedis.Accounts.Event
-    resource Omedis.Accounts.Group
-    resource Omedis.Accounts.GroupMembership
     resource Omedis.Accounts.Organisation
     resource Omedis.Accounts.Project
     resource Omedis.Accounts.Token

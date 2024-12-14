@@ -3,7 +3,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
 
   alias AshPhoenix.Form
   alias Omedis.Accounts
-  alias Omedis.Accounts.Group
+  alias Omedis.Groups.Group
 
   @impl true
   def render(assigns) do
@@ -137,7 +137,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
         )
       else
         AshPhoenix.Form.for_create(
-          Omedis.Accounts.Group,
+          Omedis.Groups.Group,
           :create,
           as: "group",
           tenant: socket.assigns.organisation,
