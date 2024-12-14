@@ -1,7 +1,7 @@
 defmodule OmedisWeb.GroupLive.Index do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Group
+  alias Omedis.Groups.Group
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -202,7 +202,7 @@ defmodule OmedisWeb.GroupLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     group =
-      Ash.get!(Omedis.Accounts.Group, id,
+      Ash.get!(Omedis.Groups.Group, id,
         actor: socket.assigns.current_user,
         tenant: socket.assigns.organisation
       )

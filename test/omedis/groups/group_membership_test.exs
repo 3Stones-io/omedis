@@ -1,9 +1,9 @@
-defmodule Omedis.GroupMembershipTest do
+defmodule Omedis.Groups.GroupMembershipTest do
   use Omedis.DataCase, async: true
 
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.GroupMembership
+  alias Omedis.Groups.GroupMembership
 
   setup do
     {:ok, owner} = create_user()

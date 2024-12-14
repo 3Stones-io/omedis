@@ -66,6 +66,6 @@ defmodule Omedis.AccessRights.AccessRight do
 
   relationships do
     belongs_to :organisation, Omedis.Accounts.Organisation
-    belongs_to :group, Omedis.Accounts.Group
+    belongs_to :group, Omedis.Groups.Group
   end
 end

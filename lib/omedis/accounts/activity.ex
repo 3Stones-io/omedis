@@ -169,7 +169,7 @@ defmodule Omedis.Accounts.Activity do
   end
 
   relationships do
-    belongs_to :group, Omedis.Accounts.Group do
+    belongs_to :group, Omedis.Groups.Group do
       allow_nil? false
       attribute_writable? true
     end

@@ -167,7 +167,7 @@ defmodule Omedis.Invitations.Invitation do
       manual Omedis.Invitations.Invitation.Relationships.InvitationAccessRights
     end
 
-    many_to_many :groups, Omedis.Accounts.Group do
+    many_to_many :groups, Omedis.Groups.Group do
       through Omedis.Invitations.InvitationGroup
     end
   end

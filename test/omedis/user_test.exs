@@ -84,7 +84,7 @@ defmodule Omedis.FarmersTest do
       assert {:ok, user} = User.create(params)
 
       assert {:ok, user_group_memberships} =
-               Omedis.Accounts.GroupMembership
+               Omedis.Groups.GroupMembership
                |> Ash.Query.filter(user_id: user.id)
                |> Ash.read(authorize?: false, tenant: organisation)
 
@@ -111,7 +111,7 @@ defmodule Omedis.FarmersTest do
                })
 
       assert {:ok, [users_group]} =
-               Omedis.Accounts.Group
+               Omedis.Groups.Group
                |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
                |> Ash.read(authorize?: false, tenant: organisation, load: :group_memberships)
 

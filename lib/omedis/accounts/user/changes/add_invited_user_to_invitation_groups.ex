@@ -5,8 +5,8 @@ defmodule Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups do
 
   use Ash.Resource.Change
 
-  alias Omedis.Accounts.GroupMembership
   alias Omedis.Accounts.Organisation
+  alias Omedis.Groups.GroupMembership
   alias Omedis.Invitations.Invitation
   alias Omedis.Invitations.InvitationGroup
 
