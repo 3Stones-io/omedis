@@ -1,4 +1,4 @@
-defmodule Omedis.AccessRights.AccessRight.CanAccessResource do
+defmodule Omedis.AccessRights.AccessRight.Checks.CanAccessResource do
   @moduledoc """
   A policy that checks if a user can access a resource.
   """

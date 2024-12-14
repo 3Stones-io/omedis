@@ -126,11 +126,11 @@ defmodule Omedis.Accounts.Activity do
 
   policies do
     policy action_type([:create, :update, :destroy]) do
-      authorize_if Omedis.AccessRights.AccessRight.CanAccessResource
+      authorize_if Omedis.AccessRights.AccessRight.Checks.CanAccessResource
     end
 
     policy action_type(:read) do
-      authorize_if Omedis.AccessRights.AccessRight.AccessFilter
+      authorize_if Omedis.AccessRights.AccessRight.Checks.AccessFilter
     end
   end
 

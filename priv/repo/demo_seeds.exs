@@ -2,6 +2,7 @@ import Omedis.Fixtures
 
 alias Omedis.Accounts
 alias Omedis.AccessRights
+alias Omedis.Groups
 
 bulk_create = fn module, organisation, list, upsert_identity ->
   list
@@ -48,7 +49,7 @@ end
 
 %{records: [group_1, group_2], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     organisation_1,
     [
       %{name: "Demo Group", slug: "demo-group"},
@@ -59,7 +60,7 @@ end
 
 %{records: [group_3], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     organisation_2,
     [
       %{name: "Demo Group 3", slug: "demo-group3"}
@@ -69,7 +70,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.GroupMembership,
+    Groups.GroupMembership,
     organisation_1,
     [
       %{group_id: group_1.id, user_id: user_1.id},
@@ -80,7 +81,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.GroupMembership,
+    Groups.GroupMembership,
     organisation_2,
     [
       %{group_id: group_3.id, user_id: user_3.id}

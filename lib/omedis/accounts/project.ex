@@ -10,8 +10,8 @@ defmodule Omedis.Accounts.Project do
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
 
-  alias Omedis.AccessRights.AccessRight.AccessFilter
-  alias Omedis.AccessRights.AccessRight.CanAccessResource
+  alias Omedis.AccessRights.AccessRight.Checks.AccessFilter
+  alias Omedis.AccessRights.AccessRight.Checks.CanAccessResource
 
   postgres do
     table "projects"
