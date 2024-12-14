@@ -101,7 +101,7 @@ defmodule Omedis.Invitations.Invitation do
 
   policies do
     policy action_type([:create, :destroy]) do
-      authorize_if Omedis.Accounts.CanAccessResource
+      authorize_if Omedis.AccessRights.AccessRight.CanAccessResource
     end
 
     policy action_type([:create, :update]) do
@@ -113,7 +113,7 @@ defmodule Omedis.Invitations.Invitation do
     end
 
     policy action([:list_paginated, :read]) do
-      authorize_if Omedis.Accounts.AccessFilter
+      authorize_if Omedis.AccessRights.AccessRight.AccessFilter
     end
   end
 
@@ -163,7 +163,7 @@ defmodule Omedis.Invitations.Invitation do
       attribute_writable? true
     end
 
-    has_many :access_rights, Omedis.Accounts.AccessRight do
+    has_many :access_rights, Omedis.AccessRights.AccessRight do
       manual Omedis.Invitations.Invitation.Relationships.InvitationAccessRights
     end
 

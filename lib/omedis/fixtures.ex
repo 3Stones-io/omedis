@@ -3,11 +3,12 @@ defmodule Omedis.Fixtures do
   Fixtures for the Omedis system.
   """
 
+  alias Omedis.AccessRights
   alias Omedis.Accounts
   alias Omedis.Invitations
 
   def create_access_right(organisation, attrs \\ %{}) do
-    fixture(Accounts.AccessRight, organisation, attrs)
+    fixture(AccessRights.AccessRight, organisation, attrs)
   end
 
   def create_group(organisation, attrs \\ %{}) do
@@ -51,7 +52,7 @@ defmodule Omedis.Fixtures do
     Ash.create(Accounts.User, attrs, authorize?: false)
   end
 
-  def attrs_for(Accounts.AccessRight, organisation) do
+  def attrs_for(AccessRights.AccessRight, organisation) do
     %{
       create: Enum.random([true, false]),
       group_id: fn ->

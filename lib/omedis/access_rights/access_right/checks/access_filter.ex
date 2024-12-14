@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.AccessFilter do
+defmodule Omedis.AccessRights.AccessRight.AccessFilter do
   @moduledoc """
   This policy filter is used to filter resources based on user access rights.
   """

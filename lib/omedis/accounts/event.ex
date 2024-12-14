@@ -126,11 +126,11 @@ defmodule Omedis.Accounts.Event do
 
   policies do
     policy action_type(:read) do
-      authorize_if Omedis.Accounts.AccessFilter
+      authorize_if Omedis.AccessRights.AccessRight.AccessFilter
     end
 
     policy action_type([:create, :update]) do
-      authorize_if Omedis.Accounts.CanAccessResource
+      authorize_if Omedis.AccessRights.AccessRight.CanAccessResource
     end
   end
 
@@ -165,7 +165,7 @@ defmodule Omedis.Accounts.Event do
     belongs_to :organisation, Omedis.Accounts.Organisation
     belongs_to :user, Omedis.Accounts.User
 
-    has_many :access_rights, Omedis.Accounts.AccessRight do
+    has_many :access_rights, Omedis.AccessRights.AccessRight do
       manual Omedis.Accounts.Event.Relationships.EventAccessRights
     end
   end

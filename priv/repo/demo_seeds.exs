@@ -1,6 +1,7 @@
 import Omedis.Fixtures
 
 alias Omedis.Accounts
+alias Omedis.AccessRights
 
 bulk_create = fn module, organisation, list, upsert_identity ->
   list
@@ -89,7 +90,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.AccessRight,
+    AccessRights.AccessRight,
     organisation_1,
     [
       %{
@@ -106,7 +107,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.AccessRight,
+    AccessRights.AccessRight,
     organisation_1,
     [
       %{
@@ -163,7 +164,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.AccessRight,
+    AccessRights.AccessRight,
     organisation_1,
     [
       %{
@@ -177,7 +178,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.AccessRight,
+    AccessRights.AccessRight,
     organisation_2,
     [
       %{

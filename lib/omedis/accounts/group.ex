@@ -112,11 +112,11 @@ defmodule Omedis.Accounts.Group do
 
   policies do
     policy action_type([:create, :update, :destroy]) do
-      authorize_if Omedis.Accounts.CanAccessResource
+      authorize_if Omedis.AccessRights.AccessRight.CanAccessResource
     end
 
     policy action_type([:read]) do
-      authorize_if Omedis.Accounts.AccessFilter
+      authorize_if Omedis.AccessRights.AccessRight.AccessFilter
     end
   end
 
@@ -153,7 +153,7 @@ defmodule Omedis.Accounts.Group do
 
     has_many :group_memberships, GroupMembership
 
-    has_many :access_rights, Omedis.Accounts.AccessRight do
+    has_many :access_rights, Omedis.AccessRights.AccessRight do
       manual Omedis.Accounts.Group.Relationships.GroupAccessRights
     end
   end

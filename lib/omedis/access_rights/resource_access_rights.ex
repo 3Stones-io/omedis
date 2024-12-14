@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Relationships.ResourceAccessRights do
+defmodule Omedis.AccessRights.ResourceAccessRights do
   @moduledoc """
   A relationship that allows us to access the access rights for a resource.
   """

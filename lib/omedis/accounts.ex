@@ -23,7 +23,6 @@ defmodule Omedis.Accounts do
   ]
 
   resources do
-    resource Omedis.Accounts.AccessRight
     resource Omedis.Accounts.Activity
     resource Omedis.Accounts.Event
     resource Omedis.Accounts.Group
