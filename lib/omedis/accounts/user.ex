@@ -12,10 +12,10 @@ defmodule Omedis.Accounts.User do
   alias Omedis.Accounts.CanDeleteAccount
   alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
   alias Omedis.Accounts.Changes.MaybeCreateOrganisation
-  alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupMembership
   alias Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups
   alias Omedis.Accounts.User.Changes.AssociateUserWithInvitation
+  alias Omedis.Groups.Group
+  alias Omedis.Groups.GroupMembership
   alias Omedis.Validations
 
   postgres do

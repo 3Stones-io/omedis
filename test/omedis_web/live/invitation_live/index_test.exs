@@ -263,7 +263,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
   end
 
   describe "/organisations/:slug/invitations/new" do
-    alias Omedis.Accounts.Group
+    alias Omedis.Groups.Group
 
     test "organisation owner can create an invitation", %{
       conn: conn,

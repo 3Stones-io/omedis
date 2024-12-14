@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Group do
+defmodule Omedis.Groups.Group do
   @moduledoc """
   This is the group module
   """
@@ -7,11 +7,11 @@ defmodule Omedis.Accounts.Group do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts,
+    domain: Omedis.Groups,
     authorizers: [Ash.Policy.Authorizer]
 
-  alias Omedis.Accounts.GroupMembership
   alias Omedis.Accounts.User
+  alias Omedis.Groups.GroupMembership
 
   @derive {Phoenix.Param, key: :slug}
 
@@ -30,7 +30,7 @@ defmodule Omedis.Accounts.Group do
   end
 
   code_interface do
-    domain Omedis.Accounts
+    domain Omedis.Groups
     define :create
     define :update
     define :by_id, get_by: [:id], action: :read
@@ -154,7 +154,7 @@ defmodule Omedis.Accounts.Group do
     has_many :group_memberships, GroupMembership
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.Group.Relationships.GroupAccessRights
+      manual Omedis.Groups.Group.Relationships.GroupAccessRights
     end
   end
 

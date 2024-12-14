@@ -1,8 +1,8 @@
 defmodule Omedis.TestUtils do
   @moduledoc false
 
-  alias Omedis.Accounts.Group
   alias Omedis.Accounts.Organisation
+  alias Omedis.Groups.Group
 
   require Ash.Query
 

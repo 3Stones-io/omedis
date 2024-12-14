@@ -7,9 +7,9 @@ defmodule Omedis.Accounts.CanDeleteAccount do
 
   import Ash.Query
 
-  alias Omedis.Accounts.Group
-  alias Omedis.Accounts.GroupMembership
   alias Omedis.Accounts.Organisation
+  alias Omedis.Groups.Group
+  alias Omedis.Groups.GroupMembership
 
   def describe(_options), do: "User can delete their own account"
 

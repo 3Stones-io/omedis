@@ -13,6 +13,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
   use Ash.Resource.Change
 
   alias Omedis.Accounts
+  alias Omedis.Groups
 
   @admin_full_access_resources [
     "AccessRight",
@@ -61,7 +62,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
 
   defp create_admins_group(organisation, opts) do
     {:ok, administrators_group} =
-      Accounts.Group.create(
+      Groups.Group.create(
         %{
           name: "Administrators",
           slug: "administrators",
@@ -71,7 +72,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
       )
 
     {:ok, _} =
-      Accounts.GroupMembership.create(
+      Groups.GroupMembership.create(
         %{
           group_id: administrators_group.id,
           user_id: organisation.owner_id
@@ -84,7 +85,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
 
   defp create_users_group(organisation, opts) do
     {:ok, users_group} =
-      Accounts.Group.create(
+      Groups.Group.create(
         %{
           name: "Users",
           slug: "users",

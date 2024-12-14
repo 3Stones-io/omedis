@@ -4,6 +4,7 @@ defmodule Omedis.Fixtures do
   """
 
   alias Omedis.Accounts
+  alias Omedis.Groups
   alias Omedis.Invitations
 
   def create_access_right(organisation, attrs \\ %{}) do
@@ -11,11 +12,11 @@ defmodule Omedis.Fixtures do
   end
 
   def create_group(organisation, attrs \\ %{}) do
-    fixture(Accounts.Group, organisation, attrs)
+    fixture(Groups.Group, organisation, attrs)
   end
 
   def create_group_membership(organisation, attrs \\ %{}) do
-    fixture(Accounts.GroupMembership, organisation, attrs)
+    fixture(Groups.GroupMembership, organisation, attrs)
   end
 
   def create_activity(organisation, attrs \\ %{}) do
@@ -65,14 +66,14 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.Group, _organisation) do
+  def attrs_for(Groups.Group, _organisation) do
     %{
       name: Faker.Company.name(),
       slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}"
     }
   end
 
-  def attrs_for(Accounts.GroupMembership, organisation) do
+  def attrs_for(Groups.GroupMembership, organisation) do
     %{
       group_id: fn ->
         {:ok, group} = create_group(organisation)

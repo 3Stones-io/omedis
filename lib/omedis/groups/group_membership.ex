@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.GroupMembership do
+defmodule Omedis.Groups.GroupMembership do
   @moduledoc """
   Represents a user in a group.
   """
@@ -6,12 +6,12 @@ defmodule Omedis.Accounts.GroupMembership do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Groups
 
   alias Omedis.Accounts.AccessFilter
   alias Omedis.Accounts.CanAccessResource
-  alias Omedis.Accounts.Group
   alias Omedis.Accounts.User
+  alias Omedis.Groups.Group
 
   postgres do
     table "group_memberships"
@@ -64,7 +64,7 @@ defmodule Omedis.Accounts.GroupMembership do
     belongs_to :user, User, primary_key?: true, allow_nil?: false
 
     has_many :access_rights, Omedis.Accounts.AccessRight do
-      manual Omedis.Accounts.GroupMembership.Relationships.GroupMembershipAccessRights
+      manual Omedis.Groups.GroupMembership.Relationships.GroupMembershipAccessRights
     end
 
     belongs_to :organisation, Omedis.Accounts.Organisation
