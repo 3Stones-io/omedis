@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.CanCreateOrganisation do
+defmodule Omedis.Accounts.Organisation.Checks.CanCreateOrganisation do
   @moduledoc """
   Determines whether a user can create an organisation.
   User can create only one organisation.
