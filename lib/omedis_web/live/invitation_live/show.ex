@@ -53,6 +53,9 @@ defmodule OmedisWeb.InvitationLive.Show do
                   required
                   label={dgettext("invitation", "Email")}
                   value={@invitation.email}
+                  input_class="cursor-not-allowed"
+                  disabled
+                  readonly
                 />
               </div>
 
