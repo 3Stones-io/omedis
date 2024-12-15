@@ -494,7 +494,11 @@ defmodule OmedisWeb.GeneralComponents do
                   <span class="hidden lg:flex lg:items-center">
                     <span class="ml-4 text-sm font-medium leading-6 text-gray-900" aria-hidden="true">
                       <%= if @current_user do %>
-                        <%= @current_user.as_string %>
+                        <%= if @current_user.as_string do %>
+                          <%= @current_user.as_string %>
+                        <% else %>
+                          <%= @current_user.email %>
+                        <% end %>
                       <% else %>
                         <.link navigate="/login" class="text-blue-500">
                           <%= dgettext("navigation", "Login") %>
