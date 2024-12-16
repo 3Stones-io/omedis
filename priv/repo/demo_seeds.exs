@@ -1,7 +1,18 @@
 import Omedis.Fixtures
 
-alias Omedis.Accounts
+require Ash.Query
+
 alias Omedis.AccessRights
+alias Omedis.Accounts
+alias Omedis.DemoSeeds
+
+defmodule Omedis.DemoSeeds do
+  def get_organisation_by_owner_id(owner_id) do
+    Accounts.Organisation
+    |> Ash.Query.filter(owner_id: owner_id)
+    |> Ash.read_one!(authorize?: false)
+  end
+end
 
 bulk_create = fn module, organisation, list, upsert_identity ->
   list
@@ -35,16 +46,7 @@ end
     :unique_email
   )
 
-%{records: [organisation_1, organisation_2], status: :success} =
-  bulk_create.(
-    Accounts.Organisation,
-    nil,
-    [
-      %{owner_id: user_1.id, slug: "demo-organisation"},
-      %{owner_id: user_2.id, slug: "demo-organisation-2"}
-    ],
-    :unique_slug
-  )
+organisation_1 = DemoSeeds.get_organisation_by_owner_id(user_1.id)
 
 %{records: [group_1, group_2], status: :success} =
   bulk_create.(
@@ -56,6 +58,8 @@ end
     ],
     :unique_slug_per_organisation
   )
+
+organisation_2 = DemoSeeds.get_organisation_by_owner_id(user_2.id)
 
 %{records: [group_3], status: :success} =
   bulk_create.(
