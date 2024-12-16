@@ -1,4 +1,4 @@
-defmodule Omedis.Validations.Timezone do
+defmodule Omedis.Accounts.Organisation.Validations.Timezone do
   use Ash.Resource.Validation
 
   @moduledoc """

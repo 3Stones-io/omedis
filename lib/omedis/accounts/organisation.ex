@@ -2,12 +2,12 @@ defmodule Omedis.Accounts.Organisation do
   @moduledoc """
   This is the Organisation module
   """
-  alias Omedis.Accounts.CanCreateOrganisation
-  alias Omedis.Accounts.CanUpdateOrganisation
-  alias Omedis.Accounts.OrganisationsAccessFilter
+  alias Omedis.Accounts.Organisation.Checks.CanCreateOrganisation
+  alias Omedis.Accounts.Organisation.Checks.CanUpdateOrganisation
+  alias Omedis.Accounts.Organisation.Checks.OrganisationsAccessFilter
+  alias Omedis.Accounts.Organisation.Validations.Timezone
   alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
-  alias Omedis.Validations
 
   require Ash.Query
 
@@ -78,7 +78,7 @@ defmodule Omedis.Accounts.Organisation do
 
       primary? true
 
-      change Omedis.Accounts.Changes.CreateOrganisationDefaults
+      change Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults
       change Omedis.Accounts.Organisation.Changes.AssociateUserWithOrganisation
     end
 
@@ -169,7 +169,7 @@ defmodule Omedis.Accounts.Organisation do
   end
 
   validations do
-    validate {Validations.Timezone, attribute: :timezone}
+    validate {Timezone, attribute: :timezone}
   end
 
   attributes do
