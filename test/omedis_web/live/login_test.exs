@@ -33,6 +33,32 @@ defmodule OmedisWeb.LoginTest do
       assert {:ok, _index_live, _html} = live(conn, ~p"/organisations")
     end
 
+    test "redirects to the edit profile page if no other return_to path is set", %{conn: conn} do
+      {:ok, user} =
+        @valid_create_params
+        |> Map.put(:email, "test@gmail.com")
+        |> User.create()
+
+      {:ok, lv, _html} = live(conn, ~p"/login")
+
+      form =
+        form(lv, "#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
+
+      conn = submit_form(form, conn)
+
+      assert redirected_to(conn) == ~p"/edit_profile"
+
+      assert {:ok, edit_profile_live, html} = live(conn, ~p"/edit_profile")
+      assert html =~ "Edit your profile details"
+
+      assert has_element?(edit_profile_live, "input[name=\"user[first_name]\"]")
+      assert has_element?(edit_profile_live, "input[name=\"user[last_name]\"]")
+      assert has_element?(edit_profile_live, "select[name=\"user[gender]\"]")
+      assert has_element?(edit_profile_live, "input[type=\"date\"][name=\"user[birthdate]\"]")
+      assert has_element?(edit_profile_live, "select[name=\"user[lang]\"]")
+      assert has_element?(edit_profile_live, "button[type=\"submit\"]")
+    end
+
     test "shows errors when wrong credentials are entered", %{conn: conn} do
       {:ok, user} = User.create(@valid_create_params)
 
