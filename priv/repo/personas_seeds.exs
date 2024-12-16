@@ -3,6 +3,7 @@ import Omedis.Fixtures
 require Ash.Query
 
 alias Omedis.Accounts
+alias Omedis.Groups
 
 bulk_create = fn module, list, opts ->
   list
@@ -145,7 +146,7 @@ end
 
 %{records: [group_1, group_2], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Demo Group", slug: "demo-group"},
       %{name: "Demo Group 2", slug: "demo-group2"}
@@ -156,7 +157,7 @@ end
 
 %{records: [security_group], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Security Team", slug: "security-team"}
     ],
@@ -166,7 +167,7 @@ end
 
 %{records: [dev_group], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Development Team", slug: "dev-team"}
     ],
@@ -176,7 +177,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.GroupMembership,
+    Groups.GroupMembership,
     [
       %{group_id: group_1.id, user_id: denis.id},
       %{group_id: group_2.id, user_id: heidi.id}
@@ -194,7 +195,7 @@ end
       %{organisation_id: organisation_1.id, name: "Herr Meier", position: "3"}
     ],
     tenant: organisation_1,
-    upsert_fields: [:name],
+    upsert_fields: [:name, :position],
     upsert_identity: :unique_name
   )
 

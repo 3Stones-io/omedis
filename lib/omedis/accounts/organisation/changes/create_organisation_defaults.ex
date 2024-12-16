@@ -69,7 +69,11 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
           slug: "administrators",
           user_id: organisation.owner_id
         },
-        opts
+        opts ++
+          [
+            upsert?: true,
+            upsert_identity: :unique_slug_per_organisation
+          ]
       )
 
     {:ok, _} =
@@ -78,7 +82,11 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
           group_id: administrators_group.id,
           user_id: organisation.owner_id
         },
-        opts
+        opts ++
+          [
+            upsert?: true,
+            upsert_identity: :unique_group_membership
+          ]
       )
 
     administrators_group
@@ -92,7 +100,11 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
           slug: "users",
           user_id: organisation.owner_id
         },
-        opts
+        opts ++
+          [
+            upsert?: true,
+            upsert_identity: :unique_slug_per_organisation
+          ]
       )
 
     users_group
@@ -172,24 +184,38 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
         },
         actor: actor,
         tenant: organisation,
-        authorize?: false
+        authorize?: false,
+        upsert?: true,
+        upsert_identity: :unique_name
       )
 
     project
   end
 
   defp create_activity(project, users_group, opts) do
-    {:ok, _} =
-      Accounts.Activity.create(
-        %{
-          name: "Miscellaneous",
-          slug: "miscellaneous",
-          group_id: users_group.id,
-          project_id: project.id,
-          is_default: true,
-          color_code: "#808080"
-        },
-        opts
-      )
+    activity = fetch_default_activity(opts)
+
+    if activity do
+      activity
+    else
+      {:ok, _} =
+        Accounts.Activity.create(
+          %{
+            name: "Miscellaneous",
+            slug: "miscellaneous",
+            group_id: users_group.id,
+            project_id: project.id,
+            is_default: true,
+            color_code: "#808080"
+          },
+          opts
+        )
+    end
+  end
+
+  defp fetch_default_activity(opts) do
+    Accounts.Activity
+    |> Ash.Query.filter(name: "Miscellaneous")
+    |> Ash.read_one!(opts)
   end
 end
