@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.OrganisationsAccessFilter do
+defmodule Omedis.Accounts.Organisation.Checks.OrganisationsAccessFilter do
   @moduledoc """
   This policy filter is used to filter organisations based on user access rights.
   """

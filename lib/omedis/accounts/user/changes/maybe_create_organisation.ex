@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Changes.MaybeCreateOrganisation do
+defmodule Omedis.Accounts.User.Changes.MaybeCreateOrganisation do
   @moduledoc false
 
   use Ash.Resource.Change

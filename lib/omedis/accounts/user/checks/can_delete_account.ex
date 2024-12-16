@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.CanDeleteAccount do
+defmodule Omedis.Accounts.User.Checks.CanDeleteAccount do
   @moduledoc """
   A policy that checks if a user can delete their own account.
   """
