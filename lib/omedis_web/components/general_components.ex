@@ -25,7 +25,7 @@ defmodule OmedisWeb.GeneralComponents do
       class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
       aria-label={dgettext("navigation", "Navigation Breadcrumb")}
     >
-      <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
+      <ol role="list" class="flex w-full max-w-screen-xl space-x-4">
         <%= for {label, path, is_current} <- @items do %>
           <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
         <% end %>
