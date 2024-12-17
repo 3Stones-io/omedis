@@ -1,6 +1,6 @@
 {
   "coverage_options": {
-    "minimum_coverage": 84.7
+    "minimum_coverage": 84.9
   },
   "skip_files": [
     "lib/omedis/release.ex",

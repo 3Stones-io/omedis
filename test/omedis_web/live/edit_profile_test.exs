@@ -12,12 +12,20 @@ defmodule OmedisWeb.EditProfileTest do
     test "You can log in with valid data and go to the edit profile page", %{conn: conn} do
       {:ok, user} = create_user()
 
-      assert {:ok, _index_live, html} =
+      assert {:ok, edit_profile_live, html} =
                conn
                |> log_in_user(user)
                |> live(~p"/edit_profile")
 
       assert html =~ "Edit Profile"
+      assert html =~ "Edit your profile details"
+
+      assert has_element?(edit_profile_live, "input[name=\"user[first_name]\"]")
+      assert has_element?(edit_profile_live, "input[name=\"user[last_name]\"]")
+      assert has_element?(edit_profile_live, "select[name=\"user[gender]\"]")
+      assert has_element?(edit_profile_live, "input[type=\"date\"][name=\"user[birthdate]\"]")
+      assert has_element?(edit_profile_live, "select[name=\"user[lang]\"]")
+      assert has_element?(edit_profile_live, "button[type=\"submit\"]")
     end
 
     test "You can change a user's details in the edit profile page", %{conn: conn} do
