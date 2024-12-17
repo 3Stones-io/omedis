@@ -12,15 +12,6 @@ defmodule Omedis.DemoSeeds do
     |> Ash.Query.filter(owner_id: owner_id)
     |> Ash.read_one!(authorize?: false)
   end
-
-  def get_domain(module) do
-    case module do
-      Omedis.Groups.Group -> Omedis.Groups
-      Omedis.Groups.GroupMembership -> Omedis.Groups
-      Omedis.Invitations.Invitation -> Omedis.Invitations
-      _ -> Omedis.Accounts
-    end
-  end
 end
 
 bulk_create = fn module, organisation, list, upsert_identity ->
@@ -40,7 +31,7 @@ bulk_create = fn module, organisation, list, upsert_identity ->
     upsert?: true,
     upsert_fields: [],
     upsert_identity: upsert_identity,
-    domain: DemoSeeds.get_domain(module)
+    domain: Ash.Resource.Info.domain(module)
   )
 end
 
