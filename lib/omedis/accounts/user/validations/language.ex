@@ -1,4 +1,4 @@
-defmodule Omedis.Validations.Language do
+defmodule Omedis.Accounts.User.Validations.Language do
   use Ash.Resource.Validation
 
   @moduledoc """
