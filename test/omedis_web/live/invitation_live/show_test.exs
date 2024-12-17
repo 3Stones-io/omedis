@@ -89,6 +89,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       assert {:ok, user} = User.by_email(@valid_registration_params["email"])
       assert Ash.CiString.value(user.email) == @valid_registration_params["email"]
+      assert user.current_organisation_id == organisation.id
 
       # Verify invitation was updated
       {:ok, updated_invitation} = Invitation.by_id(valid_invitation.id)
