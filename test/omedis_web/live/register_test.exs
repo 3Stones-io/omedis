@@ -38,6 +38,33 @@ defmodule OmedisWeb.RegisterTest do
       assert user.current_organisation_id == organisation.id
     end
 
+    test "redirects to the edit profile page if no other return_to path is set", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/register")
+
+      assert has_element?(view, "#basic_user_sign_up_form")
+
+      form =
+        form(view, "#basic_user_sign_up_form",
+          user: %{
+            email: "test@gmail.com",
+            password: "12345678"
+          }
+        )
+
+      conn = submit_form(form, conn)
+      assert redirected_to(conn) == ~p"/edit_profile"
+
+      assert {:ok, edit_profile_live, html} = live(conn, ~p"/edit_profile")
+      assert html =~ "Edit your profile details"
+
+      assert has_element?(edit_profile_live, "input[name=\"user[first_name]\"]")
+      assert has_element?(edit_profile_live, "input[name=\"user[last_name]\"]")
+      assert has_element?(edit_profile_live, "select[name=\"user[gender]\"]")
+      assert has_element?(edit_profile_live, "input[type=\"date\"][name=\"user[birthdate]\"]")
+      assert has_element?(edit_profile_live, "select[name=\"user[lang]\"]")
+      assert has_element?(edit_profile_live, "button[type=\"submit\"]")
+    end
+
     test "cannot register with existing email", %{conn: conn} do
       {:ok, user} = create_user()
 

@@ -97,6 +97,43 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert updated_invitation.user_id == user.id
     end
 
+    test "redirects to the edit profile page if no other return_to path is set", %{
+      conn: conn,
+      organisation: organisation,
+      valid_invitation: valid_invitation
+    } do
+      {:ok, view, _html} =
+        live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
+
+      valid_invitation_params =
+        Map.put(
+          @valid_registration_params,
+          "current_organisation_id",
+          organisation.id
+        )
+
+      form =
+        form(
+          view,
+          "#invitation_user_sign_up_form",
+          user: valid_invitation_params
+        )
+
+      conn = submit_form(form, conn)
+
+      assert redirected_to(conn) == ~p"/edit_profile"
+
+      assert {:ok, edit_profile_live, html} = live(conn, ~p"/edit_profile")
+      assert html =~ "Edit your profile details"
+
+      assert has_element?(edit_profile_live, "input[name=\"user[first_name]\"]")
+      assert has_element?(edit_profile_live, "input[name=\"user[last_name]\"]")
+      assert has_element?(edit_profile_live, "select[name=\"user[gender]\"]")
+      assert has_element?(edit_profile_live, "input[type=\"date\"][name=\"user[birthdate]\"]")
+      assert has_element?(edit_profile_live, "select[name=\"user[lang]\"]")
+      assert has_element?(edit_profile_live, "button[type=\"submit\"]")
+    end
+
     test "adds the invited user to the selected groups", %{
       conn: conn,
       organisation: organisation,
