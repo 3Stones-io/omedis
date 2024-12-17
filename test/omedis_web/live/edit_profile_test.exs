@@ -28,7 +28,7 @@ defmodule OmedisWeb.EditProfileTest do
                |> log_in_user(user)
                |> live(~p"/edit_profile")
 
-      assert html =~ "test@gmail.com"
+      assert html =~ ~s(<span id="user-email-or-name">test@gmail.com</span>)
 
       assert {_, {:redirect, %{to: url}}} =
                index_live
@@ -42,7 +42,7 @@ defmodule OmedisWeb.EditProfileTest do
                |> log_in_user(user)
                |> live(url)
 
-      assert html =~ "Jane Doe"
+      assert html =~ ~s(<span id="user-email-or-name">Jane Doe</span>)
     end
 
     test "You can change a user's details in the edit profile page", %{conn: conn} do

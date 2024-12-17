@@ -176,4 +176,10 @@ defmodule Omedis.Accounts.User do
   identities do
     identity :unique_email, [:email]
   end
+
+  defimpl String.Chars, for: Omedis.Accounts.User do
+    def to_string(user) do
+      user.as_string || user.email
+    end
+  end
 end
