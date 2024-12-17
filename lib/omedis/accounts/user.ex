@@ -9,14 +9,14 @@ defmodule Omedis.Accounts.User do
     extensions: [AshAuthentication, AshArchival.Resource],
     domain: Omedis.Accounts
 
-  alias Omedis.Accounts.CanDeleteAccount
-  alias Omedis.Accounts.Changes.MaybeAddOrganisationDefaults
-  alias Omedis.Accounts.Changes.MaybeCreateOrganisation
   alias Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups
   alias Omedis.Accounts.User.Changes.AssociateUserWithInvitation
+  alias Omedis.Accounts.User.Changes.MaybeAddOrganisationDefaults
+  alias Omedis.Accounts.User.Changes.MaybeCreateOrganisation
+  alias Omedis.Accounts.User.Checks.CanDeleteAccount
+  alias Omedis.Accounts.User.Validations.Language
   alias Omedis.Groups.Group
   alias Omedis.Groups.GroupMembership
-  alias Omedis.Validations
 
   postgres do
     table "users"
@@ -142,7 +142,7 @@ defmodule Omedis.Accounts.User do
   end
 
   validations do
-    validate {Validations.Language, attribute: :lang}
+    validate {Language, attribute: :lang}
   end
 
   attributes do

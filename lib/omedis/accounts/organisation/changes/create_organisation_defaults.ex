@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
+defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   @moduledoc """
   Creates the following default groups when a new organisation is created.
 

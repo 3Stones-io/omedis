@@ -25,7 +25,7 @@ defmodule OmedisWeb.GeneralComponents do
       class="flex pl-6 lg:pl-8 border-b border-gray-200 bg-white"
       aria-label={dgettext("navigation", "Navigation Breadcrumb")}
     >
-      <ol role="list" class="mx-auto flex w-full max-w-screen-xl space-x-4">
+      <ol role="list" class="flex w-full max-w-screen-xl space-x-4">
         <%= for {label, path, is_current} <- @items do %>
           <.render_breadcrumb_item label={label} path={path} is_current={is_current} />
         <% end %>
@@ -160,28 +160,6 @@ defmodule OmedisWeb.GeneralComponents do
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" class="-mx-2 space-y-1">
-                <li>
-                  <a
-                    href="#"
-                    class="group flex gap-x-3 rounded-md bg-gray-800 p-2 text-sm font-semibold leading-6 text-white"
-                  >
-                    <svg
-                      class="h-6 w-6 shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                      />
-                    </svg>
-                    <%= dgettext("navigation", "Today's Time Tracker") %>
-                  </a>
-                </li>
                 <.organisation_link
                   current_organisation={@current_organisation}
                   current_user={@current_user}
@@ -482,14 +460,13 @@ defmodule OmedisWeb.GeneralComponents do
 
               <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true"></div>
 
-              <div class="relative">
+              <div class="relative flex">
                 <button
                   type="button"
                   class="-m-1.5 flex items-center p-1.5"
                   id="user-menu-button"
                   aria-expanded="false"
                   aria-haspopup="true"
-                  phx-click={JS.toggle(to: "#user-menu", in: "fade-in-scale", out: "fade-out-scale")}
                 >
                   <span class="hidden lg:flex lg:items-center">
                     <span class="ml-4 text-sm font-medium leading-6 text-gray-900" aria-hidden="true">
@@ -511,19 +488,14 @@ defmodule OmedisWeb.GeneralComponents do
                         </.link>
                       <% end %>
                     </span>
-                    <svg
-                      class="ml-2 h-5 w-5 text-gray-400"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
                   </span>
+                </button>
+
+                <button
+                  class={[@current_user && "lg:block", !@current_user && "lg:hidden"]}
+                  phx-click={JS.toggle(to: "#user-menu", in: "fade-in-scale", out: "fade-out-scale")}
+                >
+                  <OmedisWeb.CoreComponents.icon name="hero-chevron-down" class="ml-2 h-4 w-4" />
                 </button>
 
                 <.dropdown_items current_user={@current_user} language={@language} />
@@ -551,28 +523,6 @@ defmodule OmedisWeb.GeneralComponents do
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" class="-mx-2 space-y-1">
-                <li>
-                  <a
-                    href="#"
-                    class="group flex gap-x-3 rounded-md bg-gray-800 p-2 text-sm font-semibold leading-6 text-white"
-                  >
-                    <svg
-                      class="h-6 w-6 shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                      />
-                    </svg>
-                    <%= dgettext("navigation", "Today's Time Tracker") %>
-                  </a>
-                </li>
                 <.organisation_link
                   current_organisation={@current_organisation}
                   current_user={@current_user}
@@ -787,7 +737,7 @@ defmodule OmedisWeb.GeneralComponents do
   defp dropdown_items(assigns) do
     ~H"""
     <div
-      class="absolute right-0 z-10 mt-2.5  origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none hidden"
+      class="absolute right-0 top-4 z-10 mt-2.5 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none hidden"
       role="menu"
       aria-orientation="vertical"
       aria-labelledby="user-menu-button"
