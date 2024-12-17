@@ -81,6 +81,17 @@ defmodule OmedisWeb.InvitationLive.Show do
               ) %>
             </div>
           </div>
+          <div class="sm:col-span-3">
+            <div>
+              <.input
+                type="hidden"
+                id="select_organisation"
+                field={f[:current_organisation_id]}
+                value={@organisation.id}
+                required
+              />
+            </div>
+          </div>
         </.form>
       </div>
     </.side_and_topbar>
