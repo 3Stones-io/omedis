@@ -6,7 +6,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
   require Ash.Query
 
-  alias Omedis.Accounts.Invitation
+  alias Omedis.Invitations.Invitation
 
   setup do
     {:ok, owner} = create_user()
@@ -476,6 +476,8 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
   end
 
   describe "/organisations/:slug/invitations/new" do
+    alias Omedis.Groups.Group
+
     test "organisation owner can create an invitation", %{
       conn: conn,
       group: group,
@@ -511,7 +513,15 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert invitation.language == "en"
       assert invitation.creator_id == owner.id
       assert invitation.organisation_id == organisation.id
-      assert Enum.map(invitation.groups, & &1.id) == [group.id]
+      assert group.id in Enum.map(invitation.groups, & &1.id)
+
+      # Verify Users group_id is in invitation groups
+      {:ok, [users_group]} =
+        Group
+        |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+        |> Ash.read(authorize?: false, tenant: organisation)
+
+      assert users_group.id in Enum.map(invitation.groups, & &1.id)
     end
 
     test "authorized user can create an invitation", %{
@@ -561,6 +571,19 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert invitation_from_db.id == created_invitation.id
       assert Enum.map(invitation_from_db.groups, & &1.id) == [group.id]
+
+      assert invitation_from_db.language == "en"
+      assert invitation_from_db.creator_id == authorized_user.id
+      assert invitation_from_db.organisation_id == organisation.id
+      assert group.id in Enum.map(invitation_from_db.groups, & &1.id)
+
+      # Verify Users group_id is in invitation groups
+      {:ok, [users_group]} =
+        Group
+        |> Ash.Query.filter(slug: "users", organisation_id: organisation.id)
+        |> Ash.read(authorize?: false, tenant: organisation)
+
+      assert users_group.id in Enum.map(invitation_from_db.groups, & &1.id)
     end
 
     test "unauthorized user cannot access new invitation page", %{

@@ -1,9 +1,10 @@
 defmodule OmedisWeb.OrganisationLive.Today do
   use OmedisWeb, :live_view
+
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Event
-  alias Omedis.Accounts.Group
   alias Omedis.Accounts.Project
+  alias Omedis.Groups.Group
   alias OmedisWeb.Endpoint
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
@@ -109,8 +110,6 @@ defmodule OmedisWeb.OrganisationLive.Today do
       |> format_timezone(organisation.timezone)
       |> round_up_end_at()
 
-    update_activities_and_current_time_every_minute()
-
     activities = activities(group.id, project.id, actor: current_user, tenant: organisation)
 
     events = format_events(activities, organisation)
@@ -189,53 +188,12 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   @impl true
-  def handle_info(:update_activities_and_current_time, socket) do
-    organisation = socket.assigns.organisation
-    group = socket.assigns.group
-    current_user = socket.assigns.current_user
-    project = socket.assigns.project
-
-    activities = activities(group.id, project.id, actor: current_user, tenant: organisation)
-    formatted_events = format_events(activities, organisation)
-
-    {:ok, %{results: events}} =
-      Event.list_paginated_today(actor: current_user, tenant: organisation)
-
-    {min_start_in_events, max_end_in_events} = get_time_range(events)
-
-    start_at =
-      (get_start_time_to_use(min_start_in_events, current_user.daily_start_at) ||
-         organisation.default_daily_start_at)
-      |> format_timezone(organisation.timezone)
-      |> round_down_start_at()
-
-    end_at =
-      (get_end_time_to_use(max_end_in_events, current_user.daily_end_at) ||
-         organisation.default_daily_end_at)
-      |> format_timezone(organisation.timezone)
-      |> round_up_end_at()
-
-    current_time = Time.utc_now() |> format_timezone(organisation.timezone)
-
-    {:noreply,
-     socket
-     |> assign(:activities, activities)
-     |> assign(:events, formatted_events)
-     |> assign(:start_at, start_at)
-     |> assign(:end_at, end_at)
-     |> assign(:current_time, current_time)}
-  end
-
   def handle_info(%Phoenix.Socket.Broadcast{event: "event_started", payload: activity}, socket) do
     {:noreply, assign(socket, :current_activity_id, activity.id)}
   end
 
   def handle_info(%Phoenix.Socket.Broadcast{event: "event_stopped"}, socket) do
     {:noreply, assign(socket, :current_activity_id, nil)}
-  end
-
-  defp update_activities_and_current_time_every_minute do
-    :timer.send_interval(1000, self(), :update_activities_and_current_time)
   end
 
   defp get_start_time_to_use(nil, daily_start_at), do: daily_start_at

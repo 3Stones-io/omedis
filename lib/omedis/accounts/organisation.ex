@@ -2,12 +2,12 @@ defmodule Omedis.Accounts.Organisation do
   @moduledoc """
   This is the Organisation module
   """
-  alias Omedis.Accounts.CanCreateOrganisation
-  alias Omedis.Accounts.CanUpdateOrganisation
-  alias Omedis.Accounts.Group
-  alias Omedis.Accounts.OrganisationsAccessFilter
+  alias Omedis.Accounts.Organisation.Checks.CanCreateOrganisation
+  alias Omedis.Accounts.Organisation.Checks.CanUpdateOrganisation
+  alias Omedis.Accounts.Organisation.Checks.OrganisationsAccessFilter
+  alias Omedis.Accounts.Organisation.Validations.Timezone
   alias Omedis.Accounts.Project
-  alias Omedis.Validations
+  alias Omedis.Groups.Group
 
   require Ash.Query
 
@@ -15,9 +15,6 @@ defmodule Omedis.Accounts.Organisation do
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Accounts
-
-  alias Omedis.Accounts.Group
-  alias Omedis.Accounts.OrganisationsAccessFilter
 
   @derive {Phoenix.Param, key: :slug}
 
@@ -81,7 +78,7 @@ defmodule Omedis.Accounts.Organisation do
 
       primary? true
 
-      change Omedis.Accounts.Changes.CreateOrganisationDefaults
+      change Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults
       change Omedis.Accounts.Organisation.Changes.AssociateUserWithOrganisation
     end
 
@@ -172,7 +169,7 @@ defmodule Omedis.Accounts.Organisation do
   end
 
   validations do
-    validate {Validations.Timezone, attribute: :timezone}
+    validate {Timezone, attribute: :timezone}
   end
 
   attributes do
@@ -250,7 +247,7 @@ defmodule Omedis.Accounts.Organisation do
   end
 
   relationships do
-    has_many :access_rights, Omedis.Accounts.AccessRight
+    has_many :access_rights, Omedis.AccessRights.AccessRight
 
     belongs_to :owner, Omedis.Accounts.User do
       allow_nil? true

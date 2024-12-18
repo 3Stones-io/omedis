@@ -3,8 +3,8 @@ defmodule OmedisWeb.InvitationLive.Index do
 
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Invitation
   alias Omedis.Accounts.Organisation
+  alias Omedis.Invitations.Invitation
   alias OmedisWeb.Endpoint
   alias OmedisWeb.InvitationLive.InvitationStatusComponent
   alias OmedisWeb.PaginationComponent

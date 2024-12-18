@@ -330,7 +330,10 @@ defmodule OmedisWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0 cursor-pointer"
+          class={[
+            "rounded border-zinc-300 text-zinc-900 focus:ring-0",
+            !@rest[:disabled] && "cursor-pointer"
+          ]}
           {@rest}
         />
         <%= @label %>
@@ -404,7 +407,8 @@ defmodule OmedisWeb.CoreComponents do
           "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           @rest[:readonly] && "bg-gray-50 focus:bg-gray-50 border-gray-200 focus:border-gray-300",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          @errors != [] && "border-rose-400 focus:border-rose-400",
+          @input_class
         ]}
         {@rest}
       />

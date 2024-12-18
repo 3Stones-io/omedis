@@ -8,7 +8,7 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
 
   require Ash.Query
 
-  alias Omedis.Accounts.Invitation
+  alias Omedis.Invitations.Invitation
 
   def change(%{attributes: %{email: email}} = changeset, _opts, _context) do
     Ash.Changeset.after_action(changeset, fn

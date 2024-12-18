@@ -49,7 +49,13 @@ config :omedis, OmedisWeb.Endpoint,
   pubsub_server: Omedis.PubSub,
   live_view: [signing_salt: "Lu8xpRC9"]
 
-config :omedis, ash_domains: [Omedis.Accounts]
+config :omedis,
+  ash_domains: [
+    Omedis.AccessRights,
+    Omedis.Accounts,
+    Omedis.Groups,
+    Omedis.Invitations
+  ]
 
 # I18n
 config :omedis, OmedisWeb.Gettext, default_locale: "en", locales: ~w(en de fr it)

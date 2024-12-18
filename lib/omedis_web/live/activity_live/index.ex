@@ -3,9 +3,9 @@ defmodule OmedisWeb.ActivityLive.Index do
 
   alias Omedis.Accounts
   alias Omedis.Accounts.Activity
-  alias Omedis.Accounts.Group
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
+  alias Omedis.Groups.Group
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 

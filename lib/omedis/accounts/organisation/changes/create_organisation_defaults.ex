@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
+defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   @moduledoc """
   Creates the following default groups when a new organisation is created.
 
@@ -12,7 +12,9 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
 
   use Ash.Resource.Change
 
+  alias Omedis.AccessRights
   alias Omedis.Accounts
+  alias Omedis.Groups
 
   @admin_full_access_resources [
     "AccessRight",
@@ -61,7 +63,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
 
   defp create_admins_group(organisation, opts) do
     {:ok, administrators_group} =
-      Accounts.Group.create(
+      Groups.Group.create(
         %{
           name: "Administrators",
           slug: "administrators",
@@ -71,7 +73,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
       )
 
     {:ok, _} =
-      Accounts.GroupMembership.create(
+      Groups.GroupMembership.create(
         %{
           group_id: administrators_group.id,
           user_id: organisation.owner_id
@@ -84,7 +86,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
 
   defp create_users_group(organisation, opts) do
     {:ok, users_group} =
-      Accounts.Group.create(
+      Groups.Group.create(
         %{
           name: "Users",
           slug: "users",
@@ -99,7 +101,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
   defp create_admin_access_rights(group, opts) do
     for resource_name <- @admin_full_access_resources do
       {:ok, _} =
-        Accounts.AccessRight.create(
+        AccessRights.AccessRight.create(
           %{
             create: true,
             group_id: group.id,
@@ -114,7 +116,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
 
     for resource_name <- @admin_read_only_resources do
       {:ok, _} =
-        Accounts.AccessRight.create(
+        AccessRights.AccessRight.create(
           %{
             create: false,
             group_id: group.id,
@@ -131,7 +133,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
   defp create_user_access_rights(group, opts) do
     for resource_name <- @user_read_only_resources do
       {:ok, _} =
-        Accounts.AccessRight.create(
+        AccessRights.AccessRight.create(
           %{
             create: false,
             group_id: group.id,
@@ -146,7 +148,7 @@ defmodule Omedis.Accounts.Changes.CreateOrganisationDefaults do
 
     for resource_name <- @user_create_resources do
       {:ok, _} =
-        Accounts.AccessRight.create(
+        AccessRights.AccessRight.create(
           %{
             create: true,
             group_id: group.id,

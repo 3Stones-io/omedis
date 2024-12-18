@@ -1,6 +1,6 @@
 defmodule OmedisWeb.GroupLive.Show do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Group
+  alias Omedis.Groups.Group
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 

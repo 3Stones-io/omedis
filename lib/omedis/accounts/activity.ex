@@ -34,6 +34,7 @@ defmodule Omedis.Accounts.Activity do
     define :update_position
     define :by_id, get_by: [:id], action: :read
     define :list_paginated
+    define :list_keyset_paginated
     define :by_group_id_and_project_id
   end
 
@@ -85,6 +86,15 @@ defmodule Omedis.Accounts.Activity do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :list_keyset_paginated do
+      pagination offset?: true,
+                 countable: :by_default,
+                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
+                 keyset?: true
+
+      prepare build(load: [:events], sort: [position: :asc])
+    end
+
     read :list_paginated do
       argument :group_id, :uuid do
         allow_nil? false
@@ -116,11 +126,11 @@ defmodule Omedis.Accounts.Activity do
 
   policies do
     policy action_type([:create, :update, :destroy]) do
-      authorize_if Omedis.Accounts.CanAccessResource
+      authorize_if Omedis.AccessRights.AccessRight.Checks.CanAccessResource
     end
 
     policy action_type(:read) do
-      authorize_if Omedis.Accounts.AccessFilter
+      authorize_if Omedis.AccessRights.AccessRight.Checks.AccessFilter
     end
   end
 
@@ -159,7 +169,7 @@ defmodule Omedis.Accounts.Activity do
   end
 
   relationships do
-    belongs_to :group, Omedis.Accounts.Group do
+    belongs_to :group, Omedis.Groups.Group do
       allow_nil? false
       attribute_writable? true
     end
@@ -173,7 +183,7 @@ defmodule Omedis.Accounts.Activity do
       domain Omedis.Accounts
     end
 
-    has_many :access_rights, Omedis.Accounts.AccessRight do
+    has_many :access_rights, Omedis.AccessRights.AccessRight do
       manual Omedis.Accounts.Activity.Relationships.ActivityAccessRights
     end
 

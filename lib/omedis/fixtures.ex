@@ -3,18 +3,21 @@ defmodule Omedis.Fixtures do
   Fixtures for the Omedis system.
   """
 
+  alias Omedis.AccessRights
   alias Omedis.Accounts
+  alias Omedis.Groups
+  alias Omedis.Invitations
 
   def create_access_right(organisation, attrs \\ %{}) do
-    fixture(Accounts.AccessRight, organisation, attrs)
+    fixture(AccessRights.AccessRight, organisation, attrs)
   end
 
   def create_group(organisation, attrs \\ %{}) do
-    fixture(Accounts.Group, organisation, attrs)
+    fixture(Groups.Group, organisation, attrs)
   end
 
   def create_group_membership(organisation, attrs \\ %{}) do
-    fixture(Accounts.GroupMembership, organisation, attrs)
+    fixture(Groups.GroupMembership, organisation, attrs)
   end
 
   def create_activity(organisation, attrs \\ %{}) do
@@ -26,11 +29,11 @@ defmodule Omedis.Fixtures do
   end
 
   def create_invitation(organisation, attrs \\ %{}, opts \\ []) do
-    fixture(Accounts.Invitation, organisation, attrs, opts)
+    fixture(Invitations.Invitation, organisation, attrs, opts)
   end
 
   def create_invitation_group(organisation, attrs \\ %{}) do
-    fixture(Accounts.InvitationGroup, organisation, attrs)
+    fixture(Invitations.InvitationGroup, organisation, attrs)
   end
 
   def create_project(organisation, attrs \\ %{}) do
@@ -50,7 +53,7 @@ defmodule Omedis.Fixtures do
     Ash.create(Accounts.User, attrs, authorize?: false)
   end
 
-  def attrs_for(Accounts.AccessRight, organisation) do
+  def attrs_for(AccessRights.AccessRight, organisation) do
     %{
       create: Enum.random([true, false]),
       group_id: fn ->
@@ -64,14 +67,14 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.Group, _organisation) do
+  def attrs_for(Groups.Group, _organisation) do
     %{
       name: Faker.Company.name(),
       slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}"
     }
   end
 
-  def attrs_for(Accounts.GroupMembership, organisation) do
+  def attrs_for(Groups.GroupMembership, organisation) do
     %{
       group_id: fn ->
         {:ok, group} = create_group(organisation)
@@ -117,7 +120,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.Invitation, _organisation) do
+  def attrs_for(Invitations.Invitation, _organisation) do
     %{
       creator_id: fn ->
         {:ok, user} = create_user()
@@ -130,7 +133,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.InvitationGroup, organisation) do
+  def attrs_for(Invitations.InvitationGroup, organisation) do
     %{
       group_id: fn ->
         {:ok, group} = create_group(organisation)

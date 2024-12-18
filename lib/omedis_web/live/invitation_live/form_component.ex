@@ -2,8 +2,8 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   use OmedisWeb, :live_component
 
   alias AshPhoenix.Form
-  alias Omedis.Accounts.Group
-  alias Omedis.Accounts.Invitation
+  alias Omedis.Groups.Group
+  alias Omedis.Invitations.Invitation
 
   @supported_languages [
     {"English", "en"},
@@ -33,7 +33,10 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
   @impl true
   def handle_event("save", %{"invitation" => params}, socket) do
-    params = add_organisation_and_creator(params, socket)
+    params =
+      params
+      |> add_organisation_and_creator(socket)
+      |> add_users_group(socket.assigns.groups)
 
     case Form.submit(socket.assigns.form, params: params) do
       {:ok, _invitation} ->
@@ -45,6 +48,11 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
       {:error, form} ->
         {:noreply, assign(socket, :form, form)}
     end
+  end
+
+  defp add_users_group(params, groups) do
+    users_group = Enum.find(groups, &(&1.name == "Users"))
+    put_in(params, ["groups", users_group.id], "true")
   end
 
   defp assign_groups(socket) do
@@ -164,8 +172,9 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
                 label={group.name}
                 name={@form.name <> "[groups][#{group.id}]"}
                 id={@form.id <> "_groups_#{group.id}"}
-                checked={group.id in @checked_groups}
+                checked={group.name == "Users" or group.id in @checked_groups}
                 phx-debounce="blur"
+                disabled={group.name == "Users"}
               />
             <% end %>
           </div>
