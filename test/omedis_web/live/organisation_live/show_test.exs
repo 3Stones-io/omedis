@@ -21,7 +21,8 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
     test "shows organisation page when user has read access or is owner", %{
       conn: conn,
       group: group,
-      organisation: organisation
+      organisation: organisation,
+      user: user
     } do
       {:ok, _access_right} =
         create_access_right(organisation, %{
@@ -33,6 +34,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       {:ok, _show_live, html} = live(conn, ~p"/organisations/#{organisation}")
 
       assert html =~ organisation.name
+      assert html =~ user.first_name <> " " <> user.last_name
     end
 
     test "doesn't show organisation page when user has no read access", %{conn: conn} do

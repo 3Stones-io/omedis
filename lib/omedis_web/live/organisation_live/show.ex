@@ -68,7 +68,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
           </:item>
 
           <:item title={dgettext("organisation", "Owner")}>
-            <%= @organisation.owner.full_name %>
+            <%= @organisation.owner %>
           </:item>
 
           <:item title={dgettext("organisation", "Timezone")}>
