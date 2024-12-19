@@ -11,11 +11,14 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
   alias Omedis.Invitations.Invitation
 
   def change(%{attributes: %{email: email}} = changeset, _opts, _context) do
-    Ash.Changeset.after_action(changeset, fn
-      _changeset, user ->
-        maybe_update_invitation(email, user)
+    Ash.Changeset.after_transaction(changeset, fn
+      _changeset, {:ok, user} ->
+        :ok = maybe_update_invitation(email, user)
 
         {:ok, user}
+
+      _changeset, {:error, error} ->
+        {:error, error}
     end)
   end
 
@@ -24,7 +27,14 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
   defp maybe_update_invitation(email, user) do
     case get_invitation(email) do
       {:ok, invitation} ->
-        %{status: :success} = Invitation.accept(invitation, actor: user, authorize?: false)
+        %{status: :success, notifications: notifications} =
+          Invitation.accept(invitation,
+            actor: user,
+            authorize?: false,
+            return_notifications?: true
+          )
+
+        Enum.each(notifications, &Ash.Notifier.notify/1)
 
       _ ->
         :ok
