@@ -57,7 +57,7 @@ defmodule Omedis.Workers.InvitationEmailWorkerTest do
       assert_email_sent(
         from: {"Omedis", "contact@omedis.com"},
         subject: "Omedis | Invitation to join #{organisation.name}",
-        to: invitation.email,
+        to: Ash.CiString.value(invitation.email),
         text_body: ~r/Please register your new Omedis account for /
       )
     end

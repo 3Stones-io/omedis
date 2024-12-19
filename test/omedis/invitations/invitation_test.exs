@@ -86,7 +86,7 @@ defmodule Omedis.Invitations.InvitationTest do
         queue: :invitation
       )
 
-      assert invitation.email == "test@example.com"
+      assert invitation.email == Ash.CiString.new("test@example.com")
       assert invitation.language == "en"
       assert invitation.creator_id == owner.id
       assert invitation.organisation_id == organisation.id
@@ -116,7 +116,7 @@ defmodule Omedis.Invitations.InvitationTest do
         queue: :invitation
       )
 
-      assert invitation.email == "test@example.com"
+      assert invitation.email == Ash.CiString.new("test@example.com")
 
       invitation_groups = Ash.read!(InvitationGroup, authorize?: false, tenant: organisation)
       group_ids = Enum.map(invitation_groups, & &1.group_id)
@@ -163,7 +163,7 @@ defmodule Omedis.Invitations.InvitationTest do
       }
 
       assert {:ok, invitation} = Invitation.create(attrs, actor: owner, tenant: organisation)
-      assert invitation.email == "test@example.com"
+      assert invitation.email == Ash.CiString.new("test@example.com")
     end
 
     test "schedules invitation expiration to run at the time specified in the expires_at attribute",
@@ -238,7 +238,7 @@ defmodule Omedis.Invitations.InvitationTest do
       assert {:ok, new_invitation} =
                Invitation.create(attrs, actor: owner, tenant: organisation)
 
-      assert new_invitation.email == "test@example.com"
+      assert new_invitation.email == Ash.CiString.new("test@example.com")
 
       assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(existing_invitation.id)
     end
@@ -309,7 +309,7 @@ defmodule Omedis.Invitations.InvitationTest do
       assert {:ok, updated_invitation} =
                Invitation.update(invitation, update_attrs, actor: owner, tenant: organisation)
 
-      assert updated_invitation.email == "test+1@example.com"
+      assert updated_invitation.email == Ash.CiString.new("test+1@example.com")
       assert updated_invitation.language == "it"
     end
   end

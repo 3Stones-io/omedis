@@ -24,7 +24,7 @@ defmodule Omedis.Invitations.Invitation.InvitationNotifier do
     Gettext.put_locale(invitation.language)
 
     deliver(
-      invitation.email,
+      Ash.CiString.value(invitation.email),
       dgettext("emails", "Omedis | Invitation to join %{organisation_name}",
         organisation_name: invitation.organisation.name
       ),

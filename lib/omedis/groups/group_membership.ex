@@ -10,7 +10,6 @@ defmodule Omedis.Groups.GroupMembership do
 
   alias Omedis.AccessRights.AccessRight.Checks.AccessFilter
   alias Omedis.AccessRights.AccessRight.Checks.CanAccessResource
-  alias Omedis.Accounts.Group
   alias Omedis.Accounts.User
   alias Omedis.Groups.Group
 

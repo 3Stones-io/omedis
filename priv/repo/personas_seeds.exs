@@ -3,6 +3,8 @@ import Omedis.Fixtures
 require Ash.Query
 
 alias Omedis.Accounts
+alias Omedis.Groups
+alias Omedis.Invitations
 
 bulk_create = fn module, list, opts ->
   list
@@ -39,27 +41,32 @@ sequential_create = fn module, list, opts ->
         |> attrs_for(Keyword.get(opts, :tenant))
         |> Map.merge(attrs)
 
-      # First check if record exists using the upsert_identity
+      # Get the identity fields for existence check
       identity = Keyword.get(opts, :upsert_identity)
       identity_attrs = Map.take(attrs, Ash.Resource.Info.identity(module, identity).keys)
 
+      # Build query for existence check
       query =
         module
         |> Ash.Query.new()
         |> Ash.Query.filter(^identity_attrs)
 
-      case Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant)) do
-        {:ok, [existing]} ->
+      Ash.exists?(query, tenant: Keyword.get(opts, :tenant), authorize?: false)
+
+      case Ash.exists?(query, tenant: Keyword.get(opts, :tenant), authorize?: false) do
+        # Record exists, fetch it and add to accumulator
+        true ->
+          {:ok, [existing]} =
+            Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant))
+
           {:cont, {:ok, [existing | acc]}}
 
-        {:ok, []} ->
+        # Record doesn't exist, create it
+        false ->
           case Ash.create(module, attrs, opts) do
             {:ok, record} -> {:cont, {:ok, [record | acc]}}
             error -> {:halt, error}
           end
-
-        error ->
-          {:halt, error}
       end
     end)
 
@@ -69,7 +76,13 @@ sequential_create = fn module, list, opts ->
   end
 end
 
-%{records: [denis, heidi, _fatima, ben, _sarah, _lena, tim, _anna, _marc], status: :success} =
+get_organisation = fn owner_id ->
+  Accounts.Organisation
+  |> Ash.Query.filter(owner_id: owner_id)
+  |> Ash.read_one!(authorize?: false)
+end
+
+%{records: [denis, ben, tim], status: :success} =
   bulk_create.(
     Accounts.User,
     [
@@ -80,16 +93,6 @@ end
         first_name: "Denis",
         last_name: "Gojak"
       },
-      %{
-        email: "heidi@spitex-bemeda.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("secure_heidi")
-      },
-      %{
-        email: "fatima.khan@spitex-bemeda.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("fatima123"),
-        first_name: "Fatima",
-        last_name: "Khan"
-      },
       # ASA Security
       %{
         email: "ben.hall@asa-security.ch",
@@ -97,34 +100,132 @@ end
         first_name: "Ben",
         last_name: "Hall"
       },
-      %{
-        email: "sarah.jones@asa-security.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("sarah2024"),
-        first_name: "Sarah",
-        last_name: "Jones"
-      },
-      %{
-        email: "lena.meyer@asa-security.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("meyerpass"),
-        first_name: "Lena",
-        last_name: "Meyer"
-      },
       # 3Stones
       %{
         email: "tim.davis@3stones.ch",
         hashed_password: Bcrypt.hash_pwd_salt("timrocks"),
         first_name: "Tim",
         last_name: "Davis"
+      }
+    ],
+    upsert_identity: :unique_email
+  )
+
+organisation_1 = get_organisation.(denis.id)
+organisation_2 = get_organisation.(ben.id)
+organisation_3 = get_organisation.(tim.id)
+
+%{records: _invitations, status: :success} =
+  sequential_create.(
+    Invitations.Invitation,
+    [
+      %{
+        creator_id: denis.id,
+        email: "heidi@spitex-bemeda.ch",
+        language: "en"
       },
       %{
+        creator_id: denis.id,
+        email: "fatima.khan@spitex-bemeda.ch",
+        language: "en"
+      }
+    ],
+    tenant: organisation_1,
+    upsert_identity: :unique_email
+  )
+
+%{records: [heidi, _fatima], status: :success} =
+  sequential_create.(
+    Accounts.User,
+    [
+      %{
+        email: "heidi@spitex-bemeda.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Heidi",
+        last_name: "Smith"
+      },
+      %{
+        email: "fatima.khan@spitex-bemeda.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Fatima",
+        last_name: "Khan"
+      }
+    ],
+    upsert_identity: :unique_email
+  )
+
+%{records: _invitations, status: :success} =
+  sequential_create.(
+    Invitations.Invitation,
+    [
+      %{
+        creator_id: ben.id,
+        email: "sarah.jones@asa-security.ch",
+        language: "en"
+      },
+      %{
+        creator_id: ben.id,
+        email: "lena.meyer@asa-security.ch",
+        language: "en"
+      }
+    ],
+    tenant: organisation_2,
+    authorize?: false,
+    upsert_identity: :unique_email
+  )
+
+%{records: [sarah, lena], status: :success} =
+  sequential_create.(
+    Accounts.User,
+    [
+      %{
+        email: "sarah.jones@asa-security.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Sarah",
+        last_name: "Jones"
+      },
+      %{
+        email: "lena.meyer@asa-security.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Lena",
+        last_name: "Meyer"
+      }
+    ],
+    upsert_identity: :unique_email
+  )
+
+%{records: _invitations, status: :success} =
+  sequential_create.(
+    Invitations.Invitation,
+    [
+      %{
+        creator_id: tim.id,
         email: "anna.wilson@3stones.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("anna456"),
+        language: "en"
+      },
+      %{
+        creator_id: tim.id,
+        email: "marc.brown@3stones.ch",
+        language: "en"
+      }
+    ],
+    tenant: organisation_3,
+    upsert_identity: :unique_email
+  )
+
+%{records: [anna, marc], status: :success} =
+  sequential_create.(
+    Accounts.User,
+    [
+      %{
+        email: "anna.wilson@3stones.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
         first_name: "Anna",
         last_name: "Wilson"
       },
       %{
         email: "marc.brown@3stones.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("marc789"),
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
         first_name: "Marc",
         last_name: "Brown"
       }
@@ -132,20 +233,9 @@ end
     upsert_identity: :unique_email
   )
 
-%{records: [organisation_1, organisation_2, organisation_3], status: :success} =
-  bulk_create.(
-    Accounts.Organisation,
-    [
-      %{owner_id: denis.id, name: "Spitex Bemeda", slug: "spitex-bemeda"},
-      %{owner_id: denis.id, name: "ASA Security", slug: "asa-security"},
-      %{owner_id: denis.id, name: "3Stones", slug: "3stones"}
-    ],
-    upsert_identity: :unique_slug
-  )
-
 %{records: [group_1, group_2], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Demo Group", slug: "demo-group"},
       %{name: "Demo Group 2", slug: "demo-group2"}
@@ -156,7 +246,7 @@ end
 
 %{records: [security_group], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Security Team", slug: "security-team"}
     ],
@@ -166,7 +256,7 @@ end
 
 %{records: [dev_group], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Development Team", slug: "dev-team"}
     ],
@@ -176,7 +266,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.GroupMembership,
+    Groups.GroupMembership,
     [
       %{group_id: group_1.id, user_id: denis.id},
       %{group_id: group_2.id, user_id: heidi.id}
@@ -186,37 +276,37 @@ end
   )
 
 %{records: [medical_support, _frau_schmidt, _herr_meier], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.Project,
     [
-      %{organisation_id: organisation_1.id, name: "Medical Support", position: "1"},
-      %{organisation_id: organisation_1.id, name: "Frau Schmidt", position: "2"},
-      %{organisation_id: organisation_1.id, name: "Herr Meier", position: "3"}
+      %{name: "Medical Support", position: "1", organisation_id: organisation_1.id},
+      %{name: "Frau Schmidt", position: "2", organisation_id: organisation_1.id},
+      %{name: "Herr Meier", position: "3", organisation_id: organisation_1.id}
     ],
     tenant: organisation_1,
-    upsert_fields: [:name],
+    upsert_fields: [:name, :position, :organisation_id],
     upsert_identity: :unique_name
   )
 
 %{records: [security_operations], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.Project,
     [
       %{organisation_id: organisation_2.id, name: "Security Operations", position: "1"}
     ],
     tenant: organisation_2,
-    upsert_fields: [:name],
+    upsert_fields: [:name, :position, :organisation_id],
     upsert_identity: :unique_name
   )
 
 %{records: [software_development], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.Project,
     [
       %{organisation_id: organisation_3.id, name: "Software Development", position: "1"}
     ],
     tenant: organisation_3,
-    upsert_fields: [:name],
+    upsert_fields: [:name, :position, :organisation_id],
     upsert_identity: :unique_name
   )
 

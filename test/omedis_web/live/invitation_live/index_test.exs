@@ -200,7 +200,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> render_click()
 
       assert html =~ "Invitation deleted successfully"
-      refute html =~ invitation.email
+      refute html =~ Ash.CiString.value(invitation.email)
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
                Invitation.by_id(invitation.id, actor: owner, tenant: organisation)
@@ -229,7 +229,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> render_click()
 
       assert html =~ "Invitation deleted successfully"
-      refute html =~ invitation.email
+      refute html =~ Ash.CiString.value(invitation.email)
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
                Invitation.by_id(invitation.id, actor: authorized_user, tenant: organisation)
@@ -249,16 +249,16 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         |> log_in_user(owner)
         |> live(~p"/organisations/#{organisation}/invitations")
 
-      assert html =~ newest_invitation.email
-      refute html =~ oldest_invitation.email
+      assert html =~ Ash.CiString.value(newest_invitation.email)
+      refute html =~ Ash.CiString.value(oldest_invitation.email)
 
       index_live
       |> element("th[phx-click*=\"sort_invitations\"]")
       |> render_click()
 
       html = render(index_live)
-      assert html =~ oldest_invitation.email
-      refute html =~ newest_invitation.email
+      assert html =~ Ash.CiString.value(oldest_invitation.email)
+      refute html =~ Ash.CiString.value(newest_invitation.email)
     end
   end
 
@@ -296,7 +296,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
                |> Ash.Query.filter(email: "test@example.com")
                |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
 
-      assert invitation.email == "test@example.com"
+      assert invitation.email == Ash.CiString.new("test@example.com")
       assert invitation.language == "en"
       assert invitation.creator_id == owner.id
       assert invitation.organisation_id == organisation.id
@@ -342,7 +342,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
                |> Ash.Query.filter(email: "test@example.com")
                |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
 
-      assert invitation.email == "test@example.com"
+      assert invitation.email == Ash.CiString.new("test@example.com")
       assert invitation.language == "en"
       assert invitation.creator_id == authorized_user.id
       assert invitation.organisation_id == organisation.id

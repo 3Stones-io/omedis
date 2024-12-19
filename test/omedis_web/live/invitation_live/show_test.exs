@@ -167,7 +167,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
                |> Ash.Query.filter(email: "test@gmail.com")
                |> Ash.read(authorize?: false, load: [:groups], tenant: organisation)
 
-      assert invitation.email == "test@gmail.com"
+      assert invitation.email == Ash.CiString.new("test@gmail.com")
 
       {:ok, [users_group]} =
         Omedis.Groups.Group
@@ -253,7 +253,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
                |> Ash.Query.filter(email: "test@gmail.com")
                |> Ash.read(authorize?: false, load: [:groups], tenant: organisation)
 
-      assert invitation.email == "test@gmail.com"
+      assert invitation.email == Ash.CiString.new("test@gmail.com")
 
       assert {:ok, [users_group]} =
                Omedis.Groups.Group
