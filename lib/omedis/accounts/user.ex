@@ -110,7 +110,7 @@ defmodule Omedis.Accounts.User do
   preparations do
     prepare build(
               load: [
-                :as_string
+                :full_name
               ]
             )
   end
@@ -179,7 +179,7 @@ defmodule Omedis.Accounts.User do
 
   defimpl Phoenix.HTML.Safe, for: Omedis.Accounts.User do
     def to_iodata(user) do
-      user.full_name || user.email
+      user.full_name || Ash.CiString.value(user.email)
     end
   end
 end
