@@ -28,6 +28,31 @@ defmodule OmedisWeb.EditProfileTest do
       assert has_element?(edit_profile_live, "button[type=\"submit\"]")
     end
 
+    test "displays user email or name in user menu", %{conn: conn} do
+      {:ok, user} = create_user(%{email: "test@gmail.com", first_name: nil, last_name: nil})
+
+      assert {:ok, index_live, html} =
+               conn
+               |> log_in_user(user)
+               |> live(~p"/edit_profile")
+
+      assert html =~ ~s(<span id="user-name">test@gmail.com</span>)
+
+      assert {_, {:redirect, %{to: url}}} =
+               index_live
+               |> form("#basic_user_edit_profile_form",
+                 user: %{"first_name" => "Jane", "last_name" => "Doe"}
+               )
+               |> render_submit()
+
+      assert {:ok, _index_live, html} =
+               conn
+               |> log_in_user(user)
+               |> live(url)
+
+      assert html =~ ~s(<span id="user-name">Jane Doe</span>)
+    end
+
     test "You can change a user's details in the edit profile page", %{conn: conn} do
       {:ok, user} = create_user()
 
