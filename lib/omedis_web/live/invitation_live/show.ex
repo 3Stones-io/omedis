@@ -54,7 +54,6 @@ defmodule OmedisWeb.InvitationLive.Show do
                   label={dgettext("invitation", "Email")}
                   value={@invitation.email}
                   input_class="cursor-not-allowed"
-                  disabled
                   readonly
                 />
               </div>
@@ -79,6 +78,17 @@ defmodule OmedisWeb.InvitationLive.Show do
                 class:
                   "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               ) %>
+            </div>
+          </div>
+          <div class="sm:col-span-3">
+            <div>
+              <.input
+                type="hidden"
+                id="select_organisation"
+                field={f[:current_organisation_id]}
+                value={@organisation.id}
+                required
+              />
             </div>
           </div>
         </.form>
@@ -107,7 +117,7 @@ defmodule OmedisWeb.InvitationLive.Show do
   def handle_event("submit", %{"user" => user_params}, socket) do
     updated_params =
       user_params
-      |> Map.replace("email", socket.assigns.invitation.email)
+      |> Map.put("email", socket.assigns.invitation.email)
       |> Map.put("current_organisation_id", socket.assigns.invitation.organisation_id)
 
     form = Form.validate(socket.assigns.form, updated_params)

@@ -102,6 +102,8 @@ organisation_2 = get_organisation.(user_2.id)
     upsert_identity: :unique_slug_per_organisation
   )
 
+organisation_2 = DemoSeeds.get_organisation_by_owner_id(user_2.id)
+
 %{records: [group_3], status: :success} =
   bulk_create.(
     Groups.Group,
