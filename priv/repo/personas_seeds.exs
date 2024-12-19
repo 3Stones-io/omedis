@@ -56,7 +56,9 @@ sequential_create = fn module, list, opts ->
       case Ash.exists?(query, tenant: Keyword.get(opts, :tenant), authorize?: false) do
         # Record exists, fetch it and add to accumulator
         true ->
-          {:ok, [existing]} = Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant))
+          {:ok, [existing]} =
+            Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant))
+
           {:cont, {:ok, [existing | acc]}}
 
         # Record doesn't exist, create it

@@ -51,7 +51,7 @@ defmodule Omedis.Invitations.InvitationNotifierTest do
       assert_email_sent(
         from: {"Omedis", "contact@omedis.com"},
         subject: "Omedis | Invitation to join #{organisation.name}",
-        to: [invitation.email],
+        to: [Ash.CiString.value(invitation.email)],
         text_body: ~r/INVITATION_URL/
       )
     end
@@ -76,7 +76,7 @@ defmodule Omedis.Invitations.InvitationNotifierTest do
       assert_email_sent(
         from: {"Omedis", "contact@omedis.com"},
         subject: "Omedis | Invitation à rejoindre #{organisation.name}",
-        to: [invitation.email],
+        to: [Ash.CiString.value(invitation.email)],
         text_body: ~r/INVITATION_URL/,
         text_body: ~r/Veuillez enregistrer votre nouveau compte Omedis pour/
       )
