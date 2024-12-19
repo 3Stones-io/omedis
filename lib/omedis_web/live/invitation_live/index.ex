@@ -112,7 +112,6 @@ defmodule OmedisWeb.InvitationLive.Index do
   end
 
   @impl true
-  # TODO: Figure out why we don't get this broadcast yet the invitation gets accepted
   def handle_info(%Broadcast{event: "accept"} = broadcast, socket) do
     accepted_invitation = Map.get(broadcast.payload, :data)
     {:noreply, stream_insert(socket, :invitations, accepted_invitation)}

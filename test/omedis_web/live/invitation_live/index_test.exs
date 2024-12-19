@@ -7,6 +7,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
   require Ash.Query
 
   alias Omedis.Invitations.Invitation
+  alias OmedisWeb.Endpoint
 
   setup do
     {:ok, owner} = create_user()
@@ -185,7 +186,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       invitations: invitations
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
+      :ok = Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
       invitation = Enum.at(invitations, 15)
 
       {:ok, index_live, _html} =
@@ -222,7 +223,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       invitations: invitations
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
+      :ok = Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
       invitation = Enum.at(invitations, 15)
 
       {:ok, index_live, _html} =
@@ -280,11 +281,11 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     end
 
     test "invitation acceptance is propagated to the UI using PubSub", %{
-      authorized_user: authorized_user,
       group: group,
-      organisation: organisation
+      organisation: organisation,
+      owner: owner
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:accepted:#{organisation.id}")
+      :ok = Endpoint.subscribe("invitation:accepted:#{organisation.id}")
 
       invitation_create_params = %{
         email: "test001@example.com",
@@ -293,7 +294,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       }
 
       {:ok, invitation_live, html} =
-        create_invitation_via_ui(authorized_user, organisation, invitation_create_params)
+        create_invitation_via_ui(owner, organisation, invitation_create_params)
 
       assert_patch(invitation_live, ~p"/organisations/#{organisation}/invitations")
       assert html =~ "Invitation created successfully"
@@ -355,7 +356,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert updated_invitation.status == :accepted
       assert updated_invitation.user_id == invited_user.id
 
-      # TODO: Fix this; we don't get the broadcast for some reason
       assert_broadcast "accept", broadcast_payload
 
       assert %Ash.Notifier.Notification{resource: Invitation, data: accepted_invitation} =
@@ -371,11 +371,11 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     end
 
     test "invitation expiry is propagated to the UI using PubSub", %{
-      authorized_user: authorized_user,
       group: group,
-      organisation: organisation
+      organisation: organisation,
+      owner: owner
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:expired:#{organisation.id}")
+      :ok = Endpoint.subscribe("invitation:expired:#{organisation.id}")
 
       invitation_create_params = %{
         email: "test001@example.com",
@@ -384,7 +384,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       }
 
       {:ok, invitation_live, html} =
-        create_invitation_via_ui(authorized_user, organisation, invitation_create_params)
+        create_invitation_via_ui(owner, organisation, invitation_create_params)
 
       assert_patch(invitation_live, ~p"/organisations/#{organisation}/invitations")
       assert html =~ "Invitation created successfully"
@@ -431,11 +431,11 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     end
 
     test "invitation deletion is propagated to the UI using PubSub", %{
-      authorized_user: authorized_user,
       group: group,
-      organisation: organisation
+      organisation: organisation,
+      owner: owner
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
+      :ok = Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
 
       invitation_create_params = %{
         email: "test001@example.com",
@@ -444,7 +444,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       }
 
       {:ok, invitation_live, html} =
-        create_invitation_via_ui(authorized_user, organisation, invitation_create_params)
+        create_invitation_via_ui(owner, organisation, invitation_create_params)
 
       assert_patch(invitation_live, ~p"/organisations/#{organisation}/invitations")
       assert html =~ "Invitation created successfully"
@@ -472,7 +472,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ "Pending"
 
       # Delete the invitation
-      :ok = Invitation.destroy!(created_invitation, actor: authorized_user, tenant: organisation)
+      :ok = Invitation.destroy!(created_invitation, actor: owner, tenant: organisation)
 
       assert_broadcast "destroy", broadcast_payload
 
@@ -484,7 +484,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       # Verify no such invitation exists anymore
       assert {:error, %Ash.Error.Query.NotFound{}} =
                Invitation.by_id(deleted_invitation.id,
-                 actor: authorized_user,
+                 actor: owner,
                  tenant: organisation
                )
 
@@ -550,7 +550,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       authorized_user: authorized_user,
       organisation: organisation
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:created:#{organisation.id}")
+      :ok = Endpoint.subscribe("invitation:created:#{organisation.id}")
 
       assert {:ok, view, _html} =
                conn
@@ -679,7 +679,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       group: group
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("invitation:created:#{organisation.id}")
+      :ok = Endpoint.subscribe("invitation:created:#{organisation.id}")
 
       {:ok, invitation_live, _html} =
         conn
