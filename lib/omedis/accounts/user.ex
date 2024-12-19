@@ -170,16 +170,16 @@ defmodule Omedis.Accounts.User do
   end
 
   calculations do
-    calculate :as_string, :string, expr(first_name <> " " <> last_name)
+    calculate :full_name, :string, expr(first_name <> " " <> last_name)
   end
 
   identities do
     identity :unique_email, [:email]
   end
 
-  defimpl String.Chars, for: Omedis.Accounts.User do
-    def to_string(user) do
-      user.as_string || user.email
+  defimpl Phoenix.HTML.Safe, for: Omedis.Accounts.User do
+    def to_iodata(user) do
+      user.full_name || user.email
     end
   end
 end
