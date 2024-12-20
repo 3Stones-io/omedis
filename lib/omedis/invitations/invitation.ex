@@ -7,7 +7,10 @@ defmodule Omedis.Invitations.Invitation do
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.Invitations,
-    extensions: [AshStateMachine]
+    extensions: [AshStateMachine],
+    notifiers: [Ash.Notifier.PubSub]
+
+  @pub_sub_topic [:organisation_id, "invitations"]
 
   postgres do
     table "invitations"
@@ -115,6 +118,15 @@ defmodule Omedis.Invitations.Invitation do
     policy action([:list_paginated, :read]) do
       authorize_if Omedis.AccessRights.AccessRight.Checks.AccessFilter
     end
+  end
+
+  pub_sub do
+    module OmedisWeb.Endpoint
+
+    publish :accept, @pub_sub_topic
+    publish :create, @pub_sub_topic
+    publish :destroy, @pub_sub_topic
+    publish :expire, @pub_sub_topic
   end
 
   multitenancy do
