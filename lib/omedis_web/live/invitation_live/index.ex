@@ -3,7 +3,6 @@ defmodule OmedisWeb.InvitationLive.Index do
 
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Organisation
   alias Omedis.Invitations.Invitation
   alias OmedisWeb.Endpoint
   alias OmedisWeb.InvitationLive.InvitationStatusComponent
@@ -17,26 +16,13 @@ defmodule OmedisWeb.InvitationLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      maybe_subscribe_to_invitation_updates(socket.assigns.current_organisation)
+      :ok = Endpoint.subscribe("#{socket.assigns.current_organisation.id}:invitations")
     end
 
     {:ok,
      socket
      |> assign(:sort_order, :desc)
      |> stream(:invitations, [])}
-  end
-
-  defp maybe_subscribe_to_invitation_updates(current_organisation) do
-    case current_organisation do
-      nil ->
-        :ok
-
-      %Organisation{id: current_organisation_id} ->
-        :ok = Endpoint.subscribe("invitation:accepted:#{current_organisation_id}")
-        :ok = Endpoint.subscribe("invitation:created:#{current_organisation_id}")
-        :ok = Endpoint.subscribe("invitation:destroyed:#{current_organisation_id}")
-        :ok = Endpoint.subscribe("invitation:expired:#{current_organisation_id}")
-    end
   end
 
   @impl true

@@ -186,7 +186,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       invitations: invitations
     } do
-      :ok = Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
+      :ok = Endpoint.subscribe("#{organisation.id}:invitations")
       invitation = Enum.at(invitations, 15)
 
       {:ok, index_live, _html} =
@@ -223,7 +223,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       invitations: invitations
     } do
-      :ok = Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
+      :ok = Endpoint.subscribe("#{organisation.id}:invitations")
       invitation = Enum.at(invitations, 15)
 
       {:ok, index_live, _html} =
@@ -285,7 +285,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       owner: owner
     } do
-      :ok = Endpoint.subscribe("invitation:accepted:#{organisation.id}")
+      :ok = Endpoint.subscribe("#{organisation.id}:invitations")
 
       invitation_create_params = %{
         email: "test001@example.com",
@@ -375,7 +375,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       owner: owner
     } do
-      :ok = Endpoint.subscribe("invitation:expired:#{organisation.id}")
+      :ok = Endpoint.subscribe("#{organisation.id}:invitations")
 
       invitation_create_params = %{
         email: "test001@example.com",
@@ -435,7 +435,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       owner: owner
     } do
-      :ok = Endpoint.subscribe("invitation:destroyed:#{organisation.id}")
+      :ok = Endpoint.subscribe("#{organisation.id}:invitations")
 
       invitation_create_params = %{
         email: "test001@example.com",
@@ -550,7 +550,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       authorized_user: authorized_user,
       organisation: organisation
     } do
-      :ok = Endpoint.subscribe("invitation:created:#{organisation.id}")
+      :ok = Endpoint.subscribe("#{organisation.id}:invitations")
 
       assert {:ok, view, _html} =
                conn
@@ -679,7 +679,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       organisation: organisation,
       group: group
     } do
-      :ok = Endpoint.subscribe("invitation:created:#{organisation.id}")
+      :ok = Endpoint.subscribe("#{organisation.id}:invitations")
 
       {:ok, invitation_live, _html} =
         conn

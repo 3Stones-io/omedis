@@ -10,6 +10,8 @@ defmodule Omedis.Invitations.Invitation do
     extensions: [AshStateMachine],
     notifiers: [Ash.Notifier.PubSub]
 
+  @pub_sub_topic [:organisation_id, "invitations"]
+
   postgres do
     table "invitations"
     repo Omedis.Repo
@@ -121,12 +123,10 @@ defmodule Omedis.Invitations.Invitation do
   pub_sub do
     module OmedisWeb.Endpoint
 
-    prefix "invitation"
-
-    publish :accept, ["accepted", :organisation_id]
-    publish :create, ["created", :organisation_id]
-    publish :destroy, ["destroyed", :organisation_id]
-    publish :expire, ["expired", :organisation_id]
+    publish :accept, @pub_sub_topic
+    publish :create, @pub_sub_topic
+    publish :destroy, @pub_sub_topic
+    publish :expire, @pub_sub_topic
   end
 
   multitenancy do
