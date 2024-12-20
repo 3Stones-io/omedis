@@ -8,7 +8,8 @@ defmodule Omedis.Accounts.Project do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Accounts,
+    notifiers: [Ash.Notifier.PubSub]
 
   alias Omedis.AccessRights.AccessRight.Checks.AccessFilter
   alias Omedis.AccessRights.AccessRight.Checks.CanAccessResource
@@ -113,6 +114,12 @@ defmodule Omedis.Accounts.Project do
     policy do
       authorize_if always()
     end
+  end
+
+  pub_sub do
+    module OmedisWeb.Endpoint
+
+    publish :create, [:organisation_id, "projects"]
   end
 
   validations do
