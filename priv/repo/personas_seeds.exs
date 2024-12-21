@@ -231,7 +231,7 @@ end
   status: :success
 } =
   sequential_create.(
-    Accounts.Activity,
+    TimeTracking.Activity,
     [
       %{
         group_id: group_1.id,
@@ -289,7 +289,7 @@ end
   status: :success
 } =
   sequential_create.(
-    Accounts.Activity,
+    TimeTracking.Activity,
     [
       %{
         group_id: security_group.id,
@@ -342,7 +342,7 @@ end
   status: :success
 } =
   sequential_create.(
-    Accounts.Activity,
+    TimeTracking.Activity,
     [
       %{
         group_id: dev_group.id,
@@ -403,7 +403,7 @@ end
 # Events for Spitex Bemeda
 %{records: _medical_events, status: :success} =
   bulk_create.(
-    Accounts.Event,
+    TimeTracking.Event,
     [
       %{
         activity_id: visit_patient.id,
@@ -428,7 +428,7 @@ end
 # Events for ASA Security
 %{records: _security_events, status: :success} =
   bulk_create.(
-    Accounts.Event,
+    TimeTracking.Event,
     [
       %{
         activity_id: surveillance_building.id,
@@ -446,7 +446,7 @@ end
 # Events for 3Stones
 %{records: _dev_events, status: :success} =
   bulk_create.(
-    Accounts.Event,
+    TimeTracking.Event,
     [
       %{
         activity_id: ui_design.id,
@@ -464,7 +464,7 @@ end
 # Additional events for Spitex Bemeda with varied durations over two weeks
 %{records: _additional_medical_events, status: :success} =
   bulk_create.(
-    Accounts.Event,
+    TimeTracking.Event,
     [
       # Week 1
       %{

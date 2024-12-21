@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Activity.Relationships.ActivityAccessRights do
+defmodule Omedis.TimeTracking.Activity.Relationships.ActivityAccessRights do
   @moduledoc """
   A relationship that allows us to access the access rights for an Activity.
   """

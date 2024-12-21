@@ -1,7 +1,7 @@
 defmodule OmedisWeb.EventLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Activity
-  alias Omedis.Accounts.Event
+  alias Omedis.TimeTracking.Activity
+  alias Omedis.TimeTracking.Event
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 

@@ -1,8 +1,8 @@
-defmodule Omedis.Accounts.Changes.SetDefaultActivity do
+defmodule Omedis.TimeTracking.Activity.Changes.SetDefaultActivity do
   @moduledoc false
   use Ash.Resource.Change
 
-  alias Omedis.Accounts.Activity
+  alias Omedis.TimeTracking.Activity
 
   @impl true
   def change(changeset, _opts, %{actor: actor, tenant: organisation} = _context) do

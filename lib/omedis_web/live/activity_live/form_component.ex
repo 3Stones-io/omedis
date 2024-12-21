@@ -2,7 +2,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
   use OmedisWeb, :live_component
 
   alias Omedis.Accounts
-  alias Omedis.Accounts.Activity
+  alias Omedis.TimeTracking.Activity
 
   @impl true
   def render(assigns) do

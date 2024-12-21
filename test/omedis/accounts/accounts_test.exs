@@ -5,8 +5,8 @@ defmodule Omedis.AccountsTest do
   import Omedis.TestUtils
 
   alias Omedis.Accounts
-  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Organisation
+  alias Omedis.TimeTracking.Activity
 
   setup do
     {:ok, owner} = create_user()

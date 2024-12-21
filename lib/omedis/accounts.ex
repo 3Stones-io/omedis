@@ -4,8 +4,8 @@ defmodule Omedis.Accounts do
   """
   use Ash.Domain
 
-  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Project
+  alias Omedis.TimeTracking.Activity
 
   require Ash.Query
 
@@ -23,8 +23,6 @@ defmodule Omedis.Accounts do
   ]
 
   resources do
-    resource Omedis.Accounts.Activity
-    resource Omedis.Accounts.Event
     resource Omedis.Accounts.Organisation
     resource Omedis.Accounts.Project
     resource Omedis.Accounts.Token
