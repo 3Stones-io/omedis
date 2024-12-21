@@ -1,10 +1,10 @@
-defmodule Omedis.Accounts.ActivityTest do
+defmodule Omedis.TimeTracking.ActivityTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Activity
+  alias Omedis.TimeTracking.Activity
 
   setup do
     {:ok, owner} = create_user()

@@ -3,7 +3,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
 
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
-  alias Omedis.Accounts.Activity
+  alias Omedis.TimeTracking.Activity
 
   setup do
     {:ok, owner} = create_user()

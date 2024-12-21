@@ -132,7 +132,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
   end
 
   describe "/organisations/:slug (Time Tracker)" do
-    alias Omedis.Accounts.Event
+    alias Omedis.TimeTracking.Event
     alias OmedisWeb.Endpoint
 
     setup %{group: group, organisation: organisation, user: user} do
@@ -207,7 +207,10 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       |> element("button[phx-click='select_activity'][phx-value-activity_id='#{activity_1.id}']")
       |> render_click()
 
-      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert_broadcast "event_started",
+                       %Omedis.TimeTracking.Activity{id: broadcast_activity_id},
+                       1000
+
       assert broadcast_activity_id == activity_1.id
 
       html = render(time_tracker_live_view)
@@ -310,7 +313,10 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         )
         |> render_click()
 
-      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert_broadcast "event_started",
+                       %Omedis.TimeTracking.Activity{id: broadcast_activity_id},
+                       1000
+
       assert broadcast_activity_id == activity_1.id
 
       refute html =~ "Start Timer"
@@ -384,7 +390,10 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         )
         |> render_click()
 
-      assert_broadcast "event_started", %Omedis.Accounts.Activity{id: broadcast_activity_id}, 1000
+      assert_broadcast "event_started",
+                       %Omedis.TimeTracking.Activity{id: broadcast_activity_id},
+                       1000
+
       assert broadcast_activity_id == activity_1.id
 
       # Verify timer is running

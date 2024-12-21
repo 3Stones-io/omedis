@@ -15,6 +15,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   alias Omedis.AccessRights
   alias Omedis.Accounts
   alias Omedis.Groups
+  alias Omedis.TimeTracking
 
   @admin_full_access_resources [
     "AccessRight",
@@ -180,7 +181,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
 
   defp create_activity(project, users_group, opts) do
     {:ok, _} =
-      Accounts.Activity.create(
+      TimeTracking.Activity.create(
         %{
           name: "Miscellaneous",
           slug: "miscellaneous",

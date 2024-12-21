@@ -7,6 +7,7 @@ defmodule Omedis.Fixtures do
   alias Omedis.Accounts
   alias Omedis.Groups
   alias Omedis.Invitations
+  alias Omedis.TimeTracking
 
   def create_access_right(organisation, attrs \\ %{}) do
     fixture(AccessRights.AccessRight, organisation, attrs)
@@ -21,11 +22,11 @@ defmodule Omedis.Fixtures do
   end
 
   def create_activity(organisation, attrs \\ %{}) do
-    fixture(Accounts.Activity, organisation, attrs)
+    fixture(TimeTracking.Activity, organisation, attrs)
   end
 
   def create_event(organisation, attrs \\ %{}, opts \\ []) do
-    fixture(Accounts.Event, organisation, attrs, opts)
+    fixture(TimeTracking.Event, organisation, attrs, opts)
   end
 
   def create_invitation(organisation, attrs \\ %{}, opts \\ []) do
@@ -87,7 +88,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.Activity, organisation) do
+  def attrs_for(TimeTracking.Activity, organisation) do
     %{
       color_code: "#" <> Faker.Color.rgb_hex(),
       group_id: fn ->
@@ -104,7 +105,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.Event, organisation) do
+  def attrs_for(TimeTracking.Event, organisation) do
     %{
       activity_id: fn ->
         {:ok, activity} = create_activity(organisation)

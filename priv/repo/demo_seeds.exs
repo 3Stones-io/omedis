@@ -227,7 +227,7 @@ organisation_2 = DemoSeeds.get_organisation_by_owner_id(user_2.id)
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.Activity,
+    TimeTracking.Activity,
     organisation_1,
     [
       %{

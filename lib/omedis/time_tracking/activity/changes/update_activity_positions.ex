@@ -1,10 +1,10 @@
-defmodule Omedis.Accounts.Changes.UpdateActivityPositions do
+defmodule Omedis.TimeTracking.Activity.Changes.UpdateActivityPositions do
   @moduledoc false
   use Ash.Resource.Change
 
   require Ash.Query
 
-  alias Omedis.Accounts.Activity
+  alias Omedis.TimeTracking.Activity
 
   @impl true
   def change(changeset, _opts, context) do

@@ -6,9 +6,9 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
   require Ash.Query
 
-  alias Omedis.Accounts.Event
   alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
+  alias Omedis.TimeTracking.Event
 
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})

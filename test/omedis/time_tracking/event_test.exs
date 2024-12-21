@@ -3,7 +3,7 @@ defmodule Omedis.EventTest do
 
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Event
+  alias Omedis.TimeTracking.Event
 
   setup do
     {:ok, owner} = create_user()
