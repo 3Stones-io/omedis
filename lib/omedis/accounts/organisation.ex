@@ -6,8 +6,8 @@ defmodule Omedis.Accounts.Organisation do
   alias Omedis.Accounts.Organisation.Checks.CanUpdateOrganisation
   alias Omedis.Accounts.Organisation.Checks.OrganisationsAccessFilter
   alias Omedis.Accounts.Organisation.Validations.Timezone
-  alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
+  alias Omedis.Projects.Project
 
   require Ash.Query
 

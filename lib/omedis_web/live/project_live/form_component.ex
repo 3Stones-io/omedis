@@ -111,7 +111,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
           tenant: organisation
         )
       else
-        AshPhoenix.Form.for_create(Omedis.Accounts.Project, :create,
+        AshPhoenix.Form.for_create(Omedis.Projects.Project, :create,
           as: "project",
           actor: actor,
           tenant: organisation

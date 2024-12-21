@@ -54,7 +54,8 @@ config :omedis,
     Omedis.AccessRights,
     Omedis.Accounts,
     Omedis.Groups,
-    Omedis.Invitations
+    Omedis.Invitations,
+    Omedis.Projects
   ]
 
 # I18n
