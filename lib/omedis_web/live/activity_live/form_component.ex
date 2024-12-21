@@ -1,7 +1,7 @@
 defmodule OmedisWeb.ActivityLive.FormComponent do
   use OmedisWeb, :live_component
 
-  alias Omedis.Accounts
+  alias Omedis.TimeTracking
   alias Omedis.TimeTracking.Activity
 
   @impl true
@@ -223,7 +223,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         )
       end
 
-    color_code = Accounts.select_unused_color_code(socket.assigns.organisation)
+    color_code = TimeTracking.select_unused_color_code(socket.assigns.organisation)
 
     assign(socket,
       form: to_form(form),

@@ -1,10 +1,10 @@
 defmodule OmedisWeb.ActivityLive.Index do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
+  alias Omedis.TimeTracking
   alias Omedis.TimeTracking.Activity
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
@@ -287,7 +287,7 @@ defmodule OmedisWeb.ActivityLive.Index do
            tenant: socket.assigns.organisation
          ) do
       {:ok, activity} ->
-        Accounts.move_activity_up(activity,
+        TimeTracking.move_activity_up(activity,
           actor: socket.assigns.current_user,
           tenant: socket.assigns.organisation
         )
@@ -305,7 +305,7 @@ defmodule OmedisWeb.ActivityLive.Index do
            tenant: socket.assigns.organisation
          ) do
       {:ok, activity} ->
-        Accounts.move_activity_down(activity,
+        TimeTracking.move_activity_down(activity,
           actor: socket.assigns.current_user,
           tenant: socket.assigns.organisation
         )
