@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Project do
+defmodule Omedis.Projects.Project do
   @moduledoc """
   This is the project module
   """
@@ -8,7 +8,7 @@ defmodule Omedis.Accounts.Project do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.Projects
 
   alias Omedis.AccessRights.AccessRight.Checks.AccessFilter
   alias Omedis.AccessRights.AccessRight.Checks.CanAccessResource
@@ -27,7 +27,7 @@ defmodule Omedis.Accounts.Project do
   end
 
   code_interface do
-    domain Omedis.Accounts
+    domain Omedis.Projects
     define :read
     define :create
     define :update
@@ -140,7 +140,7 @@ defmodule Omedis.Accounts.Project do
     belongs_to :organisation, Omedis.Accounts.Organisation
 
     has_many :access_rights, Omedis.AccessRights.AccessRight do
-      manual Omedis.Accounts.Project.Relationships.ProjectAccessRights
+      manual Omedis.Projects.Project.Relationships.ProjectAccessRights
     end
   end
 
