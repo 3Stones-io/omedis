@@ -111,6 +111,10 @@ defmodule OmedisWeb.ProjectLive.Index do
   def mount(_params, _session, socket) do
     actor = socket.assigns.current_user
 
+    if connected?(socket) do
+      :ok = OmedisWeb.Endpoint.subscribe("#{socket.assigns.current_organisation.id}:projects")
+    end
+
     {:ok,
      socket
      |> assign(:organisations, Ash.read!(Organisation, actor: actor))
@@ -224,5 +228,10 @@ defmodule OmedisWeb.ProjectLive.Index do
   @impl true
   def handle_info({OmedisWeb.ProjectLive.FormComponent, {:saved, project}}, socket) do
     {:noreply, stream_insert(socket, :projects, project)}
+  end
+
+  def handle_info(%Phoenix.Socket.Broadcast{event: "create"} = broadcast, socket) do
+    created_project = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :projects, created_project)}
   end
 end

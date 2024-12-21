@@ -140,6 +140,8 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       owner: owner,
       organisation: organisation
     } do
+      :ok = OmedisWeb.Endpoint.subscribe("#{organisation.id}:projects")
+
       {:ok, index_live, html} =
         conn
         |> log_in_user(owner)
@@ -155,6 +157,13 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
                |> render_submit()
 
       assert_patch(index_live, ~p"/organisations/#{organisation}/projects")
+
+      assert_broadcast "create", broadcast_payload
+
+      assert %Ash.Notifier.Notification{resource: Omedis.Accounts.Project, data: created_project} =
+               broadcast_payload
+
+      assert created_project.name == "Dummy Project"
 
       assert html =~ "Project saved."
       assert html =~ "Dummy Project"
