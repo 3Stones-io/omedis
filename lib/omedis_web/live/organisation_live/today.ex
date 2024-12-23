@@ -3,8 +3,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
   alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Event
-  alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
+  alias Omedis.Projects.Project
   alias OmedisWeb.Endpoint
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}

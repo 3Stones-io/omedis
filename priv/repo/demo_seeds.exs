@@ -197,7 +197,7 @@ organisation_2 = DemoSeeds.get_organisation_by_owner_id(user_2.id)
 
 %{records: [project_1, project_2], status: :success} =
   bulk_create.(
-    Accounts.Project,
+    Projects.Project,
     organisation_1,
     [
       %{
@@ -214,7 +214,7 @@ organisation_2 = DemoSeeds.get_organisation_by_owner_id(user_2.id)
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.Project,
+    Projects.Project,
     organisation_2,
     [
       %{

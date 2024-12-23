@@ -1,7 +1,7 @@
 defmodule OmedisWeb.ProjectLive.Show do
   use OmedisWeb, :live_view
   alias Omedis.Accounts.Organisation
-  alias Omedis.Accounts.Project
+  alias Omedis.Projects.Project
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 

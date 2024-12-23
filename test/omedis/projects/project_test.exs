@@ -1,9 +1,9 @@
-defmodule Omedis.Accounts.ProjectTest do
+defmodule Omedis.Projects.ProjectTest do
   use Omedis.DataCase, async: true
 
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Project
+  alias Omedis.Projects.Project
 
   setup do
     {:ok, owner} = create_user()

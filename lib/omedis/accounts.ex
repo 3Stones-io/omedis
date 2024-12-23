@@ -5,7 +5,6 @@ defmodule Omedis.Accounts do
   use Ash.Domain
 
   alias Omedis.Accounts.Activity
-  alias Omedis.Accounts.Project
 
   require Ash.Query
 
@@ -26,7 +25,6 @@ defmodule Omedis.Accounts do
     resource Omedis.Accounts.Activity
     resource Omedis.Accounts.Event
     resource Omedis.Accounts.Organisation
-    resource Omedis.Accounts.Project
     resource Omedis.Accounts.Token
     resource Omedis.Accounts.User
   end
@@ -64,20 +62,6 @@ defmodule Omedis.Accounts do
     case unused_color_code do
       nil -> Enum.random(@github_issue_color_codes)
       color_code -> color_code
-    end
-  end
-
-  def get_max_position_by_organisation_id(organisation_id, opts \\ []) do
-    Project
-    |> Ash.Query.filter(organisation_id: organisation_id)
-    |> Ash.Query.sort(position: :desc)
-    |> Ash.Query.limit(1)
-    |> Ash.Query.select([:position])
-    |> Ash.read!(opts)
-    |> Enum.at(0)
-    |> case do
-      nil -> 0
-      record -> record.position |> String.to_integer()
     end
   end
 
