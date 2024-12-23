@@ -32,7 +32,7 @@ bulk_create = fn module, list, opts ->
 end
 
 sequential_create = fn module, list, opts ->
-  opts = Keyword.merge([authorize?: false, upsert?: true], opts)
+  opts = Keyword.merge([authorize?: false], opts)
 
   result =
     Enum.reduce_while(list, {:ok, []}, fn attrs, {:ok, acc} ->
@@ -41,19 +41,18 @@ sequential_create = fn module, list, opts ->
         |> attrs_for(Keyword.get(opts, :tenant))
         |> Map.merge(attrs)
 
-      # Get the identity fields for existence check
-      identity = Keyword.get(opts, :upsert_identity)
-      identity_attrs = Map.take(attrs, Ash.Resource.Info.identity(module, identity).keys)
+      # Get the existence check keys
+      existence_keys = Keyword.get(opts, :existence_check_keys, [])
+      check_attrs = Map.take(attrs, existence_keys)
 
       # Build query for existence check
       query =
         module
         |> Ash.Query.new()
-        |> Ash.Query.filter(^identity_attrs)
+        |> Ash.Query.filter(^check_attrs)
 
-      Ash.exists?(query, tenant: Keyword.get(opts, :tenant), authorize?: false)
-
-      case Ash.exists?(query, tenant: Keyword.get(opts, :tenant), authorize?: false) do
+      case existence_keys != [] &&
+             Ash.exists?(query, tenant: Keyword.get(opts, :tenant), authorize?: false) do
         # Record exists, fetch it and add to accumulator
         true ->
           {:ok, [existing]} =
@@ -61,7 +60,7 @@ sequential_create = fn module, list, opts ->
 
           {:cont, {:ok, [existing | acc]}}
 
-        # Record doesn't exist, create it
+        # Record doesn't exist or no existence check needed, create it
         false ->
           case Ash.create(module, attrs, opts) do
             {:ok, record} -> {:cont, {:ok, [record | acc]}}
@@ -131,7 +130,7 @@ organisation_3 = get_organisation.(tim.id)
       }
     ],
     tenant: organisation_1,
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 %{records: [heidi, _fatima], status: :success} =
@@ -151,7 +150,7 @@ organisation_3 = get_organisation.(tim.id)
         last_name: "Khan"
       }
     ],
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 %{records: _invitations, status: :success} =
@@ -171,7 +170,7 @@ organisation_3 = get_organisation.(tim.id)
     ],
     tenant: organisation_2,
     authorize?: false,
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 %{records: [sarah, lena], status: :success} =
@@ -191,7 +190,7 @@ organisation_3 = get_organisation.(tim.id)
         last_name: "Meyer"
       }
     ],
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 %{records: _invitations, status: :success} =
@@ -210,7 +209,7 @@ organisation_3 = get_organisation.(tim.id)
       }
     ],
     tenant: organisation_3,
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 %{records: [anna, marc], status: :success} =
@@ -230,7 +229,7 @@ organisation_3 = get_organisation.(tim.id)
         last_name: "Brown"
       }
     ],
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 %{records: [group_1, group_2], status: :success} =
@@ -279,35 +278,32 @@ organisation_3 = get_organisation.(tim.id)
   sequential_create.(
     Accounts.Project,
     [
-      %{name: "Medical Support", position: "1", organisation_id: organisation_1.id},
-      %{name: "Frau Schmidt", position: "2", organisation_id: organisation_1.id},
-      %{name: "Herr Meier", position: "3", organisation_id: organisation_1.id}
+      %{name: "Medical Support", position: "2", organisation_id: organisation_1.id},
+      %{name: "Frau Schmidt", position: "3", organisation_id: organisation_1.id},
+      %{name: "Herr Meier", position: "4", organisation_id: organisation_1.id}
     ],
     tenant: organisation_1,
-    upsert_fields: [:name, :position, :organisation_id],
-    upsert_identity: :unique_name
+    existence_check_keys: [:name, :organisation_id]
   )
 
 %{records: [security_operations], status: :success} =
   sequential_create.(
     Accounts.Project,
     [
-      %{organisation_id: organisation_2.id, name: "Security Operations", position: "1"}
+      %{organisation_id: organisation_2.id, name: "Security Operations", position: "2"}
     ],
     tenant: organisation_2,
-    upsert_fields: [:name, :position, :organisation_id],
-    upsert_identity: :unique_name
+    existence_check_keys: [:name, :organisation_id]
   )
 
 %{records: [software_development], status: :success} =
   sequential_create.(
     Accounts.Project,
     [
-      %{organisation_id: organisation_3.id, name: "Software Development", position: "1"}
+      %{organisation_id: organisation_3.id, name: "Software Development", position: "2"}
     ],
     tenant: organisation_3,
-    upsert_fields: [:name, :position, :organisation_id],
-    upsert_identity: :unique_name
+    existence_check_keys: [:name, :organisation_id]
   )
 
 %{
@@ -365,7 +361,7 @@ organisation_3 = get_organisation.(tim.id)
       }
     ],
     tenant: organisation_1,
-    upsert_identity: :unique_slug
+    existence_check_keys: [:slug, :group_id]
   )
 
 %{
@@ -423,8 +419,7 @@ organisation_3 = get_organisation.(tim.id)
       }
     ],
     tenant: organisation_2,
-    upsert_fields: [:slug, :group_id],
-    upsert_identity: :unique_slug
+    existence_check_keys: [:slug, :group_id]
   )
 
 %{
@@ -476,8 +471,7 @@ organisation_3 = get_organisation.(tim.id)
       }
     ],
     tenant: organisation_3,
-    upsert_fields: [:slug, :group_id],
-    upsert_identity: :unique_slug
+    existence_check_keys: [:slug, :group_id]
   )
 
 # Helper functions for relative dates
@@ -492,7 +486,7 @@ end
 
 # Events for Spitex Bemeda
 %{records: _medical_events, status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.Event,
     [
       %{
@@ -512,12 +506,15 @@ end
     ],
     actor: denis,
     tenant: organisation_1,
-    upsert_identity: nil
+    existence_check_keys: [:summary]
   )
+
+time_on_day.(days_from_today.(-2), 8, 0) |> IO.inspect(label: "dtstart::::")
+time_on_day.(days_from_today.(-2), 8, 10) |> IO.inspect(label: "dtend::::")
 
 # Events for ASA Security
 %{records: _security_events, status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.Event,
     [
       %{
@@ -530,12 +527,12 @@ end
     ],
     actor: ben,
     tenant: organisation_2,
-    upsert_identity: nil
+    existence_check_keys: [:summary]
   )
 
 # Events for 3Stones
 %{records: _dev_events, status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.Event,
     [
       %{
@@ -548,67 +545,15 @@ end
     ],
     actor: tim,
     tenant: organisation_3,
-    upsert_identity: nil
+    existence_check_keys: [:summary]
   )
 
 # Additional events for Spitex Bemeda with varied durations over two weeks
 %{records: _additional_medical_events, status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.Event,
     [
       # Week 1
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-2), 8, 0),
-        dtend: time_on_day.(days_from_today.(-2), 8, 1),
-        summary: "Quick medication check"
-      },
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-2), 8, 30),
-        dtend: time_on_day.(days_from_today.(-2), 10, 45),
-        summary: "Extended care session - Frau Schmidt"
-      },
-      %{
-        activity_id: health_assessment.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-2), 11, 0),
-        dtend: time_on_day.(days_from_today.(-2), 11, 30),
-        summary: "Vital signs check - Herr Weber"
-      },
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-2), 13, 0),
-        dtend: time_on_day.(days_from_today.(-2), 15, 30),
-        summary: "Afternoon rounds"
-      },
-      # Week 1 - Day 2
-      %{
-        activity_id: administer_medication.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-1), 8, 15),
-        dtend: time_on_day.(days_from_today.(-1), 8, 45),
-        summary: "Morning medication round"
-      },
-      %{
-        activity_id: follow_up_visit.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-1), 9, 0),
-        dtend: time_on_day.(days_from_today.(-1), 9, 5),
-        summary: "Quick check-in call"
-      },
-      # Edge case: Forgotten to stop tracking
-      %{
-        activity_id: health_assessment.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-1), 10, 0),
-        dtend: time_on_day.(days_from_today.(0), 17, 45),
-        summary: "Patient documentation (tracking error)"
-      },
-      # Week 2
       %{
         activity_id: visit_patient.id,
         user_id: denis.id,
@@ -643,9 +588,59 @@ end
         dtstart: time_on_day.(days_from_today.(7), 8, 30),
         dtend: time_on_day.(days_from_today.(7), 11, 30),
         summary: "Complex care case"
+      },
+      # Week 2
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(8), 8, 0),
+        dtend: time_on_day.(days_from_today.(8), 8, 10),
+        summary: "Quick medication check"
+      },
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(8), 10, 30),
+        dtend: time_on_day.(days_from_today.(8), 12, 30),
+        summary: "Extended care session - Frau Schmidt"
+      },
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(8), 12, 31),
+        dtend: time_on_day.(days_from_today.(8), 13, 30),
+        summary: "Vital signs check - Herr Weber"
+      },
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(8), 13, 31),
+        dtend: time_on_day.(days_from_today.(8), 14, 30),
+        summary: "Afternoon rounds"
+      },
+      %{
+        activity_id: administer_medication.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(9), 8, 15),
+        dtend: time_on_day.(days_from_today.(9), 8, 45),
+        summary: "Morning medication round"
+      },
+      %{
+        activity_id: follow_up_visit.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(9), 9, 0),
+        dtend: time_on_day.(days_from_today.(9), 9, 5),
+        summary: "Quick check-in call"
+      },
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(9), 10, 0),
+        dtend: time_on_day.(days_from_today.(9), 11, 45),
+        summary: "Patient documentation"
       }
     ],
     actor: denis,
     tenant: organisation_1,
-    upsert_identity: nil
+    existence_check_keys: [:summary]
   )

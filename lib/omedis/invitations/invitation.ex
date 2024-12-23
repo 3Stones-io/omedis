@@ -171,8 +171,4 @@ defmodule Omedis.Invitations.Invitation do
       through Omedis.Invitations.InvitationGroup
     end
   end
-
-  identities do
-    identity :unique_email, [:email]
-  end
 end

@@ -163,23 +163,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "654AEB3E3C566AC2FAF7287023C21F1C419AE5BB16C47450EA21924B615E528A",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "invitations_unique_email_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "email"
-        }
-      ],
-      "name": "unique_email",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "hash": "C1749BE2677FCC0F259C10732F7B7C05978EEE90B55972AFD0AA202021A1BE09",
+  "identities": [],
   "multitenancy": {
     "attribute": "organisation_id",
     "global": true,
