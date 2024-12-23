@@ -39,9 +39,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
       |> add_users_group(socket.assigns.groups)
 
     case Form.submit(socket.assigns.form, params: params) do
-      {:ok, invitation} ->
-        notify_parent({:saved, invitation})
-
+      {:ok, _invitation} ->
         {:noreply,
          socket
          |> put_flash(:info, dgettext("invitation", "Invitation created successfully"))
@@ -90,8 +88,6 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   end
 
   defp prepare_params(params, _), do: params
-
-  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 
   defp language_to_flag(language) do
     case language do

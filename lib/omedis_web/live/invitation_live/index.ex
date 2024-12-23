@@ -4,15 +4,21 @@ defmodule OmedisWeb.InvitationLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Invitations.Invitation
+  alias OmedisWeb.Endpoint
   alias OmedisWeb.InvitationLive.InvitationStatusComponent
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
+  alias Phoenix.Socket.Broadcast
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
   on_mount {OmedisWeb.LiveHelpers, :assign_default_pagination_assigns}
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      :ok = Endpoint.subscribe("#{socket.assigns.current_organisation.id}:invitations")
+    end
+
     {:ok,
      socket
      |> assign(:sort_order, :desc)
@@ -89,6 +95,27 @@ defmodule OmedisWeb.InvitationLive.Index do
        )
      end)
      |> assign(:sort_order, new_sort_order)}
+  end
+
+  @impl true
+  def handle_info(%Broadcast{event: "accept"} = broadcast, socket) do
+    accepted_invitation = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :invitations, accepted_invitation)}
+  end
+
+  def handle_info(%Broadcast{event: "create"} = broadcast, socket) do
+    created_invitation = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :invitations, created_invitation)}
+  end
+
+  def handle_info(%Broadcast{event: "destroy"} = broadcast, socket) do
+    deleted_invitation = Map.get(broadcast.payload, :data)
+    {:noreply, stream_delete(socket, :invitations, deleted_invitation)}
+  end
+
+  def handle_info(%Broadcast{event: "expire"} = broadcast, socket) do
+    expired_invitation = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :invitations, expired_invitation)}
   end
 
   @impl true
