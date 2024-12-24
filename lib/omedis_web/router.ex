@@ -102,6 +102,13 @@ defmodule OmedisWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
+      live_session :playground,
+        on_mount: [
+          {OmedisWeb.LiveUserAuth, :live_user_optional}
+        ] do
+        live "/playground", OmedisWeb.PlaygroundLive, :index
+      end
+
       live_dashboard "/dashboard", metrics: OmedisWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
