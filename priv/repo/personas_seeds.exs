@@ -3,6 +3,10 @@ import Omedis.Fixtures
 require Ash.Query
 
 alias Omedis.Accounts
+alias Omedis.Groups
+alias Omedis.Invitations
+alias Omedis.Projects
+alias Omedis.TimeTracking
 
 bulk_create = fn module, list, opts ->
   list
@@ -30,7 +34,7 @@ bulk_create = fn module, list, opts ->
 end
 
 sequential_create = fn module, list, opts ->
-  opts = Keyword.merge([authorize?: false, upsert?: true], opts)
+  opts = Keyword.merge([authorize?: false], opts)
 
   result =
     Enum.reduce_while(list, {:ok, []}, fn attrs, {:ok, acc} ->
@@ -39,27 +43,31 @@ sequential_create = fn module, list, opts ->
         |> attrs_for(Keyword.get(opts, :tenant))
         |> Map.merge(attrs)
 
-      # First check if record exists using the upsert_identity
-      identity = Keyword.get(opts, :upsert_identity)
-      identity_attrs = Map.take(attrs, Ash.Resource.Info.identity(module, identity).keys)
+      # Get the existence check keys
+      existence_keys = Keyword.get(opts, :existence_check_keys, [])
+      check_attrs = Map.take(attrs, existence_keys)
 
+      # Build query for existence check
       query =
         module
         |> Ash.Query.new()
-        |> Ash.Query.filter(^identity_attrs)
+        |> Ash.Query.filter(^check_attrs)
 
-      case Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant)) do
-        {:ok, [existing]} ->
+      case existence_keys != [] &&
+             Ash.exists?(query, tenant: Keyword.get(opts, :tenant), authorize?: false) do
+        # Record exists, fetch it and add to accumulator
+        true ->
+          {:ok, [existing]} =
+            Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant))
+
           {:cont, {:ok, [existing | acc]}}
 
-        {:ok, []} ->
+        # Record doesn't exist or no existence check needed, create it
+        false ->
           case Ash.create(module, attrs, opts) do
             {:ok, record} -> {:cont, {:ok, [record | acc]}}
             error -> {:halt, error}
           end
-
-        error ->
-          {:halt, error}
       end
     end)
 
@@ -69,7 +77,13 @@ sequential_create = fn module, list, opts ->
   end
 end
 
-%{records: [denis, heidi, _fatima, ben, _sarah, _lena, tim, _anna, _marc], status: :success} =
+get_organisation = fn owner_id ->
+  Accounts.Organisation
+  |> Ash.Query.filter(owner_id: owner_id)
+  |> Ash.read_one!(authorize?: false)
+end
+
+%{records: [denis, ben, tim], status: :success} =
   bulk_create.(
     Accounts.User,
     [
@@ -80,16 +94,6 @@ end
         first_name: "Denis",
         last_name: "Gojak"
       },
-      %{
-        email: "heidi@spitex-bemeda.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("secure_heidi")
-      },
-      %{
-        email: "fatima.khan@spitex-bemeda.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("fatima123"),
-        first_name: "Fatima",
-        last_name: "Khan"
-      },
       # ASA Security
       %{
         email: "ben.hall@asa-security.ch",
@@ -97,55 +101,142 @@ end
         first_name: "Ben",
         last_name: "Hall"
       },
-      %{
-        email: "sarah.jones@asa-security.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("sarah2024"),
-        first_name: "Sarah",
-        last_name: "Jones"
-      },
-      %{
-        email: "lena.meyer@asa-security.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("meyerpass"),
-        first_name: "Lena",
-        last_name: "Meyer"
-      },
       # 3Stones
       %{
         email: "tim.davis@3stones.ch",
         hashed_password: Bcrypt.hash_pwd_salt("timrocks"),
         first_name: "Tim",
         last_name: "Davis"
-      },
-      %{
-        email: "anna.wilson@3stones.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("anna456"),
-        first_name: "Anna",
-        last_name: "Wilson"
-      },
-      %{
-        email: "marc.brown@3stones.ch",
-        hashed_password: Bcrypt.hash_pwd_salt("marc789"),
-        first_name: "Marc",
-        last_name: "Brown"
       }
     ],
     upsert_identity: :unique_email
   )
 
-%{records: [organisation_1, organisation_2, organisation_3], status: :success} =
-  bulk_create.(
-    Accounts.Organisation,
+organisation_1 = get_organisation.(denis.id)
+organisation_2 = get_organisation.(ben.id)
+organisation_3 = get_organisation.(tim.id)
+
+%{records: _invitations, status: :success} =
+  sequential_create.(
+    Invitations.Invitation,
     [
-      %{owner_id: denis.id, name: "Spitex Bemeda", slug: "spitex-bemeda"},
-      %{owner_id: denis.id, name: "ASA Security", slug: "asa-security"},
-      %{owner_id: denis.id, name: "3Stones", slug: "3stones"}
+      %{
+        creator_id: denis.id,
+        email: "heidi@spitex-bemeda.ch",
+        language: "en"
+      },
+      %{
+        creator_id: denis.id,
+        email: "fatima.khan@spitex-bemeda.ch",
+        language: "en"
+      }
     ],
-    upsert_identity: :unique_slug
+    tenant: organisation_1,
+    existence_check_keys: [:email]
+  )
+
+%{records: [heidi, _fatima], status: :success} =
+  sequential_create.(
+    Accounts.User,
+    [
+      %{
+        email: "heidi@spitex-bemeda.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Heidi",
+        last_name: "Smith"
+      },
+      %{
+        email: "fatima.khan@spitex-bemeda.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Fatima",
+        last_name: "Khan"
+      }
+    ],
+    existence_check_keys: [:email]
+  )
+
+%{records: _invitations, status: :success} =
+  sequential_create.(
+    Invitations.Invitation,
+    [
+      %{
+        creator_id: ben.id,
+        email: "sarah.jones@asa-security.ch",
+        language: "en"
+      },
+      %{
+        creator_id: ben.id,
+        email: "lena.meyer@asa-security.ch",
+        language: "en"
+      }
+    ],
+    tenant: organisation_2,
+    authorize?: false,
+    existence_check_keys: [:email]
+  )
+
+%{records: [sarah, lena], status: :success} =
+  sequential_create.(
+    Accounts.User,
+    [
+      %{
+        email: "sarah.jones@asa-security.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Sarah",
+        last_name: "Jones"
+      },
+      %{
+        email: "lena.meyer@asa-security.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Lena",
+        last_name: "Meyer"
+      }
+    ],
+    existence_check_keys: [:email]
+  )
+
+%{records: _invitations, status: :success} =
+  sequential_create.(
+    Invitations.Invitation,
+    [
+      %{
+        creator_id: tim.id,
+        email: "anna.wilson@3stones.ch",
+        language: "en"
+      },
+      %{
+        creator_id: tim.id,
+        email: "marc.brown@3stones.ch",
+        language: "en"
+      }
+    ],
+    tenant: organisation_3,
+    existence_check_keys: [:email]
+  )
+
+%{records: [anna, marc], status: :success} =
+  sequential_create.(
+    Accounts.User,
+    [
+      %{
+        email: "anna.wilson@3stones.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Anna",
+        last_name: "Wilson"
+      },
+      %{
+        email: "marc.brown@3stones.ch",
+        hashed_password: Bcrypt.hash_pwd_salt("password"),
+        first_name: "Marc",
+        last_name: "Brown"
+      }
+    ],
+    existence_check_keys: [:email]
   )
 
 %{records: [group_1, group_2], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Demo Group", slug: "demo-group"},
       %{name: "Demo Group 2", slug: "demo-group2"}
@@ -156,7 +247,7 @@ end
 
 %{records: [security_group], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Security Team", slug: "security-team"}
     ],
@@ -166,7 +257,7 @@ end
 
 %{records: [dev_group], status: :success} =
   bulk_create.(
-    Accounts.Group,
+    Groups.Group,
     [
       %{name: "Development Team", slug: "dev-team"}
     ],
@@ -176,7 +267,7 @@ end
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.GroupMembership,
+    Groups.GroupMembership,
     [
       %{group_id: group_1.id, user_id: denis.id},
       %{group_id: group_2.id, user_id: heidi.id}
@@ -186,38 +277,35 @@ end
   )
 
 %{records: [medical_support, _frau_schmidt, _herr_meier], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Projects.Project,
     [
-      %{organisation_id: organisation_1.id, name: "Medical Support", position: "1"},
-      %{organisation_id: organisation_1.id, name: "Frau Schmidt", position: "2"},
-      %{organisation_id: organisation_1.id, name: "Herr Meier", position: "3"}
+      %{name: "Medical Support", position: "2", organisation_id: organisation_1.id},
+      %{name: "Frau Schmidt", position: "3", organisation_id: organisation_1.id},
+      %{name: "Herr Meier", position: "4", organisation_id: organisation_1.id}
     ],
     tenant: organisation_1,
-    upsert_fields: [:name],
-    upsert_identity: :unique_name
+    existence_check_keys: [:name, :organisation_id]
   )
 
 %{records: [security_operations], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Projects.Project,
     [
-      %{organisation_id: organisation_2.id, name: "Security Operations", position: "1"}
+      %{organisation_id: organisation_2.id, name: "Security Operations", position: "2"}
     ],
     tenant: organisation_2,
-    upsert_fields: [:name],
-    upsert_identity: :unique_name
+    existence_check_keys: [:name, :organisation_id]
   )
 
 %{records: [software_development], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Projects.Project,
     [
-      %{organisation_id: organisation_3.id, name: "Software Development", position: "1"}
+      %{organisation_id: organisation_3.id, name: "Software Development", position: "2"}
     ],
     tenant: organisation_3,
-    upsert_fields: [:name],
-    upsert_identity: :unique_name
+    existence_check_keys: [:name, :organisation_id]
   )
 
 %{
@@ -275,7 +363,7 @@ end
       }
     ],
     tenant: organisation_1,
-    upsert_identity: :unique_slug
+    existence_check_keys: [:slug, :group_id]
   )
 
 %{
@@ -333,8 +421,7 @@ end
       }
     ],
     tenant: organisation_2,
-    upsert_fields: [:slug, :group_id],
-    upsert_identity: :unique_slug
+    existence_check_keys: [:slug, :group_id]
   )
 
 %{
@@ -386,8 +473,7 @@ end
       }
     ],
     tenant: organisation_3,
-    upsert_fields: [:slug, :group_id],
-    upsert_identity: :unique_slug
+    existence_check_keys: [:slug, :group_id]
   )
 
 # Helper functions for relative dates
@@ -402,7 +488,7 @@ end
 
 # Events for Spitex Bemeda
 %{records: _medical_events, status: :success} =
-  bulk_create.(
+  sequential_create.(
     TimeTracking.Event,
     [
       %{
@@ -422,12 +508,15 @@ end
     ],
     actor: denis,
     tenant: organisation_1,
-    upsert_identity: nil
+    existence_check_keys: [:summary]
   )
+
+time_on_day.(days_from_today.(-2), 8, 0) |> IO.inspect(label: "dtstart::::")
+time_on_day.(days_from_today.(-2), 8, 10) |> IO.inspect(label: "dtend::::")
 
 # Events for ASA Security
 %{records: _security_events, status: :success} =
-  bulk_create.(
+  sequential_create.(
     TimeTracking.Event,
     [
       %{
@@ -440,12 +529,12 @@ end
     ],
     actor: ben,
     tenant: organisation_2,
-    upsert_identity: nil
+    existence_check_keys: [:summary]
   )
 
 # Events for 3Stones
 %{records: _dev_events, status: :success} =
-  bulk_create.(
+  sequential_create.(
     TimeTracking.Event,
     [
       %{
@@ -458,67 +547,15 @@ end
     ],
     actor: tim,
     tenant: organisation_3,
-    upsert_identity: nil
+    existence_check_keys: [:summary]
   )
 
 # Additional events for Spitex Bemeda with varied durations over two weeks
 %{records: _additional_medical_events, status: :success} =
-  bulk_create.(
+  sequential_create.(
     TimeTracking.Event,
     [
       # Week 1
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-2), 8, 0),
-        dtend: time_on_day.(days_from_today.(-2), 8, 1),
-        summary: "Quick medication check"
-      },
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-2), 8, 30),
-        dtend: time_on_day.(days_from_today.(-2), 10, 45),
-        summary: "Extended care session - Frau Schmidt"
-      },
-      %{
-        activity_id: health_assessment.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-2), 11, 0),
-        dtend: time_on_day.(days_from_today.(-2), 11, 30),
-        summary: "Vital signs check - Herr Weber"
-      },
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-2), 13, 0),
-        dtend: time_on_day.(days_from_today.(-2), 15, 30),
-        summary: "Afternoon rounds"
-      },
-      # Week 1 - Day 2
-      %{
-        activity_id: administer_medication.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-1), 8, 15),
-        dtend: time_on_day.(days_from_today.(-1), 8, 45),
-        summary: "Morning medication round"
-      },
-      %{
-        activity_id: follow_up_visit.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-1), 9, 0),
-        dtend: time_on_day.(days_from_today.(-1), 9, 5),
-        summary: "Quick check-in call"
-      },
-      # Edge case: Forgotten to stop tracking
-      %{
-        activity_id: health_assessment.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(-1), 10, 0),
-        dtend: time_on_day.(days_from_today.(0), 17, 45),
-        summary: "Patient documentation (tracking error)"
-      },
-      # Week 2
       %{
         activity_id: visit_patient.id,
         user_id: denis.id,
@@ -553,9 +590,59 @@ end
         dtstart: time_on_day.(days_from_today.(7), 8, 30),
         dtend: time_on_day.(days_from_today.(7), 11, 30),
         summary: "Complex care case"
+      },
+      # Week 2
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(8), 8, 0),
+        dtend: time_on_day.(days_from_today.(8), 8, 10),
+        summary: "Quick medication check"
+      },
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(8), 10, 30),
+        dtend: time_on_day.(days_from_today.(8), 12, 30),
+        summary: "Extended care session - Frau Schmidt"
+      },
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(8), 12, 31),
+        dtend: time_on_day.(days_from_today.(8), 13, 30),
+        summary: "Vital signs check - Herr Weber"
+      },
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(8), 13, 31),
+        dtend: time_on_day.(days_from_today.(8), 14, 30),
+        summary: "Afternoon rounds"
+      },
+      %{
+        activity_id: administer_medication.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(9), 8, 15),
+        dtend: time_on_day.(days_from_today.(9), 8, 45),
+        summary: "Morning medication round"
+      },
+      %{
+        activity_id: follow_up_visit.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(9), 9, 0),
+        dtend: time_on_day.(days_from_today.(9), 9, 5),
+        summary: "Quick check-in call"
+      },
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(9), 10, 0),
+        dtend: time_on_day.(days_from_today.(9), 11, 45),
+        summary: "Patient documentation"
       }
     ],
     actor: denis,
     tenant: organisation_1,
-    upsert_identity: nil
+    existence_check_keys: [:summary]
   )

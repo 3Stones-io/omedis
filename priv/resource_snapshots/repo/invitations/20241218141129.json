@@ -18,7 +18,7 @@
       "references": null,
       "size": null,
       "source": "email",
-      "type": "text"
+      "type": "citext"
     },
     {
       "allow_nil?": false,
