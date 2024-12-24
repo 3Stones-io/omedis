@@ -7,7 +7,6 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
   require Ash.Query
 
   alias Omedis.Groups.Group
-  alias Omedis.Groups.Group
   alias Omedis.Projects.Project
   alias Omedis.TimeTracking.Event
 
@@ -17,7 +16,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
     {:ok, group} = create_group(organisation)
 
     {:ok, [project]} =
-      Omedis.Projects.Project
+      Project
       |> Ash.Query.filter(name: "Project 1", organisation_id: organisation.id)
       |> Ash.read(actor: owner, tenant: organisation)
 
