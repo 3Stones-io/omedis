@@ -5,6 +5,7 @@ require Ash.Query
 alias Omedis.Accounts
 alias Omedis.Groups
 alias Omedis.Invitations
+alias Omedis.Projects
 
 bulk_create = fn module, list, opts ->
   list

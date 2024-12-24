@@ -194,11 +194,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   end
 
   defp create_activity(project, users_group, opts) do
-    activity = fetch_default_activity(opts)
-
-    if activity do
-      activity
-    else
+    if !fetch_default_activity(opts) do
       {:ok, _} =
         Accounts.Activity.create(
           %{

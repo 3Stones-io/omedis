@@ -3,6 +3,7 @@ import Omedis.Fixtures
 alias Omedis.Accounts
 alias Omedis.Groups
 alias Omedis.Invitations
+alias Omedis.Projects
 
 require Ash.Query
 
