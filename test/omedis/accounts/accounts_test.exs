@@ -1,7 +1,6 @@
 defmodule Omedis.AccountsTest do
   use Omedis.DataCase, async: true
 
-  import Omedis.Fixtures
   import Omedis.TestUtils
 
   alias Omedis.Accounts
@@ -219,18 +218,6 @@ defmodule Omedis.AccountsTest do
     } do
       {:ok, activity} = create_activity(organisation, %{color_code: "#1f77b4"})
       assert Accounts.select_unused_color_code(organisation) != activity.color_code
-    end
-  end
-
-  describe "get_max_position_by_organisation_id/2" do
-    test "returns max position for projects in an organisation", %{
-      organisation: organisation,
-      owner: owner
-    } do
-      assert Accounts.get_max_position_by_organisation_id(organisation.id,
-               tenant: organisation,
-               actor: owner
-             ) != 0
     end
   end
 

@@ -276,7 +276,7 @@ organisation_3 = get_organisation.(tim.id)
 
 %{records: [medical_support, _frau_schmidt, _herr_meier], status: :success} =
   sequential_create.(
-    Accounts.Project,
+    Projects.Project,
     [
       %{name: "Medical Support", position: "2", organisation_id: organisation_1.id},
       %{name: "Frau Schmidt", position: "3", organisation_id: organisation_1.id},
@@ -288,7 +288,7 @@ organisation_3 = get_organisation.(tim.id)
 
 %{records: [security_operations], status: :success} =
   sequential_create.(
-    Accounts.Project,
+    Projects.Project,
     [
       %{organisation_id: organisation_2.id, name: "Security Operations", position: "2"}
     ],
@@ -298,7 +298,7 @@ organisation_3 = get_organisation.(tim.id)
 
 %{records: [software_development], status: :success} =
   sequential_create.(
-    Accounts.Project,
+    Projects.Project,
     [
       %{organisation_id: organisation_3.id, name: "Software Development", position: "2"}
     ],

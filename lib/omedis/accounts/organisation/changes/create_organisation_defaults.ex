@@ -15,6 +15,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   alias Omedis.AccessRights
   alias Omedis.Accounts
   alias Omedis.Groups
+  alias Omedis.Projects
 
   @admin_full_access_resources [
     "AccessRight",
@@ -176,7 +177,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
 
   defp create_project(organisation, actor) do
     {:ok, project} =
-      Accounts.Project.create(
+      Projects.Project.create(
         %{
           name: "Project 1",
           position: "1",

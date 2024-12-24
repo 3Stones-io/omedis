@@ -135,7 +135,7 @@ organisation_2 = get_organisation.(user_2.id)
 
 %{records: [project_1, project_2], status: :success} =
   bulk_create.(
-    Accounts.Project,
+    Projects.Project,
     [
       %{
         name: "Demo Project 1",
@@ -153,7 +153,7 @@ organisation_2 = get_organisation.(user_2.id)
 
 %{records: _records, status: :success} =
   bulk_create.(
-    Accounts.Project,
+    Projects.Project,
     [
       %{
         name: "Demo Project 3",

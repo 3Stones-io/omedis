@@ -7,8 +7,8 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
   require Ash.Query
 
   alias Omedis.Accounts.Event
-  alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
+  alias Omedis.Projects.Project
 
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
@@ -16,7 +16,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
     {:ok, group} = create_group(organisation)
 
     {:ok, [project]} =
-      Omedis.Accounts.Project
+      Omedis.Projects.Project
       |> Ash.Query.filter(name: "Project 1", organisation_id: organisation.id)
       |> Ash.read(actor: owner, tenant: organisation)
 
