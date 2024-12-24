@@ -138,7 +138,7 @@ defmodule Omedis.Invitations.Invitation do
   attributes do
     uuid_primary_key :id
 
-    attribute :email, :string, allow_nil?: false
+    attribute :email, :ci_string, allow_nil?: false
 
     attribute :expires_at, :utc_datetime,
       allow_nil?: false,
