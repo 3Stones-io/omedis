@@ -8,7 +8,7 @@ defmodule Omedis.TimeTracking.Activity do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     domain: Omedis.TimeTracking,
-    notifiers: [Omedis.Accounts.Notifiers],
+    notifiers: [Omedis.TimeTracking.Activity.Notifiers],
     authorizers: [Ash.Policy.Authorizer]
 
   postgres do

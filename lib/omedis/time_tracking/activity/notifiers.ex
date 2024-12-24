@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Notifiers do
+defmodule Omedis.TimeTracking.Activity.Notifiers do
   @moduledoc false
   use Ash.Notifier
 
