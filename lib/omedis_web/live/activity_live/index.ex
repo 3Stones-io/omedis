@@ -2,8 +2,8 @@ defmodule OmedisWeb.ActivityLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Organisation
-  alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
+  alias Omedis.Projects.Project
   alias Omedis.TimeTracking
   alias Omedis.TimeTracking.Activity
   alias OmedisWeb.PaginationComponent

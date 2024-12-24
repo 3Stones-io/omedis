@@ -7,6 +7,7 @@ defmodule Omedis.Fixtures do
   alias Omedis.Accounts
   alias Omedis.Groups
   alias Omedis.Invitations
+  alias Omedis.Projects
   alias Omedis.TimeTracking
 
   def create_access_right(organisation, attrs \\ %{}) do
@@ -38,7 +39,7 @@ defmodule Omedis.Fixtures do
   end
 
   def create_project(organisation, attrs \\ %{}) do
-    fixture(Accounts.Project, organisation, attrs)
+    fixture(Projects.Project, organisation, attrs)
   end
 
   def create_organisation(attrs \\ %{}, opts \\ []) do
@@ -162,7 +163,7 @@ defmodule Omedis.Fixtures do
     }
   end
 
-  def attrs_for(Accounts.Project, _organisation) do
+  def attrs_for(Projects.Project, _organisation) do
     %{
       name: Faker.Lorem.sentence(),
       position: (System.os_time(:second) + :rand.uniform(999_999_999)) |> to_string()

@@ -55,6 +55,7 @@ config :omedis,
     Omedis.Accounts,
     Omedis.Groups,
     Omedis.Invitations,
+    Omedis.Projects,
     Omedis.TimeTracking
   ]
 

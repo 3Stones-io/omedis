@@ -79,9 +79,9 @@ defmodule Omedis.OrganisationTest do
 
     alias Omedis.AccessRights.AccessRight
     alias Omedis.Accounts.Organisation
-    alias Omedis.Accounts.Project
     alias Omedis.Groups.Group
     alias Omedis.Groups.GroupMembership
+    alias Omedis.Projects.Project
     alias Omedis.TimeTracking.Activity
 
     test "users can only have one organisation" do
@@ -203,7 +203,7 @@ defmodule Omedis.OrganisationTest do
       organisation = fetch_users_organisation(user.id)
 
       assert {:ok, [project]} =
-               Omedis.Accounts.Project
+               Omedis.Projects.Project
                |> Ash.Query.filter(organisation_id: organisation.id)
                |> Ash.read(actor: user, tenant: organisation)
 

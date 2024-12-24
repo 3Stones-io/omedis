@@ -174,7 +174,7 @@ defmodule Omedis.TimeTracking.Activity do
       attribute_writable? true
     end
 
-    belongs_to :project, Omedis.Accounts.Project do
+    belongs_to :project, Omedis.Projects.Project do
       allow_nil? false
       attribute_writable? true
     end

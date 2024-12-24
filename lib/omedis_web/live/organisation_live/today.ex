@@ -3,6 +3,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
   alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
+  alias Omedis.Groups.Group
+  alias Omedis.Projects.Project
   alias Omedis.TimeTracking.Activity
   alias Omedis.TimeTracking.Event
   alias OmedisWeb.Endpoint

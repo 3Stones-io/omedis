@@ -13,8 +13,8 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   use Ash.Resource.Change
 
   alias Omedis.AccessRights
-  alias Omedis.Accounts
   alias Omedis.Groups
+  alias Omedis.Projects
   alias Omedis.TimeTracking
 
   @admin_full_access_resources [
@@ -165,7 +165,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
 
   defp create_project(organisation, actor) do
     {:ok, project} =
-      Accounts.Project.create(
+      Projects.Project.create(
         %{
           name: "Project 1",
           position: "1",

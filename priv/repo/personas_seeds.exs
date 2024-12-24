@@ -187,7 +187,7 @@ end
 
 %{records: [medical_support, _frau_schmidt, _herr_meier], status: :success} =
   bulk_create.(
-    Accounts.Project,
+    Projects.Project,
     [
       %{organisation_id: organisation_1.id, name: "Medical Support", position: "1"},
       %{organisation_id: organisation_1.id, name: "Frau Schmidt", position: "2"},
@@ -200,7 +200,7 @@ end
 
 %{records: [security_operations], status: :success} =
   bulk_create.(
-    Accounts.Project,
+    Projects.Project,
     [
       %{organisation_id: organisation_2.id, name: "Security Operations", position: "1"}
     ],
@@ -211,7 +211,7 @@ end
 
 %{records: [software_development], status: :success} =
   bulk_create.(
-    Accounts.Project,
+    Projects.Project,
     [
       %{organisation_id: organisation_3.id, name: "Software Development", position: "1"}
     ],
