@@ -78,11 +78,11 @@ defmodule Omedis.OrganisationTest do
     require Ash.Query
 
     alias Omedis.AccessRights.AccessRight
-    alias Omedis.Accounts.Activity
     alias Omedis.Accounts.Organisation
     alias Omedis.Groups.Group
     alias Omedis.Groups.GroupMembership
     alias Omedis.Projects.Project
+    alias Omedis.TimeTracking.Activity
 
     test "users can only have one organisation" do
       {:ok, user} = create_user()

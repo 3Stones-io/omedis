@@ -1,9 +1,9 @@
-defmodule Omedis.Accounts.Notifiers do
+defmodule Omedis.TimeTracking.Activity.Notifiers do
   @moduledoc false
   use Ash.Notifier
 
   @impl true
-  def notify(%{resource: Omedis.Accounts.Activity, action: %{name: :update_position}}) do
+  def notify(%{resource: Omedis.TimeTracking.Activity, action: %{name: :update_position}}) do
     Phoenix.PubSub.broadcast(Omedis.PubSub, "activity_positions_updated", "updated_positions")
     :ok
   end

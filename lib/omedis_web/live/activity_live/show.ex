@@ -1,10 +1,10 @@
 defmodule OmedisWeb.ActivityLive.Show do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Activity
   alias Omedis.Accounts.Organisation
   alias Omedis.Groups.Group
   alias Omedis.Projects.Project
+  alias Omedis.TimeTracking.Activity
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 

@@ -13,9 +13,9 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   use Ash.Resource.Change
 
   alias Omedis.AccessRights
-  alias Omedis.Accounts
   alias Omedis.Groups
   alias Omedis.Projects
+  alias Omedis.TimeTracking
 
   @admin_full_access_resources [
     "AccessRight",
@@ -196,7 +196,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   defp create_activity(project, users_group, opts) do
     if !fetch_default_activity(opts) do
       {:ok, _} =
-        Accounts.Activity.create(
+        TimeTracking.Activity.create(
           %{
             name: "Miscellaneous",
             slug: "miscellaneous",
@@ -211,7 +211,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   end
 
   defp fetch_default_activity(opts) do
-    Accounts.Activity
+    TimeTracking.Activity
     |> Ash.Query.filter(name: "Miscellaneous")
     |> Ash.read_one!(opts)
   end

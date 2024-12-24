@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Event.Calculations.CalculateDuration do
+defmodule Omedis.TimeTracking.Event.Calculations.CalculateDuration do
   @moduledoc """
   Calculates the duration of an event in minutes. Returns `nil` if the event has no end date.
   """

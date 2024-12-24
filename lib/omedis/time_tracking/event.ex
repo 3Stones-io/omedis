@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Event do
+defmodule Omedis.TimeTracking.Event do
   @moduledoc """
   This is the event module
   """
@@ -6,7 +6,7 @@ defmodule Omedis.Accounts.Event do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts
+    domain: Omedis.TimeTracking
 
   postgres do
     table "events"
@@ -24,7 +24,7 @@ defmodule Omedis.Accounts.Event do
   end
 
   code_interface do
-    domain Omedis.Accounts
+    domain Omedis.TimeTracking
     define :by_activity
     define :by_activity_today
     define :create
@@ -139,7 +139,7 @@ defmodule Omedis.Accounts.Event do
       where: [attribute_does_not_equal(:dtend, nil)],
       message: "end date must be greater than the start date"
 
-    validate {Omedis.Accounts.Event.Validations.NoOverlapValidation, []}
+    validate {Omedis.TimeTracking.Event.Validations.NoOverlapValidation, []}
   end
 
   multitenancy do
@@ -161,12 +161,12 @@ defmodule Omedis.Accounts.Event do
   end
 
   relationships do
-    belongs_to :activity, Omedis.Accounts.Activity
+    belongs_to :activity, Omedis.TimeTracking.Activity
     belongs_to :organisation, Omedis.Accounts.Organisation
     belongs_to :user, Omedis.Accounts.User
 
     has_many :access_rights, Omedis.AccessRights.AccessRight do
-      manual Omedis.Accounts.Event.Relationships.EventAccessRights
+      manual Omedis.TimeTracking.Event.Relationships.EventAccessRights
     end
   end
 
@@ -176,6 +176,6 @@ defmodule Omedis.Accounts.Event do
 
     calculate :duration_minutes,
               :integer,
-              {Omedis.Accounts.Event.Calculations.CalculateDuration, [:dtend, :dtstart]}
+              {Omedis.TimeTracking.Event.Calculations.CalculateDuration, [:dtend, :dtstart]}
   end
 end

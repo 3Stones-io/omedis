@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Event.Validations.NoOverlapValidation do
+defmodule Omedis.TimeTracking.Event.Validations.NoOverlapValidation do
   @moduledoc """
   Validates that an event does not overlap with another event for the same user.
   """
@@ -27,7 +27,7 @@ defmodule Omedis.Accounts.Event.Validations.NoOverlapValidation do
 
   defp validate_no_overlap(changeset, dtstart, user_id, opts) do
     query =
-      Omedis.Accounts.Event
+      Omedis.TimeTracking.Event
       |> Ash.Query.filter(user_id == ^user_id)
       |> filter_where_event_id_is_not_changeset_data_id(changeset)
       |> Ash.Query.filter(dtend >= ^dtstart or is_nil(dtend))
