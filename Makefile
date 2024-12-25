@@ -3,6 +3,7 @@
 check_code:
 	mix check_code
 	mix check_seeds
+	mix check_seeds
 
 check-gettext:
 	@mix gettext.extract --merge > /dev/null 2>&1
