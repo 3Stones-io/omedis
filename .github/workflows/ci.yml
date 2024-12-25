@@ -85,6 +85,9 @@ jobs:
       - name: Run Credo
         run: mix credo --strict
 
+      - name: Run seeds
+        run: mix check_seeds
+
   deploy:
     name: Deploy
     needs: test

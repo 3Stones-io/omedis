@@ -13,6 +13,7 @@ defmodule Omedis.MixProject do
       deps: deps(),
       preferred_cli_env: [
         check_code: :test,
+        check_seeds: :test,
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.html": :test
@@ -116,6 +117,11 @@ defmodule Omedis.MixProject do
         "ash_postgres.generate_migrations --check",
         "ash_postgres.squash_snapshots --check",
         "test --cover --warnings-as-errors"
+      ],
+      check_seeds: [
+        "run priv/repo/seeds.exs",
+        "run priv/repo/demo_seeds.exs",
+        "run priv/repo/personas_seeds.exs"
       ]
     ]
   end

@@ -511,9 +511,6 @@ end
     existence_check_keys: [:summary]
   )
 
-time_on_day.(days_from_today.(-2), 8, 0) |> IO.inspect(label: "dtstart::::")
-time_on_day.(days_from_today.(-2), 8, 10) |> IO.inspect(label: "dtend::::")
-
 # Events for ASA Security
 %{records: _security_events, status: :success} =
   sequential_create.(
