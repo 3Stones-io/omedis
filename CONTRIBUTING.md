@@ -79,8 +79,7 @@ Welcome to the Omedis project! Before starting, please check if your question is
 ## Pull Requests
 
 1. **Before Submitting**:
-   - Run `mix check_code` locally
-   - Run `mix check_seeds` locally
+   - Run `make check_code` locally
    - Ensure all tests pass
    - Include translations for new text
    - Review your own changes first
@@ -101,7 +100,7 @@ Welcome to the Omedis project! Before starting, please check if your question is
 
 - Follow existing code style
 - Add tests for new features
-- Run `mix check_code` and `mix check_seeds` before committing
+- Run `make check_code` before committing
 - Ensure CI passes (check [ci.yml](.github/workflows/ci.yml))
 
 ## Translations

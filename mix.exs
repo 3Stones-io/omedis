@@ -13,7 +13,6 @@ defmodule Omedis.MixProject do
       deps: deps(),
       preferred_cli_env: [
         check_code: :test,
-        check_seeds: :test,
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.html": :test
