@@ -13,7 +13,7 @@ defmodule Omedis.Invitations.Invitation.Changes.EnsureExpirationIsInFuture do
   defp ensure_expiration_is_in_future(changeset) do
     expires_at = Ash.Changeset.get_attribute(changeset, :expires_at)
 
-    if expires_at > DateTime.utc_now() do
+    if DateTime.compare(expires_at, DateTime.utc_now()) == :gt do
       changeset
     else
       Ash.Changeset.add_error(changeset, [:expires_at, "expiration time must be in the future"])
