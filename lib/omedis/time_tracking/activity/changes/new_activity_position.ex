@@ -1,9 +1,9 @@
-defmodule Omedis.Accounts.Changes.NewActivityPosition do
+defmodule Omedis.TimeTracking.Activity.Changes.NewActivityPosition do
   @moduledoc false
 
   use Ash.Resource.Change
 
-  alias Omedis.Accounts.Activity
+  alias Omedis.TimeTracking.Activity
 
   @impl true
   def change(changeset, _opts, %{tenant: organisation} = _context) do

@@ -1,5 +1,10 @@
 .PHONY: check-gettext
 
+check_code:
+	mix check_code
+	mix check_seeds
+	mix check_seeds
+
 check-gettext:
 	@mix gettext.extract --merge > /dev/null 2>&1
 	@if ! git diff --quiet priv/gettext; then \

@@ -1,10 +1,10 @@
 defmodule OmedisWeb.TimeTrackerLive.Index do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Activity
-  alias Omedis.Accounts.Event
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
+  alias Omedis.TimeTracking.Activity
+  alias Omedis.TimeTracking.Event
   alias OmedisWeb.Endpoint
   alias Phoenix.Socket.Broadcast
 

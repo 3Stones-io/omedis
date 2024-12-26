@@ -43,7 +43,7 @@ Use https://gitbutler.com to create a pull request.
 
 ## Contributing
 
-Make sure to execute `mix check_code` in order to run all the checks before committing the code.
+Make sure to execute `make check_code` in order to run all the checks before committing the code.
 
 ## One PR per change
 

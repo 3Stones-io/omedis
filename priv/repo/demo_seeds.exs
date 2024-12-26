@@ -4,6 +4,7 @@ alias Omedis.Accounts
 alias Omedis.Groups
 alias Omedis.Invitations
 alias Omedis.Projects
+alias Omedis.TimeTracking
 
 require Ash.Query
 
@@ -178,7 +179,7 @@ activities =
 
 %{records: _records, status: :success} =
   sequential_create.(
-    Accounts.Activity,
+    TimeTracking.Activity,
     activities,
     tenant: organisation_1,
     upsert_identity: :unique_slug

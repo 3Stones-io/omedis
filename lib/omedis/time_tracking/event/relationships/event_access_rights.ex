@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Event.Relationships.EventAccessRights do
+defmodule Omedis.TimeTracking.Event.Relationships.EventAccessRights do
   @moduledoc """
   A relationship that allows us to access the event access rights for an event.
   """

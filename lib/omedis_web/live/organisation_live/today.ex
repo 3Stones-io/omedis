@@ -1,10 +1,11 @@
 defmodule OmedisWeb.OrganisationLive.Today do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Activity
-  alias Omedis.Accounts.Event
+  alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
   alias Omedis.Projects.Project
+  alias Omedis.TimeTracking.Activity
+  alias Omedis.TimeTracking.Event
   alias OmedisWeb.Endpoint
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}

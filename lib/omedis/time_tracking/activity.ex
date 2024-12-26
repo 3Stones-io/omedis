@@ -1,4 +1,4 @@
-defmodule Omedis.Accounts.Activity do
+defmodule Omedis.TimeTracking.Activity do
   @moduledoc """
   This is the activity module
   """
@@ -7,8 +7,8 @@ defmodule Omedis.Accounts.Activity do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.Accounts,
-    notifiers: [Omedis.Accounts.Notifiers],
+    domain: Omedis.TimeTracking,
+    notifiers: [Omedis.TimeTracking.Activity.Notifiers],
     authorizers: [Ash.Policy.Authorizer]
 
   postgres do
@@ -27,7 +27,7 @@ defmodule Omedis.Accounts.Activity do
   end
 
   code_interface do
-    domain Omedis.Accounts
+    domain Omedis.TimeTracking
     define :read
     define :create
     define :update
@@ -49,8 +49,8 @@ defmodule Omedis.Accounts.Activity do
         :slug
       ]
 
-      change Omedis.Accounts.Changes.NewActivityPosition
-      change Omedis.Accounts.Changes.SetDefaultActivity
+      change Omedis.TimeTracking.Activity.Changes.NewActivityPosition
+      change Omedis.TimeTracking.Activity.Changes.SetDefaultActivity
 
       primary? true
     end
@@ -66,7 +66,7 @@ defmodule Omedis.Accounts.Activity do
         :slug
       ]
 
-      change Omedis.Accounts.Changes.SetDefaultActivity
+      change Omedis.TimeTracking.Activity.Changes.SetDefaultActivity
 
       primary? true
       require_atomic? false
@@ -75,7 +75,7 @@ defmodule Omedis.Accounts.Activity do
     update :update_position do
       accept [:position]
 
-      change Omedis.Accounts.Changes.UpdateActivityPositions
+      change Omedis.TimeTracking.Activity.Changes.UpdateActivityPositions
 
       require_atomic? false
     end
@@ -179,12 +179,12 @@ defmodule Omedis.Accounts.Activity do
       attribute_writable? true
     end
 
-    has_many :events, Omedis.Accounts.Event do
-      domain Omedis.Accounts
+    has_many :events, Omedis.TimeTracking.Event do
+      domain Omedis.TimeTracking
     end
 
     has_many :access_rights, Omedis.AccessRights.AccessRight do
-      manual Omedis.Accounts.Activity.Relationships.ActivityAccessRights
+      manual Omedis.TimeTracking.Activity.Relationships.ActivityAccessRights
     end
 
     belongs_to :organisation, Omedis.Accounts.Organisation
