@@ -2,6 +2,7 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "tailwindcss/forms";
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 /* This file is for your main application CSS */
 table:has(#activities) #activities > tr:first-child > td:has(.position) .position-up,
@@ -11,4 +12,52 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 
 .invitation-language-input:checked ~ .lang-flag {
   @apply outline outline-2 outline-offset-2 outline-red-500 rounded-full;
+}
+
+.priority-message-container {
+  display: grid;
+  grid-template-columns: 5% 75% 18%;
+  gap: 2%;
+  grid-template-areas:
+    "chat-icon title buttons"
+    "... message buttons";
+}
+
+.priority-message-container .chat-icon {
+  grid-area: chat-icon;
+}
+
+.priority-message-container .title {
+  grid-area: title;
+}
+
+.priority-message-container .message {
+  grid-area: message;
+}
+
+.priority-message-container .buttons {
+  grid-area: buttons;
+}
+
+.priority-message-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.priority-message-stack > * {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+}
+
+.priority-message-stack > :first-child { 
+  @apply z-[1000] bg-[#f7f4fe] shadow-sm shadow-[#d8d5de];
+  transform: translateY(-10%) scale(1.05);
+}
+
+.priority-message-stack > :first-child .buttons {
+  @apply border-l border-l-[1px] border-[#cbcbcd];
+}
+.priority-message-stack > * {
+  @apply bg-[#f7f4fe] shadow-sm shadow-[#d8d5de];
 }
