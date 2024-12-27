@@ -58,6 +58,11 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 .priority-message-stack > :first-child .buttons {
   @apply border-l border-l-[1px] border-[#cbcbcd];
 }
+
+.playground-message .priority-message-container  .buttons {
+  @apply border-l border-l-[1px] border-[#cbcbcd];
+}
+
 .priority-message-stack > * {
   @apply bg-[#f7f4fe] shadow-sm shadow-[#d8d5de];
 }
