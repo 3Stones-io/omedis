@@ -7,5 +7,6 @@ defmodule Omedis.Chats do
   require Ash.Query
 
   resources do
+    resource Omedis.Chats.ChatRoom
   end
 end
