@@ -8,5 +8,8 @@ defmodule Omedis.Chats do
 
   resources do
     resource Omedis.Chats.ChatRoom
+    resource Omedis.Chats.ChatMember
+    resource Omedis.Chats.ChatMessage
+    resource Omedis.Chats.ChatMessageView
   end
 end

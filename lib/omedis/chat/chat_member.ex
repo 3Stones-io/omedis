@@ -1,6 +1,6 @@
-defmodule Omedis.Chats.ChatRoom do
+defmodule Omedis.Chats.ChatMember do
   @moduledoc """
-  Represents a chat room in the system.
+  Represents a chat room member in the system.
   """
 
   use Ash.Resource,
@@ -11,11 +11,13 @@ defmodule Omedis.Chats.ChatRoom do
     domain: Omedis.Chats
 
   postgres do
-    table "chat_rooms"
+    table "chat_room_members"
     repo Omedis.Repo
 
     custom_indexes do
-      index :organisation_id
+      index :chat_room_id
+      index :user_id
+      index [:chat_room_id, :user_id]
       index :created_at
       index :updated_at
     end
@@ -26,8 +28,8 @@ defmodule Omedis.Chats.ChatRoom do
 
     create :create do
       accept [
-        :organisation_id,
-        :name
+        :chat_room_id,
+        :user_id
       ]
 
       primary? true
@@ -37,30 +39,21 @@ defmodule Omedis.Chats.ChatRoom do
   pub_sub do
     module OmedisWeb.Endpoint
 
-    prefix "chat_room"
-    publish :create, ["created", :organisation_id]
+    prefix "chat_member"
+    publish :create, ["created", :chat_room_id]
     publish :update, ["updated", :id]
   end
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false, public?: true
-    attribute :organisation_id, :uuid, allow_nil?: true, public?: false
+    attribute :chat_room_id, :uuid, allow_nil?: false, public?: false
+    attribute :user_id, :uuid, allow_nil?: false, public?: false
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
-    belongs_to :organisation, Omedis.Accounts.Organisation
-
-    has_many :members, Omedis.Chats.ChatMember do
-      source_attribute :id
-      destination_attribute :chat_room_id
-    end
-
-    has_many :messages, Omedis.Chats.ChatMessage do
-      source_attribute :id
-      destination_attribute :chat_room_id
-    end
+    belongs_to :chat_room, Omedis.Chats.ChatRoom
+    belongs_to :user, Omedis.Accounts.User
   end
 end

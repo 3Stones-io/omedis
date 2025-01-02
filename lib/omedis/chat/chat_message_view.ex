@@ -1,6 +1,6 @@
-defmodule Omedis.Chats.ChatRoom do
+defmodule Omedis.Chats.ChatMessageView do
   @moduledoc """
-  Represents a chat room in the system.
+  Represents a chat message view in the system.
   """
 
   use Ash.Resource,
@@ -11,13 +11,16 @@ defmodule Omedis.Chats.ChatRoom do
     domain: Omedis.Chats
 
   postgres do
-    table "chat_rooms"
+    table "chat_messages_views"
     repo Omedis.Repo
 
     custom_indexes do
-      index :organisation_id
+      index :chat_message_id
+      index :user_id
+      index [:chat_message_id, :user_id]
       index :created_at
       index :updated_at
+      index :viewed_at
     end
   end
 
@@ -26,8 +29,9 @@ defmodule Omedis.Chats.ChatRoom do
 
     create :create do
       accept [
-        :organisation_id,
-        :name
+        :chat_message_id,
+        :user_id,
+        :viewed_at
       ]
 
       primary? true
@@ -37,30 +41,22 @@ defmodule Omedis.Chats.ChatRoom do
   pub_sub do
     module OmedisWeb.Endpoint
 
-    prefix "chat_room"
-    publish :create, ["created", :organisation_id]
+    prefix "chat_message_view"
+    publish :create, ["created", :chat_message_id]
     publish :update, ["updated", :id]
   end
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false, public?: true
-    attribute :organisation_id, :uuid, allow_nil?: true, public?: false
+    attribute :chat_message_id, :uuid, allow_nil?: false, public?: false
+    attribute :user_id, :uuid, allow_nil?: false, public?: false
+    attribute :viewed_at, :datetime, allow_nil?: false, public?: true
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
-    belongs_to :organisation, Omedis.Accounts.Organisation
-
-    has_many :members, Omedis.Chats.ChatMember do
-      source_attribute :id
-      destination_attribute :chat_room_id
-    end
-
-    has_many :messages, Omedis.Chats.ChatMessage do
-      source_attribute :id
-      destination_attribute :chat_room_id
-    end
+    belongs_to :user, Omedis.Accounts.User
+    belongs_to :chat_message, Omedis.Chats.ChatMessage
   end
 end
