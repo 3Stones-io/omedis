@@ -55,6 +55,12 @@ defmodule Omedis.Chats.ChatRoom do
     end
   end
 
+  policies do
+    policy do
+      authorize_if always()
+    end
+  end
+
   pub_sub do
     module OmedisWeb.Endpoint
 
