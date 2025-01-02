@@ -56,7 +56,8 @@ config :omedis,
     Omedis.Groups,
     Omedis.Invitations,
     Omedis.Projects,
-    Omedis.TimeTracking
+    Omedis.TimeTracking,
+    Omedis.Chats
   ]
 
 # I18n
