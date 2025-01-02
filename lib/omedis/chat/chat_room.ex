@@ -18,7 +18,19 @@ defmodule Omedis.Chats.ChatRoom do
       index :organisation_id
       index :created_at
       index :updated_at
+      index :user_id
+      index [:organisation_id, :user_id]
     end
+  end
+
+  code_interface do
+    domain Omedis.Chats
+    define :read
+    define :create
+    define :update
+    define :destroy
+    define :by_id, get_by: [:id], action: :read
+    define :by_organisation_id, get_by: [:organisation_id], action: :read
   end
 
   actions do
@@ -27,6 +39,15 @@ defmodule Omedis.Chats.ChatRoom do
     create :create do
       accept [
         :organisation_id,
+        :name,
+        :user_id
+      ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [
         :name
       ]
 
@@ -46,12 +67,14 @@ defmodule Omedis.Chats.ChatRoom do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :organisation_id, :uuid, allow_nil?: true, public?: false
+    attribute :user_id, :uuid, allow_nil?: true, public?: false
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
     belongs_to :organisation, Omedis.Accounts.Organisation
+    belongs_to :user, Omedis.Accounts.User
 
     has_many :members, Omedis.Chats.ChatMember do
       source_attribute :id
