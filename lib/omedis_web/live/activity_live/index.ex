@@ -188,7 +188,7 @@ defmodule OmedisWeb.ActivityLive.Index do
     groups = Ash.read!(Group, actor: actor, tenant: organisation)
 
     projects =
-      Projects.by_organisation_id!(%{organisation_id: organisation.id},
+      Projects.get_project_by_organisation_id!(%{organisation_id: organisation.id},
         actor: actor,
         tenant: organisation
       )

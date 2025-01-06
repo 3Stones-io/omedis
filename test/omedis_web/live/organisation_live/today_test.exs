@@ -130,7 +130,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       owner: owner
     } do
       {:ok, projects} =
-        Projects.by_organisation_id(%{organisation_id: organisation.id},
+        Projects.get_project_by_organisation_id(%{organisation_id: organisation.id},
           actor: owner,
           tenant: organisation
         )
@@ -190,7 +190,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, updated_group} = Group.by_id(backdated_group.id, actor: owner, tenant: organisation)
 
       {:ok, updated_project} =
-        Projects.by_id(backdated_project.id, actor: owner, tenant: organisation)
+        Projects.get_project_by_id(backdated_project.id, actor: owner, tenant: organisation)
 
       assert DateTime.compare(updated_group.updated_at, backdated_group.updated_at) == :gt
       assert DateTime.compare(updated_project.updated_at, backdated_project.updated_at) == :gt

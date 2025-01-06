@@ -73,7 +73,7 @@ defmodule Omedis.Projects.Project do
       filter expr(organisation_id == ^arg(:organisation_id))
     end
 
-    read :latest_by_organisation_id do
+    read :latest_project_by_organisation_id do
       argument :organisation_id, :uuid do
         allow_nil? false
       end

@@ -96,7 +96,7 @@ defmodule OmedisWeb.ProjectLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     actor = socket.assigns.current_user
-    project = Projects.by_id!(id, actor: actor, tenant: socket.assigns.organisation)
+    project = Projects.get_project_by_id!(id, actor: actor, tenant: socket.assigns.organisation)
 
     {:noreply,
      socket

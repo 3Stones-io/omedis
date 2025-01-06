@@ -131,7 +131,7 @@ defmodule OmedisWeb.ActivityLive.Show do
     next_position = activity.position
 
     projects =
-      Projects.by_organisation_id!(%{organisation_id: organisation.id},
+      Projects.get_project_by_organisation_id!(%{organisation_id: organisation.id},
         actor: socket.assigns.current_user,
         tenant: organisation
       )
