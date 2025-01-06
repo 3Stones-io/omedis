@@ -3,7 +3,7 @@ defmodule OmedisWeb.ActivityLive.Index do
 
   alias Omedis.Accounts.Organisation
   alias Omedis.Groups.Group
-  alias Omedis.Projects.Project
+  alias Omedis.Projects
   alias Omedis.TimeTracking
   alias Omedis.TimeTracking.Activity
   alias OmedisWeb.PaginationComponent
@@ -188,7 +188,7 @@ defmodule OmedisWeb.ActivityLive.Index do
     groups = Ash.read!(Group, actor: actor, tenant: organisation)
 
     projects =
-      Project.by_organisation_id!(%{organisation_id: organisation.id},
+      Projects.by_organisation_id!(%{organisation_id: organisation.id},
         actor: actor,
         tenant: organisation
       )

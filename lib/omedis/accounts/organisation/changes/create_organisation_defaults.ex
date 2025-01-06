@@ -177,7 +177,8 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
 
   defp create_project(organisation, actor) do
     {:ok, project} =
-      Projects.Project.create(
+      Ash.create(
+        Projects.Project,
         %{
           name: "Project 1",
           position: "1",

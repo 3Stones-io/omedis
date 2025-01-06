@@ -6,7 +6,12 @@ defmodule Omedis.Projects do
   require Ash.Query
 
   resources do
-    resource Omedis.Projects.Project
+    resource Omedis.Projects.Project do
+      define :by_id, get_by: [:id], action: :read
+      define :by_organisation_id
+      define :latest_by_organisation_id
+      define :list_paginated
+    end
   end
 
   def get_max_position_by_organisation_id(organisation_id, opts \\ []) do

@@ -143,7 +143,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     actor = socket.assigns.current_user
     organisation = socket.assigns.organisation
 
-    project = Project.by_id(id, actor: actor, tenant: organisation)
+    project = Projects.by_id(id, actor: actor, tenant: organisation)
 
     case project do
       {:ok, project} ->
@@ -162,7 +162,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     )
     |> assign(:project, nil)
     |> PaginationUtils.list_paginated(params, :projects, fn offset ->
-      Project.list_paginated(
+      Projects.list_paginated(
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
         tenant: socket.assigns.organisation

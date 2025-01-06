@@ -1,7 +1,8 @@
 defmodule OmedisWeb.ProjectLive.Show do
   use OmedisWeb, :live_view
+
   alias Omedis.Accounts.Organisation
-  alias Omedis.Projects.Project
+  alias Omedis.Projects
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
@@ -95,7 +96,7 @@ defmodule OmedisWeb.ProjectLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     actor = socket.assigns.current_user
-    project = Project.by_id!(id, actor: actor, tenant: socket.assigns.organisation)
+    project = Projects.by_id!(id, actor: actor, tenant: socket.assigns.organisation)
 
     {:noreply,
      socket

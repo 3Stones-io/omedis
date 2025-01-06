@@ -3,7 +3,7 @@ defmodule Omedis.Projects.ProjectTest do
 
   import Omedis.TestUtils
 
-  alias Omedis.Projects.Project
+  alias Omedis.Projects
 
   setup do
     {:ok, owner} = create_user()
@@ -54,7 +54,7 @@ defmodule Omedis.Projects.ProjectTest do
         create_project(organisation, %{name: "Test Project"})
 
       assert {:ok, %{results: projects}} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, limit: 10, count: true],
                  actor: owner,
                  tenant: organisation
@@ -107,7 +107,7 @@ defmodule Omedis.Projects.ProjectTest do
 
       # Return projects the user has access to
       assert {:ok, paginated_result} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, limit: 20, count: true],
                  actor: user,
                  tenant: organisation
@@ -127,7 +127,7 @@ defmodule Omedis.Projects.ProjectTest do
 
       # Return an empty list if the user doesn't have access
       assert {:ok, paginated_result} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, limit: 20, count: true],
                  actor: user,
                  tenant: other_organisation
@@ -154,7 +154,7 @@ defmodule Omedis.Projects.ProjectTest do
       {:ok, _} = create_project(organisation, %{name: "Project X"})
 
       assert {:ok, paginated_result} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user,
                  tenant: organisation
@@ -206,7 +206,7 @@ defmodule Omedis.Projects.ProjectTest do
       end
 
       assert {:ok, paginated_result} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user,
                  tenant: organisation_1
@@ -218,7 +218,7 @@ defmodule Omedis.Projects.ProjectTest do
       assert Enum.all?(paginated_result.results, &(&1.organisation_id == organisation_1.id))
 
       assert {:ok, paginated_result} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user,
                  tenant: organisation_2
@@ -246,7 +246,7 @@ defmodule Omedis.Projects.ProjectTest do
       {:ok, _} = create_project(organisation, %{name: "Project X"})
 
       assert {:error, %Ash.Error.Forbidden{} = _error} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, count: true],
                  tenant: organisation
                )
@@ -268,7 +268,7 @@ defmodule Omedis.Projects.ProjectTest do
       {:ok, _} = create_project(organisation, %{name: "Project X"})
 
       assert {:error, %Ash.Error.Invalid{} = _error} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user
                )
@@ -289,7 +289,7 @@ defmodule Omedis.Projects.ProjectTest do
       {:ok, _} = create_project(organisation, %{name: "Project X"})
 
       assert {:ok, paginated_result} =
-               Project.list_paginated(
+               Projects.list_paginated(
                  page: [offset: 0, count: true],
                  actor: user,
                  tenant: organisation
@@ -311,7 +311,7 @@ defmodule Omedis.Projects.ProjectTest do
       past_datetime = DateTime.add(DateTime.utc_now(), -1, :second)
 
       {:ok, _updated_project_1} =
-        Project.update(
+        Ash.update(
           project_1,
           %{},
           context: %{updated_at: past_datetime},
@@ -323,7 +323,7 @@ defmodule Omedis.Projects.ProjectTest do
         create_project(organisation, %{name: "Project 02"})
 
       assert {:ok, [latest_project]} =
-               Project.latest_by_organisation_id(
+               Projects.latest_by_organisation_id(
                  %{organisation_id: organisation.id},
                  actor: authorized_user,
                  tenant: organisation
@@ -337,11 +337,13 @@ defmodule Omedis.Projects.ProjectTest do
   describe "create/1" do
     test "organisation owner can create a project", %{owner: owner, organisation: organisation} do
       attrs =
-        Project
+        Projects.Project
         |> attrs_for(organisation)
         |> Map.put(:name, "New Project")
 
-      assert {:ok, project} = Project.create(attrs, actor: owner, tenant: organisation)
+      assert {:ok, project} =
+               Ash.create(Projects.Project, attrs, actor: owner, tenant: organisation)
+
       assert project.name == "New Project"
     end
 
@@ -350,40 +352,42 @@ defmodule Omedis.Projects.ProjectTest do
       organisation: organisation
     } do
       attrs =
-        Project
+        Projects.Project
         |> attrs_for(organisation)
         |> Map.put(:name, "New Project")
 
-      assert {:ok, project} = Project.create(attrs, actor: authorized_user, tenant: organisation)
+      assert {:ok, project} =
+               Ash.create(Projects.Project, attrs, actor: authorized_user, tenant: organisation)
+
       assert project.name == "New Project"
     end
 
     test "unauthorized user cannot create a project", %{user: user, organisation: organisation} do
       attrs =
-        Project
+        Projects.Project
         |> attrs_for(organisation)
         |> Map.put(:name, "New Project")
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               Project.create(attrs, actor: user, tenant: organisation)
+               Ash.create(Projects.Project, attrs, actor: user, tenant: organisation)
     end
   end
 
   describe "update/1" do
     test "organisation owner can update a project", %{owner: owner, organisation: organisation} do
       attrs =
-        Project
+        Projects.Project
         |> attrs_for(organisation)
         |> Map.put(:name, "Test Project")
 
       {:ok, project} =
-        Project.create(attrs,
+        Ash.create(Projects.Project, attrs,
           actor: owner,
           tenant: organisation
         )
 
       assert {:ok, updated_project} =
-               Project.update(project, %{name: "Updated Project"},
+               Ash.update(project, %{name: "Updated Project"},
                  actor: owner,
                  tenant: organisation
                )
@@ -396,18 +400,18 @@ defmodule Omedis.Projects.ProjectTest do
       organisation: organisation
     } do
       attrs =
-        Project
+        Projects.Project
         |> attrs_for(organisation)
         |> Map.put(:name, "Test Project")
 
       {:ok, project} =
-        Project.create(attrs,
+        Ash.create(Projects.Project, attrs,
           actor: authorized_user,
           tenant: organisation
         )
 
       assert {:ok, updated_project} =
-               Project.update(project, %{name: "Updated Project"},
+               Ash.update(project, %{name: "Updated Project"},
                  actor: authorized_user,
                  tenant: organisation
                )
@@ -421,18 +425,18 @@ defmodule Omedis.Projects.ProjectTest do
       organisation: organisation
     } do
       attrs =
-        Project
+        Projects.Project
         |> attrs_for(organisation)
         |> Map.put(:name, "Test Project")
 
       {:ok, project} =
-        Project.create(attrs,
+        Ash.create(Projects.Project, attrs,
           actor: authorized_user,
           tenant: organisation
         )
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               Project.update(project, %{name: "Updated Project"},
+               Ash.update(project, %{name: "Updated Project"},
                  actor: user,
                  tenant: organisation
                )

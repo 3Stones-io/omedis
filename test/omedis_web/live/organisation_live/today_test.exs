@@ -7,7 +7,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
   require Ash.Query
 
   alias Omedis.Groups.Group
-  alias Omedis.Projects.Project
+  alias Omedis.Projects
   alias Omedis.TimeTracking.Event
 
   setup do
@@ -16,7 +16,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
     {:ok, group} = create_group(organisation)
 
     {:ok, [project]} =
-      Project
+      Projects.Project
       |> Ash.Query.filter(name: "Project 1", organisation_id: organisation.id)
       |> Ash.read(actor: owner, tenant: organisation)
 
@@ -130,7 +130,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       owner: owner
     } do
       {:ok, projects} =
-        Project.by_organisation_id(%{organisation_id: organisation.id},
+        Projects.by_organisation_id(%{organisation_id: organisation.id},
           actor: owner,
           tenant: organisation
         )
@@ -170,7 +170,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         )
 
       {:ok, backdated_project} =
-        Project.update(
+        Ash.update(
           project,
           %{},
           context: %{updated_at: past_datetime},
@@ -190,7 +190,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, updated_group} = Group.by_id(backdated_group.id, actor: owner, tenant: organisation)
 
       {:ok, updated_project} =
-        Project.by_id(backdated_project.id, actor: owner, tenant: organisation)
+        Projects.by_id(backdated_project.id, actor: owner, tenant: organisation)
 
       assert DateTime.compare(updated_group.updated_at, backdated_group.updated_at) == :gt
       assert DateTime.compare(updated_project.updated_at, backdated_project.updated_at) == :gt

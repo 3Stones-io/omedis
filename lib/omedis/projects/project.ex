@@ -27,17 +27,6 @@ defmodule Omedis.Projects.Project do
     plural_name :projects
   end
 
-  code_interface do
-    domain Omedis.Projects
-    define :read
-    define :create
-    define :update
-    define :by_id, get_by: [:id], action: :read
-    define :by_organisation_id
-    define :latest_by_organisation_id
-    define :list_paginated
-  end
-
   actions do
     defaults [:destroy]
 
