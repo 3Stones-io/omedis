@@ -170,7 +170,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         )
 
       {:ok, backdated_project} =
-        Ash.update(
+        Projects.update_project(
           project,
           %{},
           context: %{updated_at: past_datetime},

@@ -311,7 +311,7 @@ defmodule Omedis.Projects.ProjectsTest do
       past_datetime = DateTime.add(DateTime.utc_now(), -1, :second)
 
       {:ok, _updated_project_1} =
-        Ash.update(
+        Projects.update_project(
           project_1,
           %{},
           context: %{updated_at: past_datetime},
