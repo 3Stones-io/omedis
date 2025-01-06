@@ -114,8 +114,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   defp create_admin_access_rights(group, opts) do
     for resource_name <- @admin_full_access_resources do
       {:ok, _} =
-        Ash.create(
-          AccessRights.AccessRight,
+        AccessRights.create_access_right(
           %{
             create: true,
             group_id: group.id,
@@ -130,8 +129,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
 
     for resource_name <- @admin_read_only_resources do
       {:ok, _} =
-        Ash.create(
-          AccessRights.AccessRight,
+        AccessRights.create_access_right(
           %{
             create: false,
             group_id: group.id,
@@ -148,8 +146,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   defp create_user_access_rights(group, opts) do
     for resource_name <- @user_read_only_resources do
       {:ok, _} =
-        Ash.create(
-          AccessRights.AccessRight,
+        AccessRights.create_access_right(
           %{
             create: false,
             group_id: group.id,
@@ -164,8 +161,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
 
     for resource_name <- @user_create_resources do
       {:ok, _} =
-        Ash.create(
-          AccessRights.AccessRight,
+        AccessRights.create_access_right(
           %{
             create: true,
             group_id: group.id,
