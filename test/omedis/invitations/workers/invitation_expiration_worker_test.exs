@@ -1,7 +1,7 @@
 defmodule Omedis.Workers.InvitationExpirationWorkerTest do
   use Omedis.DataCase, async: true
 
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
   alias Omedis.Invitations.Invitation.Workers.InvitationExpirationWorker
 
   setup do
@@ -24,30 +24,36 @@ defmodule Omedis.Workers.InvitationExpirationWorkerTest do
 
       assert :ok = perform_job(InvitationExpirationWorker, %{"invitation_id" => invitation.id})
 
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id, authorize?: false)
+      {:ok, updated_invitation} =
+        Invitations.get_invitation_by_id(invitation.id, authorize?: false)
+
       assert updated_invitation.status == :expired
     end
 
     test "handles already expired invitations gracefully", %{invitation: invitation} do
       # First expire the invitation
-      {:ok, _} = Invitation.expire(invitation, authorize?: false)
+      {:ok, _} = Invitations.mark_invitation_as_expired(invitation, authorize?: false)
 
       # Try to expire it again through the worker
       assert :ok = perform_job(InvitationExpirationWorker, %{"invitation_id" => invitation.id})
 
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id, authorize?: false)
+      {:ok, updated_invitation} =
+        Invitations.get_invitation_by_id(invitation.id, authorize?: false)
+
       assert updated_invitation.status == :expired
     end
 
     test "handles already accepted invitations gracefully", %{invitation: invitation} do
       {:ok, user} = create_user()
       # First accept the invitation
-      {:ok, _} = Invitation.accept(invitation, actor: user, authorize?: false)
+      {:ok, _} = Invitations.accept_invitation(invitation, actor: user, authorize?: false)
 
       # Try to expire it through the worker
       assert :ok = perform_job(InvitationExpirationWorker, %{"invitation_id" => invitation.id})
 
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id, authorize?: false)
+      {:ok, updated_invitation} =
+        Invitations.get_invitation_by_id(invitation.id, authorize?: false)
+
       assert updated_invitation.status == :accepted
     end
 

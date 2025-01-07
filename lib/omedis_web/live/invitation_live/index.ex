@@ -3,7 +3,7 @@ defmodule OmedisWeb.InvitationLive.Index do
 
   use OmedisWeb, :live_view
 
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
   alias OmedisWeb.Endpoint
   alias OmedisWeb.InvitationLive.InvitationStatusComponent
   alias OmedisWeb.PaginationComponent
@@ -39,7 +39,7 @@ defmodule OmedisWeb.InvitationLive.Index do
     socket
     |> assign(:sort_order, Atom.to_string(sort_order))
     |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
-      Invitation.list_paginated(
+      Invitations.list_paginated_invitations(
         %{sort_order: sort_order},
         page: [count: true, offset: offset],
         actor: socket.assigns.current_user,
@@ -49,7 +49,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   end
 
   defp apply_action(socket, :new, _params) do
-    if Ash.can?({Invitation, :create}, socket.assigns.current_user,
+    if Ash.can?({Invitations.Invitation, :create}, socket.assigns.current_user,
          tenant: socket.assigns.organisation
        ) do
       socket
@@ -67,8 +67,8 @@ defmodule OmedisWeb.InvitationLive.Index do
   @impl true
   def handle_event("delete_invitation", %{"id" => id}, socket) do
     opts = [actor: socket.assigns.current_user, tenant: socket.assigns.organisation]
-    invitation = Invitation.by_id!(id, opts)
-    :ok = Invitation.destroy!(invitation, opts)
+    invitation = Invitations.get_invitation_by_id!(id, opts)
+    :ok = Invitations.delete_invitation!(invitation, opts)
 
     {:noreply,
      socket
@@ -87,7 +87,7 @@ defmodule OmedisWeb.InvitationLive.Index do
     {:noreply,
      socket
      |> PaginationUtils.list_paginated(params, :invitations, fn offset ->
-       Invitation.list_paginated(
+       Invitations.list_paginated_invitations(
          params,
          page: [count: true, offset: offset],
          actor: socket.assigns.current_user,
@@ -142,7 +142,7 @@ defmodule OmedisWeb.InvitationLive.Index do
 
           <:actions>
             <.link
-              :if={Ash.can?({Invitation, :create}, @current_user, tenant: @organisation)}
+              :if={Ash.can?({Invitations.Invitation, :create}, @current_user, tenant: @organisation)}
               patch={~p"/organisations/#{@organisation}/invitations/new"}
             >
               <.button>

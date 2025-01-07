@@ -6,7 +6,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   import Omedis.TestUtils
 
   alias Omedis.Accounts.User
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
 
   @valid_registration_params %{
     "email" => "test@gmail.com",
@@ -92,7 +92,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert user.current_organisation_id == organisation.id
 
       # Verify invitation was updated
-      {:ok, updated_invitation} = Invitation.by_id(valid_invitation.id)
+      {:ok, updated_invitation} = Invitations.get_invitation_by_id(valid_invitation.id)
 
       assert updated_invitation.user_id == user.id
     end
@@ -163,7 +163,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [invitation]} =
-               Invitation
+               Invitations.Invitation
                |> Ash.Query.filter(email: "test@gmail.com")
                |> Ash.read(authorize?: false, load: [:groups], tenant: organisation)
 
@@ -206,7 +206,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert redirected_to(conn) == ~p"/edit_profile"
 
       # Verify invitation was updated
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+      {:ok, updated_invitation} = Invitations.get_invitation_by_id(invitation.id)
 
       assert updated_invitation.status == :accepted
       assert {:ok, user} = User.by_email(@valid_registration_params["email"])
@@ -249,7 +249,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [invitation]} =
-               Invitation
+               Invitations.Invitation
                |> Ash.Query.filter(email: "test@gmail.com")
                |> Ash.read(authorize?: false, load: [:groups], tenant: organisation)
 
@@ -290,7 +290,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       assert {:ok, user} = User.by_email(@valid_registration_params["email"])
 
       # Verify invitation was updated
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+      {:ok, updated_invitation} = Invitations.get_invitation_by_id(invitation.id)
 
       assert updated_invitation.status == :accepted
       assert updated_invitation.user_id == user.id
