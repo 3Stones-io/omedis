@@ -4,7 +4,6 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
   alias Omedis.TimeTracking
-  alias Omedis.TimeTracking.Event
   alias OmedisWeb.Endpoint
   alias Phoenix.Socket.Broadcast
 
@@ -17,7 +16,10 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   def render(assigns) do
     ~H"""
     <div
-      :if={@current_user && Ash.can?({Event, :create}, @current_user, tenant: @current_organisation)}
+      :if={
+        @current_user &&
+          Ash.can?({TimeTracking.Event, :create}, @current_user, tenant: @current_organisation)
+      }
       class="absolute top-3 right-[5rem] lg:right-[17rem] z-10 bg-black text-white shadow-lg rounded-lg"
     >
       <%= if @current_activity do %>
@@ -376,7 +378,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
       pubsub_topics_unique_id: socket.assigns.pubsub_topics_unique_id
     ]
 
-    if Ash.can?({Event, :create}, opts[:actor], tenant: opts[:tenant]) do
+    if Ash.can?({TimeTracking.Event, :create}, opts[:actor], tenant: opts[:tenant]) do
       {:noreply,
        assign_async(socket, :current_activity, fn -> create_event(activity_id, opts) end)}
     else

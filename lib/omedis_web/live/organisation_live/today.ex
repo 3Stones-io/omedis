@@ -254,7 +254,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   defp activities(group_id, project_id, opts) do
-    case TimeTracking.get_activities_by_group_and_project_id(
+    case TimeTracking.get_activities_by_group_id_and_project_id(
            %{group_id: group_id, project_id: project_id},
            opts
          ) do

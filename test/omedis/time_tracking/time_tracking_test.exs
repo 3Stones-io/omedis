@@ -400,7 +400,7 @@ defmodule Omedis.TimeTrackingTest do
       organisation: organisation
     } do
       assert {:ok, activities} =
-               TimeTracking.get_activities_by_group_and_project_id(
+               TimeTracking.get_activities_by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: owner,
                  tenant: organisation
@@ -418,7 +418,7 @@ defmodule Omedis.TimeTrackingTest do
       organisation: organisation
     } do
       assert {:ok, activities} =
-               TimeTracking.get_activities_by_group_and_project_id(
+               TimeTracking.get_activities_by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: authorized_user,
                  tenant: organisation
@@ -436,7 +436,7 @@ defmodule Omedis.TimeTrackingTest do
            user: user
          } do
       assert {:ok, activities} =
-               TimeTracking.get_activities_by_group_and_project_id(
+               TimeTracking.get_activities_by_group_id_and_project_id(
                  %{group_id: group.id, project_id: project.id},
                  actor: user,
                  tenant: organisation

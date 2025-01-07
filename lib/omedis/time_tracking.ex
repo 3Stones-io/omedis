@@ -9,7 +9,7 @@ defmodule Omedis.TimeTracking do
   resources do
     resource Omedis.TimeTracking.Activity do
       define :create_activity, action: :create
-      define :get_activities_by_group_and_project_id, action: :by_group_id_and_project_id
+      define :get_activities_by_group_id_and_project_id, action: :by_group_id_and_project_id
       define :get_activity_by_id, get_by: [:id], action: :read
       define :list_keyset_paginated_activities, action: :list_keyset_paginated
       define :list_paginated_activities, action: :list_paginated
@@ -47,7 +47,7 @@ defmodule Omedis.TimeTracking do
         {:ok, activity}
 
       _ ->
-        __MODULE__.update_activity_position(activity, %{position: activity.position - 1}, opts)
+        update_activity_position(activity, %{position: activity.position - 1}, opts)
     end
   end
 
@@ -59,7 +59,7 @@ defmodule Omedis.TimeTracking do
         {:ok, activity}
 
       _ ->
-        __MODULE__.update_activity_position(activity, %{position: activity.position + 1}, opts)
+        update_activity_position(activity, %{position: activity.position + 1}, opts)
     end
   end
 
