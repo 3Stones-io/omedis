@@ -3,7 +3,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
 
   import Omedis.TestUtils
 
-  alias Omedis.Groups.GroupMembership
+  alias Omedis.Groups
 
   setup do
     {:ok, owner} = create_user()
@@ -42,7 +42,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       user: user
     } do
       assert {:ok, group_membership} =
-               GroupMembership.create(
+               Groups.create_group_membership(
                  %{
                    group_id: group.id,
                    user_id: user.id
@@ -62,7 +62,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       user: user
     } do
       assert {:ok, group_membership} =
-               GroupMembership.create(
+               Groups.create_group_membership(
                  %{
                    group_id: group.id,
                    user_id: user.id
@@ -83,7 +83,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       {:ok, unauthorized_user} = create_user()
 
       assert {:error, _} =
-               GroupMembership.create(
+               Groups.create_group_membership(
                  %{
                    group_id: group.id,
                    user_id: user.id
@@ -102,7 +102,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       user: user
     } do
       {:ok, _group_membership} =
-        GroupMembership.create(
+        Groups.create_group_membership(
           %{
             group_id: group.id,
             user_id: user.id
@@ -111,7 +111,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
           tenant: organisation
         )
 
-      {:ok, group_memberships} = GroupMembership.read(actor: owner, tenant: organisation)
+      {:ok, group_memberships} = Groups.get_group_memberships(actor: owner, tenant: organisation)
       assert length(group_memberships) > 0
     end
 
@@ -122,7 +122,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       user: user
     } do
       {:ok, _group_membership} =
-        GroupMembership.create(
+        Groups.create_group_membership(
           %{
             group_id: group.id,
             user_id: user.id
@@ -132,7 +132,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
         )
 
       {:ok, group_memberships} =
-        GroupMembership.read(actor: authorized_user, tenant: organisation)
+        Groups.get_group_memberships(actor: authorized_user, tenant: organisation)
 
       assert length(group_memberships) > 0
     end
@@ -144,7 +144,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       user: user
     } do
       {:ok, _group_membership} =
-        GroupMembership.create(
+        Groups.create_group_membership(
           %{
             group_id: group.id,
             user_id: user.id
@@ -154,7 +154,9 @@ defmodule Omedis.Groups.GroupMembershipTest do
         )
 
       {:ok, unauthorized_user} = create_user()
-      assert {:ok, []} = GroupMembership.read(actor: unauthorized_user, tenant: organisation)
+
+      assert {:ok, []} =
+               Groups.get_group_memberships(actor: unauthorized_user, tenant: organisation)
     end
   end
 
@@ -166,7 +168,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       user: user
     } do
       {:ok, group_membership} =
-        GroupMembership.create(
+        Groups.create_group_membership(
           %{
             group_id: group.id,
             user_id: user.id
@@ -175,9 +177,13 @@ defmodule Omedis.Groups.GroupMembershipTest do
           tenant: organisation
         )
 
-      assert :ok = GroupMembership.destroy(group_membership, actor: owner, tenant: organisation)
+      assert :ok =
+               Groups.destroy_group_membership(group_membership,
+                 actor: owner,
+                 tenant: organisation
+               )
 
-      {:ok, group_memberships} = GroupMembership.read(actor: owner, tenant: organisation)
+      {:ok, group_memberships} = Groups.get_group_memberships(actor: owner, tenant: organisation)
       refute Enum.any?(group_memberships, fn gm -> gm.id == group_membership.id end)
     end
 
@@ -188,7 +194,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       user: user
     } do
       {:ok, group_membership} =
-        GroupMembership.create(
+        Groups.create_group_membership(
           %{
             group_id: group.id,
             user_id: user.id
@@ -198,13 +204,13 @@ defmodule Omedis.Groups.GroupMembershipTest do
         )
 
       assert :ok =
-               GroupMembership.destroy(group_membership,
+               Groups.destroy_group_membership(group_membership,
                  actor: authorized_user,
                  tenant: organisation
                )
 
       {:ok, group_memberships} =
-        GroupMembership.read(actor: authorized_user, tenant: organisation)
+        Groups.get_group_memberships(actor: authorized_user, tenant: organisation)
 
       refute Enum.any?(group_memberships, fn gm -> gm.user_id == group_membership.user_id end)
     end
@@ -216,7 +222,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       user: user
     } do
       {:ok, group_membership} =
-        GroupMembership.create(
+        Groups.create_group_membership(
           %{
             group_id: group.id,
             user_id: user.id
@@ -228,7 +234,7 @@ defmodule Omedis.Groups.GroupMembershipTest do
       {:ok, unauthorized_user} = create_user()
 
       assert {:error, _} =
-               GroupMembership.destroy(group_membership,
+               Groups.destroy_group_membership(group_membership,
                  actor: unauthorized_user,
                  tenant: organisation
                )
