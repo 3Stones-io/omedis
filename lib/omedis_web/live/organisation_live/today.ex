@@ -4,8 +4,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
   alias Omedis.Projects.Project
-  alias Omedis.TimeTracking.Activity
-  alias Omedis.TimeTracking.Event
+  alias Omedis.TimeTracking
   alias OmedisWeb.Endpoint
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
@@ -90,7 +89,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
       )
 
     {:ok, %{results: events}} =
-      Event.list_paginated_today(actor: current_user, tenant: organisation)
+      TimeTracking.list_today_paginated_events(actor: current_user, tenant: organisation)
 
     {min_start_in_events, max_end_in_events} =
       if Enum.empty?(events) do
@@ -179,7 +178,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     activities
     |> Stream.map(fn activity ->
       {:ok, events} =
-        Event.by_activity_today(%{activity_id: activity.id}, opts)
+        TimeTracking.get_events_by_activity_today(%{activity_id: activity.id}, opts)
 
       Enum.filter(events, &is_nil(&1.dtend))
     end)
@@ -255,7 +254,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   defp activities(group_id, project_id, opts) do
-    case Activity.by_group_id_and_project_id(
+    case TimeTracking.get_activities_by_group_and_project_id(
            %{group_id: group_id, project_id: project_id},
            opts
          ) do
@@ -357,7 +356,8 @@ defmodule OmedisWeb.OrganisationLive.Today do
 
   defp stop_any_active_event(socket, event_stop_time \\ DateTime.utc_now()) do
     {:ok, events} =
-      Event.by_activity_today(%{activity_id: socket.assigns.current_activity_id},
+      TimeTracking.get_events_by_activity_today(
+        %{activity_id: socket.assigns.current_activity_id},
         actor: socket.assigns.current_user,
         tenant: socket.assigns.organisation
       )
@@ -378,11 +378,13 @@ defmodule OmedisWeb.OrganisationLive.Today do
   defp create_event(socket, activity_id) do
     organisation = socket.assigns.organisation
     user = socket.assigns.current_user
-    {:ok, activity} = Activity.by_id(activity_id, actor: user, tenant: organisation)
 
-    if Ash.can?({Event, :create}, user, tenant: organisation) do
+    {:ok, activity} =
+      TimeTracking.get_activity_by_id(activity_id, actor: user, tenant: organisation)
+
+    if Ash.can?({TimeTracking.Event, :create}, user, tenant: organisation) do
       {:ok, _event} =
-        Event.create(
+        TimeTracking.create_event(
           %{
             activity_id: activity_id,
             dtstart: DateTime.utc_now(),
@@ -418,7 +420,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
          tenant: socket.assigns.organisation
        ) do
       {:ok, _event} =
-        Event.update(event, %{dtend: opts[:event_stop_time]},
+        TimeTracking.update_event(event, %{dtend: opts[:event_stop_time]},
           actor: opts[:actor],
           tenant: opts[:tenant]
         )

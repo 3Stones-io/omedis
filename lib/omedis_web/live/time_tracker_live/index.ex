@@ -3,7 +3,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
-  alias Omedis.TimeTracking.Activity
+  alias Omedis.TimeTracking
   alias Omedis.TimeTracking.Event
   alias OmedisWeb.Endpoint
   alias Phoenix.Socket.Broadcast
@@ -237,7 +237,9 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   defp get_active_activity(activity, opts) do
     case Enum.find(activity.events, &is_nil(&1.dtend)) do
       nil ->
-        {:ok, updated_activity} = Activity.by_id(activity.id, opts ++ [load: [:events]])
+        {:ok, updated_activity} =
+          TimeTracking.get_activity_by_id(activity.id, opts ++ [load: [:events]])
+
         send(self(), {:activity_updated, updated_activity})
         updated_activity
 
@@ -269,7 +271,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp stop_event(activity_id, opts) do
     {:ok, events} =
-      Event.by_activity_today(%{activity_id: activity_id}, opts)
+      TimeTracking.get_events_by_activity_today(%{activity_id: activity_id}, opts)
 
     case Enum.find(events, fn event -> event.dtend == nil end) do
       nil ->
@@ -284,7 +286,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp do_stop_event(event, opts) do
     if Ash.can?({event, :update}, opts[:actor], tenant: opts[:tenant]) do
-      {:ok, _event} = Event.update(event, %{dtend: DateTime.utc_now()}, opts)
+      {:ok, _event} = TimeTracking.update_event(event, %{dtend: DateTime.utc_now()}, opts)
     end
   end
 
@@ -301,7 +303,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp maybe_assign_activities(socket) do
     {:ok, %Ash.Page.Offset{results: activities}} =
-      Activity.list_keyset_paginated(
+      TimeTracking.list_keyset_paginated_activities(
         actor: socket.assigns.current_user,
         tenant: socket.assigns.current_organisation
       )
@@ -417,7 +419,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp fetch_activities(socket, page_opts) do
     {:ok, %Ash.Page.Keyset{results: activities}} =
-      Activity.list_keyset_paginated(
+      TimeTracking.list_keyset_paginated_activities(
         actor: socket.assigns.current_user,
         tenant: socket.assigns.current_organisation,
         page: [limit: 10] ++ page_opts
@@ -430,10 +432,10 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     pubsub_topics_unique_id = opts[:pubsub_topics_unique_id]
     opts = Keyword.delete(opts, :pubsub_topics_unique_id)
 
-    {:ok, activity} = Activity.by_id(activity_id, opts ++ [load: [:events]])
+    {:ok, activity} = TimeTracking.get_activity_by_id(activity_id, opts ++ [load: [:events]])
 
     {:ok, _event} =
-      Event.create(
+      TimeTracking.create_event(
         %{
           activity_id: activity_id,
           dtstart: DateTime.utc_now(),

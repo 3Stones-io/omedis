@@ -7,8 +7,25 @@ defmodule Omedis.TimeTracking do
   alias Omedis.TimeTracking.Activity
 
   resources do
-    resource Omedis.TimeTracking.Activity
-    resource Omedis.TimeTracking.Event
+    resource Omedis.TimeTracking.Activity do
+      define :create_activity, action: :create
+      define :get_activities_by_group_and_project_id, action: :by_group_id_and_project_id
+      define :get_activity_by_id, get_by: [:id], action: :read
+      define :list_keyset_paginated_activities, action: :list_keyset_paginated
+      define :list_paginated_activities, action: :list_paginated
+      define :update_activity_position, action: :update_position
+      define :update_activity, action: :update
+    end
+
+    resource Omedis.TimeTracking.Event do
+      define :create_event, action: :create
+      define :get_events_by_activity_today, action: :by_activity_today
+      define :get_events_by_activity, action: :by_activity
+      define :list_events, action: :read
+      define :list_paginated_events, action: :list_paginated
+      define :list_today_paginated_events, action: :list_paginated_today
+      define :update_event, action: :update
+    end
   end
 
   @github_issue_color_codes [
@@ -30,7 +47,7 @@ defmodule Omedis.TimeTracking do
         {:ok, activity}
 
       _ ->
-        Activity.update_position(activity, %{position: activity.position - 1}, opts)
+        __MODULE__.update_activity_position(activity, %{position: activity.position - 1}, opts)
     end
   end
 
@@ -42,7 +59,7 @@ defmodule Omedis.TimeTracking do
         {:ok, activity}
 
       _ ->
-        Activity.update_position(activity, %{position: activity.position + 1}, opts)
+        __MODULE__.update_activity_position(activity, %{position: activity.position + 1}, opts)
     end
   end
 

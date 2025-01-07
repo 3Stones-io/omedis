@@ -5,6 +5,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
   import Omedis.TestUtils
 
   alias Omedis.Accounts.Organisation
+  alias Omedis.TimeTracking
 
   setup [:register_and_log_in_user]
 
@@ -132,7 +133,6 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
   end
 
   describe "/organisations/:slug (Time Tracker)" do
-    alias Omedis.TimeTracking.Event
     alias OmedisWeb.Endpoint
 
     setup %{group: group, organisation: organisation, user: user} do
@@ -219,7 +219,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       assert html =~ "animate-pulse"
 
       assert {:ok, [event]} =
-               Event.by_activity_today(
+               TimeTracking.get_events_by_activity_today(
                  %{activity_id: activity_1.id},
                  actor: user,
                  tenant: organisation
@@ -324,7 +324,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       # Verify event was started
       assert {:ok, [event]} =
-               Event.by_activity_today(
+               TimeTracking.get_events_by_activity_today(
                  %{activity_id: activity_1.id},
                  actor: user,
                  tenant: organisation
@@ -347,7 +347,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       # Verify event was stopped
       assert {:ok, [event]} =
-               Event.by_activity_today(
+               TimeTracking.get_events_by_activity_today(
                  %{activity_id: activity_1.id},
                  actor: user,
                  tenant: organisation
@@ -402,7 +402,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       # Verify event was started
       assert {:ok, [event]} =
-               Event.by_activity_today(
+               TimeTracking.get_events_by_activity_today(
                  %{activity_id: activity_1.id},
                  actor: user,
                  tenant: organisation

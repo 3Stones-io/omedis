@@ -196,7 +196,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
   defp create_activity(project, users_group, opts) do
     if !fetch_default_activity(opts) do
       {:ok, _} =
-        TimeTracking.Activity.create(
+        TimeTracking.create_activity(
           %{
             name: "Miscellaneous",
             slug: "miscellaneous",
