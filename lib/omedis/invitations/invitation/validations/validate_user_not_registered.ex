@@ -7,13 +7,13 @@ defmodule Omedis.Invitations.Invitation.Validations.ValidateUserNotRegistered do
   """
   use Ash.Resource.Validation
 
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
 
   @impl true
   def validate(changeset, _opts, context) do
     email = Ash.Changeset.get_attribute(changeset, :email)
 
-    case User.by_email(email, actor: context.actor, tenant: context.tenant) do
+    case Accounts.get_user_by_email(email, actor: context.actor, tenant: context.tenant) do
       {:ok, _} ->
         {:error, field: :email, message: "An account with this email already exists"}
 

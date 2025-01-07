@@ -4,7 +4,7 @@ defmodule OmedisWeb.LiveHelpers do
   import Phoenix.Component
   import Phoenix.LiveView
 
-  alias Omedis.Accounts.Organisation
+  alias Omedis.Accounts
   alias OmedisWeb.Endpoint
 
   def on_mount(:assign_default_pagination_assigns, _params, _session, socket) do
@@ -33,7 +33,8 @@ defmodule OmedisWeb.LiveHelpers do
         :handle_params,
         fn
           %{"slug" => slug} = _params, _uri, socket ->
-            organisation = Organisation.by_slug!(slug, actor: socket.assigns.current_user)
+            organisation =
+              Accounts.get_organisation_by_slug!(slug, actor: socket.assigns.current_user)
 
             :ok = Endpoint.subscribe("time_tracker_live_view_#{pubsub_topics_unique_id}")
 

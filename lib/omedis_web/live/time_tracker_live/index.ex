@@ -1,8 +1,7 @@
 defmodule OmedisWeb.TimeTrackerLive.Index do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Organisation
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
   alias Omedis.TimeTracking.Activity
   alias Omedis.TimeTracking.Event
   alias OmedisWeb.Endpoint
@@ -137,7 +136,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
         assign(socket, :current_user, nil)
 
       organisation ->
-        current_user = User.by_id!(current_user_id, tenant: organisation)
+        current_user = Accounts.get_user_by_id!(current_user_id, tenant: organisation)
 
         assign(socket, :current_user, current_user)
     end
@@ -146,7 +145,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   defp get_current_organisation(session) do
     case session["organisation_id"] do
       nil -> nil
-      organisation_id -> Organisation.by_id!(organisation_id, authorize?: false)
+      organisation_id -> Accounts.get_organisation_by_id!(organisation_id, authorize?: false)
     end
   end
 
