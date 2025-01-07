@@ -3,7 +3,7 @@ defmodule OmedisWeb.ActivityLive.Show do
 
   alias Omedis.Accounts.Organisation
   alias Omedis.Groups.Group
-  alias Omedis.Projects.Project
+  alias Omedis.Projects
   alias Omedis.TimeTracking.Activity
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
@@ -131,7 +131,7 @@ defmodule OmedisWeb.ActivityLive.Show do
     next_position = activity.position
 
     projects =
-      Project.by_organisation_id!(%{organisation_id: organisation.id},
+      Projects.get_project_by_organisation_id!(%{organisation_id: organisation.id},
         actor: socket.assigns.current_user,
         tenant: organisation
       )
