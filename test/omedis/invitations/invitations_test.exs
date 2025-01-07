@@ -1,10 +1,10 @@
-defmodule Omedis.Invitations.InvitationTest do
+defmodule Omedis.InvitationsTest do
   use Omedis.DataCase, async: true
 
   import Omedis.Fixtures
   import Omedis.TestUtils
 
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
   alias Omedis.Invitations.Invitation.Workers.InvitationEmailWorker
   alias Omedis.Invitations.Invitation.Workers.InvitationExpirationWorker
   alias Omedis.Invitations.InvitationGroup
@@ -60,7 +60,7 @@ defmodule Omedis.Invitations.InvitationTest do
     }
   end
 
-  describe "create/1" do
+  describe "create_invitation/1" do
     test "organisation owner can create invitation and queue a job to send an invitation email",
          %{
            group: group,
@@ -75,7 +75,7 @@ defmodule Omedis.Invitations.InvitationTest do
       }
 
       assert {:ok, invitation} =
-               Invitation.create(attrs, actor: owner, tenant: organisation)
+               Invitations.create_invitation(attrs, actor: owner, tenant: organisation)
 
       assert_enqueued(
         worker: InvitationEmailWorker,
@@ -108,7 +108,8 @@ defmodule Omedis.Invitations.InvitationTest do
         groups: [group.id]
       }
 
-      assert {:ok, invitation} = Invitation.create(attrs, actor: user, tenant: organisation)
+      assert {:ok, invitation} =
+               Invitations.create_invitation(attrs, actor: user, tenant: organisation)
 
       assert_enqueued(
         worker: InvitationEmailWorker,
@@ -137,7 +138,7 @@ defmodule Omedis.Invitations.InvitationTest do
       }
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               Invitation.create(attrs, actor: user, tenant: organisation)
+               Invitations.create_invitation(attrs, actor: user, tenant: organisation)
 
       refute_enqueued(worker: InvitationEmailWorker)
     end
@@ -162,7 +163,9 @@ defmodule Omedis.Invitations.InvitationTest do
         groups: [group.id]
       }
 
-      assert {:ok, invitation} = Invitation.create(attrs, actor: owner, tenant: organisation)
+      assert {:ok, invitation} =
+               Invitations.create_invitation(attrs, actor: owner, tenant: organisation)
+
       assert invitation.email == Ash.CiString.new("test@example.com")
     end
 
@@ -172,11 +175,12 @@ defmodule Omedis.Invitations.InvitationTest do
            owner: owner
          } do
       attrs =
-        Invitation
+        Invitations.Invitation
         |> attrs_for(organisation)
         |> Map.put(:creator_id, owner.id)
 
-      assert {:ok, invitation} = Invitation.create(attrs, actor: owner, tenant: organisation)
+      assert {:ok, invitation} =
+               Invitations.create_invitation(attrs, actor: owner, tenant: organisation)
 
       assert_enqueued(
         worker: InvitationExpirationWorker,
@@ -191,13 +195,13 @@ defmodule Omedis.Invitations.InvitationTest do
            owner: owner
          } do
       attrs =
-        Invitation
+        Invitations.Invitation
         |> attrs_for(organisation)
         |> Map.put(:creator_id, owner.id)
         |> Map.put(:expires_at, DateTime.add(DateTime.utc_now(), -1, :second))
 
       assert {:error, %Ash.Error.Invalid{errors: errors}} =
-               Invitation.create(attrs, actor: owner, tenant: organisation)
+               Invitations.create_invitation(attrs, actor: owner, tenant: organisation)
 
       assert [
                _,
@@ -236,11 +240,12 @@ defmodule Omedis.Invitations.InvitationTest do
       }
 
       assert {:ok, new_invitation} =
-               Invitation.create(attrs, actor: owner, tenant: organisation)
+               Invitations.create_invitation(attrs, actor: owner, tenant: organisation)
 
       assert new_invitation.email == Ash.CiString.new("test@example.com")
 
-      assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(existing_invitation.id)
+      assert {:error, %Ash.Error.Query.NotFound{}} =
+               Invitations.get_invitation_by_id(existing_invitation.id)
     end
 
     test "validates required attributes", %{
@@ -255,13 +260,13 @@ defmodule Omedis.Invitations.InvitationTest do
       }
 
       assert {:error, %Ash.Error.Invalid{}} =
-               Invitation.create(attrs, actor: owner, tenant: organisation)
+               Invitations.create_invitation(attrs, actor: owner, tenant: organisation)
 
       refute_enqueued(worker: InvitationExpirationWorker)
     end
   end
 
-  describe "accept/2" do
+  describe "accept_invitation/2" do
     test "updates invitation status to accepted", %{
       organisation: organisation,
       owner: owner
@@ -269,13 +274,13 @@ defmodule Omedis.Invitations.InvitationTest do
       {:ok, invitation} = create_invitation(organisation)
 
       assert {:ok, updated_invitation} =
-               Invitation.accept(invitation, actor: owner, tenant: organisation)
+               Invitations.accept_invitation(invitation, actor: owner, tenant: organisation)
 
       assert updated_invitation.status == :accepted
     end
   end
 
-  describe "expire/2" do
+  describe "mark_invitation_as_expireds/2" do
     test "updates invitation status to expired", %{
       organisation: organisation,
       owner: owner
@@ -283,42 +288,20 @@ defmodule Omedis.Invitations.InvitationTest do
       {:ok, invitation} = create_invitation(organisation)
 
       assert {:ok, updated_invitation} =
-               Invitation.expire(invitation, actor: owner, tenant: organisation)
+               Invitations.mark_invitation_as_expired(invitation,
+                 actor: owner,
+                 tenant: organisation
+               )
 
       assert updated_invitation.status == :expired
     end
   end
 
-  describe "update/2" do
-    test "updates invitation", %{
-      organisation: organisation,
-      owner: owner
-    } do
-      create_attrs =
-        attrs_for(Invitation, organisation)
-        |> Map.put(:email, "test@example.com")
-        |> Map.put(:language, "en")
-
-      {:ok, invitation} = create_invitation(organisation, create_attrs)
-
-      update_attrs = %{
-        email: "test+1@example.com",
-        language: "it"
-      }
-
-      assert {:ok, updated_invitation} =
-               Invitation.update(invitation, update_attrs, actor: owner, tenant: organisation)
-
-      assert updated_invitation.email == Ash.CiString.new("test+1@example.com")
-      assert updated_invitation.language == "it"
-    end
-  end
-
-  describe "by_id/1" do
+  describe "get_invitation_by_id/1" do
     test "returns invitation if it has not expired", %{organisation: organisation} do
       {:ok, invitation} = create_invitation(organisation)
 
-      assert {:ok, _invitation} = Invitation.by_id(invitation.id)
+      assert {:ok, _invitation} = Invitations.get_invitation_by_id(invitation.id)
     end
 
     test "returns an error if invitation has expired", %{
@@ -331,15 +314,17 @@ defmodule Omedis.Invitations.InvitationTest do
           status: :expired
         })
 
-      assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(invitation.id)
+      assert {:error, %Ash.Error.Query.NotFound{}} =
+               Invitations.get_invitation_by_id(invitation.id)
     end
 
     test "returns an error if invitation does not exist" do
-      assert {:error, %Ash.Error.Query.NotFound{}} = Invitation.by_id(Ecto.UUID.generate())
+      assert {:error, %Ash.Error.Query.NotFound{}} =
+               Invitations.get_invitation_by_id(Ecto.UUID.generate())
     end
   end
 
-  describe "destroy/2" do
+  describe "delete_invitation/2" do
     setup %{organisation: organisation} do
       {:ok, invitation} = create_invitation(organisation)
 
@@ -351,7 +336,11 @@ defmodule Omedis.Invitations.InvitationTest do
       invitation: invitation,
       owner: organisation_owner
     } do
-      assert :ok = Invitation.destroy(invitation, actor: organisation_owner, tenant: organisation)
+      assert :ok =
+               Invitations.delete_invitation(invitation,
+                 actor: organisation_owner,
+                 tenant: organisation
+               )
     end
 
     test "authorized user can destroy an invitation", %{
@@ -359,7 +348,11 @@ defmodule Omedis.Invitations.InvitationTest do
       invitation: invitation,
       organisation: organisation
     } do
-      assert :ok = Invitation.destroy(invitation, actor: authorized_user, tenant: organisation)
+      assert :ok =
+               Invitations.delete_invitation(invitation,
+                 actor: authorized_user,
+                 tenant: organisation
+               )
     end
 
     test "unauthorized user cannot destroy an invitation", %{
@@ -372,11 +365,14 @@ defmodule Omedis.Invitations.InvitationTest do
       Ash.destroy!(access_right)
 
       assert {:error, %Ash.Error.Forbidden{}} =
-               Invitation.destroy(invitation, actor: authorized_user, tenant: organisation)
+               Invitations.delete_invitation(invitation,
+                 actor: authorized_user,
+                 tenant: organisation
+               )
     end
   end
 
-  describe "list_paginated/2" do
+  describe "list_paginated_invitations/1" do
     test "returns invitations for the organisation owner", %{
       organisation: organisation,
       owner: organisation_owner
@@ -384,7 +380,7 @@ defmodule Omedis.Invitations.InvitationTest do
       {:ok, invitation} = create_invitation(organisation)
 
       assert {:ok, %{results: results, count: 1}} =
-               Invitation.list_paginated(
+               Invitations.list_paginated_invitations(
                  actor: organisation_owner,
                  page: [limit: 10, offset: 0],
                  tenant: organisation
@@ -410,7 +406,7 @@ defmodule Omedis.Invitations.InvitationTest do
       end
 
       assert {:ok, %{results: results, count: 15}} =
-               Invitation.list_paginated(
+               Invitations.list_paginated_invitations(
                  actor: authorized_user,
                  page: [limit: 10, offset: 0],
                  tenant: organisation
@@ -420,7 +416,7 @@ defmodule Omedis.Invitations.InvitationTest do
 
       # Second page
       assert {:ok, %{results: more_results}} =
-               Invitation.list_paginated(
+               Invitations.list_paginated_invitations(
                  actor: authorized_user,
                  page: [limit: 10, offset: 10],
                  tenant: organisation
@@ -450,7 +446,7 @@ defmodule Omedis.Invitations.InvitationTest do
         end
 
       assert {:ok, %{results: results}} =
-               Invitation.list_paginated(%{sort_order: :asc},
+               Invitations.list_paginated_invitations(%{sort_order: :asc},
                  actor: organisation_owner,
                  tenant: organisation
                )
@@ -480,7 +476,7 @@ defmodule Omedis.Invitations.InvitationTest do
       Ash.destroy!(access_right, tenant: organisation)
 
       assert {:ok, %{results: [], count: 0}} =
-               Invitation.list_paginated(
+               Invitations.list_paginated_invitations(
                  actor: authorized_user,
                  page: [limit: 20, offset: 0],
                  tenant: organisation

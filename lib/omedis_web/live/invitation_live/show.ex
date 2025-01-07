@@ -4,7 +4,7 @@ defmodule OmedisWeb.InvitationLive.Show do
   alias AshPhoenix.Form
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
 
   @impl true
   def render(assigns) do
@@ -141,7 +141,7 @@ defmodule OmedisWeb.InvitationLive.Show do
         |> put_flash(:error, dgettext("invitation", "User already registered"))
         |> redirect(to: ~p"/login")
 
-      %Invitation{} = invitation ->
+      %Invitations.Invitation{} = invitation ->
         organisation = Organisation.by_id!(invitation.organisation_id, authorize?: false)
         Gettext.put_locale(OmedisWeb.Gettext, invitation.language)
 
@@ -157,7 +157,7 @@ defmodule OmedisWeb.InvitationLive.Show do
   end
 
   defp get_invitation(id) do
-    with {:ok, invitation} <- Invitation.by_id(id),
+    with {:ok, invitation} <- Invitations.get_invitation_by_id(id),
          :ok <- invited_user_not_registered?(invitation.email) do
       invitation
     end
