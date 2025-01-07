@@ -4,6 +4,8 @@ defmodule Omedis.AccessRights do
   use Ash.Domain
 
   resources do
-    resource Omedis.AccessRights.AccessRight
+    resource Omedis.AccessRights.AccessRight do
+      define :create_access_right, action: :create
+    end
   end
 end
