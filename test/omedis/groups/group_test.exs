@@ -3,6 +3,7 @@ defmodule Omedis.Groups.GroupTest do
 
   import Omedis.TestUtils
 
+  alias Omedis.Groups
   alias Omedis.Groups.Group
 
   setup do
@@ -37,7 +38,7 @@ defmodule Omedis.Groups.GroupTest do
     test "organisation owner can create a group", %{user: user, organisation: organisation} do
       assert %Group{} =
                group =
-               Group.create!(
+               Groups.create_group!(
                  %{
                    name: "Test Group",
                    user_id: user.id,
@@ -57,7 +58,7 @@ defmodule Omedis.Groups.GroupTest do
     } do
       assert %Group{} =
                group =
-               Group.create!(
+               Groups.create_group!(
                  %{
                    name: "Test Group",
                    user_id: authorized_user.id,
@@ -76,7 +77,7 @@ defmodule Omedis.Groups.GroupTest do
       {:ok, organisation} = create_organisation()
 
       assert_raise Ash.Error.Forbidden, fn ->
-        Group.create!(
+        Groups.create_group!(
           %{name: "Test Group", user_id: user.id},
           actor: user,
           tenant: organisation
@@ -102,7 +103,10 @@ defmodule Omedis.Groups.GroupTest do
 
       assert %Group{} =
                updated_group =
-               Group.update!(group, %{name: "Updated Group"}, actor: user, tenant: organisation)
+               Groups.update_group!(group, %{name: "Updated Group"},
+                 actor: user,
+                 tenant: organisation
+               )
 
       assert updated_group.name == "Updated Group"
     end
@@ -116,7 +120,7 @@ defmodule Omedis.Groups.GroupTest do
 
       assert %Group{} =
                updated_group =
-               Group.update!(group, %{name: "New Name"},
+               Groups.update_group!(group, %{name: "New Name"},
                  actor: authorized_user,
                  tenant: organisation
                )
@@ -139,7 +143,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Forbidden, fn ->
-        Group.update!(group, %{name: "Updated Group"}, actor: user, tenant: organisation)
+        Groups.update_group!(group, %{name: "Updated Group"}, actor: user, tenant: organisation)
       end
     end
   end
@@ -157,7 +161,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert :ok =
-               Group.destroy(group, actor: user, tenant: organisation)
+               Groups.destroy_group(group, actor: user, tenant: organisation)
     end
 
     test "authorized users can delete a group", %{
@@ -168,7 +172,7 @@ defmodule Omedis.Groups.GroupTest do
         create_group(organisation, %{user_id: authorized_user.id})
 
       assert :ok =
-               Group.destroy(group, actor: authorized_user, tenant: organisation)
+               Groups.destroy_group(group, actor: authorized_user, tenant: organisation)
     end
 
     test "can't delete a group if actor doesn't have destroy access", %{
@@ -188,7 +192,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Forbidden, fn ->
-        Group.destroy!(group, actor: user, tenant: organisation)
+        Groups.destroy_group!(group, actor: user, tenant: organisation)
       end
     end
   end
@@ -209,7 +213,9 @@ defmodule Omedis.Groups.GroupTest do
         read: true
       })
 
-      assert %Group{} = result = Group.by_id!(group.id, actor: user, tenant: organisation)
+      assert %Group{} =
+               result = Groups.get_group_by_id!(group.id, actor: user, tenant: organisation)
+
       assert result.id == group.id
     end
 
@@ -228,7 +234,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        Group.by_id!(invalid_id, actor: user, tenant: organisation)
+        Groups.get_group_by_id!(invalid_id, actor: user, tenant: organisation)
       end
     end
 
@@ -247,7 +253,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        Group.by_id!(group.id, actor: user, tenant: organisation)
+        Groups.get_group_by_id!(group.id, actor: user, tenant: organisation)
       end
     end
   end
@@ -274,7 +280,7 @@ defmodule Omedis.Groups.GroupTest do
       end)
 
       assert %Ash.Page.Offset{results: groups} =
-               Group.by_organisation_id!(%{organisation_id: organisation.id},
+               Groups.get_group_by_organisation_id!(%{organisation_id: organisation.id},
                  actor: user,
                  tenant: organisation,
                  page: [limit: 10, offset: 0]
@@ -305,7 +311,7 @@ defmodule Omedis.Groups.GroupTest do
       end)
 
       assert %Ash.Page.Offset{results: []} =
-               Group.by_organisation_id!(%{organisation_id: organisation.id},
+               Groups.get_group_by_organisation_id!(%{organisation_id: organisation.id},
                  actor: user,
                  tenant: organisation
                )
@@ -323,7 +329,7 @@ defmodule Omedis.Groups.GroupTest do
       past_datetime = DateTime.add(DateTime.utc_now(), -1, :second)
 
       {:ok, _updated_group_1} =
-        Group.update(
+        Groups.update_group(
           group_1,
           %{},
           context: %{updated_at: past_datetime},
@@ -363,7 +369,8 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert %Group{} =
-               result = Group.by_slug!("test-group-slug", actor: user, tenant: organisation)
+               result =
+               Groups.get_group_by_slug!("test-group-slug", actor: user, tenant: organisation)
 
       assert result.id == group.id
     end
@@ -383,7 +390,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        Group.by_slug!(invalid_slug, actor: user, tenant: organisation)
+        Groups.get_group_by_slug!(invalid_slug, actor: user, tenant: organisation)
       end
     end
 
@@ -401,7 +408,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        Group.by_slug!(group.slug, actor: user, tenant: organisation)
+        Groups.get_group_by_slug!(group.slug, actor: user, tenant: organisation)
       end
     end
   end
