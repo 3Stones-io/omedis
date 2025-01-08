@@ -3,7 +3,7 @@ defmodule OmedisWeb.ActivityLive.Show do
 
   alias Omedis.Accounts.Organisation
   alias Omedis.Groups.Group
-  alias Omedis.Projects.Project
+  alias Omedis.Projects
   alias Omedis.TimeTracking
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
