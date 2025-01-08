@@ -8,7 +8,7 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
 
   require Ash.Query
 
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
 
   def change(%{attributes: %{email: email}} = changeset, _opts, _context) do
     Ash.Changeset.after_transaction(changeset, fn
@@ -28,7 +28,7 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
     case get_invitation(email) do
       {:ok, invitation} ->
         %{status: :success, notifications: notifications} =
-          Invitation.accept(invitation,
+          Invitations.accept_invitation(invitation,
             actor: user,
             authorize?: false,
             return_notifications?: true
@@ -42,7 +42,7 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
   end
 
   defp get_invitation(email) do
-    Invitation
+    Invitations.Invitation
     |> Ash.Query.filter(email: email)
     |> Ash.Query.filter(expires_at > ^DateTime.utc_now())
     |> Ash.read(authorize?: false)

@@ -9,7 +9,7 @@ defmodule Omedis.Invitations.Invitation.Validations.ValidateNoPendingInvitation 
 
   require Ash.Query
 
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
 
   @impl true
   def validate(changeset, _opts, context) do
@@ -21,7 +21,8 @@ defmodule Omedis.Invitations.Invitation.Validations.ValidateNoPendingInvitation 
 
       {:ok, [invitation]} ->
         # If we get here, remove the existing invitation and proceed with creating the new one
-        :ok = Invitation.destroy(invitation, actor: context.actor, tenant: context.tenant)
+        :ok =
+          Invitations.delete_invitation(invitation, actor: context.actor, tenant: context.tenant)
 
       {:error, error} ->
         {:error, error}
@@ -29,7 +30,7 @@ defmodule Omedis.Invitations.Invitation.Validations.ValidateNoPendingInvitation 
   end
 
   defp get_pending_invitation(email, opts) do
-    Invitation
+    Invitations.Invitation
     |> Ash.Query.filter(email: email, organisation_id: opts[:tenant].id)
     |> Ash.Query.filter(is_nil(user_id))
     |> Ash.Query.filter(expires_at > ^DateTime.utc_now())

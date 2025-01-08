@@ -1,9 +1,8 @@
 defmodule OmedisWeb.OrganisationLive.Today do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Project
   alias Omedis.Groups.Group
-  alias Omedis.Projects.Project
+  alias Omedis.Projects
   alias Omedis.TimeTracking
   alias OmedisWeb.Endpoint
 
@@ -70,7 +69,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
     current_user = socket.assigns.current_user
     organisation = socket.assigns.organisation
     group = Group.by_id!(id, tenant: organisation, actor: current_user)
-    project = Project.by_id!(project_id, tenant: organisation, actor: current_user)
+    project = Projects.get_project_by_id!(project_id, tenant: organisation, actor: current_user)
 
     # Update the timestamps for the group and project,
     # so they become the latest ones
@@ -82,7 +81,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
       )
 
     {:ok, updated_project} =
-      Project.update(project,
+      Projects.update_project(project,
         actor: current_user,
         context: %{updated_at: DateTime.utc_now()},
         tenant: organisation
@@ -463,7 +462,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   defp latest_project_for_an_organisation(socket, opts) do
     organisation = socket.assigns.organisation
 
-    case Project.latest_by_organisation_id(%{organisation_id: organisation.id}, opts) do
+    case Projects.latest_project_by_organisation_id(%{organisation_id: organisation.id}, opts) do
       {:ok, [project]} ->
         {:ok, project}
 
@@ -490,7 +489,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   end
 
   defp projects_for_an_organisation(organisation, current_user) do
-    case Project.by_organisation_id(%{organisation_id: organisation.id},
+    case Projects.get_project_by_organisation_id(%{organisation_id: organisation.id},
            actor: current_user,
            tenant: organisation
          ) do
