@@ -26,18 +26,6 @@ defmodule Omedis.TimeTracking.Activity do
     plural_name :activities
   end
 
-  code_interface do
-    domain Omedis.TimeTracking
-    define :read
-    define :create
-    define :update
-    define :update_position
-    define :by_id, get_by: [:id], action: :read
-    define :list_paginated
-    define :list_keyset_paginated
-    define :by_group_id_and_project_id
-  end
-
   actions do
     create :create do
       accept [

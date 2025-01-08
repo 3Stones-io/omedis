@@ -4,7 +4,7 @@ defmodule Omedis.TimeTracking.Activity.Changes.UpdateActivityPositions do
 
   require Ash.Query
 
-  alias Omedis.TimeTracking.Activity
+  alias Omedis.TimeTracking
 
   @impl true
   def change(changeset, _opts, context) do
@@ -15,14 +15,14 @@ defmodule Omedis.TimeTracking.Activity.Changes.UpdateActivityPositions do
     requested_position = Ash.Changeset.get_attribute(changeset, :position)
 
     activity_to_shift =
-      Activity
+      TimeTracking.Activity
       |> Ash.Query.filter(group_id == ^group_id and position == ^requested_position)
       |> Ash.read_one!(actor: actor, tenant: organisation)
 
     changeset
     |> Ash.Changeset.before_action(fn changeset ->
       max_position =
-        Activity
+        TimeTracking.Activity
         |> Ash.Query.filter(group_id == ^group_id)
         |> Ash.count!(actor: actor, tenant: organisation)
 
@@ -48,7 +48,7 @@ defmodule Omedis.TimeTracking.Activity.Changes.UpdateActivityPositions do
   end
 
   defp shift_activity_position(activity, new_position, organisation, actor) do
-    Activity.update(
+    TimeTracking.update_activity(
       activity,
       %{position: new_position},
       actor: actor,

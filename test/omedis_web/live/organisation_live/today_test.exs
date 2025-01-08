@@ -8,7 +8,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
   alias Omedis.Groups.Group
   alias Omedis.Projects
-  alias Omedis.TimeTracking.Event
+  alias Omedis.TimeTracking
 
   setup do
     {:ok, owner} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
@@ -278,7 +278,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       {:ok, [event]} =
-        Event.by_activity_today(
+        TimeTracking.get_events_by_activity_today(
           %{activity_id: activity.id},
           actor: owner,
           tenant: organisation
@@ -323,7 +323,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       # Verify event was stopped (end_at was set)
       {:ok, [event]} =
-        Event.by_activity_today(
+        TimeTracking.get_events_by_activity_today(
           %{activity_id: activity.id},
           actor: owner,
           tenant: organisation
@@ -361,7 +361,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       {:ok, [event]} =
-        Event.by_activity_today(
+        TimeTracking.get_events_by_activity_today(
           %{activity_id: activity.id},
           actor: authorized_user,
           tenant: organisation
@@ -407,7 +407,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       # Verify event was stopped (end_at was set)
       {:ok, [event]} =
-        Event.by_activity_today(
+        TimeTracking.get_events_by_activity_today(
           %{activity_id: activity.id},
           actor: authorized_user,
           tenant: organisation
@@ -475,7 +475,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
              |> render_click() =~ "stop-current-activity-#{activity.id}"
 
       assert {:ok, []} =
-               Event.by_activity_today(
+               TimeTracking.get_events_by_activity_today(
                  %{activity_id: activity.id},
                  actor: unauthorized_user,
                  tenant: organisation
