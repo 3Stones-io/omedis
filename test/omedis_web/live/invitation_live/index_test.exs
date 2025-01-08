@@ -6,7 +6,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
   require Ash.Query
 
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
   alias OmedisWeb.Endpoint
 
   setup do
@@ -205,7 +205,10 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert_broadcast "destroy", broadcast_payload
 
-      assert %Ash.Notifier.Notification{resource: Invitation, data: deleted_invitation} =
+      assert %Ash.Notifier.Notification{
+               resource: Invitations.Invitation,
+               data: deleted_invitation
+             } =
                broadcast_payload
 
       assert deleted_invitation.id == invitation.id
@@ -214,7 +217,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       refute html =~ Ash.CiString.value(invitation.email)
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
-               Invitation.by_id(invitation.id, actor: owner, tenant: organisation)
+               Invitations.get_invitation_by_id(invitation.id, actor: owner, tenant: organisation)
     end
 
     test "authorized user can delete invitations", %{
@@ -242,7 +245,10 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert_broadcast "destroy", broadcast_payload
 
-      assert %Ash.Notifier.Notification{resource: Invitation, data: deleted_invitation} =
+      assert %Ash.Notifier.Notification{
+               resource: Invitations.Invitation,
+               data: deleted_invitation
+             } =
                broadcast_payload
 
       assert deleted_invitation.id == invitation.id
@@ -251,7 +257,10 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       refute html =~ Ash.CiString.value(invitation.email)
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
-               Invitation.by_id(invitation.id, actor: authorized_user, tenant: organisation)
+               Invitations.get_invitation_by_id(invitation.id,
+                 actor: authorized_user,
+                 tenant: organisation
+               )
     end
 
     test "can sort invitations by inserted_at", %{
@@ -300,7 +309,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [created_invitation]} =
-               Invitation
+               Invitations.Invitation
                |> Ash.Query.filter(email: "test001@example.com")
                |> Ash.read(authorize?: false, tenant: organisation)
 
@@ -350,7 +359,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert {:ok, invited_user} = Accounts.get_user_by_email("test001@example.com")
 
       # Verify invitation was updated
-      {:ok, updated_invitation} = Invitation.by_id(created_invitation.id)
+      {:ok, updated_invitation} = Invitations.get_invitation_by_id(created_invitation.id)
 
       assert updated_invitation.id == created_invitation.id
       assert updated_invitation.status == :accepted
@@ -358,8 +367,10 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert_broadcast "accept", broadcast_payload
 
-      assert %Ash.Notifier.Notification{resource: Invitation, data: accepted_invitation} =
-               broadcast_payload
+      assert %Ash.Notifier.Notification{
+               resource: Invitations.Invitation,
+               data: accepted_invitation
+             } = broadcast_payload
 
       assert accepted_invitation.id == updated_invitation.id
 
@@ -390,7 +401,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [created_invitation]} =
-               Invitation
+               Invitations.Invitation
                |> Ash.Query.filter(email: "test001@example.com")
                |> Ash.read(authorize?: false, tenant: organisation)
 
@@ -412,12 +423,14 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ "Pending"
 
       # Expire the invitation
-      {:ok, _} = Invitation.expire(created_invitation, authorize?: false)
+      {:ok, _} = Invitations.mark_invitation_as_expired(created_invitation, authorize?: false)
 
       assert_broadcast "expire", broadcast_payload
 
-      assert %Ash.Notifier.Notification{resource: Invitation, data: expired_invitation} =
-               broadcast_payload
+      assert %Ash.Notifier.Notification{
+               resource: Invitations.Invitation,
+               data: expired_invitation
+             } = broadcast_payload
 
       assert expired_invitation.id == created_invitation.id
       assert expired_invitation.status == :expired
@@ -450,7 +463,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [created_invitation]} =
-               Invitation
+               Invitations.Invitation
                |> Ash.Query.filter(email: "test001@example.com")
                |> Ash.read(authorize?: false, tenant: organisation)
 
@@ -472,18 +485,20 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ "Pending"
 
       # Delete the invitation
-      :ok = Invitation.destroy!(created_invitation, actor: owner, tenant: organisation)
+      :ok = Invitations.delete_invitation!(created_invitation, actor: owner, tenant: organisation)
 
       assert_broadcast "destroy", broadcast_payload
 
-      assert %Ash.Notifier.Notification{resource: Invitation, data: deleted_invitation} =
-               broadcast_payload
+      assert %Ash.Notifier.Notification{
+               resource: Invitations.Invitation,
+               data: deleted_invitation
+             } = broadcast_payload
 
       assert deleted_invitation.id == created_invitation.id
 
       # Verify no such invitation exists anymore
       assert {:error, %Ash.Error.Query.NotFound{}} =
-               Invitation.by_id(deleted_invitation.id,
+               Invitations.get_invitation_by_id(deleted_invitation.id,
                  actor: owner,
                  tenant: organisation
                )
@@ -525,7 +540,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ "Invitation created successfully"
 
       assert [invitation] =
-               Invitation
+               Invitations.Invitation
                |> Ash.Query.filter(email: "test@example.com")
                |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
 
@@ -572,7 +587,10 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert_broadcast "create", broadcast_payload
 
-      assert %Ash.Notifier.Notification{resource: Invitation, data: created_invitation} =
+      assert %Ash.Notifier.Notification{
+               resource: Invitations.Invitation,
+               data: created_invitation
+             } =
                broadcast_payload
 
       assert created_invitation.status == :pending
@@ -585,7 +603,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ Ash.CiString.value(created_invitation.email)
 
       assert [invitation_from_db] =
-               Invitation
+               Invitations.Invitation
                |> Ash.Query.filter(email: "test@example.com")
                |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
 
@@ -703,11 +721,13 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
       assert_broadcast "create", broadcast_payload
 
-      assert %Ash.Notifier.Notification{resource: Invitation, data: created_invitation} =
-               broadcast_payload
+      assert %Ash.Notifier.Notification{
+               resource: Invitations.Invitation,
+               data: created_invitation
+             } = broadcast_payload
 
       assert [invitation_from_db] =
-               Invitation
+               Invitations.Invitation
                |> Ash.Query.filter(email: "test004@example.com")
                |> Ash.read!(authorize?: false, load: [:groups], tenant: organisation)
 

@@ -4,7 +4,7 @@ defmodule Omedis.AccountsTest do
   import Omedis.TestUtils
 
   alias Omedis.Accounts
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
 
   require Ash.Query
 
@@ -401,7 +401,7 @@ defmodule Omedis.AccountsTest do
                  birthdate: "1980-01-01"
                })
 
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+      {:ok, updated_invitation} = Invitations.get_invitation_by_id(invitation.id)
 
       assert updated_invitation.user_id == user.id
     end

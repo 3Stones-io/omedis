@@ -1,11 +1,11 @@
 defmodule OmedisWeb.RegisterTest do
   use OmedisWeb.ConnCase, async: true
 
-  alias Omedis.Accounts
-  alias Omedis.Invitations.Invitation
-
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
+
+  alias Omedis.Accounts
+  alias Omedis.Invitations
 
   @valid_registration_params %{
     email: "test@gmail.com",
@@ -154,7 +154,7 @@ defmodule OmedisWeb.RegisterTest do
 
       assert {:ok, user} = Accounts.get_user_by_email("test@user.com")
 
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+      {:ok, updated_invitation} = Invitations.get_invitation_by_id(invitation.id)
 
       assert updated_invitation.user_id == user.id
     end

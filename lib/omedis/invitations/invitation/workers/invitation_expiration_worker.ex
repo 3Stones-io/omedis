@@ -4,7 +4,7 @@ defmodule Omedis.Invitations.Invitation.Workers.InvitationExpirationWorker do
 
   require Ash.Query
 
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"invitation_id" => invitation_id}}) do
@@ -14,14 +14,14 @@ defmodule Omedis.Invitations.Invitation.Workers.InvitationExpirationWorker do
         :ok
 
       {:ok, [invitation]} ->
-        {:ok, _invitation} = Invitation.expire(invitation, authorize?: false)
+        {:ok, _invitation} = Invitations.mark_invitation_as_expired(invitation, authorize?: false)
 
         :ok
     end
   end
 
   defp get_invitation(invitation_id, opts) do
-    Invitation
+    Invitations.Invitation
     |> Ash.Query.filter(id: invitation_id, status: :pending)
     |> Ash.read(opts)
   end
