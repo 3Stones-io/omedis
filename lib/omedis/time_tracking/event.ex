@@ -23,17 +23,6 @@ defmodule Omedis.TimeTracking.Event do
     plural_name :events
   end
 
-  code_interface do
-    domain Omedis.TimeTracking
-    define :by_activity
-    define :by_activity_today
-    define :create
-    define :list_paginated
-    define :list_paginated_today
-    define :read
-    define :update
-  end
-
   actions do
     create :create do
       accept [
