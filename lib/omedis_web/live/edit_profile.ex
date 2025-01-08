@@ -78,7 +78,7 @@ defmodule OmedisWeb.EditProfileLive do
   end
 
   def handle_event("delete_account", %{"id" => id}, socket) do
-    case Accounts.delete_account(id, actor: socket.assigns.current_user) do
+    case Accounts.delete_user(id, actor: socket.assigns.current_user) do
       :ok ->
         {:noreply,
          socket

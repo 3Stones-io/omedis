@@ -493,7 +493,7 @@ defmodule Omedis.AccountsTest do
       refute Enum.empty?(users)
 
       assert_raise Ash.Error.Forbidden, fn ->
-        Accounts.delete_account!(user, actor: user)
+        Accounts.delete_user!(user, actor: user)
       end
     end
 
@@ -516,7 +516,7 @@ defmodule Omedis.AccountsTest do
       {:ok, users} = Ash.read(Accounts.User)
       refute Enum.empty?(users)
 
-      assert :ok = Accounts.delete_account!(user, actor: user)
+      assert :ok = Accounts.delete_user!(user, actor: user)
 
       assert_raise Ash.Error.Invalid, fn ->
         Ash.get!(Accounts.User, user.id)
@@ -531,7 +531,7 @@ defmodule Omedis.AccountsTest do
       {:ok, user2} = create_user(%{email: "test2@gmail.com"})
 
       assert_raise Ash.Error.Forbidden, fn ->
-        Accounts.delete_account!(user, actor: user2)
+        Accounts.delete_user!(user, actor: user2)
       end
     end
   end

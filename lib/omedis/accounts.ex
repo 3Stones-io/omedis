@@ -17,7 +17,7 @@ defmodule Omedis.Accounts do
 
     resource Omedis.Accounts.User do
       define :create_user, action: :create
-      define :delete_account, action: :destroy
+      define :delete_user, action: :destroy
       define :get_user_by_email, get_by: [:email], action: :read
       define :get_user_by_id, get_by: [:id], action: :read
       define :update_user, action: :update

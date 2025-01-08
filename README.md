@@ -155,7 +155,7 @@ To delete the user with the email address `example@example.com` you ...
 alias Omedis.Accounts.User
 
 {:ok , user} = Accounts.get_user_by_email("example@example.com")
-Accounts.delete_account(user)
+Accounts.delete_user(user)
 
 ```
 
