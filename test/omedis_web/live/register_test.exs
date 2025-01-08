@@ -3,7 +3,7 @@ defmodule OmedisWeb.RegisterTest do
 
   alias Omedis.Accounts.Organisation
   alias Omedis.Accounts.User
-  alias Omedis.Invitations.Invitation
+  alias Omedis.Invitations
 
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
@@ -155,7 +155,7 @@ defmodule OmedisWeb.RegisterTest do
 
       assert {:ok, user} = User.by_email("test@user.com")
 
-      {:ok, updated_invitation} = Invitation.by_id(invitation.id)
+      {:ok, updated_invitation} = Invitations.get_invitation_by_id(invitation.id)
 
       assert updated_invitation.user_id == user.id
     end

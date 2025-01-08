@@ -32,17 +32,6 @@ defmodule Omedis.Invitations.Invitation do
     end
   end
 
-  code_interface do
-    domain Omedis.Invitations
-    define :accept
-    define :by_id, get_by: [:id]
-    define :create
-    define :destroy
-    define :expire
-    define :list_paginated
-    define :update
-  end
-
   actions do
     defaults [:read, :destroy]
 
