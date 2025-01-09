@@ -27,7 +27,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
           <:loading>
             <div class="flex items-center gap-x-2 px-4 py-2">
               <div class="w-3 h-3 rounded-full animate-pulse bg-white"></div>
-              00:00
+              00:00:00
             </div>
           </:loading>
           <div class="flex items-center gap-x-2 px-4 py-2">
@@ -123,7 +123,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
      |> stream(:activities, [])
      |> assign(:current_organisation, get_current_organisation(session))
      |> assign(:current_user_id, session["current_user_id"])
-     |> assign(:elapsed_time, "00:00")
+     |> assign(:elapsed_time, "00:00:00")
      |> assign(:language, nil)
      |> assign(:last_activity_token, nil)
      |> assign(:first_activity_token, nil)
@@ -253,7 +253,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   defp calculate_elapsed_time(activity) do
     case Enum.find(activity.events, &is_nil(&1.dtend)) do
       nil ->
-        "00:00"
+        "00:00:00"
 
       event ->
         now = Time.utc_now()
@@ -262,13 +262,17 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     end
   end
 
-  defp format_elapsed_time(seconds_diff) when seconds_diff < 60 do
-    "00:#{String.pad_leading("#{seconds_diff}", 2, "0")}"
-  end
-
   defp format_elapsed_time(seconds_diff) do
-    minutes_diff = div(seconds_diff, 60)
-    OmedisWeb.TimeTracking.minutes_to_hhmm(minutes_diff)
+    hours = div(seconds_diff, 3600)
+    remaining_seconds = rem(seconds_diff, 3600)
+    minutes = div(remaining_seconds, 60)
+    seconds = rem(remaining_seconds, 60)
+
+    Enum.map_join(
+      [hours, minutes, seconds],
+      ":",
+      &String.pad_leading("#{&1}", 2, "0")
+    )
   end
 
   defp stop_event(activity_id, opts) do
