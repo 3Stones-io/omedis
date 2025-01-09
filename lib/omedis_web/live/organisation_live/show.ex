@@ -34,23 +34,26 @@ defmodule OmedisWeb.OrganisationLive.Show do
                 <%= dgettext("organisation", "Edit organisation") %>
               </.button>
             </.link>
-            <.link patch={~p"/organisations/#{@organisation}/invitations"} phx-click={JS.push_focus()}>
+            <.link
+              navigate={~p"/organisations/#{@organisation}/invitations"}
+              phx-click={JS.push_focus()}
+            >
               <.button>
                 <%= dgettext("organisation", "Invitations") %>
               </.button>
             </.link>
-            <.link patch={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
               <.button>
                 <%= dgettext("organisation", "Projects") %>
               </.button>
             </.link>
-            <.link patch={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
               <.button>
                 <%= dgettext("organisation", "Groups") %>
               </.button>
             </.link>
 
-            <.link patch={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
               <.button>
                 <%= dgettext("organisation", "Today") %>
               </.button>

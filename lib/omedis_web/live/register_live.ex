@@ -87,7 +87,7 @@ defmodule OmedisWeb.RegisterLive do
                 <%= dgettext("auth", "Register") %>
               </h2>
               <p class="mt-1 text-sm leading-6 text-gray-600">
-                <%= dgettext("auth", "Use a permanent address where you can receive mail.") %>
+                <%= dgettext("auth", "Use a permanent email address where you can receive email.") %>
               </p>
             </div>
           </div>

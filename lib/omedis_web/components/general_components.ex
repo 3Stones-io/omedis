@@ -86,9 +86,12 @@ defmodule OmedisWeb.GeneralComponents do
               <%= @label %>
             </p>
           <% else %>
-            <a href={@path} class="truncate text-sm font-medium text-gray-500 hover:text-gray-900">
+            <.link
+              navigate={@path}
+              class="truncate text-sm font-medium text-gray-500 hover:text-gray-900"
+            >
               <%= @label %>
-            </a>
+            </.link>
           <% end %>
         <% end %>
         <%= if not @is_current do %>
