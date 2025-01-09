@@ -48,11 +48,6 @@ msgstr "Anmelden..."
 msgid "Something went wrong. Try again."
 msgstr "Etwas ist schief gelaufen. Versuchen Sie es erneut."
 
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Use a permanent address where you can receive mail."
-msgstr "Verwenden Sie eine permanente Adresse, unter der Sie Post empfangen können."
-
 #: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Use your credentials to sign in"
@@ -68,3 +63,8 @@ msgstr "Benutzername oder Passwort ist falsch"
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "neues Passwort"
+
+#: lib/omedis_web/live/register_live.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Use a permanent email address where you can receive email."
+msgstr "Verwenden Sie eine permanente E-Mail-Adresse, unter der Sie E-Mails empfangen können."

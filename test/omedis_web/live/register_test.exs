@@ -125,7 +125,9 @@ defmodule OmedisWeb.RegisterTest do
 
       assert html =~ "Registrieren"
       assert html =~ "Passwort"
-      assert html =~ "Verwenden Sie eine permanente Adresse, unter der Sie Post empfangen können."
+
+      assert html =~
+               "Verwenden Sie eine permanente E-Mail-Adresse, unter der Sie E-Mails empfangen können."
     end
 
     test "updates the associated invitation when user is created", %{
