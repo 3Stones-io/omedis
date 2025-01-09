@@ -21,7 +21,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
       }
       class={[
         "absolute top-3 right-[5rem] lg:right-[17rem] z-10 bg-black text-white shadow-lg rounded-lg",
-        @current_activity && "w-[6rem]"
+        @current_activity && "w-[8rem]"
       ]}
     >
       <%= if @current_activity do %>
