@@ -2,7 +2,7 @@ defmodule OmedisWeb.EditProfileLive do
   use OmedisWeb, :live_view
 
   alias AshPhoenix.Form
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
 
   @supported_languages [
     {"English", "en"},
@@ -78,7 +78,7 @@ defmodule OmedisWeb.EditProfileLive do
   end
 
   def handle_event("delete_account", %{"id" => id}, socket) do
-    case User.destroy(id, actor: socket.assigns.current_user) do
+    case Accounts.delete_user(id, actor: socket.assigns.current_user) do
       :ok ->
         {:noreply,
          socket

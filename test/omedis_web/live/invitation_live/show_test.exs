@@ -5,7 +5,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
   alias Omedis.Invitations
 
   @valid_registration_params %{
@@ -87,7 +87,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       assert redirected_to(conn) == ~p"/edit_profile"
 
-      assert {:ok, user} = User.by_email(@valid_registration_params["email"])
+      assert {:ok, user} = Accounts.get_user_by_email(@valid_registration_params["email"])
       assert Ash.CiString.value(user.email) == @valid_registration_params["email"]
       assert user.current_organisation_id == organisation.id
 
@@ -209,7 +209,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, updated_invitation} = Invitations.get_invitation_by_id(invitation.id)
 
       assert updated_invitation.status == :accepted
-      assert {:ok, user} = User.by_email(@valid_registration_params["email"])
+      assert {:ok, user} = Accounts.get_user_by_email(@valid_registration_params["email"])
       assert user.id == updated_invitation.user_id
 
       # Verify user is added to the invited groups
@@ -287,7 +287,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       assert redirected_to(conn) == ~p"/edit_profile"
 
-      assert {:ok, user} = User.by_email(@valid_registration_params["email"])
+      assert {:ok, user} = Accounts.get_user_by_email(@valid_registration_params["email"])
 
       # Verify invitation was updated
       {:ok, updated_invitation} = Invitations.get_invitation_by_id(invitation.id)

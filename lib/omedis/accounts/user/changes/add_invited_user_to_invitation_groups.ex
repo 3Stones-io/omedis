@@ -5,7 +5,7 @@ defmodule Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups do
 
   use Ash.Resource.Change
 
-  alias Omedis.Accounts.Organisation
+  alias Omedis.Accounts
   alias Omedis.Groups.GroupMembership
   alias Omedis.Invitations.Invitation
   alias Omedis.Invitations.InvitationGroup
@@ -20,7 +20,7 @@ defmodule Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups do
     Ash.Changeset.after_action(changeset, fn
       _changeset, user ->
         {:ok, current_organisation} =
-          Organisation.by_id(current_organisation_id, authorize?: false)
+          Accounts.get_organisation_by_id(current_organisation_id, authorize?: false)
 
         add_user_to_invited_groups(user, current_organisation)
 

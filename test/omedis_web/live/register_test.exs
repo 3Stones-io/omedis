@@ -1,12 +1,11 @@
 defmodule OmedisWeb.RegisterTest do
   use OmedisWeb.ConnCase, async: true
 
-  alias Omedis.Accounts.Organisation
-  alias Omedis.Accounts.User
-  alias Omedis.Invitations
-
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
+
+  alias Omedis.Accounts
+  alias Omedis.Invitations
 
   @valid_registration_params %{
     email: "test@gmail.com",
@@ -31,8 +30,8 @@ defmodule OmedisWeb.RegisterTest do
       conn = submit_form(form, conn)
       assert redirected_to(conn) == ~p"/edit_profile"
 
-      assert {:ok, user} = User.by_email("test@gmail.com")
-      assert [organisation] = Ash.read!(Organisation, actor: user)
+      assert {:ok, user} = Accounts.get_user_by_email("test@gmail.com")
+      assert [organisation] = Ash.read!(Accounts.Organisation, actor: user)
       assert organisation.owner_id == user.id
       assert organisation.name == "test@gmail.com"
       assert user.current_organisation_id == organisation.id
@@ -136,7 +135,7 @@ defmodule OmedisWeb.RegisterTest do
       organisation = fetch_users_organisation(user.id)
       {:ok, invitation} = create_invitation(organisation, %{email: "test@user.com"})
 
-      assert {:error, _} = User.by_email("test@user.com")
+      assert {:error, _} = Accounts.get_user_by_email("test@user.com")
 
       {:ok, view, _html} = live(conn, "/register")
 
@@ -153,7 +152,7 @@ defmodule OmedisWeb.RegisterTest do
 
       {:ok, _index_live, _html} = live(conn, ~p"/organisations")
 
-      assert {:ok, user} = User.by_email("test@user.com")
+      assert {:ok, user} = Accounts.get_user_by_email("test@user.com")
 
       {:ok, updated_invitation} = Invitations.get_invitation_by_id(invitation.id)
 

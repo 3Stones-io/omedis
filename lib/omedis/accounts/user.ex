@@ -48,16 +48,6 @@ defmodule Omedis.Accounts.User do
     end
   end
 
-  code_interface do
-    domain Accounts
-    define :read
-    define :create
-    define :update
-    define :destroy
-    define :by_id, get_by: [:id], action: :read
-    define :by_email, get_by: [:email], action: :read
-  end
-
   actions do
     defaults [:read, :destroy]
 

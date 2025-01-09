@@ -60,7 +60,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
   end
 
   describe "/organisations/:slug/invitations" do
-    alias Omedis.Accounts.User
+    alias Omedis.Accounts
 
     setup %{owner: owner, authorized_user: authorized_user, organisation: organisation} do
       # Create invitations (15 for owner, 5 for user_2)
@@ -331,7 +331,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert html =~ "Pending"
 
       # Ensure the user does not exist yet
-      {:error, _} = User.by_email("test001@example.com")
+      {:error, _} = Accounts.get_user_by_email("test001@example.com")
 
       # Accept invitation, by registering for a user account,
       # using the same email as used in the invitation
@@ -356,7 +356,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       _conn = submit_form(form, new_conn)
 
       # Verify user was created
-      assert {:ok, invited_user} = User.by_email("test001@example.com")
+      assert {:ok, invited_user} = Accounts.get_user_by_email("test001@example.com")
 
       # Verify invitation was updated
       {:ok, updated_invitation} = Invitations.get_invitation_by_id(created_invitation.id)

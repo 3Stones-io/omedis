@@ -1,6 +1,7 @@
 defmodule OmedisWeb.OrganisationLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Organisation
+
+  alias Omedis.Accounts
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -148,7 +149,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
     )
     |> assign(:organisation, nil)
     |> PaginationUtils.list_paginated(params, :organisations, fn offset ->
-      Organisation.list_paginated(
+      Accounts.list_paginated_organisations(
         page: [count: true, offset: offset],
         actor: socket.assigns.current_user
       )

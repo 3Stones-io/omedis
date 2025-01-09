@@ -4,7 +4,7 @@ defmodule OmedisWeb.EditProfileTest do
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
 
   require Ash.Query
 
@@ -73,7 +73,7 @@ defmodule OmedisWeb.EditProfileTest do
                |> form("#basic_user_edit_profile_form", user: %{"first_name" => "Jane"})
                |> render_submit()
 
-      {:ok, user} = User.by_email(user.email)
+      {:ok, user} = Accounts.get_user_by_email(user.email)
 
       assert {:ok, _index_live, html} =
                conn

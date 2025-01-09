@@ -10,12 +10,11 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias Omedis.Accounts.Organisation
-alias Omedis.Accounts.User
+alias Omedis.Accounts
 
-case Ash.read(Organisation, authorize?: false) do
+case Ash.read(Accounts.Organisation, authorize?: false) do
   {:ok, []} ->
-    User.create!(%{
+    Accounts.create_user!(%{
       email: "dummy@user.com",
       hashed_password: Bcrypt.hash_pwd_salt("password"),
       first_name: "Dummy",

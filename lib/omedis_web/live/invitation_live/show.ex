@@ -2,8 +2,7 @@ defmodule OmedisWeb.InvitationLive.Show do
   use OmedisWeb, :live_view
 
   alias AshPhoenix.Form
-  alias Omedis.Accounts.Organisation
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
   alias Omedis.Invitations
 
   @impl true
@@ -142,7 +141,9 @@ defmodule OmedisWeb.InvitationLive.Show do
         |> redirect(to: ~p"/login")
 
       %Invitations.Invitation{} = invitation ->
-        organisation = Organisation.by_id!(invitation.organisation_id, authorize?: false)
+        organisation =
+          Accounts.get_organisation_by_id!(invitation.organisation_id, authorize?: false)
+
         Gettext.put_locale(OmedisWeb.Gettext, invitation.language)
 
         socket
@@ -164,7 +165,7 @@ defmodule OmedisWeb.InvitationLive.Show do
   end
 
   defp invited_user_not_registered?(email) do
-    case User.by_email(email) do
+    case Accounts.get_user_by_email(email) do
       {:ok, _} -> {:error, :user_already_registered}
       _ -> :ok
     end
@@ -173,7 +174,7 @@ defmodule OmedisWeb.InvitationLive.Show do
   defp assign_form(socket) do
     form =
       Form.for_create(
-        User,
+        Accounts.User,
         :register_with_password,
         api: Accounts,
         as: "user"

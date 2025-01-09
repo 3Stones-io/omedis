@@ -4,18 +4,19 @@ defmodule OmedisWeb.Plugs.CurrentOrganisation do
   """
   import Plug.Conn
 
-  alias Omedis.Accounts.Organisation
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
 
   def init(_opts), do: nil
 
   def call(conn, _opts) do
     current_organisation =
-      with %User{current_organisation_id: current_organisation_id}
+      with %Accounts.User{current_organisation_id: current_organisation_id}
            when not is_nil(current_organisation_id) <-
              conn.assigns[:current_user],
            {:ok, organisation} <-
-             Organisation.by_id(current_organisation_id, actor: conn.assigns.current_user) do
+             Accounts.get_organisation_by_id(current_organisation_id,
+               actor: conn.assigns.current_user
+             ) do
         organisation
       else
         _ ->
