@@ -19,7 +19,10 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
         @current_user &&
           Ash.can?({TimeTracking.Event, :create}, @current_user, tenant: @current_organisation)
       }
-      class="absolute top-3 right-[5rem] lg:right-[17rem] z-10 bg-black text-white shadow-lg rounded-lg"
+      class={[
+        "absolute top-3 right-[5rem] lg:right-[17rem] z-10 bg-black text-white shadow-lg rounded-lg",
+        @current_activity && "w-[6rem]"
+      ]}
     >
       <%= if @current_activity do %>
         <.async_result :let={current_activity} assign={@current_activity}>
