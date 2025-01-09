@@ -63,10 +63,10 @@ defmodule Omedis.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.5"},
-      {:ash, "~> 3.0"},
+      {:ash, "~> 3.4"},
       {:picosat_elixir, "~> 0.2"},
-      {:finch, "~> 0.18.0"},
-      {:ash_authentication, "~> 4.0"},
+      {:finch, "~> 0.19"},
+      {:ash_authentication, "~> 4.3"},
       {:ash_postgres, "~> 2.4"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
@@ -81,7 +81,8 @@ defmodule Omedis.MixProject do
       {:slugify, "~> 1.3"},
       {:oban, "~> 2.17"},
       {:ash_archival, "~> 1.0.4"},
-      {:ash_state_machine, "~> 0.2.7"}
+      {:ash_state_machine, "~> 0.2.7"},
+      {:ash_sql, "0.2.40"}
     ]
   end
 
