@@ -483,7 +483,7 @@ defmodule Omedis.AccountsTest do
     end
   end
 
-  describe "delete_account/2" do
+  describe "delete_user/2" do
     test "an organisation owner cannot delete their account if they are the only admin" do
       {:ok, user} = create_user(%{email: "test@gmail.com"})
 
