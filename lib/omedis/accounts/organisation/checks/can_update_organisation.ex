@@ -19,10 +19,11 @@ defmodule Omedis.Accounts.Organisation.Checks.CanUpdateOrganisation do
   def match?(actor, %{subject: %{data: organisation, action: %{type: action}}}, _opts) do
     AccessRight
     |> filter(
-      resource_name == "Organisation" and exists(group.group_memberships, user_id == ^actor.id)
+      resource_name == "Organisation" and organisation.id == ^organisation.id and
+        exists(group.group_memberships, user_id == ^actor.id)
     )
     |> filter_by_action(action)
-    |> Ash.exists?(tenant: organisation)
+    |> Ash.exists?()
   end
 
   defp filter_by_action(query, :update), do: filter(query, update == true)

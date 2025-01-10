@@ -42,6 +42,7 @@ defmodule Omedis.AccessRights.AccessRight do
   multitenancy do
     strategy :attribute
     attribute :organisation_id
+    global? true
   end
 
   attributes do

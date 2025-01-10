@@ -24,7 +24,7 @@ defmodule Omedis.TimeTracking.Activity.Changes.NewActivityPosition do
               1
           end
 
-        Ash.Changeset.change_attribute(changeset, :position, position)
+        Ash.Changeset.force_change_attribute(changeset, :position, position)
 
       _ ->
         Ash.Changeset.add_error(changeset, [:position, "Position is required"])

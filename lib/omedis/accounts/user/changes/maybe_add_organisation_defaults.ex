@@ -25,7 +25,7 @@ defmodule Omedis.Accounts.User.Changes.MaybeAddOrganisationDefaults do
           fn _key, v1, _v2 -> v1 end
         )
 
-      Ash.Changeset.change_attributes(changeset, changeset_attributes)
+      Ash.Changeset.force_change_attributes(changeset, changeset_attributes)
     else
       changeset
     end

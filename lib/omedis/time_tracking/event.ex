@@ -38,7 +38,7 @@ defmodule Omedis.TimeTracking.Event do
       change fn changeset, _ ->
         case changeset.context do
           %{created_at: created_at} ->
-            Ash.Changeset.change_attribute(changeset, :created_at, created_at)
+            Ash.Changeset.force_change_attribute(changeset, :created_at, created_at)
 
           _ ->
             changeset
