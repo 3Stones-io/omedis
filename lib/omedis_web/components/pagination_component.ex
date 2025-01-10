@@ -20,7 +20,7 @@ defmodule OmedisWeb.PaginationComponent do
             @current_page <= 1 && "cursor-not-allowed opacity-50"
           ]}
         >
-          <%= dgettext("pagination", "Previous") %>
+          {dgettext("pagination", "Previous")}
         </.page_link>
         <.page_link
           patch={@current_page != @total_pages && @resource_path <> "?page=#{@current_page + 1}"}
@@ -29,16 +29,16 @@ defmodule OmedisWeb.PaginationComponent do
             @current_page == @total_pages && "cursor-not-allowed opacity-50"
           ]}
         >
-          <%= dgettext("pagination", "Next") %>
+          {dgettext("pagination", "Next")}
         </.page_link>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <p class="text-sm text-gray-700">
-            <%= dgettext("pagination", "Showing page") %>
-            <span class="font-medium text-gray-900"><%= @current_page %></span>
-            <%= dgettext("pagination", "of") %>
-            <span class="font-medium text-gray-900"><%= @total_pages %></span>
+            {dgettext("pagination", "Showing page")}
+            <span class="font-medium text-gray-900">{@current_page}</span>
+            {dgettext("pagination", "of")}
+            <span class="font-medium text-gray-900">{@total_pages}</span>
           </p>
         </div>
         <div>
@@ -51,7 +51,7 @@ defmodule OmedisWeb.PaginationComponent do
               ]}
             >
               <span class="sr-only">
-                <%= dgettext("pagination", "Previous") %>
+                {dgettext("pagination", "Previous")}
               </span>
 
               <svg
@@ -84,7 +84,7 @@ defmodule OmedisWeb.PaginationComponent do
                       "hover:bg-gray-50 ring-1 ring-inset ring-gray-300 text-gray-900"
                   ]}
                 >
-                  <%= page %>
+                  {page}
                 </.page_link>
               <% end %>
             <% end %>
@@ -96,7 +96,7 @@ defmodule OmedisWeb.PaginationComponent do
               ]}
             >
               <span class="sr-only">
-                <%= dgettext("pagination", "Next") %>
+                {dgettext("pagination", "Next")}
               </span>
               <svg
                 class="h-5 w-5"
@@ -158,7 +158,7 @@ defmodule OmedisWeb.PaginationComponent do
         @class
       ]}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.link>
     """
   end

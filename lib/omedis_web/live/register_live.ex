@@ -84,16 +84,16 @@ defmodule OmedisWeb.RegisterLive do
           <div class="w-full">
             <div class="lg:col-span-3 flex flex-col">
               <h2 class="text-base font-semibold leading-7 text-gray-900">
-                <%= dgettext("auth", "Register") %>
+                {dgettext("auth", "Register")}
               </h2>
               <p class="mt-1 text-sm leading-6 text-gray-600">
-                <%= dgettext("auth", "Use a permanent email address where you can receive email.") %>
+                {dgettext("auth", "Use a permanent email address where you can receive email.")}
               </p>
             </div>
           </div>
           <div class="mt-2 md:mt-0 w-full px-1">
             <p class="text-base font-semibold leading-7 text-gray-900">
-              <%= dgettext("auth", "Change language") %>
+              {dgettext("auth", "Change language")}
             </p>
             <div class="flex items-center space-x-2">
               <.form
@@ -118,7 +118,7 @@ defmodule OmedisWeb.RegisterLive do
                   >
                     <:custom_label>
                       <span class="text-2xl cursor-pointer">
-                        <%= language_to_flag(lang_code) %>
+                        {language_to_flag(lang_code)}
                       </span>
                     </:custom_label>
                   </.input>
@@ -171,7 +171,7 @@ defmodule OmedisWeb.RegisterLive do
                 type="submit"
                 class="rounded-md bg-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                <%= dgettext("auth", "Register") %>
+                {dgettext("auth", "Register")}
               </button>
             </div>
           </div>

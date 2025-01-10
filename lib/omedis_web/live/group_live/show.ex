@@ -31,7 +31,7 @@ defmodule OmedisWeb.GroupLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= dgettext("navigation", "Activities") %>
+                {dgettext("navigation", "Activities")}
               </.button>
             </.link>
           </:actions>
@@ -39,15 +39,15 @@ defmodule OmedisWeb.GroupLive.Show do
 
         <.list>
           <:item title={dgettext("group", "Name")}>
-            <%= @group.name %>
+            {@group.name}
           </:item>
           <:item title={dgettext("group", "Slug")}>
-            <%= @group.slug %>
+            {@group.slug}
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups"}>
-          <%= dgettext("navigation", "Back to groups") %>
+          {dgettext("navigation", "Back to groups")}
         </.back>
 
         <.modal

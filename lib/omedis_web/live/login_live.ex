@@ -79,18 +79,18 @@ defmodule OmedisWeb.LoginLive do
           <div class="space-y-6">
             <div class="border-b border-gray-900/10 pb-12">
               <h2 class="text-base font-semibold leading-7 text-gray-900">
-                <%= dgettext("auth", "Sign in") %>
+                {dgettext("auth", "Sign in")}
               </h2>
               <p class="mt-1 text-sm leading-6 text-gray-600">
-                <%= dgettext("auth", "Use your credentials to sign in") %>
+                {dgettext("auth", "Use your credentials to sign in")}
               </p>
 
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">
-                  <%= dgettext("auth", "Email") %>
+                  {dgettext("auth", "Email")}
                 </label>
                 <div phx-feedback-for={f[:email].name} class="mt-2">
-                  <%= text_input(f, :email,
+                  {text_input(f, :email,
                     class:
                       "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                     placeholder: dgettext("auth", "Email"),
@@ -98,40 +98,40 @@ defmodule OmedisWeb.LoginLive do
                     required: true,
                     autocomplete: :email,
                     "phx-debounce": "200"
-                  ) %>
+                  )}
                   <.error :for={msg <- get_field_errors(f[:email], :email)}>
-                    <%= dgettext("auth", "Email") <> " " <> msg %>
+                    {dgettext("auth", "Email") <> " " <> msg}
                   </.error>
                 </div>
               </div>
 
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">
-                  <%= dgettext("auth", "Password") %>
+                  {dgettext("auth", "Password")}
                 </label>
 
                 <div phx-feedback-for={f[:password].name} class="mt-2">
-                  <%= password_input(f, :password,
+                  {password_input(f, :password,
                     class:
                       "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                     placeholder: dgettext("auth", "Password"),
                     value: f[:password].value,
                     autocomplete: dgettext("auth", "new password"),
                     "phx-debounce": "blur"
-                  ) %>
+                  )}
                   <.error :for={msg <- get_field_errors(f[:password], :password)}>
-                    <%= dgettext("auth", "Password") <> " " <> msg %>
+                    {dgettext("auth", "Password") <> " " <> msg}
                   </.error>
                 </div>
               </div>
 
               <div class="mt-6 flex items-center justify-end gap-x-6">
-                <%= submit(
+                {submit(
                   dgettext("auth", "Signing in..."),
                   phx_disable_with: dgettext("auth", "Signing in..."),
                   class:
                     "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                ) %>
+                )}
               </div>
             </div>
           </div>

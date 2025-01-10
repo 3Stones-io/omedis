@@ -43,7 +43,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                 style={"background-color: #{current_activity.color_code}"}
               >
               </div>
-              <%= @elapsed_time %>
+              {@elapsed_time}
             </div>
           </div>
         </.async_result>
@@ -55,7 +55,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
             phx-click={JS.toggle(to: "#time-tracker-activities-dropdown")}
           >
             <.icon name="hero-play-circle-solid" class="w-5 h-5" />
-            <%= dgettext("time_tracker", "Start Timer") %>
+            {dgettext("time_tracker", "Start Timer")}
           </button>
 
           <div
@@ -90,7 +90,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                       style={"background-color: #{activity.color_code}"}
                     />
                     <span class="truncate">
-                      <%= activity.name %>
+                      {activity.name}
                     </span>
                   </div>
                 </button>

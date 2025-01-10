@@ -27,9 +27,9 @@ defmodule OmedisWeb.ProjectLive.Show do
         />
 
         <.header>
-          <%= dgettext("project", "Project") %>
+          {dgettext("project", "Project")}
           <:subtitle>
-            <%= dgettext("project", "This is a project record from your database.") %>
+            {dgettext("project", "This is a project record from your database.")}
           </:subtitle>
 
           <:actions>
@@ -38,7 +38,7 @@ defmodule OmedisWeb.ProjectLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
-                <%= dgettext("navigation", "Edit Project") %>
+                {dgettext("navigation", "Edit Project")}
               </.button>
             </.link>
           </:actions>
@@ -46,16 +46,16 @@ defmodule OmedisWeb.ProjectLive.Show do
 
         <.list>
           <:item title={dgettext("project", "Name")}>
-            <%= @project.name %>
+            {@project.name}
           </:item>
 
           <:item title={dgettext("project", "Position")}>
-            <%= @project.position %>
+            {@project.position}
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/projects"}>
-          <%= dgettext("project", "Back to projects") %>
+          {dgettext("project", "Back to projects")}
         </.back>
 
         <.modal
