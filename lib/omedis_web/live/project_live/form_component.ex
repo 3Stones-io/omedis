@@ -6,12 +6,12 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>
-          <%= dgettext(
+          {dgettext(
             "project",
             "Use this form to manage project records in your database."
-          ) %>
+          )}
         </:subtitle>
       </.header>
 
@@ -49,7 +49,7 @@ defmodule OmedisWeb.ProjectLive.FormComponent do
 
         <:actions>
           <.button phx-disable-with={dgettext("project", "Saving...")}>
-            <%= dgettext("project", "Save Project") %>
+            {dgettext("project", "Save Project")}
           </.button>
         </:actions>
       </.simple_form>

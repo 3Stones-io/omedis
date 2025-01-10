@@ -10,7 +10,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.simple_form
@@ -123,7 +123,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
         <div class="space-y-3">
           <.input field={@form[:email]} type="text" label={dgettext("organisation", "Email")} />
           <.error :for={msg <- get_field_errors(f[:email], :email)}>
-            <%= "Email" <> " " <> msg %>
+            {"Email" <> " " <> msg}
           </.error>
         </div>
 
@@ -137,7 +137,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
             label={dgettext("organisation", "ZSR Number")}
           />
           <.error :for={msg <- get_field_errors(f[:zsr_number], :zsr_number)}>
-            <%= "Zsr_number" <> " " <> msg %>
+            {"Zsr_number" <> " " <> msg}
           </.error>
         </div>
         <div class="space-y-3">
@@ -178,7 +178,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
 
         <:actions>
           <.button phx-disable-with={dgettext("organisation", "Saving...")}>
-            <%= dgettext("organisation", "Save Organisation") %>
+            {dgettext("organisation", "Save Organisation")}
           </.button>
         </:actions>
       </.simple_form>

@@ -34,7 +34,7 @@ defmodule OmedisWeb.ActivityLive.Index do
         />
 
         <.header>
-          <%= dgettext("activity", "Listing Activities") %>
+          {dgettext("activity", "Listing Activities")}
 
           <:actions>
             <.link
@@ -42,7 +42,7 @@ defmodule OmedisWeb.ActivityLive.Index do
               patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/new"}
             >
               <.button>
-                <%= dgettext("activity", "New Activity") %>
+                {dgettext("activity", "New Activity")}
               </.button>
             </.link>
           </:actions>
@@ -59,7 +59,7 @@ defmodule OmedisWeb.ActivityLive.Index do
         >
           <:col :let={{_id, activity}} label={dgettext("activity", "Name")}>
             <.custom_color_button color={activity.color_code}>
-              <%= activity.name %>
+              {activity.name}
             </.custom_color_button>
           </:col>
 
@@ -94,7 +94,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           <:col :let={{_id, activity}}>
             <%= if activity.is_default do %>
               <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                <%= dgettext("activity", "Default") %>
+                {dgettext("activity", "Default")}
               </span>
             <% end %>
           </:col>
@@ -104,7 +104,7 @@ defmodule OmedisWeb.ActivityLive.Index do
               <.link navigate={
                 ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}"
               }>
-                <%= dgettext("activity", "Show") %>
+                {dgettext("activity", "Show")}
               </.link>
             </div>
 
@@ -112,7 +112,7 @@ defmodule OmedisWeb.ActivityLive.Index do
               :if={Ash.can?({activity, :update}, @current_user, tenant: @organisation)}
               patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}/edit"}
             >
-              <%= dgettext("activity", "Edit") %>
+              {dgettext("activity", "Edit")}
             </.link>
           </:action>
         </.table>

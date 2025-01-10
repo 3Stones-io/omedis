@@ -32,13 +32,13 @@ defmodule OmedisWeb.ActivityLive.Show do
         />
 
         <.header>
-          <%= dgettext("activity", "Activity") %>
+          {dgettext("activity", "Activity")}
 
           <:subtitle>
-            <%= dgettext(
+            {dgettext(
               "activity",
               "This is an activity record from your database."
-            ) %>
+            )}
           </:subtitle>
 
           <:actions>
@@ -49,7 +49,7 @@ defmodule OmedisWeb.ActivityLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= dgettext("activity", "Edit Activity") %>
+                {dgettext("activity", "Edit Activity")}
               </.button>
             </.link>
 
@@ -58,7 +58,7 @@ defmodule OmedisWeb.ActivityLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= dgettext("activity", "View Events") %>
+                {dgettext("activity", "View Events")}
               </.button>
             </.link>
           </:actions>
@@ -66,20 +66,20 @@ defmodule OmedisWeb.ActivityLive.Show do
 
         <.list>
           <:item title={dgettext("activity", "Name")}>
-            <%= @activity.name %>
+            {@activity.name}
           </:item>
 
           <:item title={dgettext("activity", "Color Code")}>
-            <%= @activity.color_code %>
+            {@activity.color_code}
           </:item>
 
           <:item title={dgettext("activity", "Position")}>
-            <%= @activity.position %>
+            {@activity.position}
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}>
-          <%= dgettext("activity", "Back to activities") %>
+          {dgettext("activity", "Back to activities")}
         </.back>
 
         <.modal

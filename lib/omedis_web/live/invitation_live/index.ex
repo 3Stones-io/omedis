@@ -138,7 +138,7 @@ defmodule OmedisWeb.InvitationLive.Index do
         />
 
         <.header>
-          <%= dgettext("invitation", "Listing Invitations") %>
+          {dgettext("invitation", "Listing Invitations")}
 
           <:actions>
             <.link
@@ -146,7 +146,7 @@ defmodule OmedisWeb.InvitationLive.Index do
               patch={~p"/organisations/#{@organisation}/invitations/new"}
             >
               <.button>
-                <%= dgettext("invitation", "New Invitation") %>
+                {dgettext("invitation", "New Invitation")}
               </.button>
             </.link>
           </:actions>
@@ -172,7 +172,7 @@ defmodule OmedisWeb.InvitationLive.Index do
         <div class="overflow-x-auto">
           <.table id="invitations" rows={@streams.invitations}>
             <:col :let={{_id, invitation}} label={dgettext("invitation", "Email")}>
-              <%= invitation.email %>
+              {invitation.email}
             </:col>
 
             <:col :let={{_id, invitation}} label={dgettext("invitation", "Status")}>
@@ -191,11 +191,11 @@ defmodule OmedisWeb.InvitationLive.Index do
                 )
               }
             >
-              <%= Calendar.strftime(invitation.inserted_at, "%Y-%m-%d %H:%M:%S") %>
+              {Calendar.strftime(invitation.inserted_at, "%Y-%m-%d %H:%M:%S")}
             </:col>
 
             <:col :let={{_id, invitation}} label={dgettext("invitation", "Expires At")}>
-              <%= Calendar.strftime(invitation.expires_at, "%Y-%m-%d %H:%M:%S") %>
+              {Calendar.strftime(invitation.expires_at, "%Y-%m-%d %H:%M:%S")}
             </:col>
 
             <:action :let={{dom_id, invitation}}>
@@ -210,7 +210,7 @@ defmodule OmedisWeb.InvitationLive.Index do
                 }
                 class="text-red-600 hover:text-red-900"
               >
-                <%= dgettext("invitation", "Delete") %>
+                {dgettext("invitation", "Delete")}
               </.link>
             </:action>
           </.table>
