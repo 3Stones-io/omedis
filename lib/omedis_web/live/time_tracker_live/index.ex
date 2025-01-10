@@ -82,7 +82,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                   phx-value-activity_id={activity.id}
                   class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  id={dom_id}
+                  id={"#{dom_id}-select"}
                 >
                   <div class="flex items-center gap-x-2">
                     <div
