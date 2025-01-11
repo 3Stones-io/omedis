@@ -1,7 +1,7 @@
 defmodule OmedisWeb.EventLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.TimeTracking.Activity
-  alias Omedis.TimeTracking.Event
+
+  alias Omedis.TimeTracking
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -35,22 +35,22 @@ defmodule OmedisWeb.EventLive.Index do
 
         <.header>
           <span>
-            <%= dgettext("event", "Listing Events for") %>
+            {dgettext("event", "Listing Events for")}
           </span>
-          <%= @activity.name %>
+          {@activity.name}
         </.header>
 
         <.table id="events" rows={@streams.events}>
           <:col :let={{_id, event}} label={dgettext("event", "Comment")}>
-            <%= event.summary %>
+            {event.summary}
           </:col>
 
           <:col :let={{_id, event}} label={dgettext("event", "Start at")}>
-            <%= event.dtstart %>
+            {event.dtstart}
           </:col>
 
           <:col :let={{_id, event}} label={dgettext("event", "End at")}>
-            <%= event.dtend %>
+            {event.dtend}
           </:col>
         </.table>
         <PaginationComponent.pagination
@@ -76,7 +76,10 @@ defmodule OmedisWeb.EventLive.Index do
   def handle_params(%{"id" => id} = params, _url, socket) do
     {:ok, activity} =
       id
-      |> Activity.by_id!(actor: socket.assigns.current_user, tenant: socket.assigns.organisation)
+      |> TimeTracking.get_activity_by_id!(
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.organisation
+      )
       |> Ash.load(:group, authorize?: false)
 
     {:noreply,
@@ -94,7 +97,7 @@ defmodule OmedisWeb.EventLive.Index do
     )
     |> assign(:event, nil)
     |> PaginationUtils.list_paginated(params, :events, fn offset ->
-      Event.by_activity(%{activity_id: params["id"]},
+      TimeTracking.get_events_by_activity(%{activity_id: params["id"]},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
         tenant: socket.assigns.organisation

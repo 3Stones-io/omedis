@@ -1,6 +1,7 @@
 defmodule OmedisWeb.OrganisationLive.Index do
   use OmedisWeb, :live_view
-  alias Omedis.Accounts.Organisation
+
+  alias Omedis.Accounts
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -25,7 +26,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
         />
 
         <.header>
-          <%= dgettext("organisation", "Listing Organisations") %>
+          {dgettext("organisation", "Listing Organisations")}
         </.header>
 
         <div class="overflow-x-auto">
@@ -35,44 +36,44 @@ defmodule OmedisWeb.OrganisationLive.Index do
             row_click={fn {_id, organisation} -> JS.navigate(~p"/organisations/#{organisation}") end}
           >
             <:col :let={{_id, organisation}} label={dgettext("organisation", "Name")}>
-              <%= organisation.name %>
+              {organisation.name}
               <%= if not is_nil(organisation.additional_info) and organisation.additional_info != "" do %>
                 <br />
-                <%= organisation.additional_info %>
+                {organisation.additional_info}
               <% end %>
             </:col>
             <:col :let={{_id, organisation}} label={dgettext("organisation", "Street")}>
-              <%= organisation.street %>
+              {organisation.street}
               <%= if not is_nil(organisation.street2) do %>
                 <br />
-                <%= organisation.street2 %>
+                {organisation.street2}
               <% end %>
 
               <%= if not is_nil(organisation.po_box) do %>
                 <br />
-                <%= organisation.po_box %>
+                {organisation.po_box}
               <% end %>
             </:col>
             <:col :let={{_id, organisation}} label={dgettext("organisation", "Zip Code")}>
-              <%= organisation.zip_code %>
+              {organisation.zip_code}
             </:col>
             <:col :let={{_id, organisation}} label={dgettext("organisation", "City")}>
-              <%= organisation.city %>
+              {organisation.city}
             </:col>
             <:col :let={{_id, organisation}} label={dgettext("organisation", "Canton")}>
-              <%= organisation.canton %>
+              {organisation.canton}
             </:col>
             <:col :let={{_id, organisation}} label={dgettext("organisation", "Country")}>
-              <%= organisation.country %>
+              {organisation.country}
             </:col>
             <:action :let={{_id, organisation}}>
               <div class="sr-only">
                 <.link navigate={~p"/organisations/#{organisation}"}>
-                  <%= dgettext("organisation", "Show") %>
+                  {dgettext("organisation", "Show")}
                 </.link>
               </div>
               <.link patch={~p"/organisations/#{organisation}/edit"}>
-                <%= dgettext("organisation", "Edit") %>
+                {dgettext("organisation", "Edit")}
               </.link>
             </:action>
           </.table>
@@ -148,7 +149,7 @@ defmodule OmedisWeb.OrganisationLive.Index do
     )
     |> assign(:organisation, nil)
     |> PaginationUtils.list_paginated(params, :organisations, fn offset ->
-      Organisation.list_paginated(
+      Accounts.list_paginated_organisations(
         page: [count: true, offset: offset],
         actor: socket.assigns.current_user
       )

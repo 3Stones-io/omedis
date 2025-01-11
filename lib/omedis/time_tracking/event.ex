@@ -23,17 +23,6 @@ defmodule Omedis.TimeTracking.Event do
     plural_name :events
   end
 
-  code_interface do
-    domain Omedis.TimeTracking
-    define :by_activity
-    define :by_activity_today
-    define :create
-    define :list_paginated
-    define :list_paginated_today
-    define :read
-    define :update
-  end
-
   actions do
     create :create do
       accept [
@@ -49,7 +38,7 @@ defmodule Omedis.TimeTracking.Event do
       change fn changeset, _ ->
         case changeset.context do
           %{created_at: created_at} ->
-            Ash.Changeset.change_attribute(changeset, :created_at, created_at)
+            Ash.Changeset.force_change_attribute(changeset, :created_at, created_at)
 
           _ ->
             changeset

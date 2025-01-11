@@ -30,14 +30,14 @@ defmodule OmedisWeb.ProjectLive.Index do
         />
 
         <.header>
-          <%= dgettext("project", "Listing Projects") %>
+          {dgettext("project", "Listing Projects")}
           <:actions>
             <.link
               :if={Ash.can?({Project, :create}, @current_user, tenant: @organisation)}
               patch={~p"/organisations/#{@organisation}/projects/new"}
             >
               <.button>
-                <%= dgettext("navigation", "New Project") %>
+                {dgettext("navigation", "New Project")}
               </.button>
             </.link>
           </:actions>
@@ -53,17 +53,17 @@ defmodule OmedisWeb.ProjectLive.Index do
           }
         >
           <:col :let={{_id, project}} label={dgettext("project", "Name")}>
-            <%= project.name %>
+            {project.name}
           </:col>
 
           <:col :let={{_id, project}} label={dgettext("project", "Position")}>
-            <%= project.position %>
+            {project.position}
           </:col>
 
           <:action :let={{_id, project}}>
             <div class="sr-only">
               <.link navigate={~p"/organisations/#{@organisation}/projects/#{project}"}>
-                <%= dgettext("project", "Show") %>
+                {dgettext("project", "Show")}
               </.link>
             </div>
 
@@ -71,7 +71,7 @@ defmodule OmedisWeb.ProjectLive.Index do
               :if={Ash.can?({project, :update}, @current_user, tenant: @organisation)}
               patch={~p"/organisations/#{@organisation}/projects/#{project}/edit"}
             >
-              <%= dgettext("project", "Edit") %>
+              {dgettext("project", "Edit")}
             </.link>
           </:action>
         </.table>

@@ -3,8 +3,7 @@ defmodule Omedis.Accounts.User.Changes.MaybeCreateOrganisation do
 
   use Ash.Resource.Change
 
-  alias Omedis.Accounts.Organisation
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
   alias Omedis.Invitations.Invitation
 
   def change(changeset, _opts, _context) do
@@ -33,7 +32,7 @@ defmodule Omedis.Accounts.User.Changes.MaybeCreateOrganisation do
       |> Ash.CiString.value()
       |> Slug.slugify()
 
-    Organisation.create!(
+    Accounts.create_organisation!(
       %{
         name: user.email,
         slug: organisation_slug,
@@ -47,6 +46,6 @@ defmodule Omedis.Accounts.User.Changes.MaybeCreateOrganisation do
   end
 
   defp update_user_current_organisation(organisation, user) do
-    User.update!(user.id, %{current_organisation_id: organisation.id})
+    Accounts.update_user!(user, %{current_organisation_id: organisation.id})
   end
 end

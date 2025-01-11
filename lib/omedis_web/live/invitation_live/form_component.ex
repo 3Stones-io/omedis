@@ -115,10 +115,10 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= dgettext("invitation", "New Invitation") %>
+        {dgettext("invitation", "New Invitation")}
 
         <:subtitle>
-          <%= dgettext("invitation", "Use this form to invite new members.") %>
+          {dgettext("invitation", "Use this form to invite new members.")}
         </:subtitle>
       </.header>
 
@@ -133,7 +133,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            <%= dgettext("invitation", "Language") %>
+            {dgettext("invitation", "Language")}
           </label>
           <div class="flex space-x-4">
             <%= for {_language, code} <- @supported_languages do %>
@@ -147,7 +147,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
                     checked={input_value(@form, :language) == code}
                   />
                   <span class="cursor-pointer text-2xl px-2 lang-flag">
-                    <%= language_to_flag(code) %>
+                    {language_to_flag(code)}
                   </span>
                 </label>
               </div>
@@ -155,14 +155,14 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
           </div>
           <div phx-feedback-for={@form[:language].name}>
             <.error :for={error <- @form[:language].errors}>
-              <%= translate_error(error) %>
+              {translate_error(error)}
             </.error>
           </div>
         </div>
 
         <div class="space-y-2">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            <%= dgettext("invitation", "Groups") %>
+            {dgettext("invitation", "Groups")}
           </label>
 
           <div class="space-y-2">
@@ -181,7 +181,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
         </div>
         <:actions>
           <.button phx-disable-with={dgettext("invitation", "Saving...")}>
-            <%= dgettext("invitation", "Send Invitation") %>
+            {dgettext("invitation", "Send Invitation")}
           </.button>
         </:actions>
       </.simple_form>

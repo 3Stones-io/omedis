@@ -129,7 +129,7 @@ email, hashed_password, first_name, last_name , gender and birthdate.
 
 alias Omedis.Accounts.User
 
-User.create(%{email: "wintermeyer@gmail.com" , hashed_password: Bcrypt.hash_pwd_salt("password"),first_name: "Stefan", last_name: "Wintermeyer", gender: "Male", birthdate: "1980-01-01"})
+Accounts.create_user(%{email: "wintermeyer@gmail.com" , hashed_password: Bcrypt.hash_pwd_salt("password"),first_name: "Stefan", last_name: "Wintermeyer", gender: "Male", birthdate: "1980-01-01"})
 
 ```
 
@@ -141,8 +141,8 @@ To update the user with the email address `example@example.com` you
 
 alias Omedis.Accounts.User
 
-{:ok , user} = User.by_email("example@example.com")
-User.update(user, %{first_name: "Stefan" })
+{:ok , user} = Accounts.get_user_by_email("example@example.com")
+Accounts.update_user(user, %{first_name: "Stefan" })
 
 ```
 
@@ -154,8 +154,8 @@ To delete the user with the email address `example@example.com` you ...
 
 alias Omedis.Accounts.User
 
-{:ok , user} = User.by_email("example@example.com")
-User.destroy(user)
+{:ok , user} = Accounts.get_user_by_email("example@example.com")
+Accounts.delete_user(user)
 
 ```
 

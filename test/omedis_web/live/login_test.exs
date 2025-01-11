@@ -1,6 +1,7 @@
 defmodule OmedisWeb.LoginTest do
   use OmedisWeb.ConnCase
-  alias Omedis.Accounts.User
+
+  alias Omedis.Accounts
 
   import Phoenix.LiveViewTest
 
@@ -21,7 +22,7 @@ defmodule OmedisWeb.LoginTest do
     end
 
     test "You can log in with valid data", %{conn: conn} do
-      {:ok, user} = User.create(@valid_create_params)
+      {:ok, user} = Accounts.create_user(@valid_create_params)
 
       {:ok, lv, _html} = live(conn, ~p"/login")
 
@@ -37,7 +38,7 @@ defmodule OmedisWeb.LoginTest do
       {:ok, user} =
         @valid_create_params
         |> Map.put(:email, "test@gmail.com")
-        |> User.create()
+        |> Accounts.create_user()
 
       {:ok, lv, _html} = live(conn, ~p"/login")
 
@@ -60,7 +61,7 @@ defmodule OmedisWeb.LoginTest do
     end
 
     test "shows errors when wrong credentials are entered", %{conn: conn} do
-      {:ok, user} = User.create(@valid_create_params)
+      {:ok, user} = Accounts.create_user(@valid_create_params)
 
       {:ok, lv, _html} = live(conn, ~p"/login")
 

@@ -2,7 +2,7 @@ defmodule OmedisWeb.EditProfileLive do
   use OmedisWeb, :live_view
 
   alias AshPhoenix.Form
-  alias Omedis.Accounts.User
+  alias Omedis.Accounts
 
   @supported_languages [
     {"English", "en"},
@@ -78,7 +78,7 @@ defmodule OmedisWeb.EditProfileLive do
   end
 
   def handle_event("delete_account", %{"id" => id}, socket) do
-    case User.destroy(id, actor: socket.assigns.current_user) do
+    case Accounts.delete_user(id, actor: socket.assigns.current_user) do
       :ok ->
         {:noreply,
          socket
@@ -122,111 +122,111 @@ defmodule OmedisWeb.EditProfileLive do
           <div class="space-y-4">
             <div class="border-b border-gray-900/10 pb-12">
               <h2 class="text-base font-semibold leading-7 text-gray-900">
-                <%= dgettext("user_profile", "Update Profile") %>
+                {dgettext("user_profile", "Update Profile")}
               </h2>
               <p class="mt-1 text-sm leading-6 text-gray-600">
-                <%= dgettext("user_profile", "Edit your profile details") %>
+                {dgettext("user_profile", "Edit your profile details")}
               </p>
               <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("user_profile", "First Name") %>
+                    {dgettext("user_profile", "First Name")}
                   </label>
 
                   <div phx-feedback-for={f[:first_name].name} class="mt-2">
-                    <%= text_input(f, :first_name,
+                    {text_input(f, :first_name,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       placeholder: dgettext("user_profile", "First Name"),
                       value: f[:first_name].value,
                       "phx-debounce": "blur"
-                    ) %>
+                    )}
                     <.error :for={msg <- get_field_errors(f[:first_name], :first_name)}>
-                      <%= dgettext("user_profile", "First Name %{msg}", msg: msg) %>
+                      {dgettext("user_profile", "First Name %{msg}", msg: msg)}
                     </.error>
                   </div>
                 </div>
 
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("user_profile", "Last Name") %>
+                    {dgettext("user_profile", "Last Name")}
                   </label>
                   <div phx-feedback-for={f[:last_name].name} class="mt-2">
-                    <%= text_input(f, :last_name,
+                    {text_input(f, :last_name,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       placeholder: dgettext("user_profile", "Last Name"),
                       value: f[:last_name].value,
                       "phx-debounce": "blur"
-                    ) %>
+                    )}
                     <.error :for={msg <- get_field_errors(f[:last_name], :last_name)}>
-                      <%= dgettext("user_profile", "Last Name %{msg}", msg: msg) %>
+                      {dgettext("user_profile", "Last Name %{msg}", msg: msg)}
                     </.error>
                   </div>
                 </div>
 
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("user_profile", "Gender") %>
+                    {dgettext("user_profile", "Gender")}
                   </label>
 
                   <div phx-feedback-for={f[:gender].name} class="mt-2">
-                    <%= select(f, :gender, ["Male", "Female"],
+                    {select(f, :gender, ["Male", "Female"],
                       prompt: dgettext("user_profile", "Select Gender"),
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       value: f[:gender].value,
                       "phx-debounce": "blur"
-                    ) %>
+                    )}
                     <.error :for={msg <- get_field_errors(f[:gender], :gender)}>
-                      <%= dgettext("user_profile", "Gender %{msg}", msg: msg) %>
+                      {dgettext("user_profile", "Gender %{msg}", msg: msg)}
                     </.error>
                   </div>
                 </div>
 
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("user_profile", "Birthdate") %>
+                    {dgettext("user_profile", "Birthdate")}
                   </label>
 
                   <div phx-feedback-for={f[:birthdate].name} class="mt-2">
-                    <%= date_input(f, :birthdate,
+                    {date_input(f, :birthdate,
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       placeholder: dgettext("user_profile", "Birthdate"),
                       value: f[:birthdate].value,
                       "phx-debounce": "blur"
-                    ) %>
+                    )}
                     <.error :for={msg <- get_field_errors(f[:birthdate], :birthdate)}>
-                      <%= dgettext("user_profile", "Birthdate %{msg}", msg: msg) %>
+                      {dgettext("user_profile", "Birthdate %{msg}", msg: msg)}
                     </.error>
                   </div>
                 </div>
 
                 <div class="sm:col-span-3">
                   <label class="block text-sm font-medium leading-6 text-gray-900">
-                    <%= dgettext("user_profile", "Language") %>
+                    {dgettext("user_profile", "Language")}
                   </label>
 
                   <div phx-feedback-for={f[:lang].name} class="mt-2">
-                    <%= select(f, :lang, @supported_languages,
+                    {select(f, :lang, @supported_languages,
                       prompt: dgettext("user_profile", "Select Your Language"),
                       class:
                         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
                       "phx-debounce": "blur"
-                    ) %>
+                    )}
                     <.error :for={msg <- get_field_errors(f[:lang], :lang)}>
-                      <%= dgettext("user_profile", "Language %{msg}", msg: msg) %>
+                      {dgettext("user_profile", "Language %{msg}", msg: msg)}
                     </.error>
                   </div>
 
                   <div class="mt-6 flex items-center justify-end gap-x-6">
-                    <%= submit(
+                    {submit(
                       dgettext("user_profile", "Save Profile"),
                       phx_disable_with: dgettext("user_profile", "Saving..."),
                       class:
                         "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    ) %>
+                    )}
                   </div>
                 </div>
               </div>
@@ -247,7 +247,7 @@ defmodule OmedisWeb.EditProfileLive do
             }
             class="bg-red-600 hover:bg-red-900 text-white px-3 py-2 rounded-md"
           >
-            <%= dgettext("user_profile", "Delete Account") %>
+            {dgettext("user_profile", "Delete Account")}
           </.link>
         </div>
       </div>

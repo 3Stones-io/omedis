@@ -4,7 +4,7 @@ defmodule OmedisWeb.ActivityLive.Show do
   alias Omedis.Accounts.Organisation
   alias Omedis.Groups.Group
   alias Omedis.Projects
-  alias Omedis.TimeTracking.Activity
+  alias Omedis.TimeTracking
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
@@ -32,13 +32,13 @@ defmodule OmedisWeb.ActivityLive.Show do
         />
 
         <.header>
-          <%= dgettext("activity", "Activity") %>
+          {dgettext("activity", "Activity")}
 
           <:subtitle>
-            <%= dgettext(
+            {dgettext(
               "activity",
               "This is an activity record from your database."
-            ) %>
+            )}
           </:subtitle>
 
           <:actions>
@@ -49,7 +49,7 @@ defmodule OmedisWeb.ActivityLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= dgettext("activity", "Edit Activity") %>
+                {dgettext("activity", "Edit Activity")}
               </.button>
             </.link>
 
@@ -58,7 +58,7 @@ defmodule OmedisWeb.ActivityLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= dgettext("activity", "View Events") %>
+                {dgettext("activity", "View Events")}
               </.button>
             </.link>
           </:actions>
@@ -66,20 +66,20 @@ defmodule OmedisWeb.ActivityLive.Show do
 
         <.list>
           <:item title={dgettext("activity", "Name")}>
-            <%= @activity.name %>
+            {@activity.name}
           </:item>
 
           <:item title={dgettext("activity", "Color Code")}>
-            <%= @activity.color_code %>
+            {@activity.color_code}
           </:item>
 
           <:item title={dgettext("activity", "Position")}>
-            <%= @activity.position %>
+            {@activity.position}
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}>
-          <%= dgettext("activity", "Back to activities") %>
+          {dgettext("activity", "Back to activities")}
         </.back>
 
         <.modal
@@ -126,7 +126,12 @@ defmodule OmedisWeb.ActivityLive.Show do
     organisation = socket.assigns.organisation
     group = Group.by_slug!(group_slug, actor: socket.assigns.current_user, tenant: organisation)
     groups = Ash.read!(Group, actor: socket.assigns.current_user, tenant: organisation)
-    activity = Activity.by_id!(id, actor: socket.assigns.current_user, tenant: organisation)
+
+    activity =
+      TimeTracking.get_activity_by_id!(id,
+        actor: socket.assigns.current_user,
+        tenant: organisation
+      )
 
     next_position = activity.position
 

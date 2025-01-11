@@ -63,7 +63,7 @@ defmodule Omedis.Groups.Group do
       change fn changeset, _context ->
         case changeset.context do
           %{updated_at: updated_at} ->
-            Ash.Changeset.change_attribute(changeset, :updated_at, updated_at)
+            Ash.Changeset.force_change_attribute(changeset, :updated_at, updated_at)
 
           _ ->
             changeset

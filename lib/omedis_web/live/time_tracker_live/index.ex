@@ -1,10 +1,8 @@
 defmodule OmedisWeb.TimeTrackerLive.Index do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Organisation
-  alias Omedis.Accounts.User
-  alias Omedis.TimeTracking.Activity
-  alias Omedis.TimeTracking.Event
+  alias Omedis.Accounts
+  alias Omedis.TimeTracking
   alias OmedisWeb.Endpoint
   alias Phoenix.Socket.Broadcast
 
@@ -17,15 +15,21 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   def render(assigns) do
     ~H"""
     <div
-      :if={@current_user && Ash.can?({Event, :create}, @current_user, tenant: @current_organisation)}
-      class="absolute top-3 right-[5rem] lg:right-[17rem] z-10 bg-black text-white shadow-lg rounded-lg"
+      :if={
+        @current_user &&
+          Ash.can?({TimeTracking.Event, :create}, @current_user, tenant: @current_organisation)
+      }
+      class={[
+        "absolute top-3 right-[5rem] lg:right-[17rem] z-10 bg-black text-white shadow-lg rounded-lg",
+        @current_activity && "w-[8rem]"
+      ]}
     >
       <%= if @current_activity do %>
         <.async_result :let={current_activity} assign={@current_activity}>
           <:loading>
             <div class="flex items-center gap-x-2 px-4 py-2">
               <div class="w-3 h-3 rounded-full animate-pulse bg-white"></div>
-              00:00
+              00:00:00
             </div>
           </:loading>
           <div class="flex items-center gap-x-2 px-4 py-2">
@@ -39,7 +43,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                 style={"background-color: #{current_activity.color_code}"}
               >
               </div>
-              <%= @elapsed_time %>
+              {@elapsed_time}
             </div>
           </div>
         </.async_result>
@@ -51,7 +55,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
             phx-click={JS.toggle(to: "#time-tracker-activities-dropdown")}
           >
             <.icon name="hero-play-circle-solid" class="w-5 h-5" />
-            <%= dgettext("time_tracker", "Start Timer") %>
+            {dgettext("time_tracker", "Start Timer")}
           </button>
 
           <div
@@ -78,7 +82,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                   phx-value-activity_id={activity.id}
                   class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  id={dom_id}
+                  id={"#{dom_id}-select"}
                 >
                   <div class="flex items-center gap-x-2">
                     <div
@@ -86,7 +90,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                       style={"background-color: #{activity.color_code}"}
                     />
                     <span class="truncate">
-                      <%= activity.name %>
+                      {activity.name}
                     </span>
                   </div>
                 </button>
@@ -121,7 +125,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
      |> stream(:activities, [])
      |> assign(:current_organisation, get_current_organisation(session))
      |> assign(:current_user_id, session["current_user_id"])
-     |> assign(:elapsed_time, "00:00")
+     |> assign(:elapsed_time, "00:00:00")
      |> assign(:language, nil)
      |> assign(:last_activity_token, nil)
      |> assign(:first_activity_token, nil)
@@ -137,7 +141,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
         assign(socket, :current_user, nil)
 
       organisation ->
-        current_user = User.by_id!(current_user_id, tenant: organisation)
+        current_user = Accounts.get_user_by_id!(current_user_id, tenant: organisation)
 
         assign(socket, :current_user, current_user)
     end
@@ -146,7 +150,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   defp get_current_organisation(session) do
     case session["organisation_id"] do
       nil -> nil
-      organisation_id -> Organisation.by_id!(organisation_id, authorize?: false)
+      organisation_id -> Accounts.get_organisation_by_id!(organisation_id, authorize?: false)
     end
   end
 
@@ -237,7 +241,9 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   defp get_active_activity(activity, opts) do
     case Enum.find(activity.events, &is_nil(&1.dtend)) do
       nil ->
-        {:ok, updated_activity} = Activity.by_id(activity.id, opts ++ [load: [:events]])
+        {:ok, updated_activity} =
+          TimeTracking.get_activity_by_id(activity.id, opts ++ [load: [:events]])
+
         send(self(), {:activity_updated, updated_activity})
         updated_activity
 
@@ -249,7 +255,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   defp calculate_elapsed_time(activity) do
     case Enum.find(activity.events, &is_nil(&1.dtend)) do
       nil ->
-        "00:00"
+        "00:00:00"
 
       event ->
         now = Time.utc_now()
@@ -258,18 +264,22 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     end
   end
 
-  defp format_elapsed_time(seconds_diff) when seconds_diff < 60 do
-    "00:#{String.pad_leading("#{seconds_diff}", 2, "0")}"
-  end
-
   defp format_elapsed_time(seconds_diff) do
-    minutes_diff = div(seconds_diff, 60)
-    OmedisWeb.TimeTracking.minutes_to_hhmm(minutes_diff)
+    hours = div(seconds_diff, 3600)
+    remaining_seconds = rem(seconds_diff, 3600)
+    minutes = div(remaining_seconds, 60)
+    seconds = rem(remaining_seconds, 60)
+
+    Enum.map_join(
+      [hours, minutes, seconds],
+      ":",
+      &String.pad_leading("#{&1}", 2, "0")
+    )
   end
 
   defp stop_event(activity_id, opts) do
     {:ok, events} =
-      Event.by_activity_today(%{activity_id: activity_id}, opts)
+      TimeTracking.get_events_by_activity_today(%{activity_id: activity_id}, opts)
 
     case Enum.find(events, fn event -> event.dtend == nil end) do
       nil ->
@@ -284,7 +294,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp do_stop_event(event, opts) do
     if Ash.can?({event, :update}, opts[:actor], tenant: opts[:tenant]) do
-      {:ok, _event} = Event.update(event, %{dtend: DateTime.utc_now()}, opts)
+      {:ok, _event} = TimeTracking.update_event(event, %{dtend: DateTime.utc_now()}, opts)
     end
   end
 
@@ -301,7 +311,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp maybe_assign_activities(socket) do
     {:ok, %Ash.Page.Offset{results: activities}} =
-      Activity.list_keyset_paginated(
+      TimeTracking.list_keyset_paginated_activities(
         actor: socket.assigns.current_user,
         tenant: socket.assigns.current_organisation
       )
@@ -374,7 +384,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
       pubsub_topics_unique_id: socket.assigns.pubsub_topics_unique_id
     ]
 
-    if Ash.can?({Event, :create}, opts[:actor], tenant: opts[:tenant]) do
+    if Ash.can?({TimeTracking.Event, :create}, opts[:actor], tenant: opts[:tenant]) do
       {:noreply,
        assign_async(socket, :current_activity, fn -> create_event(activity_id, opts) end)}
     else
@@ -417,7 +427,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp fetch_activities(socket, page_opts) do
     {:ok, %Ash.Page.Keyset{results: activities}} =
-      Activity.list_keyset_paginated(
+      TimeTracking.list_keyset_paginated_activities(
         actor: socket.assigns.current_user,
         tenant: socket.assigns.current_organisation,
         page: [limit: 10] ++ page_opts
@@ -430,10 +440,10 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     pubsub_topics_unique_id = opts[:pubsub_topics_unique_id]
     opts = Keyword.delete(opts, :pubsub_topics_unique_id)
 
-    {:ok, activity} = Activity.by_id(activity_id, opts ++ [load: [:events]])
+    {:ok, activity} = TimeTracking.get_activity_by_id(activity_id, opts ++ [load: [:events]])
 
     {:ok, _event} =
-      Event.create(
+      TimeTracking.create_event(
         %{
           activity_id: activity_id,
           dtstart: DateTime.utc_now(),

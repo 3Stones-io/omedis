@@ -22,7 +22,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
         />
 
         <.header>
-          <%= @organisation.slug %>
+          {@organisation.slug}
 
           <:actions>
             <.link
@@ -31,28 +31,31 @@ defmodule OmedisWeb.OrganisationLive.Show do
               phx-click={JS.push_focus()}
             >
               <.button>
-                <%= dgettext("organisation", "Edit organisation") %>
+                {dgettext("organisation", "Edit organisation")}
               </.button>
             </.link>
-            <.link patch={~p"/organisations/#{@organisation}/invitations"} phx-click={JS.push_focus()}>
+            <.link
+              navigate={~p"/organisations/#{@organisation}/invitations"}
+              phx-click={JS.push_focus()}
+            >
               <.button>
-                <%= dgettext("organisation", "Invitations") %>
+                {dgettext("organisation", "Invitations")}
               </.button>
             </.link>
-            <.link patch={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
               <.button>
-                <%= dgettext("organisation", "Projects") %>
+                {dgettext("organisation", "Projects")}
               </.button>
             </.link>
-            <.link patch={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
               <.button>
-                <%= dgettext("organisation", "Groups") %>
+                {dgettext("organisation", "Groups")}
               </.button>
             </.link>
 
-            <.link patch={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
               <.button>
-                <%= dgettext("organisation", "Today") %>
+                {dgettext("organisation", "Today")}
               </.button>
             </.link>
           </:actions>
@@ -60,116 +63,116 @@ defmodule OmedisWeb.OrganisationLive.Show do
 
         <.list>
           <:item title={dgettext("organisation", "Slug")}>
-            <%= @organisation.slug %>
+            {@organisation.slug}
           </:item>
 
           <:item title={dgettext("organisation", "Name")}>
-            <%= @organisation.name %>
+            {@organisation.name}
           </:item>
 
           <:item title={dgettext("organisation", "Owner")}>
-            <%= @organisation.owner %>
+            {@organisation.owner}
           </:item>
 
           <:item title={dgettext("organisation", "Timezone")}>
-            <%= @organisation.timezone %>
+            {@organisation.timezone}
           </:item>
 
           <:item title={dgettext("organisation", "Additional Info")}>
-            <%= @organisation.additional_info %>
+            {@organisation.additional_info}
           </:item>
 
           <:item title={dgettext("organisation", "Street")}>
-            <%= @organisation.street %>
+            {@organisation.street}
           </:item>
 
           <:item title={dgettext("organisation", "Street2")}>
-            <%= @organisation.street2 %>
+            {@organisation.street2}
           </:item>
 
           <:item title={dgettext("organisation", "PO Box")}>
-            <%= @organisation.po_box %>
+            {@organisation.po_box}
           </:item>
 
           <:item title={dgettext("organisation", "Zip Code")}>
-            <%= @organisation.zip_code %>
+            {@organisation.zip_code}
           </:item>
 
           <:item title={dgettext("organisation", "City")}>
-            <%= @organisation.city %>
+            {@organisation.city}
           </:item>
 
           <:item title={dgettext("organisation", "Canton")}>
-            <%= @organisation.canton %>
+            {@organisation.canton}
           </:item>
 
           <:item title={dgettext("organisation", "Country")}>
-            <%= @organisation.country %>
+            {@organisation.country}
           </:item>
 
           <:item title={dgettext("organisation", "Description")}>
-            <%= @organisation.description %>
+            {@organisation.description}
           </:item>
 
           <:item title={dgettext("organisation", "Phone")}>
-            <%= @organisation.phone %>
+            {@organisation.phone}
           </:item>
 
           <:item title={dgettext("organisation", "Fax")}>
-            <%= @organisation.fax %>
+            {@organisation.fax}
           </:item>
 
           <:item title={dgettext("organisation", "Email")}>
-            <%= @organisation.email %>
+            {@organisation.email}
           </:item>
 
           <:item title={dgettext("organisation", "Website")}>
-            <%= @organisation.website %>
+            {@organisation.website}
           </:item>
 
           <:item title={dgettext("organisation", "ZSR Number")}>
-            <%= @organisation.zsr_number %>
+            {@organisation.zsr_number}
           </:item>
 
           <:item title={dgettext("organisation", "EAN/GLN")}>
-            <%= @organisation.ean_gln %>
+            {@organisation.ean_gln}
           </:item>
 
           <:item title={dgettext("organisation", "UID/BFS Number")}>
-            <%= @organisation.uid_bfs_number %>
+            {@organisation.uid_bfs_number}
           </:item>
 
           <:item title={dgettext("organisation", "Trade Register No")}>
-            <%= @organisation.trade_register_no %>
+            {@organisation.trade_register_no}
           </:item>
 
           <:item title={dgettext("organisation", "BUR Number")}>
-            <%= @organisation.bur_number %>
+            {@organisation.bur_number}
           </:item>
 
           <:item title={dgettext("organisation", "Account Number")}>
-            <%= @organisation.account_number %>
+            {@organisation.account_number}
           </:item>
 
           <:item title={dgettext("organisation", "IBAN")}>
-            <%= @organisation.iban %>
+            {@organisation.iban}
           </:item>
 
           <:item title={dgettext("organisation", "BIC")}>
-            <%= @organisation.bic %>
+            {@organisation.bic}
           </:item>
 
           <:item title={dgettext("organisation", "Bank")}>
-            <%= @organisation.bank %>
+            {@organisation.bank}
           </:item>
 
           <:item title={dgettext("organisation", "Account Holder")}>
-            <%= @organisation.account_holder %>
+            {@organisation.account_holder}
           </:item>
         </.list>
 
         <.back navigate={~p"/organisations"}>
-          <%= dgettext("organisation", "Back to organisations") %>
+          {dgettext("organisation", "Back to organisations")}
         </.back>
 
         <.modal

@@ -1,9 +1,8 @@
 {
   "coverage_options": {
-    "minimum_coverage": 85.7
+    "minimum_coverage": 85.8
   },
   "skip_files": [
-    "lib/omedis_web/components/calendar_components.ex",
     "lib/omedis_web/components/core_components.ex",
     "lib/omedis_web/live/playground_live.ex",
     "lib/omedis/release.ex"

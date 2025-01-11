@@ -35,18 +35,6 @@ defmodule Omedis.Accounts.Organisation do
     plural_name :organisations
   end
 
-  code_interface do
-    domain Omedis.Accounts
-    define :read
-    define :create
-    define :update
-    define :by_id, get_by: [:id], action: :read
-    define :destroy
-    define :by_owner_id
-    define :by_slug, get_by: [:slug], action: :read
-    define :list_paginated
-  end
-
   actions do
     create :create do
       accept [

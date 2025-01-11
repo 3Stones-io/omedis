@@ -48,11 +48,6 @@ msgstr ""
 msgid "Something went wrong. Try again."
 msgstr ""
 
-#: lib/omedis_web/live/register_live.ex
-#, elixir-autogen, elixir-format
-msgid "Use a permanent address where you can receive mail."
-msgstr ""
-
 #: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Use your credentials to sign in"
@@ -67,4 +62,9 @@ msgstr ""
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
 msgid "new password"
+msgstr ""
+
+#: lib/omedis_web/live/register_live.ex
+#, elixir-autogen, elixir-format
+msgid "Use a permanent email address where you can receive email."
 msgstr ""
