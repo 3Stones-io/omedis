@@ -171,8 +171,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
                |> form("#activity-form",
                  activity: %{
                    name: "New Activity",
-                   project_id: project.id,
-                   slug: "new-activity"
+                   project_id: project.id
                  }
                )
                |> render_submit()
@@ -205,8 +204,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
                |> form("#activity-form",
                  activity: %{
                    name: "New Activity",
-                   project_id: project.id,
-                   slug: "new-activity"
+                   project_id: project.id
                  }
                )
                |> render_submit()
@@ -248,7 +246,7 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
 
       html =
         view
-        |> form("#activity-form", activity: %{name: "", slug: ""})
+        |> form("#activity-form", activity: %{name: ""})
         |> render_change()
 
       assert html =~ "must be present"

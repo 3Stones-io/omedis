@@ -44,21 +44,22 @@ defmodule Omedis.Groups.Group do
     create :create do
       accept [
         :name,
-        :user_id,
-        :slug
+        :user_id
       ]
 
+      change Omedis.Groups.Group.Changes.MaybeSlugifyName
       primary? true
     end
 
     update :update do
       accept [
-        :name,
-        :slug
+        :name
       ]
 
       primary? true
       require_atomic? false
+
+      change Omedis.Groups.Group.Changes.MaybeSlugifyName
 
       change fn changeset, _context ->
         case changeset.context do

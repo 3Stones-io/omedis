@@ -70,13 +70,6 @@ msgid "Show Group"
 msgstr "Afficher le groupe"
 
 #: lib/omedis_web/live/group_live/form_component.ex
-#: lib/omedis_web/live/group_live/index.ex
-#: lib/omedis_web/live/group_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Slug"
-msgstr "Slug"
-
-#: lib/omedis_web/live/group_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Use this form to manage group records in your database."
 msgstr "Utilisez ce formulaire pour gérer les enregistrements de groupe dans votre base de données."

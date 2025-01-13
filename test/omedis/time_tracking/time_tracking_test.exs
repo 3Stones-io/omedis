@@ -88,8 +88,7 @@ defmodule Omedis.TimeTrackingTest do
         name: "Test Activity",
         group_id: group.id,
         project_id: project.id,
-        color_code: "#FF0000",
-        slug: "test-activity"
+        color_code: "#FF0000"
       }
 
       assert {:ok, activity} =
@@ -110,8 +109,7 @@ defmodule Omedis.TimeTrackingTest do
         name: "Test Activity",
         group_id: group.id,
         project_id: project.id,
-        color_code: "#FF0000",
-        slug: "test-activity"
+        color_code: "#FF0000"
       }
 
       assert {:ok, activity} =
@@ -130,8 +128,7 @@ defmodule Omedis.TimeTrackingTest do
         name: "Test Activity",
         group_id: group.id,
         project_id: project.id,
-        color_code: "#FF0000",
-        slug: "test-activity"
+        color_code: "#FF0000"
       }
 
       assert {:error, %Ash.Error.Forbidden{}} =
@@ -166,8 +163,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0000",
-          slug: "test-activity"
+          color_code: "#FF0000"
         })
 
       assert {:ok, updated_activity} =
@@ -190,8 +186,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0000",
-          slug: "test-activity"
+          color_code: "#FF0000"
         })
 
       assert {:ok, updated_activity} =
@@ -214,8 +209,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0000",
-          slug: "test-activity"
+          color_code: "#FF0000"
         })
 
       assert {:error, %Ash.Error.Forbidden{}} =
@@ -236,8 +230,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0000",
-          slug: "test-activity"
+          color_code: "#FF0000"
         })
 
       invalid_attrs = %{
@@ -265,8 +258,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0000",
-          slug: "test-activity"
+          color_code: "#FF0000"
         })
 
       assert {:ok, found_activity} =
@@ -286,8 +278,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0000",
-          slug: "test-activity"
+          color_code: "#FF0000"
         })
 
       assert {:ok, found_activity} =
@@ -310,8 +301,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Test Activity",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0000",
-          slug: "test-activity"
+          color_code: "#FF0000"
         })
 
       assert {:error, %Ash.Error.Query.NotFound{}} =
@@ -477,8 +467,7 @@ defmodule Omedis.TimeTrackingTest do
         group_id: group.id,
         is_default: true,
         name: "New Default Activity",
-        project_id: project.id,
-        slug: "new-default-activity"
+        project_id: project.id
       }
 
       assert {:ok, new_activity} =
@@ -528,8 +517,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Activity 1",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0001",
-          slug: "activity-1"
+          color_code: "#FF0001"
         })
 
       {:ok, activity2} =
@@ -537,8 +525,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Activity 2",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0002",
-          slug: "activity-2"
+          color_code: "#FF0002"
         })
 
       %{activity1: activity1, activity2: activity2}
@@ -612,8 +599,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Activity 1",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0001",
-          slug: "activity-1"
+          color_code: "#FF0001"
         })
 
       {:ok, activity1} =
@@ -621,8 +607,7 @@ defmodule Omedis.TimeTrackingTest do
           name: "Activity 2",
           group_id: group.id,
           project_id: project.id,
-          color_code: "#FF0002",
-          slug: "activity-2"
+          color_code: "#FF0002"
         })
 
       %{activity1: activity1, activity2: activity2}

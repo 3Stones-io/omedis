@@ -177,12 +177,6 @@ msgid "Show Organisation"
 msgstr "Mostra organizzazione"
 
 #: lib/omedis_web/live/organisation_live/form_component.ex
-#: lib/omedis_web/live/organisation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Slug"
-msgstr "Slug"
-
-#: lib/omedis_web/live/organisation_live/form_component.ex
 #: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format

@@ -62,10 +62,6 @@ defmodule OmedisWeb.OrganisationLive.Show do
         </.header>
 
         <.list>
-          <:item title={dgettext("organisation", "Slug")}>
-            <%= @organisation.slug %>
-          </:item>
-
           <:item title={dgettext("organisation", "Name")}>
             <%= @organisation.name %>
           </:item>

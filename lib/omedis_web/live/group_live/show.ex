@@ -41,9 +41,6 @@ defmodule OmedisWeb.GroupLive.Show do
           <:item title={dgettext("group", "Name")}>
             <%= @group.name %>
           </:item>
-          <:item title={dgettext("group", "Slug")}>
-            <%= @group.slug %>
-          </:item>
         </.list>
 
         <.back navigate={~p"/organisations/#{@organisation}/groups"}>

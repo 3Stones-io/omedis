@@ -2,8 +2,6 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
   use OmedisWeb, :live_component
 
   alias AshPhoenix.Form
-  alias Omedis.Accounts
-  alias Omedis.Accounts.Organisation
 
   @impl true
   def render(assigns) do
@@ -33,17 +31,6 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
           />
         </div>
 
-        <div class="space-y-3">
-          <.input
-            field={@form[:slug]}
-            type="text"
-            label={
-              Phoenix.HTML.raw(
-                "#{dgettext("organisation", "Slug")} <span class='text-red-600'>*</span>"
-              )
-            }
-          />
-        </div>
         <div class="space-y-3">
           <.input
             field={@form[:street]}
@@ -198,21 +185,7 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
   @impl true
 
   def handle_event("validate", %{"organisation" => organisation_params}, socket) do
-    current_name = socket.assigns.form.source.params["name"]
-    new_name = organisation_params["name"]
-
-    new_organisation_params =
-      if current_name != new_name do
-        if new_name == "" || new_name == nil do
-          organisation_params
-        else
-          Map.put(organisation_params, "slug", update_slug(Slug.slugify(new_name), socket))
-        end
-      else
-        organisation_params
-      end
-
-    form = Form.validate(socket.assigns.form, new_organisation_params, errors: true)
+    form = Form.validate(socket.assigns.form, organisation_params, errors: true)
     {:noreply, socket |> assign(form: form)}
   end
 
@@ -236,30 +209,6 @@ defmodule OmedisWeb.OrganisationLive.FormComponent do
          socket
          |> assign(errors: Form.errors(form))
          |> assign(form: form)}
-    end
-  end
-
-  defp generate_unique_slug(base_slug, socket) do
-    new_slug = "#{base_slug}#{:rand.uniform(99)}"
-
-    if Accounts.slug_exists?(Organisation, [slug: new_slug],
-         actor: socket.assigns.current_user,
-         tenant: socket.assigns.organisation
-       ) do
-      generate_unique_slug(base_slug, socket)
-    else
-      Slug.slugify(new_slug)
-    end
-  end
-
-  defp update_slug(slug, socket) do
-    if Accounts.slug_exists?(Organisation, [slug: slug],
-         actor: socket.assigns.current_user,
-         tenant: socket.assigns.organisation
-       ) do
-      generate_unique_slug(slug, socket)
-    else
-      Slug.slugify(slug)
     end
   end
 

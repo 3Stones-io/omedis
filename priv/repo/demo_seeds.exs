@@ -34,7 +34,7 @@ bulk_create = fn module, list, opts ->
 end
 
 sequential_create = fn module, list, opts ->
-  opts = Keyword.merge([authorize?: false, upsert?: true], opts)
+  opts = Keyword.merge([authorize?: false], opts)
 
   result =
     Enum.reduce_while(list, {:ok, []}, fn attrs, {:ok, acc} ->
@@ -43,27 +43,31 @@ sequential_create = fn module, list, opts ->
         |> attrs_for(Keyword.get(opts, :tenant))
         |> Map.merge(attrs)
 
-      # First check if record exists using the upsert_identity
-      identity = Keyword.get(opts, :upsert_identity)
-      identity_attrs = Map.take(attrs, Ash.Resource.Info.identity(module, identity).keys)
+      # Get the existence check keys
+      existence_keys = Keyword.get(opts, :existence_check_keys, [])
+      check_attrs = Map.take(attrs, existence_keys)
 
+      # Build query for existence check
       query =
         module
         |> Ash.Query.new()
-        |> Ash.Query.filter(^identity_attrs)
+        |> Ash.Query.filter(^check_attrs)
 
-      case Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant)) do
-        {:ok, [existing]} ->
+      case existence_keys != [] &&
+             Ash.exists?(query, tenant: Keyword.get(opts, :tenant), authorize?: false) do
+        # Record exists, fetch it and add to accumulator
+        true ->
+          {:ok, [existing]} =
+            Ash.read(query, authorize?: false, tenant: Keyword.get(opts, :tenant))
+
           {:cont, {:ok, [existing | acc]}}
 
-        {:ok, []} ->
+        # Record doesn't exist or no existence check needed, create it
+        false ->
           case Ash.create(module, attrs, opts) do
             {:ok, record} -> {:cont, {:ok, [record | acc]}}
             error -> {:halt, error}
           end
-
-        error ->
-          {:halt, error}
       end
     end)
 
@@ -73,21 +77,22 @@ sequential_create = fn module, list, opts ->
   end
 end
 
-get_organisation = fn owner_id ->
-  Accounts.Organisation
-  |> Ash.Query.filter(owner_id: owner_id)
-  |> Ash.read_one!(authorize?: false)
-end
+get_organisation =
+  fn owner_id ->
+    Accounts.Organisation
+    |> Ash.Query.filter(owner_id: owner_id)
+    |> Ash.read_one!(authorize?: false)
+  end
 
 %{records: [user_1, user_2, user_3], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.User,
     [
       %{email: "user@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")},
       %{email: "user2@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")},
       %{email: "user3@demo.com", hashed_password: Bcrypt.hash_pwd_salt("password")}
     ],
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 organisation_1 = get_organisation.(user_1.id)
@@ -97,8 +102,8 @@ organisation_2 = get_organisation.(user_2.id)
   bulk_create.(
     Groups.Group,
     [
-      %{name: "Demo Group", slug: "demo-group"},
-      %{name: "Demo Group 2", slug: "demo-group2"}
+      %{name: "Demo Group"},
+      %{name: "Demo Group 2"}
     ],
     tenant: organisation_1,
     upsert_identity: :unique_slug_per_organisation
@@ -108,7 +113,7 @@ organisation_2 = get_organisation.(user_2.id)
   bulk_create.(
     Groups.Group,
     [
-      %{name: "Demo Group 3", slug: "demo-group3"}
+      %{name: "Demo Group 3"}
     ],
     tenant: organisation_2,
     upsert_identity: :unique_slug_per_organisation
@@ -171,7 +176,6 @@ activities =
   for i <- 1..30 do
     %{
       name: "Demo Activity #{i}",
-      slug: "demo-activity-#{i}",
       group_id: if(rem(i, 2) == 0, do: group_1.id, else: group_2.id),
       project_id: if(rem(i, 2) == 0, do: project_1.id, else: project_2.id)
     }
@@ -182,7 +186,7 @@ activities =
     TimeTracking.Activity,
     activities,
     tenant: organisation_1,
-    upsert_identity: :unique_slug
+    existence_check_keys: [:slug, :group_id]
   )
 
 %{records: [invitation_1 | _rest], status: :success} =

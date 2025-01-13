@@ -59,10 +59,6 @@ defmodule OmedisWeb.GroupLive.Index do
             <%= group.name %>
           </:col>
 
-          <:col :let={{_id, group}} label={dgettext("group", "Slug")}>
-            <%= group.slug %>
-          </:col>
-
           <:col :let={{_id, group}} label={dgettext("group", "Actions")}>
             <div class="flex gap-4">
               <.link
@@ -189,7 +185,8 @@ defmodule OmedisWeb.GroupLive.Index do
       dgettext("group", "Listing Groups")
     )
     |> assign(:group, nil)
-    |> PaginationUtils.list_paginated(params, :groups, fn offset ->
+
+    PaginationUtils.list_paginated(socket, params, :groups, fn offset ->
       Group.by_organisation_id(
         %{organisation_id: socket.assigns.organisation.id},
         actor: socket.assigns.current_user,

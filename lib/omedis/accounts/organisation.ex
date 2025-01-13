@@ -58,7 +58,6 @@ defmodule Omedis.Accounts.Organisation do
         :trade_register_no,
         :bur_number,
         :account_number,
-        :slug,
         :default_daily_start_at,
         :default_daily_end_at,
         :timezone
@@ -66,6 +65,7 @@ defmodule Omedis.Accounts.Organisation do
 
       primary? true
 
+      change Omedis.Accounts.Organisation.Changes.MaybeSlugifyName
       change Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults
       change Omedis.Accounts.Organisation.Changes.AssociateUserWithOrganisation
     end
@@ -92,12 +92,12 @@ defmodule Omedis.Accounts.Organisation do
         :trade_register_no,
         :bur_number,
         :account_number,
-        :slug,
         :default_daily_start_at,
         :default_daily_end_at,
         :timezone
       ]
 
+      change Omedis.Accounts.Organisation.Changes.MaybeSlugifyName
       primary? true
       require_atomic? false
     end
