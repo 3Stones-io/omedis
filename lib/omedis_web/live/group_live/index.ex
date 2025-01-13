@@ -29,11 +29,11 @@ defmodule OmedisWeb.GroupLive.Index do
 
         <div>
           <.link navigate={~p"/organisations/#{@organisation}"} class="button">
-            <%= dgettext("navigation", "Back") %>
+            {dgettext("navigation", "Back")}
           </.link>
         </div>
         <.header>
-          <%= dgettext("group", "Listing Groups") %>
+          {dgettext("group", "Listing Groups")}
           <:actions>
             <.link
               :if={
@@ -42,7 +42,7 @@ defmodule OmedisWeb.GroupLive.Index do
               patch={~p"/organisations/#{@organisation}/groups/new"}
             >
               <.button>
-                <%= dgettext("group", "New Group") %>
+                {dgettext("group", "New Group")}
               </.button>
             </.link>
           </:actions>
@@ -56,7 +56,7 @@ defmodule OmedisWeb.GroupLive.Index do
           }
         >
           <:col :let={{_id, group}} label={dgettext("group", "Name")}>
-            <%= group.name %>
+            {group.name}
           </:col>
 
           <:col :let={{_id, group}} label={dgettext("group", "Actions")}>
@@ -72,7 +72,7 @@ defmodule OmedisWeb.GroupLive.Index do
                 patch={~p"/organisations/#{@organisation}/groups/#{group}/edit"}
                 class="font-semibold"
               >
-                <%= dgettext("group", "Edit") %>
+                {dgettext("group", "Edit")}
               </.link>
               <.link
                 :if={
@@ -84,7 +84,7 @@ defmodule OmedisWeb.GroupLive.Index do
                 id={"delete-group-#{group.id}"}
               >
                 <p class="font-semibold" phx-click="delete" phx-value-id={group.id}>
-                  <%= dgettext("group", "Delete") %>
+                  {dgettext("group", "Delete")}
                 </p>
               </.link>
             </div>

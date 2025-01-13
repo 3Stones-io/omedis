@@ -57,7 +57,7 @@ defmodule OmedisWeb.TimeTracking do
     ~H"""
     <div class="w-[100%] h-[30vh] flex justify-center items-center">
       <p>
-        <%= dgettext("organisation", "No activities have been defined yet.") %>
+        {dgettext("organisation", "No activities have been defined yet.")}
       </p>
     </div>
     """
@@ -139,7 +139,7 @@ defmodule OmedisWeb.TimeTracking do
     <div class="w-[100%] h-[100%] flex flex-col justify-between  gap-1">
       <%= for time_interval <- get_time_intervals_array(@start_at, @end_at) do %>
         <p>
-          <%= format_time(time_interval) %>
+          {format_time(time_interval)}
         </p>
       <% end %>
     </div>
@@ -249,7 +249,7 @@ defmodule OmedisWeb.TimeTracking do
         >
           <p class="flex gap-2 justify-center text-sm  md:text-base p-2 text-white items-center">
             <span>
-              <%= @activity.name %>
+              {@activity.name}
             </span>
             <span class="ml-4">
               <%= if @current_activity_id == @activity.id do %>
@@ -310,7 +310,7 @@ defmodule OmedisWeb.TimeTracking do
             class="absolute w-[100%] bg-gray-200 rounded-md p-2"
             style={"top: #{calculate_top_position(event.dtstart, @start_at, @end_at)}%; height: #{calculate_height(event.dtstart, event.dtend, @start_at, @end_at)}%;"}
           >
-            <%= event.title %>
+            {event.title}
           </div>
         <% end %>
       </div>
@@ -350,7 +350,7 @@ defmodule OmedisWeb.TimeTracking do
     ~H"""
     <%= for event <- @activity.events |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
       <p :if={event.dtend == nil}>
-        <%= Time.diff(Time.utc_now(), event.dtstart, :minute) |> minutes_to_hhmm() %>
+        {Time.diff(Time.utc_now(), event.dtstart, :minute) |> minutes_to_hhmm()}
       </p>
     <% end %>
     """
@@ -372,7 +372,7 @@ defmodule OmedisWeb.TimeTracking do
     ~H"""
     <div class="flex flex-col mb-3 gap-1">
       <p>
-        <%= @header_text %>
+        {@header_text}
       </p>
 
       <div class="w-[100%] flex justify-between">
@@ -383,7 +383,7 @@ defmodule OmedisWeb.TimeTracking do
           id="group-select-form"
         >
           <p>
-            <%= dgettext("organisation", "Select Group") %>
+            {dgettext("organisation", "Select Group")}
           </p>
 
           <select
@@ -394,7 +394,7 @@ defmodule OmedisWeb.TimeTracking do
           >
             <%= for {name , id} <- @groups do %>
               <option selected={id == @group.id} value={id}>
-                <%= name %>
+                {name}
               </option>
             <% end %>
           </select>
@@ -407,7 +407,7 @@ defmodule OmedisWeb.TimeTracking do
           id="project-select-form"
         >
           <p>
-            <%= dgettext("organisation", "Select Project") %>
+            {dgettext("organisation", "Select Project")}
           </p>
           <select
             name="project_id"
@@ -417,7 +417,7 @@ defmodule OmedisWeb.TimeTracking do
           >
             <%= for {name , id} <- @projects do %>
               <option selected={id == @project.id} value={id}>
-                <%= name %>
+                {name}
               </option>
             <% end %>
           </select>

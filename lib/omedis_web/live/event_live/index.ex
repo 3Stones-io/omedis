@@ -35,22 +35,22 @@ defmodule OmedisWeb.EventLive.Index do
 
         <.header>
           <span>
-            <%= dgettext("event", "Listing Events for") %>
+            {dgettext("event", "Listing Events for")}
           </span>
-          <%= @activity.name %>
+          {@activity.name}
         </.header>
 
         <.table id="events" rows={@streams.events}>
           <:col :let={{_id, event}} label={dgettext("event", "Comment")}>
-            <%= event.summary %>
+            {event.summary}
           </:col>
 
           <:col :let={{_id, event}} label={dgettext("event", "Start at")}>
-            <%= event.dtstart %>
+            {event.dtstart}
           </:col>
 
           <:col :let={{_id, event}} label={dgettext("event", "End at")}>
-            <%= event.dtend %>
+            {event.dtend}
           </:col>
         </.table>
         <PaginationComponent.pagination

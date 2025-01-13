@@ -9,7 +9,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.simple_form
@@ -55,7 +55,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
 
         <div class="flex gap-5">
           <p>
-            <%= dgettext("activity", "Enter custom color") %>
+            {dgettext("activity", "Enter custom color")}
           </p>
           <div
             role="switch"
@@ -68,7 +68,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
             aria-checked={@is_custom_color}
           >
             <span class="sr-only">
-              <%= dgettext("activity", "Enable or disable custom color input") %>
+              {dgettext("activity", "Enable or disable custom color input")}
             </span>
 
             <span class={
@@ -109,7 +109,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         </div>
 
         <.custom_color_button :if={@form[:name].value} color={@form[:color_code].value || @color_code}>
-          <%= @form[:name].value || "Name" %>
+          {@form[:name].value || "Name"}
         </.custom_color_button>
 
         <:actions>
@@ -124,7 +124,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
             disabled={@form.source.source.valid? == false}
             phx-disable-with={dgettext("activity", "Saving...")}
           >
-            <%= dgettext("activity", "Save Activity") %>
+            {dgettext("activity", "Save Activity")}
           </.button>
         </:actions>
       </.simple_form>

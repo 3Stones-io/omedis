@@ -8,9 +8,9 @@ defmodule OmedisWeb.GroupLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>
-          <%= dgettext("group", "Use this form to manage group records in your database.") %>
+          {dgettext("group", "Use this form to manage group records in your database.")}
         </:subtitle>
       </.header>
 
@@ -32,7 +32,7 @@ defmodule OmedisWeb.GroupLive.FormComponent do
 
         <:actions>
           <.button phx-disable-with={dgettext("group", "Saving...")}>
-            <%= dgettext("group", "Save Group") %>
+            {dgettext("group", "Save Group")}
           </.button>
         </:actions>
       </.simple_form>
