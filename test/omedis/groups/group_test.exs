@@ -341,7 +341,7 @@ defmodule Omedis.Groups.GroupTest do
         create_group(organisation, %{name: "Group 02"})
 
       assert {:ok, [latest_group]} =
-               Group.latest_by_organisation_id(
+               Groups.latest_group_by_organisation_id(
                  %{organisation_id: organisation.id},
                  actor: authorized_user,
                  tenant: organisation

@@ -14,6 +14,7 @@ defmodule Omedis.Groups do
         action: :by_organisation_id
 
       define :get_groups, action: :read
+      define :latest_group_by_organisation_id, action: :latest_by_organisation_id
       define :update_group, action: :update
     end
 
