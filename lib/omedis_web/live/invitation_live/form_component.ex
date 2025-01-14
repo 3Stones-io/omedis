@@ -2,7 +2,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   use OmedisWeb, :live_component
 
   alias AshPhoenix.Form
-  alias Omedis.Groups.Group
+  alias Omedis.Groups
   alias Omedis.Invitations.Invitation
 
   @supported_languages [
@@ -56,7 +56,7 @@ defmodule OmedisWeb.InvitationLive.FormComponent do
   end
 
   defp assign_groups(socket) do
-    case Group.by_organisation_id(%{organisation_id: socket.assigns.organisation.id},
+    case Groups.get_group_by_organisation_id(%{organisation_id: socket.assigns.organisation.id},
            actor: socket.assigns.current_user,
            tenant: socket.assigns.organisation
          ) do

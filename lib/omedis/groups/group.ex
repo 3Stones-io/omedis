@@ -29,17 +29,6 @@ defmodule Omedis.Groups.Group do
     plural_name :groups
   end
 
-  code_interface do
-    domain Omedis.Groups
-    define :create
-    define :update
-    define :by_id, get_by: [:id], action: :read
-    define :destroy
-    define :by_organisation_id
-    define :by_slug, get_by: [:slug], action: :read
-    define :latest_by_organisation_id
-  end
-
   actions do
     create :create do
       accept [

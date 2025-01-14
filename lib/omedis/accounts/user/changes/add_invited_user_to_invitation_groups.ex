@@ -6,7 +6,7 @@ defmodule Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups do
   use Ash.Resource.Change
 
   alias Omedis.Accounts
-  alias Omedis.Groups.GroupMembership
+  alias Omedis.Groups
   alias Omedis.Invitations.Invitation
   alias Omedis.Invitations.InvitationGroup
 
@@ -35,7 +35,7 @@ defmodule Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups do
          {:ok, invitation_groups} <- get_invitation_groups(invitation.id, current_organisation) do
       Enum.each(invitation_groups, fn invitation_group ->
         {:ok, _} =
-          GroupMembership.create(
+          Groups.create_group_membership(
             %{
               group_id: invitation_group.group_id,
               user_id: user.id
