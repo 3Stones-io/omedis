@@ -1,52 +1,73 @@
-defmodule Omedis.Groups.GroupTest do
+defmodule Omedis.Groups.GroupsTest do
   use Omedis.DataCase, async: true
 
   import Omedis.TestUtils
 
+  alias Omedis.Groups
   alias Omedis.Groups.Group
 
   setup do
-    {:ok, user} = create_user()
-    organisation = fetch_users_organisation(user.id)
-    {:ok, authorized_user} = create_user()
+    {:ok, owner} = create_user()
+    organisation = fetch_users_organisation(owner.id)
     {:ok, group} = create_group(organisation)
-    create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
+    {:ok, authorized_user} = create_user()
+    {:ok, user} = create_user()
 
-    create_access_right(organisation, %{
-      group_id: group.id,
-      read: true,
-      resource_name: "Organisation",
-      create: true,
-      destroy: true,
-      update: true
-    })
+    {:ok, _} =
+      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
 
-    create_access_right(organisation, %{
-      group_id: group.id,
-      read: true,
-      resource_name: "Group",
-      create: true,
-      destroy: true,
-      update: true
-    })
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group.id,
+        read: true,
+        resource_name: "Organisation",
+        create: true,
+        destroy: true,
+        update: true
+      })
 
-    %{user: user, organisation: organisation, authorized_user: authorized_user}
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group.id,
+        read: true,
+        resource_name: "GroupMembership",
+        destroy: true,
+        create: true
+      })
+
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group.id,
+        read: true,
+        resource_name: "Group",
+        create: true,
+        destroy: true,
+        update: true
+      })
+
+    %{
+      user: user,
+      owner: owner,
+      organisation: organisation,
+      authorized_user: authorized_user,
+      group: group
+    }
   end
 
-  describe "create/2" do
-    test "organisation owner can create a group", %{user: user, organisation: organisation} do
+  describe "create_group/2" do
+    test "organisation owner can create a group", %{owner: owner, organisation: organisation} do
       assert %Group{} =
                group =
-               Group.create!(
+               Groups.create_group!(
                  %{
                    name: "Test Group",
-                   user_id: user.id
+                   user_id: owner.id
                  },
-                 actor: user,
+                 actor: owner,
                  tenant: organisation
                )
 
-      assert group.user_id == user.id
+      assert group.user_id == owner.id
       assert group.organisation_id == organisation.id
     end
 
@@ -56,7 +77,7 @@ defmodule Omedis.Groups.GroupTest do
     } do
       assert %Group{} =
                group =
-               Group.create!(
+               Groups.create_group!(
                  %{
                    name: "Test Group",
                    user_id: authorized_user.id
@@ -74,7 +95,7 @@ defmodule Omedis.Groups.GroupTest do
       {:ok, organisation} = create_organisation()
 
       assert_raise Ash.Error.Forbidden, fn ->
-        Group.create!(
+        Groups.create_group!(
           %{name: "Test Group", user_id: user.id},
           actor: user,
           tenant: organisation
@@ -83,7 +104,7 @@ defmodule Omedis.Groups.GroupTest do
     end
   end
 
-  describe "update/2" do
+  describe "update_group/2" do
     test "can update a group if user is the owner of the organisation", %{
       user: user,
       organisation: organisation
@@ -100,7 +121,10 @@ defmodule Omedis.Groups.GroupTest do
 
       assert %Group{} =
                updated_group =
-               Group.update!(group, %{name: "Updated Group"}, actor: user, tenant: organisation)
+               Groups.update_group!(group, %{name: "Updated Group"},
+                 actor: user,
+                 tenant: organisation
+               )
 
       assert updated_group.name == "Updated Group"
     end
@@ -114,7 +138,7 @@ defmodule Omedis.Groups.GroupTest do
 
       assert %Group{} =
                updated_group =
-               Group.update!(group, %{name: "New Name"},
+               Groups.update_group!(group, %{name: "New Name"},
                  actor: authorized_user,
                  tenant: organisation
                )
@@ -137,12 +161,12 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Forbidden, fn ->
-        Group.update!(group, %{name: "Updated Group"}, actor: user, tenant: organisation)
+        Groups.update_group!(group, %{name: "Updated Group"}, actor: user, tenant: organisation)
       end
     end
   end
 
-  describe "destroy/2" do
+  describe "destroy_group/2" do
     test "organisation owner can delete a group", %{user: user, organisation: organisation} do
       {:ok, group} = create_group(organisation, %{user_id: user.id})
 
@@ -155,7 +179,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert :ok =
-               Group.destroy(group, actor: user, tenant: organisation)
+               Groups.destroy_group(group, actor: user, tenant: organisation)
     end
 
     test "authorized users can delete a group", %{
@@ -166,7 +190,7 @@ defmodule Omedis.Groups.GroupTest do
         create_group(organisation, %{user_id: authorized_user.id})
 
       assert :ok =
-               Group.destroy(group, actor: authorized_user, tenant: organisation)
+               Groups.destroy_group(group, actor: authorized_user, tenant: organisation)
     end
 
     test "can't delete a group if actor doesn't have destroy access", %{
@@ -186,12 +210,12 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Forbidden, fn ->
-        Group.destroy!(group, actor: user, tenant: organisation)
+        Groups.destroy_group!(group, actor: user, tenant: organisation)
       end
     end
   end
 
-  describe "by_id!/1" do
+  describe "get_group_by_id!/1" do
     test "returns a group given a valid id", %{
       user: user,
       organisation: organisation
@@ -207,7 +231,9 @@ defmodule Omedis.Groups.GroupTest do
         read: true
       })
 
-      assert %Group{} = result = Group.by_id!(group.id, actor: user, tenant: organisation)
+      assert %Group{} =
+               result = Groups.get_group_by_id!(group.id, actor: user, tenant: organisation)
+
       assert result.id == group.id
     end
 
@@ -226,7 +252,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        Group.by_id!(invalid_id, actor: user, tenant: organisation)
+        Groups.get_group_by_id!(invalid_id, actor: user, tenant: organisation)
       end
     end
 
@@ -245,12 +271,12 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        Group.by_id!(group.id, actor: user, tenant: organisation)
+        Groups.get_group_by_id!(group.id, actor: user, tenant: organisation)
       end
     end
   end
 
-  describe "by_organisation_id/1" do
+  describe "get_group_by_organisation_id/1" do
     test "returns paginated groups the user and organisation have access to", %{
       user: user,
       organisation: organisation
@@ -271,7 +297,7 @@ defmodule Omedis.Groups.GroupTest do
       end)
 
       assert %Ash.Page.Offset{results: groups} =
-               Group.by_organisation_id!(%{organisation_id: organisation.id},
+               Groups.get_group_by_organisation_id!(%{organisation_id: organisation.id},
                  actor: user,
                  tenant: organisation,
                  page: [limit: 10, offset: 0]
@@ -301,14 +327,14 @@ defmodule Omedis.Groups.GroupTest do
       end)
 
       assert %Ash.Page.Offset{results: []} =
-               Group.by_organisation_id!(%{organisation_id: organisation.id},
+               Groups.get_group_by_organisation_id!(%{organisation_id: organisation.id},
                  actor: user,
                  tenant: organisation
                )
     end
   end
 
-  describe "latest_by_organisation_id/1" do
+  describe "latest_group_by_organisation_id/1" do
     test "returns the latest group for an organisation", %{
       authorized_user: authorized_user,
       organisation: organisation
@@ -319,7 +345,7 @@ defmodule Omedis.Groups.GroupTest do
       past_datetime = DateTime.add(DateTime.utc_now(), -1, :second)
 
       {:ok, _updated_group_1} =
-        Group.update(
+        Groups.update_group(
           group_1,
           %{},
           context: %{updated_at: past_datetime},
@@ -331,7 +357,7 @@ defmodule Omedis.Groups.GroupTest do
         create_group(organisation, %{name: "Group 02"})
 
       assert {:ok, [latest_group]} =
-               Group.latest_by_organisation_id(
+               Groups.latest_group_by_organisation_id(
                  %{organisation_id: organisation.id},
                  actor: authorized_user,
                  tenant: organisation
@@ -342,7 +368,7 @@ defmodule Omedis.Groups.GroupTest do
     end
   end
 
-  describe "by_slug!/1" do
+  describe "get_group_by_slug!/1" do
     test "returns a group given a valid slug and actor has read access", %{
       user: user,
       organisation: organisation
@@ -350,7 +376,7 @@ defmodule Omedis.Groups.GroupTest do
       {:ok, group} = create_group(organisation, %{user_id: user.id, name: "Test Group Slug"})
       {:ok, group2} = create_group(organisation, %{user_id: user.id})
 
-      create_group_membership(organisation, %{user_id: user.id, group_id: group2.id})
+      create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
       create_access_right(organisation, %{
         resource_name: "Group",
@@ -359,7 +385,8 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert %Group{} =
-               result = Group.by_slug!("test-group-slug", actor: user, tenant: organisation)
+               result =
+               Groups.get_group_by_slug!("test-group-slug", actor: user, tenant: organisation)
 
       assert result.id == group.id
     end
@@ -379,7 +406,7 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        Group.by_slug!(invalid_slug, actor: user, tenant: organisation)
+        Groups.get_group_by_slug!(invalid_slug, actor: user, tenant: organisation)
       end
     end
 
@@ -397,8 +424,215 @@ defmodule Omedis.Groups.GroupTest do
       })
 
       assert_raise Ash.Error.Query.NotFound, fn ->
-        Group.by_slug!(group.slug, actor: user, tenant: organisation)
+        Groups.get_group_by_slug!(group.slug, actor: user, tenant: organisation)
       end
+    end
+  end
+
+  describe "create_group_membership/1" do
+    test "organisation owner can create a group_membership", %{
+      group: group,
+      owner: owner,
+      organisation: organisation,
+      user: user
+    } do
+      assert {:ok, group_membership} =
+               Groups.create_group_membership(
+                 %{
+                   group_id: group.id,
+                   user_id: user.id
+                 },
+                 actor: owner,
+                 tenant: organisation
+               )
+
+      assert group_membership.group_id == group.id
+      assert group_membership.user_id == user.id
+    end
+
+    test "authorized user can create a group_membership", %{
+      authorized_user: authorized_user,
+      group: group,
+      organisation: organisation,
+      user: user
+    } do
+      assert {:ok, group_membership} =
+               Groups.create_group_membership(
+                 %{
+                   group_id: group.id,
+                   user_id: user.id
+                 },
+                 actor: authorized_user,
+                 tenant: organisation
+               )
+
+      assert group_membership.group_id == group.id
+      assert group_membership.user_id == user.id
+    end
+
+    test "unauthorized user cannot create a group_membership", %{
+      group: group,
+      organisation: organisation,
+      user: user
+    } do
+      {:ok, unauthorized_user} = create_user()
+
+      assert {:error, _} =
+               Groups.create_group_membership(
+                 %{
+                   group_id: group.id,
+                   user_id: user.id
+                 },
+                 actor: unauthorized_user,
+                 tenant: organisation
+               )
+    end
+  end
+
+  describe "get_group_memberships/0" do
+    test "organisation owner can read all group_memberships", %{
+      group: group,
+      owner: owner,
+      organisation: organisation,
+      user: user
+    } do
+      {:ok, _group_membership} =
+        Groups.create_group_membership(
+          %{
+            group_id: group.id,
+            user_id: user.id
+          },
+          actor: owner,
+          tenant: organisation
+        )
+
+      {:ok, group_memberships} = Groups.get_group_memberships(actor: owner, tenant: organisation)
+      assert length(group_memberships) > 0
+    end
+
+    test "authorized user can read all group_memberships", %{
+      authorized_user: authorized_user,
+      group: group,
+      organisation: organisation,
+      user: user
+    } do
+      {:ok, _group_membership} =
+        Groups.create_group_membership(
+          %{
+            group_id: group.id,
+            user_id: user.id
+          },
+          actor: authorized_user,
+          tenant: organisation
+        )
+
+      {:ok, group_memberships} =
+        Groups.get_group_memberships(actor: authorized_user, tenant: organisation)
+
+      assert length(group_memberships) > 0
+    end
+
+    test "unauthorized user cannot read group_memberships", %{
+      group: group,
+      owner: owner,
+      organisation: organisation,
+      user: user
+    } do
+      {:ok, _group_membership} =
+        Groups.create_group_membership(
+          %{
+            group_id: group.id,
+            user_id: user.id
+          },
+          actor: owner,
+          tenant: organisation
+        )
+
+      {:ok, unauthorized_user} = create_user()
+
+      assert {:ok, []} =
+               Groups.get_group_memberships(actor: unauthorized_user, tenant: organisation)
+    end
+  end
+
+  describe "destroy_group_membership/1" do
+    test "organisation owner can delete a group_membership", %{
+      group: group,
+      owner: owner,
+      organisation: organisation,
+      user: user
+    } do
+      {:ok, group_membership} =
+        Groups.create_group_membership(
+          %{
+            group_id: group.id,
+            user_id: user.id
+          },
+          actor: owner,
+          tenant: organisation
+        )
+
+      assert :ok =
+               Groups.destroy_group_membership(group_membership,
+                 actor: owner,
+                 tenant: organisation
+               )
+
+      {:ok, group_memberships} = Groups.get_group_memberships(actor: owner, tenant: organisation)
+      refute Enum.any?(group_memberships, fn gm -> gm.id == group_membership.id end)
+    end
+
+    test "authorized user can delete a group_membership", %{
+      authorized_user: authorized_user,
+      group: group,
+      organisation: organisation,
+      user: user
+    } do
+      {:ok, group_membership} =
+        Groups.create_group_membership(
+          %{
+            group_id: group.id,
+            user_id: user.id
+          },
+          actor: authorized_user,
+          tenant: organisation
+        )
+
+      assert :ok =
+               Groups.destroy_group_membership(group_membership,
+                 actor: authorized_user,
+                 tenant: organisation
+               )
+
+      {:ok, group_memberships} =
+        Groups.get_group_memberships(actor: authorized_user, tenant: organisation)
+
+      refute Enum.any?(group_memberships, fn gm -> gm.user_id == group_membership.user_id end)
+    end
+
+    test "unauthorized user cannot delete a group_membership", %{
+      group: group,
+      owner: owner,
+      organisation: organisation,
+      user: user
+    } do
+      {:ok, group_membership} =
+        Groups.create_group_membership(
+          %{
+            group_id: group.id,
+            user_id: user.id
+          },
+          actor: owner,
+          tenant: organisation
+        )
+
+      {:ok, unauthorized_user} = create_user()
+
+      assert {:error, _} =
+               Groups.destroy_group_membership(group_membership,
+                 actor: unauthorized_user,
+                 tenant: organisation
+               )
     end
   end
 end

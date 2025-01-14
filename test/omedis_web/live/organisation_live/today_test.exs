@@ -6,7 +6,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
   require Ash.Query
 
-  alias Omedis.Groups.Group
+  alias Omedis.Groups
   alias Omedis.Projects
   alias Omedis.TimeTracking
 
@@ -85,7 +85,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
            project: project
          } do
       {:ok, [latest_group]} =
-        Group.latest_by_organisation_id(%{organisation_id: organisation.id},
+        Groups.latest_group_by_organisation_id(%{organisation_id: organisation.id},
           actor: owner,
           tenant: organisation
         )
@@ -105,14 +105,14 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       owner: owner
     } do
       {:ok, %{results: groups}} =
-        Group.by_organisation_id(%{organisation_id: organisation.id},
+        Groups.get_group_by_organisation_id(%{organisation_id: organisation.id},
           actor: owner,
           tenant: organisation
         )
 
       # Delete all groups
       Enum.each(groups, fn group ->
-        :ok = Group.destroy(group, authorize?: false)
+        :ok = Groups.destroy_group(group, authorize?: false)
       end)
 
       {:error, {:live_redirect, %{to: path, flash: flash}}} =
@@ -160,7 +160,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       # Backdate the updated_at fields to ensure we can detect changes
       {:ok, backdated_group} =
-        Group.update(
+        Groups.update_group(
           group,
           %{},
           context: %{updated_at: past_datetime},
@@ -187,7 +187,8 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         )
 
       # Fetch updated records
-      {:ok, updated_group} = Group.by_id(backdated_group.id, actor: owner, tenant: organisation)
+      {:ok, updated_group} =
+        Groups.get_group_by_id(backdated_group.id, actor: owner, tenant: organisation)
 
       {:ok, updated_project} =
         Projects.get_project_by_id(backdated_project.id, actor: owner, tenant: organisation)
