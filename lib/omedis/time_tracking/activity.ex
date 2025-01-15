@@ -36,7 +36,7 @@ defmodule Omedis.TimeTracking.Activity do
         :name
       ]
 
-      change Omedis.TimeTracking.Activity.Changes.MaybeSlugifyName
+      change Omedis.MaybeSlugifyName
       change Omedis.TimeTracking.Activity.Changes.NewActivityPosition
       change Omedis.TimeTracking.Activity.Changes.SetDefaultActivity
 
@@ -53,7 +53,7 @@ defmodule Omedis.TimeTracking.Activity do
         :position
       ]
 
-      change Omedis.TimeTracking.Activity.Changes.MaybeSlugifyName
+      change Omedis.MaybeSlugifyName
       change Omedis.TimeTracking.Activity.Changes.SetDefaultActivity
 
       primary? true

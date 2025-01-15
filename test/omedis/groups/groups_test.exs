@@ -374,7 +374,7 @@ defmodule Omedis.Groups.GroupsTest do
       organisation: organisation
     } do
       {:ok, group} = create_group(organisation, %{user_id: user.id, name: "Test Group Slug"})
-      {:ok, group2} = create_group(organisation, %{user_id: user.id})
+      {:ok, _group2} = create_group(organisation, %{user_id: user.id})
 
       create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 

@@ -65,7 +65,7 @@ defmodule Omedis.Accounts.Organisation do
 
       primary? true
 
-      change Omedis.Accounts.Organisation.Changes.MaybeSlugifyName
+      change Omedis.MaybeSlugifyName
       change Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults
       change Omedis.Accounts.Organisation.Changes.AssociateUserWithOrganisation
     end
@@ -97,7 +97,7 @@ defmodule Omedis.Accounts.Organisation do
         :timezone
       ]
 
-      change Omedis.Accounts.Organisation.Changes.MaybeSlugifyName
+      change Omedis.MaybeSlugifyName
       primary? true
       require_atomic? false
     end

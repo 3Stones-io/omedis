@@ -36,7 +36,7 @@ defmodule Omedis.Groups.Group do
         :user_id
       ]
 
-      change Omedis.Groups.Group.Changes.MaybeSlugifyName
+      change Omedis.MaybeSlugifyName
       primary? true
     end
 
@@ -48,7 +48,7 @@ defmodule Omedis.Groups.Group do
       primary? true
       require_atomic? false
 
-      change Omedis.Groups.Group.Changes.MaybeSlugifyName
+      change Omedis.MaybeSlugifyName
 
       change fn changeset, _context ->
         case changeset.context do

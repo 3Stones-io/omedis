@@ -86,7 +86,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
                show_live
                |> form("#organisation-form", organisation: attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/organisations/#{Slug.slugify(attrs.name)}")
+               |> follow_redirect(conn, ~p"/organisations/updated-organisation")
 
       assert html =~ "Organisation saved"
       assert html =~ "Updated Organisation"
