@@ -880,6 +880,30 @@ defmodule Omedis.TimeTrackingTest do
       assert event.user_id == owner.id
     end
 
+    test "broadcasts an event created message when an event is created", %{
+      activity: activity,
+      organisation: organisation,
+      owner: owner
+    } do
+      :ok = OmedisWeb.Endpoint.subscribe("#{activity.id}:events")
+
+      attrs =
+        TimeTracking.Event
+        |> attrs_for(organisation)
+        |> Map.put(:activity_id, activity.id)
+        |> Map.put(:user_id, owner.id)
+
+      assert {:ok, event} = TimeTracking.create_event(attrs, actor: owner, tenant: organisation)
+
+      assert_receive %Phoenix.Socket.Broadcast{
+        event: "create",
+        payload: %{data: ^event},
+        topic: topic
+      }
+
+      assert topic == "#{activity.id}:events"
+    end
+
     test "authorized user can create an event", %{
       activity: activity,
       organisation: organisation,
@@ -1637,6 +1661,38 @@ defmodule Omedis.TimeTrackingTest do
                TimeTracking.update_event(event, update_attrs, actor: user, tenant: organisation)
 
       assert updated_event.summary == "Updated summary"
+    end
+
+    test "broadcasts an event updated message when an event is updated", %{
+      activity: activity,
+      organisation: organisation,
+      owner: owner
+    } do
+      :ok = OmedisWeb.Endpoint.subscribe("#{activity.id}:events")
+
+      {:ok, event} =
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            user_id: owner.id,
+            summary: "Original summary"
+          },
+          actor: owner
+        )
+
+      update_attrs = %{summary: "Updated summary"}
+
+      assert {:ok, updated_event} =
+               TimeTracking.update_event(event, update_attrs, actor: owner, tenant: organisation)
+
+      assert_receive %Phoenix.Socket.Broadcast{
+        event: "update",
+        payload: %{data: ^updated_event},
+        topic: topic
+      }
+
+      assert topic == "#{activity.id}:events"
     end
 
     test "unauthorized user cannot update an event", %{

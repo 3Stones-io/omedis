@@ -6,7 +6,8 @@ defmodule Omedis.TimeTracking.Event do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.TimeTracking
+    domain: Omedis.TimeTracking,
+    notifiers: [Ash.Notifier.PubSub]
 
   postgres do
     table "events"
@@ -123,6 +124,13 @@ defmodule Omedis.TimeTracking.Event do
     end
   end
 
+  pub_sub do
+    module OmedisWeb.Endpoint
+
+    publish :create, [:activity_id, "events"]
+    publish :update, [:activity_id, "events"]
+  end
+
   validations do
     validate compare(:dtend, greater_than: :dtstart),
       where: [attribute_does_not_equal(:dtend, nil)],
@@ -168,3 +176,5 @@ defmodule Omedis.TimeTracking.Event do
               {Omedis.TimeTracking.Event.Calculations.CalculateDuration, [:dtend, :dtstart]}
   end
 end
+
+# Should be on created and update(eg when dtend is updated)
