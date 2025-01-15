@@ -4,7 +4,6 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Organisation
   alias Omedis.TimeTracking
 
   setup [:register_and_log_in_user]
@@ -92,7 +91,6 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
         create_organisation(
           %{
             name: "Owned Organisation",
-            slug: "owned-organisation",
             owner_id: user.id
           },
           actor: user
@@ -109,23 +107,18 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
 
       html =
         show_live
-        |> form("#organisation-form", organisation: %{name: "", slug: ""})
+        |> form("#organisation-form", organisation: %{name: ""})
         |> render_change()
 
       assert html =~ "is required"
 
-      attrs =
-        Organisation
-        |> attrs_for(nil)
-        |> Enum.reject(fn {_k, v} -> is_function(v) end)
-        |> Enum.into(%{})
-        |> Map.put(:name, "Updated Organisation")
+      attrs = %{name: "Updated Organisation"}
 
       assert {:ok, _show_live, html} =
                show_live
                |> form("#organisation-form", organisation: attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/organisations/#{attrs.slug}")
+               |> follow_redirect(conn, ~p"/organisations/#{Slug.slugify(attrs.name)}")
 
       assert html =~ "Organisation saved"
       assert html =~ "Updated Organisation"

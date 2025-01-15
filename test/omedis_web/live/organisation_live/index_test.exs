@@ -4,8 +4,6 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
   import Phoenix.LiveViewTest
   import Omedis.TestUtils
 
-  alias Omedis.Accounts.Organisation
-
   describe "/organisations" do
     setup do
       # Create users
@@ -37,8 +35,7 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
     setup [:register_and_log_in_user]
 
     setup %{user: user} do
-      {:ok, organisation} =
-        create_organisation(%{name: "Test Organisation", slug: "test-organisation"})
+      {:ok, organisation} = create_organisation(%{name: "Test Organisation"})
 
       {:ok, group} = create_group(organisation)
       {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
@@ -66,19 +63,6 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
       assert flash["error"] == "You are not authorized to access this page"
     end
 
-    test "an organisation slug is generated when the name is changed", %{conn: conn, user: user} do
-      organisation = fetch_users_organisation(user.id)
-
-      {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation}/edit")
-
-      html =
-        show_live
-        |> form("#organisation-form", organisation: %{name: "Updated Organisation"})
-        |> render_change()
-
-      assert html =~ Slug.slugify("Updated Organisation")
-    end
-
     test "shows form errors", %{conn: conn, user: user} do
       organisation = fetch_users_organisation(user.id)
       {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation}/edit")
@@ -96,18 +80,13 @@ defmodule OmedisWeb.OrganisationLive.IndexTest do
 
       {:ok, show_live, _html} = live(conn, ~p"/organisations/#{organisation}/edit")
 
-      attrs =
-        Organisation
-        |> attrs_for(nil)
-        |> Enum.reject(fn {_k, v} -> is_function(v) end)
-        |> Enum.into(%{})
-        |> Map.put(:name, "Updated Organisation")
+      attrs = %{name: "Updated Organisation"}
 
       assert {:ok, _show_live, html} =
                show_live
                |> form("#organisation-form", organisation: attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/organisations/#{attrs.slug}")
+               |> follow_redirect(conn, ~p"/organisations/updated-organisation")
 
       assert html =~ "Organisation saved"
       assert html =~ "Updated Organisation"

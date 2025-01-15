@@ -61,8 +61,7 @@ defmodule Omedis.Groups.GroupsTest do
                Groups.create_group!(
                  %{
                    name: "Test Group",
-                   user_id: owner.id,
-                   slug: "test-group"
+                   user_id: owner.id
                  },
                  actor: owner,
                  tenant: organisation
@@ -81,8 +80,7 @@ defmodule Omedis.Groups.GroupsTest do
                Groups.create_group!(
                  %{
                    name: "Test Group",
-                   user_id: authorized_user.id,
-                   slug: "test-group"
+                   user_id: authorized_user.id
                  },
                  actor: authorized_user,
                  tenant: organisation
@@ -201,7 +199,7 @@ defmodule Omedis.Groups.GroupsTest do
       {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(organisation, %{user_id: user.id, slug: "test-group"})
+        create_group(organisation, %{user_id: user.id})
 
       create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
@@ -223,7 +221,7 @@ defmodule Omedis.Groups.GroupsTest do
       organisation: organisation
     } do
       {:ok, group} =
-        create_group(organisation, %{user_id: user.id, slug: "test-group"})
+        create_group(organisation, %{user_id: user.id})
 
       create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
@@ -262,7 +260,7 @@ defmodule Omedis.Groups.GroupsTest do
       {:ok, organisation} = create_organisation()
 
       {:ok, group} =
-        create_group(organisation, %{user_id: user.id, slug: "test-group"})
+        create_group(organisation, %{user_id: user.id})
 
       create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
@@ -283,11 +281,10 @@ defmodule Omedis.Groups.GroupsTest do
       user: user,
       organisation: organisation
     } do
-      Enum.each(1..15, fn i ->
+      Enum.each(1..15, fn _ ->
         {:ok, group} =
           create_group(organisation, %{
-            user_id: user.id,
-            slug: "test-group-#{i}"
+            user_id: user.id
           })
 
         create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
@@ -314,11 +311,10 @@ defmodule Omedis.Groups.GroupsTest do
     } do
       {:ok, organisation} = create_organisation()
 
-      Enum.each(1..15, fn i ->
+      Enum.each(1..15, fn _ ->
         {:ok, group} =
           create_group(organisation, %{
-            user_id: user.id,
-            slug: "test-group-#{i}"
+            user_id: user.id
           })
 
         create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
@@ -377,7 +373,8 @@ defmodule Omedis.Groups.GroupsTest do
       user: user,
       organisation: organisation
     } do
-      {:ok, group} = create_group(organisation, %{user_id: user.id, slug: "test-group-slug"})
+      {:ok, group} = create_group(organisation, %{user_id: user.id, name: "Test Group Slug"})
+      {:ok, _group2} = create_group(organisation, %{user_id: user.id})
 
       create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 
@@ -416,7 +413,7 @@ defmodule Omedis.Groups.GroupsTest do
     test "returns an error if actor doesn't have read access", %{user: user} do
       {:ok, organisation} = create_organisation()
 
-      {:ok, group} = create_group(organisation, %{user_id: user.id, slug: "test-group-slug"})
+      {:ok, group} = create_group(organisation, %{user_id: user.id})
 
       create_group_membership(organisation, %{user_id: user.id, group_id: group.id})
 

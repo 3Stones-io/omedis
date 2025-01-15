@@ -32,7 +32,6 @@ defmodule OmedisWeb.GroupLive.ShowTest do
         |> log_in_user(user)
         |> live(~p"/organisations/#{organisation}/groups/#{group}")
 
-      assert html =~ "Slug"
       assert html =~ "Test Group"
     end
 

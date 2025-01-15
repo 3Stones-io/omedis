@@ -27,7 +27,6 @@ import Alpine from "alpinejs";
 import FlashAutoDisappear from "./hooks/flash_auto_disappear";
 import HideOnNavigate from "./hooks/hide_on_navigate";
 import phxFeedbackDom from "./phx_feedback_dom";
-import SlugInput from "./hooks/slug_input";
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -35,7 +34,6 @@ Alpine.start();
 let Hooks = {
   FlashAutoDisappear,
   HideOnNavigate,
-  SlugInput,
 };
 
 let csrfToken = document
