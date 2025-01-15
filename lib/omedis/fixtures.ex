@@ -112,8 +112,8 @@ defmodule Omedis.Fixtures do
         {:ok, activity} = create_activity(organisation)
         activity.id
       end,
-      dtend: DateTime.add(DateTime.utc_now(), 60, :minute),
-      dtstart: DateTime.utc_now(),
+      dtend: NaiveDateTime.add(NaiveDateTime.utc_now(), 60, :minute),
+      dtstart: NaiveDateTime.utc_now(),
       summary: Faker.Lorem.word(),
       user_id: fn ->
         {:ok, user} = create_user()
