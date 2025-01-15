@@ -340,8 +340,7 @@ defmodule Omedis.AccountsTest do
 
     test "returns paginated organisations the user has access to", %{user: user, group: group} do
       Enum.each(1..15, fn i ->
-        {:ok, organisation} =
-          create_organisation(%{name: "Organisation #{i}", slug: "organisation-#{i}"})
+        {:ok, organisation} = create_organisation(%{name: "Organisation #{i}"})
 
         create_access_right(organisation, %{
           group_id: group.id,

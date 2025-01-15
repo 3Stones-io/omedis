@@ -31,7 +31,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         {:ok, group} =
           create_group(organisation, %{
             user_id: owner.id,
-            slug: "group-#{i}",
             name: "Group #{i}"
           })
 
@@ -48,7 +47,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         {:ok, group} =
           create_group(organisation, %{
             user_id: owner.id,
-            slug: "group-#{i}",
             name: "Group #{i}"
           })
 
@@ -65,7 +63,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
         {:ok, group} =
           create_group(organisation_2, %{
             user_id: another_user.id,
-            slug: "group-#{i}",
             name: "Group #{i}"
           })
 
@@ -114,7 +111,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, group} =
         create_group(organisation, %{
           user_id: owner.id,
-          slug: "group-1",
           name: "Group 1"
         })
 
@@ -155,7 +151,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, group} =
         create_group(organisation, %{
           user_id: owner.id,
-          slug: "group-1",
           name: "Group 1"
         })
 
@@ -196,7 +191,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, group} =
         create_group(organisation, %{
           user_id: owner.id,
-          slug: "group-1",
           name: "Group 1"
         })
 
@@ -223,7 +217,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
              |> render_click() =~ "Edit Group"
 
       assert view
-             |> form("#group-form", group: %{name: "New Group Name", slug: "new-group-name"})
+             |> form("#group-form", group: %{name: "New Group Name"})
              |> render_submit()
 
       assert_patch(view, ~p"/organisations/#{organisation}/groups")
@@ -244,7 +238,6 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, group} =
         create_group(organisation, %{
           user_id: owner.id,
-          slug: "group-1",
           name: "Group 1"
         })
 

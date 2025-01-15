@@ -8,7 +8,7 @@ defmodule Omedis.Accounts.User.Checks.CanDeleteAccount do
   import Ash.Query
 
   alias Omedis.Accounts.Organisation
-  alias Omedis.Groups.Group
+  alias Omedis.Groups
   alias Omedis.Groups.GroupMembership
 
   def describe(_options), do: "User can delete their own account"
@@ -23,7 +23,7 @@ defmodule Omedis.Accounts.User.Checks.CanDeleteAccount do
     organisation = owner_organisation(actor)
 
     admin_group =
-      Group.by_slug!("administrators", actor: actor, tenant: organisation)
+      Groups.get_group_by_slug!("administrators", actor: actor, tenant: organisation)
 
     admin_group_membership_count =
       GroupMembership

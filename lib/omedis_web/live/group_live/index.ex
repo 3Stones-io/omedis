@@ -1,6 +1,7 @@
 defmodule OmedisWeb.GroupLive.Index do
   use OmedisWeb, :live_view
 
+  alias Omedis.Groups
   alias Omedis.Groups.Group
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
@@ -37,7 +38,11 @@ defmodule OmedisWeb.GroupLive.Index do
           <:actions>
             <.link
               :if={
-                Ash.can?({Group, :create}, @current_user, actor: @current_user, tenant: @organisation)
+                Ash.can?({Group, :create}, @current_user,
+                  actor: @current_user,
+                  tenant: @organisation,
+                  domain: Groups
+                )
               }
               patch={~p"/organisations/#{@organisation}/groups/new"}
             >
@@ -57,10 +62,6 @@ defmodule OmedisWeb.GroupLive.Index do
         >
           <:col :let={{_id, group}} label={dgettext("group", "Name")}>
             {group.name}
-          </:col>
-
-          <:col :let={{_id, group}} label={dgettext("group", "Slug")}>
-            {group.slug}
           </:col>
 
           <:col :let={{_id, group}} label={dgettext("group", "Actions")}>
@@ -136,7 +137,7 @@ defmodule OmedisWeb.GroupLive.Index do
 
   defp apply_action(socket, :edit, %{"group_slug" => group_slug}) do
     group =
-      Group.by_slug!(group_slug,
+      Groups.get_group_by_slug!(group_slug,
         actor: socket.assigns.current_user,
         tenant: socket.assigns.organisation
       )
@@ -164,6 +165,7 @@ defmodule OmedisWeb.GroupLive.Index do
   defp apply_action(socket, :new, _params) do
     if Ash.can?({Group, :create}, socket.assigns.current_user,
          actor: socket.assigns.current_user,
+         domain: Groups,
          tenant: socket.assigns.organisation
        ) do
       socket
@@ -190,7 +192,7 @@ defmodule OmedisWeb.GroupLive.Index do
     )
     |> assign(:group, nil)
     |> PaginationUtils.list_paginated(params, :groups, fn offset ->
-      Group.by_organisation_id(
+      Groups.get_group_by_organisation_id(
         %{organisation_id: socket.assigns.organisation.id},
         actor: socket.assigns.current_user,
         page: [count: true, offset: offset],
@@ -211,7 +213,7 @@ defmodule OmedisWeb.GroupLive.Index do
          actor: socket.assigns.current_user,
          tenant: socket.assigns.organisation
        ) do
-      Group.destroy(group,
+      Groups.destroy_group(group,
         actor: socket.assigns.current_user,
         tenant: socket.assigns.organisation
       )

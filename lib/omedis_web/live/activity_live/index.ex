@@ -2,7 +2,7 @@ defmodule OmedisWeb.ActivityLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.Accounts.Organisation
-  alias Omedis.Groups.Group
+  alias Omedis.Groups
   alias Omedis.Projects
   alias Omedis.TimeTracking
   alias Omedis.TimeTracking.Activity
@@ -184,8 +184,8 @@ defmodule OmedisWeb.ActivityLive.Index do
   def handle_params(%{"group_slug" => group_slug} = params, _url, socket) do
     actor = socket.assigns.current_user
     organisation = socket.assigns.organisation
-    group = Group.by_slug!(group_slug, actor: actor, tenant: organisation)
-    groups = Ash.read!(Group, actor: actor, tenant: organisation)
+    group = Groups.get_group_by_slug!(group_slug, actor: actor, tenant: organisation)
+    groups = Groups.get_groups!(actor: actor, tenant: organisation)
 
     projects =
       Projects.get_project_by_organisation_id!(%{organisation_id: organisation.id},

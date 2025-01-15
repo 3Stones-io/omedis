@@ -84,7 +84,7 @@ get_organisation = fn owner_id ->
 end
 
 %{records: [denis, ben, tim], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.User,
     [
       # Spitex Bemeda
@@ -109,7 +109,7 @@ end
         last_name: "Davis"
       }
     ],
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 organisation_1 = get_organisation.(denis.id)
@@ -238,8 +238,8 @@ organisation_3 = get_organisation.(tim.id)
   bulk_create.(
     Groups.Group,
     [
-      %{name: "Demo Group", slug: "demo-group"},
-      %{name: "Demo Group 2", slug: "demo-group2"}
+      %{name: "Demo Group"},
+      %{name: "Demo Group 2"}
     ],
     tenant: organisation_1,
     upsert_identity: :unique_slug_per_organisation
@@ -249,7 +249,7 @@ organisation_3 = get_organisation.(tim.id)
   bulk_create.(
     Groups.Group,
     [
-      %{name: "Security Team", slug: "security-team"}
+      %{name: "Security Team"}
     ],
     tenant: organisation_2,
     upsert_identity: :unique_slug_per_organisation
@@ -259,7 +259,7 @@ organisation_3 = get_organisation.(tim.id)
   bulk_create.(
     Groups.Group,
     [
-      %{name: "Development Team", slug: "dev-team"}
+      %{name: "Development Team"}
     ],
     tenant: organisation_3,
     upsert_identity: :unique_slug_per_organisation
@@ -326,40 +326,35 @@ organisation_3 = get_organisation.(tim.id)
         project_id: medical_support.id,
         name: "Visit Patient",
         color_code: "#FF0000",
-        is_default: true,
-        slug: "visit-patient"
+        is_default: true
       },
       %{
         group_id: group_1.id,
         project_id: medical_support.id,
         name: "Drive to Patient",
         color_code: "#00FF00",
-        is_default: false,
-        slug: "drive-to-patient"
+        is_default: false
       },
       %{
         group_id: group_1.id,
         project_id: medical_support.id,
         name: "Administer Medication",
         color_code: "#0000FF",
-        is_default: false,
-        slug: "administer-medication"
+        is_default: false
       },
       %{
         group_id: group_1.id,
         project_id: medical_support.id,
         name: "Follow-Up Visit",
         color_code: "#FF00FF",
-        is_default: false,
-        slug: "follow-up-visit"
+        is_default: false
       },
       %{
         group_id: group_1.id,
         project_id: medical_support.id,
         name: "Health Assessment",
         color_code: "#FFFF00",
-        is_default: false,
-        slug: "health-assessment"
+        is_default: false
       }
     ],
     tenant: organisation_1,
@@ -384,40 +379,35 @@ organisation_3 = get_organisation.(tim.id)
         project_id: security_operations.id,
         name: "Surveillance - Building",
         color_code: "#FF0000",
-        is_default: true,
-        slug: "surveillance-building"
+        is_default: true
       },
       %{
         group_id: security_group.id,
         project_id: security_operations.id,
         name: "Drive to Building",
         color_code: "#00FF00",
-        is_default: false,
-        slug: "drive-to-building"
+        is_default: false
       },
       %{
         group_id: security_group.id,
         project_id: security_operations.id,
         name: "Incident Reporting",
         color_code: "#0000FF",
-        is_default: false,
-        slug: "incident-reporting"
+        is_default: false
       },
       %{
         group_id: security_group.id,
         project_id: security_operations.id,
         name: "Guard Assignment",
         color_code: "#FF00FF",
-        is_default: false,
-        slug: "guard-assignment"
+        is_default: false
       },
       %{
         group_id: security_group.id,
         project_id: security_operations.id,
         name: "Alarm Response",
         color_code: "#FFFF00",
-        is_default: false,
-        slug: "alarm-response"
+        is_default: false
       }
     ],
     tenant: organisation_2,
@@ -436,40 +426,35 @@ organisation_3 = get_organisation.(tim.id)
         project_id: software_development.id,
         name: "UI Design",
         color_code: "#FF0000",
-        is_default: true,
-        slug: "ui-design"
+        is_default: true
       },
       %{
         group_id: dev_group.id,
         project_id: software_development.id,
         name: "Modeling",
         color_code: "#00FF00",
-        is_default: false,
-        slug: "modeling"
+        is_default: false
       },
       %{
         group_id: dev_group.id,
         project_id: software_development.id,
         name: "Code Review",
         color_code: "#0000FF",
-        is_default: false,
-        slug: "code-review"
+        is_default: false
       },
       %{
         group_id: dev_group.id,
         project_id: software_development.id,
         name: "Talking to Devs",
         color_code: "#FF00FF",
-        is_default: false,
-        slug: "talking-to-devs"
+        is_default: false
       },
       %{
         group_id: dev_group.id,
         project_id: software_development.id,
         name: "Testing Features",
         color_code: "#FFFF00",
-        is_default: false,
-        slug: "testing-features"
+        is_default: false
       }
     ],
     tenant: organisation_3,

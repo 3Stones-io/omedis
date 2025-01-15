@@ -24,12 +24,6 @@ defmodule Omedis.Groups.GroupMembership do
     end
   end
 
-  code_interface do
-    define :create
-    define :read
-    define :destroy
-  end
-
   actions do
     defaults [:read, :destroy]
 

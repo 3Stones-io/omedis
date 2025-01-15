@@ -64,10 +64,9 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
 
   defp create_admins_group(organisation, opts) do
     {:ok, administrators_group} =
-      Groups.Group.create(
+      Groups.create_group(
         %{
           name: "Administrators",
-          slug: "administrators",
           user_id: organisation.owner_id
         },
         opts ++
@@ -78,7 +77,7 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
       )
 
     {:ok, _} =
-      Groups.GroupMembership.create(
+      Groups.create_group_membership(
         %{
           group_id: administrators_group.id,
           user_id: organisation.owner_id
@@ -95,10 +94,9 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
 
   defp create_users_group(organisation, opts) do
     {:ok, users_group} =
-      Groups.Group.create(
+      Groups.create_group(
         %{
           name: "Users",
-          slug: "users",
           user_id: organisation.owner_id
         },
         opts ++
@@ -199,7 +197,6 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
         TimeTracking.create_activity(
           %{
             name: "Miscellaneous",
-            slug: "miscellaneous",
             group_id: users_group.id,
             project_id: project.id,
             is_default: true,

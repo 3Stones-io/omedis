@@ -23,15 +23,6 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           field={@form[:name]}
           type="text"
           label={Phoenix.HTML.raw("Name  <span class='text-red-600'>*</span>")}
-          phx-change={JS.push("generate-slug", value: %{"name" => input_value(@form, :name)})}
-        />
-
-        <.input
-          field={@form[:slug]}
-          type="text"
-          label={Phoenix.HTML.raw("Slug <span class='text-red-600'>*</span>")}
-          id="activity-slug"
-          phx-hook="SlugInput"
         />
 
         <%= if @group.id do %>
@@ -155,18 +146,6 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
       AshPhoenix.Form.validate(socket.assigns.form, activity_params)
 
     {:noreply, assign(socket, form: form)}
-  end
-
-  def handle_event("generate-slug", %{"activity" => %{"name" => name}}, socket) do
-    slug =
-      name
-      |> String.trim()
-      |> Slug.slugify()
-
-    {:noreply,
-     socket
-     |> assign(:form, AshPhoenix.Form.validate(socket.assigns.form, %{"name" => name}))
-     |> push_event("update-slug", %{"slug" => slug})}
   end
 
   def handle_event("toggle_color_mode", _params, socket) do

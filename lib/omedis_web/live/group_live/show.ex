@@ -1,6 +1,6 @@
 defmodule OmedisWeb.GroupLive.Show do
   use OmedisWeb, :live_view
-  alias Omedis.Groups.Group
+  alias Omedis.Groups
 
   on_mount {OmedisWeb.LiveHelpers, :assign_and_broadcast_current_organisation}
 
@@ -40,9 +40,6 @@ defmodule OmedisWeb.GroupLive.Show do
         <.list>
           <:item title={dgettext("group", "Name")}>
             {@group.name}
-          </:item>
-          <:item title={dgettext("group", "Slug")}>
-            {@group.slug}
           </:item>
         </.list>
 
@@ -87,7 +84,7 @@ defmodule OmedisWeb.GroupLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(
        :group,
-       Group.by_slug!(group_slug,
+       Groups.get_group_by_slug!(group_slug,
          actor: socket.assigns.current_user,
          tenant: socket.assigns.organisation
        )
