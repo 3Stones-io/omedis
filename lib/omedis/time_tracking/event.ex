@@ -127,8 +127,8 @@ defmodule Omedis.TimeTracking.Event do
   pub_sub do
     module OmedisWeb.Endpoint
 
-    publish :create, [:organisation_id, "events"]
-    publish :update, [:organisation_id, "events"]
+    publish :create, [:activity_id, "events"]
+    publish :update, [:activity_id, "events"]
   end
 
   validations do

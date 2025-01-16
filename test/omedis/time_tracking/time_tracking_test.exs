@@ -885,7 +885,7 @@ defmodule Omedis.TimeTrackingTest do
       organisation: organisation,
       owner: owner
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("#{organisation.id}:events")
+      :ok = OmedisWeb.Endpoint.subscribe("#{activity.id}:events")
 
       attrs =
         TimeTracking.Event
@@ -901,7 +901,7 @@ defmodule Omedis.TimeTrackingTest do
         topic: topic
       }
 
-      assert topic == "#{organisation.id}:events"
+      assert topic == "#{activity.id}:events"
     end
 
     test "authorized user can create an event", %{
@@ -1668,7 +1668,7 @@ defmodule Omedis.TimeTrackingTest do
       organisation: organisation,
       owner: owner
     } do
-      :ok = OmedisWeb.Endpoint.subscribe("#{organisation.id}:events")
+      :ok = OmedisWeb.Endpoint.subscribe("#{activity.id}:events")
 
       {:ok, event} =
         create_event(
@@ -1692,7 +1692,7 @@ defmodule Omedis.TimeTrackingTest do
         topic: topic
       }
 
-      assert topic == "#{organisation.id}:events"
+      assert topic == "#{activity.id}:events"
     end
 
     test "unauthorized user cannot update an event", %{

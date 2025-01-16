@@ -84,7 +84,7 @@ defmodule OmedisWeb.EventLive.Index do
       |> Ash.load(:group, authorize?: false)
 
     if connected?(socket) do
-      :ok = Endpoint.subscribe("#{socket.assigns.organisation.id}:events")
+      :ok = Endpoint.subscribe("#{activity.id}:events")
     end
 
     {:noreply,
