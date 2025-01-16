@@ -294,7 +294,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   defp do_stop_event(event, opts) do
     if Ash.can?({event, :update}, opts[:actor], tenant: opts[:tenant]) do
-      {:ok, _event} = TimeTracking.update_event(event, %{dtend: DateTime.utc_now()}, opts)
+      {:ok, _event} = TimeTracking.update_event(event, %{dtend: NaiveDateTime.utc_now()}, opts)
     end
   end
 
@@ -446,7 +446,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
       TimeTracking.create_event(
         %{
           activity_id: activity_id,
-          dtstart: DateTime.utc_now(),
+          dtstart: NaiveDateTime.utc_now(),
           summary: activity.name,
           user_id: opts[:actor].id
         },
