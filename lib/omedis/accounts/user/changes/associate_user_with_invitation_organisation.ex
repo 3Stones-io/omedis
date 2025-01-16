@@ -11,36 +11,31 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitationOrganisation d
   alias Omedis.Accounts
   alias Omedis.Invitations
 
-  def change(%{attributes: %{email: email}} = changeset, _opts, _context) do
-    Ash.Changeset.after_transaction(changeset, fn
-      _changeset, {:ok, user} ->
-        user = maybe_update_current_organisation(email, user)
-
-        {:ok, user}
-
-      _changeset, {:error, error} ->
-        {:error, error}
-    end)
+  def change(
+        %{context: %{invitation_id: invitation_id}} = changeset,
+        _opts,
+        _context
+      )
+      when not is_nil(invitation_id) do
+    Ash.Changeset.before_action(
+      changeset,
+      fn changeset -> maybe_update_user_current_organisation(changeset, invitation_id) end,
+      prepend?: true
+    )
   end
 
   def change(changeset, _opts, _context), do: changeset
 
-  defp maybe_update_current_organisation(email, user) do
-    case get_invitation(email) do
-      {:ok, invitation} ->
-        Accounts.update_user!(user, %{current_organisation_id: invitation.organisation_id},
-          authorize?: false
-        )
+  defp maybe_update_user_current_organisation(changeset, invitation_id) do
+    {:ok, invitation} = Invitations.get_invitation_by_id(invitation_id, authorize?: false)
 
-      _ ->
-        user
-    end
-  end
+    {:ok, organisation} =
+      Accounts.get_organisation_by_id(invitation.organisation_id, authorize?: false)
 
-  defp get_invitation(email) do
-    Invitations.Invitation
-    |> Ash.Query.filter(email: email)
-    |> Ash.Query.filter(expires_at > ^DateTime.utc_now())
-    |> Ash.read(authorize?: false)
+    Ash.Changeset.force_change_attributes(changeset, %{
+      current_organisation_id: organisation.id,
+      daily_start_at: organisation.default_daily_start_at,
+      daily_end_at: organisation.default_daily_end_at
+    })
   end
 end
