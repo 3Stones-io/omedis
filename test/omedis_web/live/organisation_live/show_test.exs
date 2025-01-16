@@ -222,6 +222,58 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       assert is_nil(event.dtend)
     end
 
+    test "timer does not count negative values", %{
+      conn: conn,
+      organisation: organisation,
+      user: user,
+      project: project,
+      group: group
+    } do
+      today = NaiveDateTime.utc_now()
+      start_time = NaiveDateTime.shift(today, hour: -23)
+
+      {:ok, activity} =
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Test Activity",
+          color_code: "#FF0340"
+        })
+
+      {:ok, _event} =
+        create_event(
+          organisation,
+          %{
+            activity_id: activity.id,
+            dtstart: start_time,
+            dtend: nil,
+            user_id: user.id
+          },
+          actor: user
+        )
+
+      pubsub_topics_unique_id = Ash.UUID.generate()
+
+      :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+
+      {:ok, organisation_live_view, _html} =
+        conn
+        |> put_session("pubsub_topics_unique_id", pubsub_topics_unique_id)
+        |> live(~p"/organisations/#{organisation}")
+
+      # Wait for TimeTrackerLiveView to receive organisation assigns
+      wait_until(fn ->
+        html = render(organisation_live_view)
+        assert html =~ ~s/<span id="time-tracker-elapsed-time">/
+        refute html =~ "00:00:00"
+      end)
+
+      assert organisation_live_view
+             |> element("#time-tracker-elapsed-time")
+             |> render() =~ ~r/-{0}23:00:\d{2}/
+    end
+
     test "infinite scroll works in both directions", %{
       conn: conn,
       group: group,

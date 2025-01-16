@@ -43,7 +43,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                 style={"background-color: #{current_activity.color_code}"}
               >
               </div>
-              {@elapsed_time}
+              <span id="time-tracker-elapsed-time">{@elapsed_time}</span>
             </div>
           </div>
         </.async_result>
