@@ -6,7 +6,8 @@ defmodule Omedis.TimeTracking.Event do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    domain: Omedis.TimeTracking
+    domain: Omedis.TimeTracking,
+    notifiers: [Ash.Notifier.PubSub]
 
   postgres do
     table "events"
@@ -121,6 +122,13 @@ defmodule Omedis.TimeTracking.Event do
     policy action_type([:create, :update]) do
       authorize_if Omedis.AccessRights.AccessRight.Checks.CanAccessResource
     end
+  end
+
+  pub_sub do
+    module OmedisWeb.Endpoint
+
+    publish :create, [:activity_id, "events"]
+    publish :update, [:activity_id, "events"]
   end
 
   validations do

@@ -2,6 +2,7 @@ defmodule OmedisWeb.EventLive.Index do
   use OmedisWeb, :live_view
 
   alias Omedis.TimeTracking
+  alias OmedisWeb.Endpoint
   alias OmedisWeb.PaginationComponent
   alias OmedisWeb.PaginationUtils
 
@@ -82,11 +83,22 @@ defmodule OmedisWeb.EventLive.Index do
       )
       |> Ash.load(:group, authorize?: false)
 
+    if connected?(socket) do
+      :ok = Endpoint.subscribe("#{activity.id}:events")
+    end
+
     {:noreply,
      socket
      |> assign(:activity, activity)
      |> assign(:group, activity.group)
      |> apply_action(socket.assigns.live_action, params)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(%Phoenix.Socket.Broadcast{event: event} = broadcast, socket)
+      when event in ["create", "update"] do
+    event = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :events, event)}
   end
 
   defp apply_action(socket, :index, params) do
