@@ -127,8 +127,8 @@ defmodule Omedis.TimeTracking.Event do
   pub_sub do
     module OmedisWeb.Endpoint
 
-    publish :create, [:activity_id, "events"]
-    publish :update, [:activity_id, "events"]
+    publish :create, [:organisation_id, "events"]
+    publish :update, [:organisation_id, "events"]
   end
 
   validations do
@@ -176,5 +176,3 @@ defmodule Omedis.TimeTracking.Event do
               {Omedis.TimeTracking.Event.Calculations.CalculateDuration, [:dtend, :dtstart]}
   end
 end
-
-# Should be on created and update(eg when dtend is updated)

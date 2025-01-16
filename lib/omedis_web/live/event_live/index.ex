@@ -84,7 +84,7 @@ defmodule OmedisWeb.EventLive.Index do
       |> Ash.load(:group, authorize?: false)
 
     if connected?(socket) do
-      :ok = Endpoint.subscribe("#{activity.id}:events")
+      :ok = Endpoint.subscribe("#{socket.assigns.organisation.id}:events")
     end
 
     {:noreply,
@@ -94,15 +94,11 @@ defmodule OmedisWeb.EventLive.Index do
      |> apply_action(socket.assigns.live_action, params)}
   end
 
-  @impl true
-  def handle_info(%Phoenix.Socket.Broadcast{event: "create"} = broadcast, socket) do
-    new_event = Map.get(broadcast.payload, :data)
-    {:noreply, stream_insert(socket, :events, new_event)}
-  end
-
-  def handle_info(%Phoenix.Socket.Broadcast{event: "update"} = broadcast, socket) do
-    updated_event = Map.get(broadcast.payload, :data)
-    {:noreply, stream_insert(socket, :events, updated_event)}
+  @impl Phoenix.LiveView
+  def handle_info(%Phoenix.Socket.Broadcast{event: event} = broadcast, socket)
+      when event in ["create", "update"] do
+    event = Map.get(broadcast.payload, :data)
+    {:noreply, stream_insert(socket, :events, event)}
   end
 
   defp apply_action(socket, :index, params) do
