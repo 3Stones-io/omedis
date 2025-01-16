@@ -64,10 +64,6 @@ defmodule OmedisWeb.GroupLive.Index do
             {group.name}
           </:col>
 
-          <:col :let={{_id, group}} label={dgettext("group", "Slug")}>
-            {group.slug}
-          </:col>
-
           <:col :let={{_id, group}} label={dgettext("group", "Actions")}>
             <div class="flex gap-4">
               <.link

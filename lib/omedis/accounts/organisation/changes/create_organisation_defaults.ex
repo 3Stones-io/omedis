@@ -67,7 +67,6 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
       Groups.create_group(
         %{
           name: "Administrators",
-          slug: "administrators",
           user_id: organisation.owner_id
         },
         opts ++
@@ -98,7 +97,6 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
       Groups.create_group(
         %{
           name: "Users",
-          slug: "users",
           user_id: organisation.owner_id
         },
         opts ++
@@ -199,7 +197,6 @@ defmodule Omedis.Accounts.Organisation.Changes.CreateOrganisationDefaults do
         TimeTracking.create_activity(
           %{
             name: "Miscellaneous",
-            slug: "miscellaneous",
             group_id: users_group.id,
             project_id: project.id,
             is_default: true,

@@ -33,10 +33,10 @@ defmodule Omedis.TimeTracking.Activity do
         :group_id,
         :is_default,
         :project_id,
-        :name,
-        :slug
+        :name
       ]
 
+      change Omedis.MaybeSlugifyName
       change Omedis.TimeTracking.Activity.Changes.NewActivityPosition
       change Omedis.TimeTracking.Activity.Changes.SetDefaultActivity
 
@@ -50,10 +50,10 @@ defmodule Omedis.TimeTracking.Activity do
         :group_id,
         :project_id,
         :color_code,
-        :position,
-        :slug
+        :position
       ]
 
+      change Omedis.MaybeSlugifyName
       change Omedis.TimeTracking.Activity.Changes.SetDefaultActivity
 
       primary? true

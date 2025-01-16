@@ -71,8 +71,7 @@ defmodule Omedis.Fixtures do
 
   def attrs_for(Groups.Group, _organisation) do
     %{
-      name: Faker.Company.name(),
-      slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}"
+      name: Faker.Company.name()
     }
   end
 
@@ -101,8 +100,7 @@ defmodule Omedis.Fixtures do
       project_id: fn ->
         {:ok, project} = create_project(organisation)
         project.id
-      end,
-      slug: Faker.Lorem.word() <> "-#{Faker.random_between(1000, 9999)}"
+      end
     }
   end
 
@@ -112,8 +110,8 @@ defmodule Omedis.Fixtures do
         {:ok, activity} = create_activity(organisation)
         activity.id
       end,
-      dtend: DateTime.add(DateTime.utc_now(), 60, :minute),
-      dtstart: DateTime.utc_now(),
+      dtend: NaiveDateTime.add(NaiveDateTime.utc_now(), 60, :minute),
+      dtstart: NaiveDateTime.utc_now(),
       summary: Faker.Lorem.word(),
       user_id: fn ->
         {:ok, user} = create_user()
@@ -157,7 +155,6 @@ defmodule Omedis.Fixtures do
         {:ok, user} = create_user()
         user.id
       end,
-      slug: Faker.Lorem.word() <> "-#{Ecto.UUID.generate()}",
       street: Faker.Address.street_address(),
       zip_code: Faker.Address.zip_code()
     }

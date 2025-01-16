@@ -84,7 +84,7 @@ get_organisation = fn owner_id ->
 end
 
 %{records: [denis, ben, tim], status: :success} =
-  bulk_create.(
+  sequential_create.(
     Accounts.User,
     [
       # Spitex Bemeda
@@ -109,7 +109,7 @@ end
         last_name: "Davis"
       }
     ],
-    upsert_identity: :unique_email
+    existence_check_keys: [:email]
   )
 
 organisation_1 = get_organisation.(denis.id)
@@ -238,8 +238,8 @@ organisation_3 = get_organisation.(tim.id)
   bulk_create.(
     Groups.Group,
     [
-      %{name: "Demo Group", slug: "demo-group"},
-      %{name: "Demo Group 2", slug: "demo-group2"}
+      %{name: "Demo Group"},
+      %{name: "Demo Group 2"}
     ],
     tenant: organisation_1,
     upsert_identity: :unique_slug_per_organisation
@@ -249,7 +249,7 @@ organisation_3 = get_organisation.(tim.id)
   bulk_create.(
     Groups.Group,
     [
-      %{name: "Security Team", slug: "security-team"}
+      %{name: "Security Team"}
     ],
     tenant: organisation_2,
     upsert_identity: :unique_slug_per_organisation
@@ -259,7 +259,7 @@ organisation_3 = get_organisation.(tim.id)
   bulk_create.(
     Groups.Group,
     [
-      %{name: "Development Team", slug: "dev-team"}
+      %{name: "Development Team"}
     ],
     tenant: organisation_3,
     upsert_identity: :unique_slug_per_organisation
@@ -326,40 +326,35 @@ organisation_3 = get_organisation.(tim.id)
         project_id: medical_support.id,
         name: "Visit Patient",
         color_code: "#FF0000",
-        is_default: true,
-        slug: "visit-patient"
+        is_default: true
       },
       %{
         group_id: group_1.id,
         project_id: medical_support.id,
         name: "Drive to Patient",
         color_code: "#00FF00",
-        is_default: false,
-        slug: "drive-to-patient"
+        is_default: false
       },
       %{
         group_id: group_1.id,
         project_id: medical_support.id,
         name: "Administer Medication",
         color_code: "#0000FF",
-        is_default: false,
-        slug: "administer-medication"
+        is_default: false
       },
       %{
         group_id: group_1.id,
         project_id: medical_support.id,
         name: "Follow-Up Visit",
         color_code: "#FF00FF",
-        is_default: false,
-        slug: "follow-up-visit"
+        is_default: false
       },
       %{
         group_id: group_1.id,
         project_id: medical_support.id,
         name: "Health Assessment",
         color_code: "#FFFF00",
-        is_default: false,
-        slug: "health-assessment"
+        is_default: false
       }
     ],
     tenant: organisation_1,
@@ -384,40 +379,35 @@ organisation_3 = get_organisation.(tim.id)
         project_id: security_operations.id,
         name: "Surveillance - Building",
         color_code: "#FF0000",
-        is_default: true,
-        slug: "surveillance-building"
+        is_default: true
       },
       %{
         group_id: security_group.id,
         project_id: security_operations.id,
         name: "Drive to Building",
         color_code: "#00FF00",
-        is_default: false,
-        slug: "drive-to-building"
+        is_default: false
       },
       %{
         group_id: security_group.id,
         project_id: security_operations.id,
         name: "Incident Reporting",
         color_code: "#0000FF",
-        is_default: false,
-        slug: "incident-reporting"
+        is_default: false
       },
       %{
         group_id: security_group.id,
         project_id: security_operations.id,
         name: "Guard Assignment",
         color_code: "#FF00FF",
-        is_default: false,
-        slug: "guard-assignment"
+        is_default: false
       },
       %{
         group_id: security_group.id,
         project_id: security_operations.id,
         name: "Alarm Response",
         color_code: "#FFFF00",
-        is_default: false,
-        slug: "alarm-response"
+        is_default: false
       }
     ],
     tenant: organisation_2,
@@ -436,40 +426,35 @@ organisation_3 = get_organisation.(tim.id)
         project_id: software_development.id,
         name: "UI Design",
         color_code: "#FF0000",
-        is_default: true,
-        slug: "ui-design"
+        is_default: true
       },
       %{
         group_id: dev_group.id,
         project_id: software_development.id,
         name: "Modeling",
         color_code: "#00FF00",
-        is_default: false,
-        slug: "modeling"
+        is_default: false
       },
       %{
         group_id: dev_group.id,
         project_id: software_development.id,
         name: "Code Review",
         color_code: "#0000FF",
-        is_default: false,
-        slug: "code-review"
+        is_default: false
       },
       %{
         group_id: dev_group.id,
         project_id: software_development.id,
         name: "Talking to Devs",
         color_code: "#FF00FF",
-        is_default: false,
-        slug: "talking-to-devs"
+        is_default: false
       },
       %{
         group_id: dev_group.id,
         project_id: software_development.id,
         name: "Testing Features",
         color_code: "#FFFF00",
-        is_default: false,
-        slug: "testing-features"
+        is_default: false
       }
     ],
     tenant: organisation_3,
@@ -477,37 +462,129 @@ organisation_3 = get_organisation.(tim.id)
   )
 
 # Helper functions for relative dates
-today = DateTime.utc_now() |> DateTime.truncate(:second)
-days_from_today = fn days -> DateTime.add(today, days * 86400, :second) end
+today =
+  NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second) |> NaiveDateTime.beginning_of_day()
+
+days_from_today = fn days -> NaiveDateTime.shift(today, day: days) end
 
 time_on_day = fn date, hour, minute ->
-  date
-  |> DateTime.add(hour * 3600 + minute * 60, :second)
-  |> DateTime.truncate(:second)
+  NaiveDateTime.shift(date, hour: hour, minute: minute)
 end
 
-# Events for Spitex Bemeda
-%{records: _medical_events, status: :success} =
+# Additional events for Spitex Bemeda with varied durations over two weeks
+%{records: _additional_medical_events, status: :success} =
   sequential_create.(
     TimeTracking.Event,
     [
+      # Oldest events first (Week 2)
+      %{
+        activity_id: administer_medication.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-9), 8, 15),
+        dtend: time_on_day.(days_from_today.(-9), 8, 45),
+        summary: "Morning medication round"
+      },
+      %{
+        activity_id: follow_up_visit.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-9), 9, 0),
+        dtend: time_on_day.(days_from_today.(-9), 9, 5),
+        summary: "Quick check-in call"
+      },
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-9), 10, 0),
+        dtend: time_on_day.(days_from_today.(-9), 11, 45),
+        summary: "Patient documentation"
+      },
+      # Day -8 events
       %{
         activity_id: visit_patient.id,
         user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(2), 8, 0),
-        dtend: time_on_day.(days_from_today.(2), 9, 30),
-        summary: "Morning patient visit - Frau Schmidt"
+        dtstart: time_on_day.(days_from_today.(-8), 8, 0),
+        dtend: time_on_day.(days_from_today.(-8), 8, 10),
+        summary: "Quick medication check"
+      },
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-8), 10, 30),
+        dtend: time_on_day.(days_from_today.(-8), 12, 30),
+        summary: "Extended care session - Frau Schmidt"
+      },
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-8), 12, 31),
+        dtend: time_on_day.(days_from_today.(-8), 13, 30),
+        summary: "Vital signs check - Herr Weber"
+      },
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-8), 13, 31),
+        dtend: time_on_day.(days_from_today.(-8), 14, 30),
+        summary: "Afternoon rounds"
+      },
+      # Day -7 events
+      %{
+        activity_id: health_assessment.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-7), 8, 30),
+        dtend: time_on_day.(days_from_today.(-7), 11, 30),
+        summary: "Complex care case"
+      },
+      # Day -6 events
+      %{
+        activity_id: follow_up_visit.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-6), 9, 0),
+        dtend: time_on_day.(days_from_today.(-6), 9, 45),
+        summary: "Team meeting"
+      },
+      %{
+        activity_id: follow_up_visit.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-6), 10, 0),
+        dtend: time_on_day.(days_from_today.(-6), 10, 2),
+        summary: "Quick phone call"
+      },
+      # Day -5 events
+      %{
+        activity_id: visit_patient.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-5), 8, 0),
+        dtend: time_on_day.(days_from_today.(-5), 11, 0),
+        summary: "Morning patient visits"
       },
       %{
         activity_id: administer_medication.id,
-        user_id: heidi.id,
-        dtstart: time_on_day.(days_from_today.(2), 10, 0),
-        dtend: time_on_day.(days_from_today.(2), 11, 0),
-        summary: "Medication administration - Herr Meier"
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-5), 13, 0),
+        dtend: time_on_day.(days_from_today.(-5), 13, 15),
+        summary: "Medication review"
       }
     ],
     actor: denis,
     tenant: organisation_1,
+    existence_check_keys: [:summary]
+  )
+
+%{records: _dev_events, status: :success} =
+  sequential_create.(
+    TimeTracking.Event,
+    [
+      %{
+        activity_id: ui_design.id,
+        user_id: denis.id,
+        dtstart: time_on_day.(days_from_today.(-3), 9, 0),
+        dtend: time_on_day.(days_from_today.(-3), 10, 30),
+        summary: "Sprint Planning Meeting"
+      }
+    ],
+    actor: tim,
+    tenant: organisation_3,
     existence_check_keys: [:summary]
   )
 
@@ -519,8 +596,8 @@ end
       %{
         activity_id: surveillance_building.id,
         user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(2), 20, 0),
-        dtend: time_on_day.(days_from_today.(3), 4, 0),
+        dtstart: time_on_day.(days_from_today.(-3), 20, 0),
+        dtend: time_on_day.(days_from_today.(-2), 4, 0),
         summary: "Night shift - Building A"
       }
     ],
@@ -529,114 +606,24 @@ end
     existence_check_keys: [:summary]
   )
 
-# Events for 3Stones
-%{records: _dev_events, status: :success} =
+# Most recent events for Spitex Bemeda
+%{records: _medical_events, status: :success} =
   sequential_create.(
     TimeTracking.Event,
     [
       %{
-        activity_id: ui_design.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(3), 9, 0),
-        dtend: time_on_day.(days_from_today.(3), 10, 30),
-        summary: "Sprint Planning Meeting"
-      }
-    ],
-    actor: tim,
-    tenant: organisation_3,
-    existence_check_keys: [:summary]
-  )
-
-# Additional events for Spitex Bemeda with varied durations over two weeks
-%{records: _additional_medical_events, status: :success} =
-  sequential_create.(
-    TimeTracking.Event,
-    [
-      # Week 1
-      %{
         activity_id: visit_patient.id,
         user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(5), 8, 0),
-        dtend: time_on_day.(days_from_today.(5), 11, 0),
-        summary: "Morning patient visits"
+        dtstart: time_on_day.(days_from_today.(-2), 8, 0),
+        dtend: time_on_day.(days_from_today.(-2), 9, 30),
+        summary: "Morning patient visit - Frau Schmidt"
       },
       %{
         activity_id: administer_medication.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(5), 13, 0),
-        dtend: time_on_day.(days_from_today.(5), 13, 15),
-        summary: "Medication review"
-      },
-      %{
-        activity_id: follow_up_visit.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(6), 9, 0),
-        dtend: time_on_day.(days_from_today.(6), 9, 45),
-        summary: "Team meeting"
-      },
-      %{
-        activity_id: follow_up_visit.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(6), 10, 0),
-        dtend: time_on_day.(days_from_today.(6), 10, 2),
-        summary: "Quick phone call"
-      },
-      %{
-        activity_id: health_assessment.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(7), 8, 30),
-        dtend: time_on_day.(days_from_today.(7), 11, 30),
-        summary: "Complex care case"
-      },
-      # Week 2
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(8), 8, 0),
-        dtend: time_on_day.(days_from_today.(8), 8, 10),
-        summary: "Quick medication check"
-      },
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(8), 10, 30),
-        dtend: time_on_day.(days_from_today.(8), 12, 30),
-        summary: "Extended care session - Frau Schmidt"
-      },
-      %{
-        activity_id: health_assessment.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(8), 12, 31),
-        dtend: time_on_day.(days_from_today.(8), 13, 30),
-        summary: "Vital signs check - Herr Weber"
-      },
-      %{
-        activity_id: visit_patient.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(8), 13, 31),
-        dtend: time_on_day.(days_from_today.(8), 14, 30),
-        summary: "Afternoon rounds"
-      },
-      %{
-        activity_id: administer_medication.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(9), 8, 15),
-        dtend: time_on_day.(days_from_today.(9), 8, 45),
-        summary: "Morning medication round"
-      },
-      %{
-        activity_id: follow_up_visit.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(9), 9, 0),
-        dtend: time_on_day.(days_from_today.(9), 9, 5),
-        summary: "Quick check-in call"
-      },
-      %{
-        activity_id: health_assessment.id,
-        user_id: denis.id,
-        dtstart: time_on_day.(days_from_today.(9), 10, 0),
-        dtend: time_on_day.(days_from_today.(9), 11, 45),
-        summary: "Patient documentation"
+        user_id: heidi.id,
+        dtstart: time_on_day.(days_from_today.(-2), 10, 0),
+        dtend: time_on_day.(days_from_today.(-2), 11, 0),
+        summary: "Medication administration - Herr Meier"
       }
     ],
     actor: denis,

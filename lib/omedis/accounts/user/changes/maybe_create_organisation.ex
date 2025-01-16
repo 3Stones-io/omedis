@@ -27,15 +27,9 @@ defmodule Omedis.Accounts.User.Changes.MaybeCreateOrganisation do
   end
 
   defp create_organisation(user) do
-    organisation_slug =
-      user.email
-      |> Ash.CiString.value()
-      |> Slug.slugify()
-
     Accounts.create_organisation!(
       %{
         name: user.email,
-        slug: organisation_slug,
         owner_id: user.id
       },
       actor: user,

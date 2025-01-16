@@ -320,11 +320,11 @@ defmodule OmedisWeb.OrganisationLive.Today do
   @impl true
   def handle_event("start_activity", %{"activity_id" => activity_id}, socket) do
     if socket.assigns.current_activity_id do
-      event_stop_time = DateTime.add(DateTime.utc_now(), -1, :second)
+      event_stop_time = NaiveDateTime.add(NaiveDateTime.utc_now(), -1, :second)
 
       {:noreply,
        socket
-       |> stop_any_active_event(event_stop_time: event_stop_time)
+       |> stop_any_active_event(event_stop_time)
        |> create_event(activity_id)}
     else
       {:noreply, create_event(socket, activity_id)}
@@ -353,7 +353,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
      )}
   end
 
-  defp stop_any_active_event(socket, event_stop_time \\ DateTime.utc_now()) do
+  defp stop_any_active_event(socket, event_stop_time \\ NaiveDateTime.utc_now()) do
     {:ok, events} =
       TimeTracking.get_events_by_activity_today(
         %{activity_id: socket.assigns.current_activity_id},
@@ -386,7 +386,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
         TimeTracking.create_event(
           %{
             activity_id: activity_id,
-            dtstart: DateTime.utc_now(),
+            dtstart: NaiveDateTime.utc_now(),
             summary: activity.name,
             user_id: user.id
           },
@@ -398,7 +398,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
         Endpoint.broadcast(
           "current_activity_#{socket.assigns.pubsub_topics_unique_id}",
           "event_started",
-          activity
+          Ash.load!(activity, :events, tenant: organisation, actor: user)
         )
 
       assign(socket, :current_activity_id, activity_id)
