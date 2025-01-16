@@ -268,13 +268,6 @@ defmodule OmedisWeb.TimeTracking do
                 </button>
               <% end %>
             </span>
-            <span>
-              <.counter_for_time_taken_by_current_task
-                language={@language}
-                activity={@activity}
-                current_time={@current_time}
-              />
-            </span>
           </p>
         </div>
       </div>
@@ -344,28 +337,6 @@ defmodule OmedisWeb.TimeTracking do
     total_minutes = Time.diff(timeline_end, timeline_start, :minute)
     event_duration = Time.diff(event_end, event_start, :minute)
     event_duration / total_minutes * 100
-  end
-
-  def counter_for_time_taken_by_current_task(assigns) do
-    ~H"""
-    <%= for event <- @activity.events |> Enum.filter(fn x -> x.created_at |> DateTime.to_date == Date.utc_today  end)   do %>
-      <p :if={event.dtend == nil}>
-        {Time.diff(Time.utc_now(), event.dtstart, :minute) |> minutes_to_hhmm()}
-      </p>
-    <% end %>
-    """
-  end
-
-  def minutes_to_hhmm(minutes) do
-    hours = div(minutes, 60)
-    remaining_minutes = rem(minutes, 60)
-
-    # Format to ensure two digits for both hours and minutes
-    formatted_time =
-      :io_lib.format("~2..0B:~2..0B", [hours, remaining_minutes])
-      |> IO.iodata_to_binary()
-
-    "#{formatted_time}"
   end
 
   def select_for_groups_and_project(assigns) do
