@@ -43,7 +43,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
                 style={"background-color: #{current_activity.color_code}"}
               >
               </div>
-              {@elapsed_time}
+              <span id="time-tracker-elapsed-time">{@elapsed_time}</span>
             </div>
           </div>
         </.async_result>
@@ -258,8 +258,8 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
         "00:00:00"
 
       event ->
-        now = Time.utc_now()
-        seconds_diff = Time.diff(now, event.dtstart, :second)
+        now = NaiveDateTime.utc_now()
+        seconds_diff = NaiveDateTime.diff(now, event.dtstart, :second)
         format_elapsed_time(seconds_diff)
     end
   end
