@@ -152,7 +152,7 @@ defmodule OmedisWeb.RegisterTest do
 
       conn = submit_form(form, conn)
 
-      {:ok, _index_live, _html} = live(conn, ~p"/organisations")
+      {:ok, _index_live, _html} = live(conn, ~p"/edit_profile")
 
       assert {:ok, user} = Accounts.get_user_by_email("test@user.com")
 
