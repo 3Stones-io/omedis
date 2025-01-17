@@ -11,6 +11,7 @@ defmodule Omedis.Accounts.User do
 
   alias Omedis.Accounts.User.Changes.AddInvitedUserToInvitationGroups
   alias Omedis.Accounts.User.Changes.AssociateUserWithInvitation
+  alias Omedis.Accounts.User.Changes.AssociateUserWithInvitationOrganisation
   alias Omedis.Accounts.User.Changes.MaybeAddOrganisationDefaults
   alias Omedis.Accounts.User.Changes.MaybeCreateOrganisation
   alias Omedis.Accounts.User.Checks.CanDeleteAccount
@@ -127,6 +128,14 @@ defmodule Omedis.Accounts.User do
     end
 
     change {AddInvitedUserToInvitationGroups, []} do
+      where [action_is(:register_with_password)]
+    end
+
+    change {AssociateUserWithInvitationOrganisation, []} do
+      where [action_is(:create)]
+    end
+
+    change {AssociateUserWithInvitationOrganisation, []} do
       where [action_is(:register_with_password)]
     end
   end

@@ -341,7 +341,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         live(new_conn, ~p"/organisations/#{organisation}/invitations/#{created_invitation.id}")
 
       params = %{
-        "current_organisation_id" => organisation.id,
         "email" => "test001@example.com",
         "password" => "12345678"
       }
@@ -353,7 +352,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
           user: params
         )
 
-      _conn = submit_form(form, new_conn)
+      render_submit(form)
 
       # Verify user was created
       assert {:ok, invited_user} = Accounts.get_user_by_email("test001@example.com")

@@ -30,13 +30,11 @@ defmodule OmedisWeb.InvitationLive.Show do
             </div>
           </div>
         </div>
+
         <.form
           :let={f}
           id="invitation_user_sign_up_form"
           for={@form}
-          action={@action}
-          phx-trigger-action={@trigger_action}
-          method="POST"
           class="space-y-2 group"
           phx-change="validate"
           phx-submit="submit"
@@ -79,17 +77,6 @@ defmodule OmedisWeb.InvitationLive.Show do
               )}
             </div>
           </div>
-          <div class="sm:col-span-3">
-            <div>
-              <.input
-                type="hidden"
-                id="select_organisation"
-                field={f[:current_organisation_id]}
-                value={@organisation.id}
-                required
-              />
-            </div>
-          </div>
         </.form>
       </div>
     </.side_and_topbar>
@@ -117,15 +104,17 @@ defmodule OmedisWeb.InvitationLive.Show do
     updated_params =
       user_params
       |> Map.put("email", socket.assigns.invitation.email)
-      |> Map.put("current_organisation_id", socket.assigns.invitation.organisation_id)
 
-    form = Form.validate(socket.assigns.form, updated_params)
+    case AshPhoenix.Form.submit(socket.assigns.form, params: updated_params) do
+      {:ok, _user} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "User registered successfully")
+         |> redirect(to: ~p"/login")}
 
-    {:noreply,
-     socket
-     |> assign(:form, form)
-     |> assign(:errors, Form.errors(form))
-     |> assign(:trigger_action, form.valid?)}
+      {:error, form} ->
+        {:noreply, assign(socket, form: form)}
+    end
   end
 
   defp apply_action(socket, :show, %{"id" => id}) do
@@ -177,7 +166,8 @@ defmodule OmedisWeb.InvitationLive.Show do
         Accounts.User,
         :register_with_password,
         api: Accounts,
-        as: "user"
+        as: "user",
+        context: %{invitation_id: socket.assigns.invitation.id}
       )
 
     assign(socket, :form, form)

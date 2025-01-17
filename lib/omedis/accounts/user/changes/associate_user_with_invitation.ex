@@ -10,10 +10,33 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
 
   alias Omedis.Invitations
 
-  def change(%{attributes: %{email: email}} = changeset, _opts, _context) do
+  @impl true
+  def change(
+        %{context: %{invitation_id: invitation_id}} = changeset,
+        _opts,
+        _context
+      )
+      when not is_nil(invitation_id) do
     Ash.Changeset.after_transaction(changeset, fn
       _changeset, {:ok, user} ->
-        :ok = maybe_update_invitation(email, user)
+        maybe_update_invitation_by_id(invitation_id, user)
+        {:ok, user}
+
+      _changeset, {:error, error} ->
+        {:error, error}
+    end)
+  end
+
+  @impl true
+  def change(
+        %{attributes: %{email: email}} = changeset,
+        _opts,
+        _context
+      )
+      when not is_nil(email) do
+    Ash.Changeset.after_transaction(changeset, fn
+      _changeset, {:ok, user} ->
+        maybe_update_invitations(email, user)
 
         {:ok, user}
 
@@ -24,24 +47,35 @@ defmodule Omedis.Accounts.User.Changes.AssociateUserWithInvitation do
 
   def change(changeset, _opts, _context), do: changeset
 
-  defp maybe_update_invitation(email, user) do
-    case get_invitation(email) do
+  defp maybe_update_invitation_by_id(invitation_id, user) do
+    case Invitations.get_invitation_by_id(invitation_id, authorize?: false) do
       {:ok, invitation} ->
-        %{status: :success, notifications: notifications} =
-          Invitations.accept_invitation(invitation,
-            actor: user,
-            authorize?: false,
-            return_notifications?: true
-          )
-
-        Enum.each(notifications, &Ash.Notifier.notify/1)
+        Invitations.accept_invitation(invitation,
+          actor: user,
+          authorize?: false
+        )
 
       _ ->
         :ok
     end
   end
 
-  defp get_invitation(email) do
+  defp maybe_update_invitations(email, user) do
+    case get_invitations(email) do
+      {:ok, invitations} ->
+        Enum.each(invitations, fn invitation ->
+          Invitations.accept_invitation(invitation,
+            actor: user,
+            authorize?: false
+          )
+        end)
+
+      _ ->
+        :ok
+    end
+  end
+
+  defp get_invitations(email) do
     Invitations.Invitation
     |> Ash.Query.filter(email: email)
     |> Ash.Query.filter(expires_at > ^DateTime.utc_now())
