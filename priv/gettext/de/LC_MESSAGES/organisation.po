@@ -23,11 +23,6 @@ msgstr "Kontonummer"
 msgid "Additional Info"
 msgstr "Zusätzliche Informationen"
 
-#: lib/omedis_web/live/organisation_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Back to organisations"
-msgstr "Zurück zu Organisationen"
-
 #: lib/omedis_web/live/organisation_live/form_component.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
@@ -35,21 +30,18 @@ msgid "Bank"
 msgstr "Bank"
 
 #: lib/omedis_web/live/organisation_live/form_component.ex
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Canton"
 msgstr "Kanton"
 
 #: lib/omedis_web/live/organisation_live/form_component.ex
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "City"
 msgstr "Stadt"
 
 #: lib/omedis_web/live/organisation_live/form_component.ex
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Country"
@@ -70,12 +62,6 @@ msgstr "Täglicher Beginn um"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: lib/omedis_web/live/organisation_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Edit Organisation"
@@ -108,13 +94,7 @@ msgstr "Gruppen"
 msgid "Invitations"
 msgstr "Einladungen"
 
-#: lib/omedis_web/live/organisation_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Listing Organisations"
-msgstr "Organisationen auflisten"
-
 #: lib/omedis_web/live/organisation_live/form_component.ex
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Name"
@@ -166,18 +146,12 @@ msgstr "Projekt auswählen"
 msgid "Select group and project"
 msgstr "Gruppe und Projekt auswählen"
 
-#: lib/omedis_web/live/organisation_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Show"
-msgstr "Anzeigen"
-
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Show Organisation"
 msgstr "Organisation anzeigen"
 
 #: lib/omedis_web/live/organisation_live/form_component.ex
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Street"
@@ -211,7 +185,6 @@ msgstr "Handelsregisternummer"
 msgid "Website"
 msgstr "Webseite"
 
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page"
@@ -274,7 +247,6 @@ msgid "ZSR Number"
 msgstr "ZSR-Nummer"
 
 #: lib/omedis_web/live/organisation_live/form_component.ex
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Zip Code"
