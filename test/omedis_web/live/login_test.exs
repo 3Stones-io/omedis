@@ -31,7 +31,7 @@ defmodule OmedisWeb.LoginTest do
 
       conn = submit_form(form, conn)
 
-      assert {:ok, _index_live, _html} = live(conn, ~p"/organisations")
+      assert {:ok, _index_live, _html} = live(conn, ~p"/edit_profile")
     end
 
     test "redirects to the edit profile page if no other return_to path is set", %{conn: conn} do

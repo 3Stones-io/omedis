@@ -66,7 +66,6 @@ msgstr "Gruppen"
 #: lib/omedis_web/live/group_live/index.ex
 #: lib/omedis_web/live/group_live/show.ex
 #: lib/omedis_web/live/invitation_live/index.ex
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #: lib/omedis_web/live/organisation_live/today.ex
 #: lib/omedis_web/live/project_live/index.ex
@@ -94,21 +93,6 @@ msgstr "Navigationspfad"
 #, elixir-autogen, elixir-format
 msgid "New Project"
 msgstr "Neues Projekt"
-
-#: lib/omedis_web/live/activity_live/index.ex
-#: lib/omedis_web/live/activity_live/show.ex
-#: lib/omedis_web/live/event_live/index.ex
-#: lib/omedis_web/live/group_live/index.ex
-#: lib/omedis_web/live/group_live/show.ex
-#: lib/omedis_web/live/invitation_live/index.ex
-#: lib/omedis_web/live/organisation_live/index.ex
-#: lib/omedis_web/live/organisation_live/show.ex
-#: lib/omedis_web/live/organisation_live/today.ex
-#: lib/omedis_web/live/project_live/index.ex
-#: lib/omedis_web/live/project_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Organisations"
-msgstr "Organisationen"
 
 #: lib/omedis_web/components/general_components.ex
 #: lib/omedis_web/live/project_live/index.ex
