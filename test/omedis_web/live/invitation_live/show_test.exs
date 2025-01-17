@@ -83,7 +83,8 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
           user: valid_invitation_params
         )
 
-      conn = submit_form(form, conn)
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
 
       assert redirected_to(conn) == ~p"/edit_profile"
 
@@ -119,7 +120,9 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
           user: valid_invitation_params
         )
 
-      conn = submit_form(form, conn)
+      render_submit(form)
+
+      conn = follow_trigger_action(form, conn)
 
       assert redirected_to(conn) == ~p"/edit_profile"
 
@@ -201,7 +204,9 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         |> Map.put("email", "test@gmail.com")
 
       form = form(view, "#invitation_user_sign_up_form", user: valid_invitation_params)
-      conn = submit_form(form, new_conn)
+
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
 
       assert redirected_to(conn) == ~p"/edit_profile"
 
@@ -283,7 +288,9 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         |> Map.put("email", "test@gmail.com")
 
       form = form(view, "#invitation_user_sign_up_form", user: valid_invitation_params)
-      conn = submit_form(form, new_conn)
+
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
 
       assert redirected_to(conn) == ~p"/edit_profile"
 
