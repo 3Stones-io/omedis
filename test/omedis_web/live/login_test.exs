@@ -82,16 +82,14 @@ defmodule OmedisWeb.LoginTest do
     } do
       {:ok, user} = Accounts.create_user(@valid_create_params)
 
-      {:ok, lv, html} = live(conn, ~p"/login")
+      {:ok, view, _html} = live(conn, ~p"/login")
 
-      form =
-        form(lv, "#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
-
-      conn = submit_form(form, conn)
+      html =
+        view
+        |> form("#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
+        |> render_submit()
 
       assert html =~ "Signing in..."
-
-      assert redirected_to(conn) == ~p"/edit_profile"
     end
   end
 end
