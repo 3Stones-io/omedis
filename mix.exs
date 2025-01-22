@@ -109,6 +109,7 @@ defmodule Omedis.MixProject do
         "phx.digest"
       ],
       check_code: [
+        "compile --warnings-as-errors",
         "format --check-formatted",
         "credo --strict",
         "cmd make check-gettext",

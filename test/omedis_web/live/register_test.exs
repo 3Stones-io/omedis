@@ -27,8 +27,15 @@ defmodule OmedisWeb.RegisterTest do
           }
         )
 
-      conn = submit_form(form, conn)
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
+
       assert redirected_to(conn) == ~p"/edit_profile"
+
+      # Now do a logged in request and assert on the menu
+      conn = get(conn, "/")
+      response = html_response(conn, 200)
+      assert response =~ "test@gmail.com"
 
       assert {:ok, user} = Accounts.get_user_by_email("test@gmail.com")
       assert [organisation] = Ash.read!(Accounts.Organisation, actor: user)
@@ -50,7 +57,9 @@ defmodule OmedisWeb.RegisterTest do
           }
         )
 
-      conn = submit_form(form, conn)
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
+
       assert redirected_to(conn) == ~p"/edit_profile"
 
       assert {:ok, edit_profile_live, html} = live(conn, ~p"/edit_profile")
@@ -150,7 +159,8 @@ defmodule OmedisWeb.RegisterTest do
       form =
         form(view, "#basic_user_sign_up_form", user: updated_params)
 
-      conn = submit_form(form, conn)
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
 
       {:ok, _index_live, _html} = live(conn, ~p"/edit_profile")
 
