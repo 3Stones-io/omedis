@@ -29,9 +29,10 @@ defmodule OmedisWeb.LoginTest do
       form =
         form(lv, "#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
 
-      conn = submit_form(form, conn)
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
 
-      assert {:ok, _index_live, _html} = live(conn, ~p"/organisations")
+      assert redirected_to(conn) == ~p"/edit_profile"
     end
 
     test "redirects to the edit profile page if no other return_to path is set", %{conn: conn} do
@@ -45,7 +46,8 @@ defmodule OmedisWeb.LoginTest do
       form =
         form(lv, "#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
 
-      conn = submit_form(form, conn)
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
 
       assert redirected_to(conn) == ~p"/edit_profile"
 
@@ -70,11 +72,14 @@ defmodule OmedisWeb.LoginTest do
           user: %{email: user.email, password: "invalid_password"}
         )
 
-      conn = submit_form(form, conn)
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
 
-      assert {:ok, _index_live, html} = live(conn, ~p"/login")
+      assert redirected_to(conn) == ~p"/login"
 
-      assert html =~ "Username or password is incorrect"
+      conn = get(conn, "/login")
+      response = html_response(conn, 200)
+      assert response =~ "Username or password is incorrect"
     end
 
     test "Login button changes from Sign in to Signing in... when submitting a valid form", %{
