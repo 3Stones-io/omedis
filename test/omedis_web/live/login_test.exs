@@ -81,5 +81,19 @@ defmodule OmedisWeb.LoginTest do
       response = html_response(conn, 200)
       assert response =~ "Username or password is incorrect"
     end
+
+    test "redirects to forgot password page when the Forgot Password button is clicked", %{
+      conn: conn
+    } do
+      {:ok, lv, _html} = live(conn, ~p"/login")
+
+      {:ok, conn} =
+        lv
+        |> element("#forgot-password-link")
+        |> render_click()
+        |> follow_redirect(conn, "/password-reset")
+
+      assert conn.resp_body =~ "Forgot your password?"
+    end
   end
 end

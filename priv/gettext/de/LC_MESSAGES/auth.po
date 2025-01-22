@@ -16,6 +16,7 @@ msgstr ""
 msgid "Change language"
 msgstr "Sprache ändern"
 
+#: lib/omedis_web/live/forgot_password_live.ex
 #: lib/omedis_web/live/login_live.ex
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
@@ -68,3 +69,54 @@ msgstr "neues Passwort"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Use a permanent email address where you can receive email."
 msgstr "Verwenden Sie eine permanente E-Mail-Adresse, unter der Sie E-Mails empfangen können."
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Forgot your password?"
+msgstr "Passwort vergessen?"
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system, you will receive instructions to reset your password shortly."
+msgstr "Wenn Ihre E-Mail in unserem System ist, erhalten Sie in Kürze Anweisungen zum Zurücksetzen Ihres Passworts."
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "New password"
+msgstr "neues Passwort"
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Reset Password"
+msgstr "Passwort zurücksetzen"
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Reset password"
+msgstr "Passwort zurücksetzen"
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format
+msgid "Reset password link is invalid or it has expired."
+msgstr "Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Resetting..."
+msgstr "Zurücksetzen..."
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Send reset link"
+msgstr "Link zum Zurücksetzen senden"
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Sending..."
+msgstr "Senden..."
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "We'll send a password reset link to your inbox"
+msgstr "Wir senden Ihnen einen Link zum Zurücksetzen des Passworts an Ihr Postfach"

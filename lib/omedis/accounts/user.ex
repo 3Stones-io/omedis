@@ -33,8 +33,13 @@ defmodule Omedis.Accounts.User do
 
         register_action_accept([
           :email,
+          :lang,
           :current_organisation_id
         ])
+
+        resettable do
+          sender Omedis.Accounts.User.Notifiers.SendPasswordResetEmail
+        end
       end
     end
 

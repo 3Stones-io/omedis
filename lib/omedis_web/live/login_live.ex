@@ -1,9 +1,9 @@
 defmodule OmedisWeb.LoginLive do
+  use OmedisWeb, :live_view
+
   alias AshPhoenix.Form
   alias Omedis.Accounts
   alias Omedis.Accounts.User
-
-  use OmedisWeb, :live_view
 
   on_mount {OmedisWeb.LiveHelpers, :assign_locale}
 
@@ -25,7 +25,7 @@ defmodule OmedisWeb.LoginLive do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :sign_in, _params) do
     socket
     |> assign(
       :page_title,
@@ -125,9 +125,17 @@ defmodule OmedisWeb.LoginLive do
                 </div>
               </div>
 
+              <.link
+                href={~p"/password-reset"}
+                id="forgot-password-link"
+                class="text-sm text-blue-600 hover:underline mt-4 inline-block"
+              >
+                {dgettext("auth", "Forgot your password?")}
+              </.link>
+
               <div class="mt-6 flex items-center justify-end gap-x-6">
                 {submit(
-                  dgettext("auth", "Signing in..."),
+                  dgettext("auth", "Sign in"),
                   phx_disable_with: dgettext("auth", "Signing in..."),
                   class:
                     "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

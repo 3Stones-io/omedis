@@ -16,6 +16,7 @@ msgstr ""
 msgid "Change language"
 msgstr ""
 
+#: lib/omedis_web/live/forgot_password_live.ex
 #: lib/omedis_web/live/login_live.ex
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
@@ -67,4 +68,55 @@ msgstr ""
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Use a permanent email address where you can receive email."
+msgstr ""
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Forgot your password?"
+msgstr ""
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system, you will receive instructions to reset your password shortly."
+msgstr ""
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "New password"
+msgstr ""
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Reset Password"
+msgstr ""
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Reset password"
+msgstr ""
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format
+msgid "Reset password link is invalid or it has expired."
+msgstr ""
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Resetting..."
+msgstr ""
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Send reset link"
+msgstr ""
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Sending..."
+msgstr ""
+
+#: lib/omedis_web/live/forgot_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "We'll send a password reset link to your inbox"
 msgstr ""

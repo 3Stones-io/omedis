@@ -20,3 +20,13 @@ msgstr "==============================\n\nCiao!\n\nPer favore, registra il tuo n
 #, elixir-autogen, elixir-format
 msgid "Omedis | Invitation to join %{organisation_name}"
 msgstr "Omedis | Invito a unirti a %{organisation_name}"
+
+#: lib/omedis/accounts/user/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "==============================\n\nHello!\n\nPlease click on this link %{url} to reset your password\n\nBest regards,\n\nOmedis.\n\n==============================\n"
+msgstr "==============================\n\nCiao!\n\nClicca su questo link %{url} per reimpostare la tua password\n\nCordiali saluti,\n\nOmedis.\n\n==============================\n"
+
+#: lib/omedis/accounts/user/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "Omedis | Reset your password"
+msgstr "Omedis | Reimposta la tua password"

@@ -165,6 +165,7 @@ defmodule OmedisWeb.RegisterLive do
                   phx-debounce="blur"
                 />
               </div>
+              <.input type="hidden" field={f[:lang]} value={@language} />
             </div>
             <div class="mt-6 flex items-center justify-end gap-x-6">
               <button

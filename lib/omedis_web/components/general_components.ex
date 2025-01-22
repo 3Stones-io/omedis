@@ -748,7 +748,7 @@ defmodule OmedisWeb.GeneralComponents do
         <.link navigate="/edit_profile">
           {dgettext("navigation", "Edit Profile")}
         </.link>
-        <.link navigate="/auth/user/sign-out">
+        <.link href="/auth/user/sign-out">
           {dgettext("navigation", "Sign out")}
         </.link>
       </div>
