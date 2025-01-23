@@ -307,6 +307,15 @@ defmodule OmedisWeb.GeneralComponents do
                     {dgettext("navigation", "Reports")}
                   </a>
                 </li>
+                <li>
+                  <.link
+                    navigate={~p"/playground"}
+                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+                  >
+                    <OmedisWeb.CoreComponents.icon name="hero-code-bracket" />
+                    {dgettext("navigation", "Playground")}
+                  </.link>
+                </li>
               </ul>
             </li>
             <li :if={@current_organisation}>
@@ -663,6 +672,15 @@ defmodule OmedisWeb.GeneralComponents do
                     </svg>
                     {dgettext("navigation", "Reports")}
                   </a>
+                </li>
+                <li>
+                  <.link
+                    navigate={~p"/playground"}
+                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+                  >
+                    <OmedisWeb.CoreComponents.icon name="hero-code-bracket" />
+                    {dgettext("navigation", "Playground")}
+                  </.link>
                 </li>
               </ul>
             </li>

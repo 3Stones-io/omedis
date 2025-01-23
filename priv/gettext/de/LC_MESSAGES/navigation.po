@@ -150,3 +150,8 @@ msgstr "Projekt bearbeiten"
 #, elixir-autogen, elixir-format
 msgid "Create new organisation"
 msgstr "Neue Organisation erstellen"
+
+#: lib/omedis_web/components/general_components.ex
+#, elixir-autogen, elixir-format
+msgid "Playground"
+msgstr ""

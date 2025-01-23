@@ -197,6 +197,23 @@ defmodule OmedisWeb.ProjectLive.IndexTest do
       assert html =~ "Dummy Project"
     end
 
+    test "shows form errors if invalid data is submitted", %{
+      conn: conn,
+      authorized_user: authorized_user
+    } do
+      {:ok, index_live, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/projects/new")
+
+      assert html =
+               index_live
+               |> form("#project-form", project: %{name: ""})
+               |> render_change()
+
+      assert html =~ "is required"
+    end
+
     test "unauthorized user cannot create new project", %{
       conn: conn,
       user: unauthorized_user

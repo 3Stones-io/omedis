@@ -82,6 +82,7 @@ defmodule OmedisWeb.Router do
     end
 
     live "/invitations/:id", InvitationLive.Show, :show
+    live "/playground", PlaygroundLive, :index
   end
 
   # Other scopes may use custom stacks.
@@ -100,8 +101,6 @@ defmodule OmedisWeb.Router do
 
     scope "/dev" do
       pipe_through :browser
-
-      live "/playground", OmedisWeb.PlaygroundLive, :index
 
       live_dashboard "/dashboard", metrics: OmedisWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview

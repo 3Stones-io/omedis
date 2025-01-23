@@ -11,7 +11,6 @@ defmodule Omedis.Accounts do
       define :create_organisation, action: :create
       define :get_organisation_by_id, get_by: [:id], action: :read
       define :get_organisation_by_slug, get_by: [:slug], action: :read
-      define :list_paginated_organisations, action: :list_paginated
       define :update_organisation, action: :update
     end
 
