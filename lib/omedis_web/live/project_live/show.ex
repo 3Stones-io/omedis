@@ -18,7 +18,6 @@ defmodule OmedisWeb.ProjectLive.Show do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
             {dgettext("navigation", "Projects"), ~p"/organisations/#{@organisation}/projects", false},
             {@project.name, "", true}
