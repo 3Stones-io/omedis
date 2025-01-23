@@ -7,25 +7,63 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
   setup do
     {:ok, owner} = create_user()
-    {:ok, another_user} = create_user()
     organisation = fetch_users_organisation(owner.id)
-    organisation_2 = fetch_users_organisation(another_user.id)
+    {:ok, group} = create_group(organisation)
+
+    {:ok, _invitation} =
+      create_invitation(organisation, %{email: "test@user.com", groups: [group.id]})
+
+    {:ok, authorized_user} =
+      create_user(%{email: "test@user.com", current_organisation_id: organisation.id})
+
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group.id,
+        read: true,
+        resource_name: "Organisation"
+      })
+
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group.id,
+        read: true,
+        create: true,
+        destroy: true,
+        update: true,
+        resource_name: "Group"
+      })
+
+    {:ok, group2} = create_group(organisation)
+
+    {:ok, _invitation} =
+      create_invitation(organisation, %{email: "test2@user.com", groups: [group2.id]})
+
+    {:ok, user} =
+      create_user(%{email: "test2@user.com", current_organisation_id: organisation.id})
+
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group2.id,
+        read: true,
+        resource_name: "Organisation"
+      })
 
     %{
-      another_user: another_user,
+      authorized_user: authorized_user,
+      group: group,
+      group2: group2,
       owner: owner,
-      organisation_2: organisation_2,
-      organisation: organisation
+      organisation: organisation,
+      user: user
     }
   end
 
-  describe "/organisations/:slug/groups" do
+  describe "/groups" do
     test "list groups with pagination", %{
-      another_user: another_user,
+      authorized_user: authorized_user,
       conn: conn,
       owner: owner,
-      organisation: organisation,
-      organisation_2: organisation_2
+      organisation: organisation
     } do
       Enum.each(3..15, fn i ->
         {:ok, group} =
@@ -61,14 +99,14 @@ defmodule OmedisWeb.GroupLive.IndexTest do
 
       Enum.each(31..40, fn i ->
         {:ok, group} =
-          create_group(organisation_2, %{
-            user_id: another_user.id,
+          create_group(organisation, %{
+            user_id: authorized_user.id,
             name: "Group #{i}"
           })
 
-        create_group_membership(organisation, %{user_id: another_user.id, group_id: group.id})
+        create_group_membership(organisation, %{user_id: authorized_user.id, group_id: group.id})
 
-        create_access_right(organisation_2, %{
+        create_access_right(organisation, %{
           resource_name: "Group",
           group_id: group.id,
           read: false
@@ -78,12 +116,12 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/groups")
+        |> live(~p"/groups")
 
       assert html =~ "Listing Groups"
       assert html =~ "New Group"
       assert html =~ "Group 3"
-      assert html =~ "Group 10"
+      assert html =~ "Group 8"
       refute html =~ "Group 11"
 
       assert view |> element("nav[aria-label=Pagination]") |> has_element?()
@@ -92,50 +130,55 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       |> element("nav[aria-label=Pagination] a", "3")
       |> render_click()
 
-      # # There is no next page
-      refute view |> element("nav[aria-label=Pagination] a", "4") |> has_element?()
-
       html = render(view)
       assert html =~ "Group 21"
       refute html =~ "Group 16"
       refute html =~ "Group 37"
+
+      assert view |> element("nav[aria-label=Pagination] a", "4") |> has_element?()
+
+      view
+      |> element("nav[aria-label=Pagination] a", "4")
+      |> render_click()
+
+      html = render(view)
+      refute html =~ "Group 21"
+      assert html =~ "Group 37"
+
+      assert view |> element("nav[aria-label=Pagination] a", "5") |> has_element?()
+
+      view
+      |> element("nav[aria-label=Pagination] a", "5")
+      |> render_click()
+
+      html = render(view)
+      refute html =~ "Group 37"
+      assert html =~ "Group 40"
+
+      refute view |> element("nav[aria-label=Pagination] a", "6") |> has_element?()
     end
 
     test "edit and delete actions are hidden is user has no rights to destroy or update a group",
          %{
            conn: conn,
-           owner: owner
+           group: group,
+           group2: group2,
+           organisation: organisation,
+           user: user
          } do
-      {:ok, organisation} = create_organisation()
-
-      {:ok, group} =
-        create_group(organisation, %{
-          user_id: owner.id,
-          name: "Group 1"
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: group2.id,
+          read: true,
+          destroy: false,
+          update: false,
+          resource_name: "Group"
         })
-
-      create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
-
-      create_access_right(organisation, %{
-        resource_name: "Organisation",
-        group_id: group.id,
-        read: true,
-        destroy: false,
-        update: false
-      })
-
-      create_access_right(organisation, %{
-        resource_name: "Group",
-        group_id: group.id,
-        read: true,
-        destroy: false,
-        update: false
-      })
 
       {:ok, view, html} =
         conn
-        |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/groups")
+        |> log_in_user(user)
+        |> live(~p"/groups")
 
       refute view |> element("#edit-group-#{group.id}") |> has_element?()
       refute view |> element("#delete-group-#{group.id}") |> has_element?()
@@ -166,7 +209,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/groups")
+        |> live(~p"/groups")
 
       assert view
              |> element("#delete-group-#{group.id}")
@@ -206,7 +249,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/groups")
+        |> live(~p"/groups")
 
       assert view
              |> element("#edit-group-#{group.id}")
@@ -220,7 +263,7 @@ defmodule OmedisWeb.GroupLive.IndexTest do
              |> form("#group-form", group: %{name: "New Group Name"})
              |> render_submit()
 
-      assert_patch(view, ~p"/organisations/#{organisation}/groups")
+      assert_patch(view, ~p"/groups")
 
       html = render(view)
       assert html =~ "Group updated successfully"
@@ -228,41 +271,29 @@ defmodule OmedisWeb.GroupLive.IndexTest do
     end
   end
 
-  describe "/organisations/:slug/groups/:slug/edit" do
+  describe "/groups/:slug/edit" do
     test "can't edit a group if not authorized", %{
       conn: conn,
-      owner: owner
+      group: group,
+      group2: group2,
+      organisation: organisation,
+      user: user
     } do
-      {:ok, organisation} = create_organisation()
-
-      {:ok, group} =
-        create_group(organisation, %{
-          user_id: owner.id,
-          name: "Group 1"
+      {:ok, _} =
+        create_access_right(organisation, %{
+          group_id: group2.id,
+          read: true,
+          destroy: false,
+          update: false,
+          resource_name: "Group"
         })
-
-      create_group_membership(organisation, %{user_id: owner.id, group_id: group.id})
-
-      create_access_right(organisation, %{
-        resource_name: "Organisation",
-        group_id: group.id,
-        read: true,
-        update: false
-      })
-
-      create_access_right(organisation, %{
-        resource_name: "Group",
-        group_id: group.id,
-        read: true,
-        update: false
-      })
 
       {:error, {:redirect, %{to: path, flash: flash}}} =
         conn
-        |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/groups/#{group}/edit")
+        |> log_in_user(user)
+        |> live(~p"/groups/#{group}/edit")
 
-      assert path == ~p"/organisations/#{organisation}/groups"
+      assert path == ~p"/groups"
       assert flash["error"] == "You are not authorized to access this page"
     end
   end

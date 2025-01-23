@@ -55,13 +55,13 @@ defmodule OmedisWeb.InvitationLive.Index do
       socket
       |> assign(:invitation, nil)
     else
-      push_navigate(socket, to: ~p"/organisations/#{socket.assigns.organisation}/invitations")
+      push_navigate(socket, to: ~p"/invitations")
     end
   end
 
   defp apply_action(socket, _, _params) do
     socket
-    |> push_navigate(to: ~p"/organisations/#{socket.assigns.organisation}/invitations/new")
+    |> push_navigate(to: ~p"/invitations/new")
   end
 
   @impl true
@@ -130,7 +130,6 @@ defmodule OmedisWeb.InvitationLive.Index do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
             {dgettext("navigation", "Invitations"), "", true}
           ]}
@@ -143,7 +142,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           <:actions>
             <.link
               :if={Ash.can?({Invitations.Invitation, :create}, @current_user, tenant: @organisation)}
-              patch={~p"/organisations/#{@organisation}/invitations/new"}
+              patch={~p"/invitations/new"}
             >
               <.button>
                 {dgettext("invitation", "New Invitation")}
@@ -156,7 +155,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           :if={@live_action == :new}
           id="invitation-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation}/invitations")}
+          on_cancel={JS.patch(~p"/invitations")}
         >
           <.live_component
             module={OmedisWeb.InvitationLive.FormComponent}
@@ -165,7 +164,7 @@ defmodule OmedisWeb.InvitationLive.Index do
             organisation={@organisation}
             language={@language}
             current_user={@current_user}
-            patch={~p"/organisations/#{@organisation}/invitations"}
+            patch={~p"/invitations"}
           />
         </.modal>
 
@@ -220,7 +219,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           <PaginationComponent.pagination
             current_page={@current_page}
             language={@language}
-            resource_path={~p"/organisations/#{@organisation}/invitations"}
+            resource_path={~p"/invitations"}
             total_pages={@total_pages}
           />
         </div>

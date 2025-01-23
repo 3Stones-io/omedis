@@ -18,9 +18,8 @@ defmodule OmedisWeb.ProjectLive.Show do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dgettext("navigation", "Projects"), ~p"/organisations/#{@organisation}/projects", false},
+            {dgettext("navigation", "Projects"), ~p"/projects", false},
             {@project.name, "", true}
           ]}
           language={@language}
@@ -33,10 +32,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           </:subtitle>
 
           <:actions>
-            <.link
-              patch={~p"/organisations/#{@organisation}/projects/#{@project}/show/edit"}
-              phx-click={JS.push_focus()}
-            >
+            <.link patch={~p"/projects/#{@project}/show/edit"} phx-click={JS.push_focus()}>
               <.button :if={Ash.can?({@project, :update}, @current_user, tenant: @organisation)}>
                 {dgettext("navigation", "Edit Project")}
               </.button>
@@ -54,7 +50,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/organisations/#{@organisation}/projects"}>
+        <.back navigate={~p"/projects"}>
           {dgettext("project", "Back to projects")}
         </.back>
 
@@ -65,7 +61,7 @@ defmodule OmedisWeb.ProjectLive.Show do
           }
           id="project-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation}/projects/#{@project}")}
+          on_cancel={JS.patch(~p"/projects/#{@project}")}
         >
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
@@ -78,7 +74,7 @@ defmodule OmedisWeb.ProjectLive.Show do
             action={@live_action}
             language={@language}
             project={@project}
-            patch={~p"/organisations/#{@organisation}/projects/#{@project}"}
+            patch={~p"/projects/#{@project}"}
           />
         </.modal>
       </div>
@@ -118,7 +114,7 @@ defmodule OmedisWeb.ProjectLive.Show do
       socket
     else
       socket
-      |> push_patch(to: ~p"/organisations/#{organisation}/projects/#{socket.assigns.project.id}")
+      |> push_patch(to: ~p"/projects/#{socket.assigns.project.id}")
       |> put_flash(
         :error,
         dgettext("project", "You are not authorized to access this page")

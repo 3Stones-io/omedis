@@ -1,7 +1,6 @@
 defmodule OmedisWeb.ActivityLive.Index do
   use OmedisWeb, :live_view
 
-  alias Omedis.Accounts.Organisation
   alias Omedis.Groups
   alias Omedis.Projects
   alias Omedis.TimeTracking
@@ -24,10 +23,8 @@ defmodule OmedisWeb.ActivityLive.Index do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
-            {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
-            {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
+            {dgettext("navigation", "Groups"), ~p"/groups", false},
+            {@group.name, ~p"/groups/#{@group}", false},
             {dgettext("navigation", "Activities"), "", true}
           ]}
           language={@language}
@@ -39,7 +36,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           <:actions>
             <.link
               :if={Ash.can?({Activity, :create}, @current_user, tenant: @organisation)}
-              patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/new"}
+              patch={~p"/groups/#{@group}/activities/new"}
             >
               <.button>
                 {dgettext("activity", "New Activity")}
@@ -53,7 +50,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           rows={@streams.activities}
           row_click={
             fn {_id, activity} ->
-              JS.navigate(~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}")
+              JS.navigate(~p"/groups/#{@group}/activities/#{activity}")
             end
           }
         >
@@ -101,16 +98,14 @@ defmodule OmedisWeb.ActivityLive.Index do
 
           <:action :let={{_id, activity}}>
             <div class="sr-only">
-              <.link navigate={
-                ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}"
-              }>
+              <.link navigate={~p"/groups/#{@group}/activities/#{activity}"}>
                 {dgettext("activity", "Show")}
               </.link>
             </div>
 
             <.link
               :if={Ash.can?({activity, :update}, @current_user, tenant: @organisation)}
-              patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{activity}/edit"}
+              patch={~p"/groups/#{@group}/activities/#{activity}/edit"}
             >
               {dgettext("activity", "Edit")}
             </.link>
@@ -121,7 +116,7 @@ defmodule OmedisWeb.ActivityLive.Index do
           :if={@live_action in [:new, :edit]}
           id="activity-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation}/groups/#{@group}/activities")}
+          on_cancel={JS.patch(~p"/groups/#{@group}/activities")}
         >
           <.live_component
             module={OmedisWeb.ActivityLive.FormComponent}
@@ -136,13 +131,13 @@ defmodule OmedisWeb.ActivityLive.Index do
             language={@language}
             action={@live_action}
             activity={@activity}
-            patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}
+            patch={~p"/groups/#{@group}/activities"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}
+          resource_path={~p"/groups/#{@group}/activities"}
           total_pages={@total_pages}
         />
       </div>
@@ -175,8 +170,6 @@ defmodule OmedisWeb.ActivityLive.Index do
      |> assign(:current_page, 1)
      |> assign(:language, language)
      |> assign(:total_pages, 0)
-     |> assign(:organisations, Ash.read!(Organisation, actor: socket.assigns.current_user))
-     |> assign(:organisation, nil)
      |> stream(:activities, [])}
   end
 
@@ -184,6 +177,7 @@ defmodule OmedisWeb.ActivityLive.Index do
   def handle_params(%{"group_slug" => group_slug} = params, _url, socket) do
     actor = socket.assigns.current_user
     organisation = socket.assigns.organisation
+
     group = Groups.get_group_by_slug!(group_slug, actor: actor, tenant: organisation)
     groups = Groups.get_groups!(actor: actor, tenant: organisation)
 
@@ -219,9 +213,7 @@ defmodule OmedisWeb.ActivityLive.Index do
         :error,
         dgettext("activity", "You are not authorized to access this page")
       )
-      |> push_navigate(
-        to: ~p"/organisations/#{organisation}/groups/#{socket.assigns.group}/activities"
-      )
+      |> push_navigate(to: ~p"/groups/#{socket.assigns.group}/activities")
     end
   end
 
@@ -236,15 +228,14 @@ defmodule OmedisWeb.ActivityLive.Index do
         dgettext("activity", "New Activity")
       )
       |> assign(:activity, nil)
+      |> assign(:is_custom_color, false)
     else
       socket
       |> put_flash(
         :error,
         dgettext("activity", "You are not authorized to access this page")
       )
-      |> push_navigate(
-        to: ~p"/organisations/#{organisation}/groups/#{socket.assigns.group}/activities"
-      )
+      |> push_navigate(to: ~p"/groups/#{socket.assigns.group}/activities")
     end
   end
 

@@ -20,12 +20,10 @@ defmodule OmedisWeb.ActivityLive.Show do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
-            {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {dgettext("navigation", "Activities"),
-             ~p"/organisations/#{@organisation}/groups/#{@group}/activities", false},
+            {dgettext("navigation", "Groups"), ~p"/groups", false},
+            {@group.name, ~p"/groups/#{@group}", false},
+            {dgettext("navigation", "Activities"), ~p"/groups/#{@group}/activities", false},
             {@activity.name, "", true}
           ]}
           language={@language}
@@ -43,9 +41,7 @@ defmodule OmedisWeb.ActivityLive.Show do
 
           <:actions>
             <.link
-              patch={
-                ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity}/show/edit"
-              }
+              patch={~p"/groups/#{@group}/activities/#{@activity}/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button>
@@ -53,10 +49,7 @@ defmodule OmedisWeb.ActivityLive.Show do
               </.button>
             </.link>
 
-            <.link
-              navigate={~p"/organisations/#{@organisation}/activities/#{@activity}/events"}
-              phx-click={JS.push_focus()}
-            >
+            <.link navigate={~p"/activities/#{@activity}/events"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("activity", "View Events")}
               </.button>
@@ -78,7 +71,7 @@ defmodule OmedisWeb.ActivityLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}>
+        <.back navigate={~p"/groups/#{@group}/activities"}>
           {dgettext("activity", "Back to activities")}
         </.back>
 
@@ -86,9 +79,7 @@ defmodule OmedisWeb.ActivityLive.Show do
           :if={@live_action == :edit}
           id="activity-modal"
           show
-          on_cancel={
-            JS.patch(~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity}")
-          }
+          on_cancel={JS.patch(~p"/groups/#{@group}/activities/#{@activity}")}
         >
           <.live_component
             module={OmedisWeb.ActivityLive.FormComponent}
@@ -106,7 +97,7 @@ defmodule OmedisWeb.ActivityLive.Show do
             next_position={@next_position}
             language={@language}
             activity={@activity}
-            patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity}"}
+            patch={~p"/groups/#{@group}/activities/#{@activity}"}
           />
         </.modal>
       </div>
@@ -180,10 +171,7 @@ defmodule OmedisWeb.ActivityLive.Show do
         :error,
         dgettext("activity", "You are not authorized to access this page")
       )
-      |> push_navigate(
-        to:
-          ~p"/organisations/#{organisation}/groups/#{socket.assigns.group}/activities/#{activity.id}"
-      )
+      |> push_navigate(to: ~p"/groups/#{socket.assigns.group}/activities/#{activity.id}")
     end
   end
 

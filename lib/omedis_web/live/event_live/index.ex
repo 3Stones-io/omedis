@@ -21,14 +21,11 @@ defmodule OmedisWeb.EventLive.Index do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
-            {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {dgettext("navigation", "Activities"),
-             ~p"/organisations/#{@organisation}/groups/#{@group}/activities", false},
-            {@activity.name,
-             ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity.id}", false},
+            {dgettext("navigation", "Groups"), ~p"/groups", false},
+            {@group.name, ~p"/groups/#{@group}", false},
+            {dgettext("navigation", "Activities"), ~p"/groups/#{@group}/activities", false},
+            {@activity.name, ~p"/groups/#{@group}/activities/#{@activity.id}", false},
             {dgettext("navigation", "Events"), "", true}
           ]}
           language={@language}
@@ -57,7 +54,7 @@ defmodule OmedisWeb.EventLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/organisations/#{@organisation}/activities/#{@activity.id}/events"}
+          resource_path={~p"/activities/#{@activity.id}/events"}
           total_pages={@total_pages}
         />
       </div>

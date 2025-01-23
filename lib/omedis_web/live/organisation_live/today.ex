@@ -20,10 +20,9 @@ defmodule OmedisWeb.OrganisationLive.Today do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
-            {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
+            {dgettext("navigation", "Groups"), ~p"/groups", false},
+            {@group.name, ~p"/groups/#{@group}", false},
             {dgettext("navigation", "Today"), "", true}
           ]}
           language={@language}
@@ -138,10 +137,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
          {:ok, project} <- latest_project_for_an_organisation(socket, opts) do
       {:noreply,
        socket
-       |> push_navigate(
-         to:
-           ~p"/organisations/#{socket.assigns.organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-       )}
+       |> push_navigate(to: ~p"/today?group_id=#{group.id}&project_id=#{project.id}")}
     end
   end
 
@@ -338,19 +334,13 @@ defmodule OmedisWeb.OrganisationLive.Today do
   def handle_event("select_group", %{"group_id" => id}, socket) do
     {:noreply,
      socket
-     |> push_navigate(
-       to:
-         ~p"/organisations/#{socket.assigns.organisation}/today?group_id=#{id}&project_id=#{socket.assigns.project.id}"
-     )}
+     |> push_navigate(to: ~p"/today?group_id=#{id}&project_id=#{socket.assigns.project.id}")}
   end
 
   def handle_event("select_project", %{"project_id" => id}, socket) do
     {:noreply,
      socket
-     |> push_navigate(
-       to:
-         ~p"/organisations/#{socket.assigns.organisation}/today?group_id=#{socket.assigns.group.id}&project_id=#{id}"
-     )}
+     |> push_navigate(to: ~p"/today?group_id=#{socket.assigns.group.id}&project_id=#{id}")}
   end
 
   defp stop_any_active_event(socket, event_stop_time \\ NaiveDateTime.utc_now()) do
@@ -455,7 +445,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
         {:noreply,
          socket
          |> put_flash(:error, dgettext("group", "No group found. Please create one first."))
-         |> push_navigate(to: ~p"/organisations/#{organisation}/groups/new")}
+         |> push_navigate(to: ~p"/groups/new")}
     end
   end
 
@@ -470,7 +460,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
         {:noreply,
          socket
          |> put_flash(:error, dgettext("project", "No project found. Please create one first."))
-         |> push_navigate(to: ~p"/organisations/#{organisation}/projects/new")}
+         |> push_navigate(to: ~p"/projects/new")}
     end
   end
 

@@ -171,7 +171,7 @@ defmodule OmedisWeb.GeneralComponents do
                 <li>
                   <.link
                     :if={@current_organisation}
-                    navigate={~p"/organisations/#{@current_organisation}/today"}
+                    navigate={~p"/today"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -316,7 +316,7 @@ defmodule OmedisWeb.GeneralComponents do
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
                   <.link
-                    navigate={~p"/organisations/#{@current_organisation}/groups"}
+                    navigate={~p"/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -329,7 +329,7 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
                 <li>
                   <.link
-                    navigate={~p"/organisations/#{@current_organisation}/projects"}
+                    navigate={~p"/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -529,7 +529,7 @@ defmodule OmedisWeb.GeneralComponents do
                 <li>
                   <.link
                     :if={@current_organisation}
-                    navigate={~p"/organisations/#{@current_organisation}/today"}
+                    navigate={~p"/today"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <svg
@@ -673,7 +673,7 @@ defmodule OmedisWeb.GeneralComponents do
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
                   <.link
-                    navigate={~p"/organisations/#{@current_organisation}/groups"}
+                    navigate={~p"/groups"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -686,7 +686,7 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
                 <li>
                   <.link
-                    navigate={~p"/organisations/#{@current_organisation}/projects"}
+                    navigate={~p"/projects"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">

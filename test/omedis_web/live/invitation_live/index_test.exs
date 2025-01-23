@@ -15,10 +15,12 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     organisation = fetch_users_organisation(owner.id)
 
     {:ok, group} = create_group(organisation)
-    {:ok, authorized_user} = create_user(%{"current_organisation_id" => organisation.id})
 
-    {:ok, _} =
-      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _invitation} =
+      create_invitation(organisation, %{email: "test@user.com", groups: [group.id]})
+
+    {:ok, authorized_user} =
+      create_user(%{email: "test@user.com", current_organisation_id: organisation.id})
 
     {:ok, _} =
       create_access_right(organisation, %{
@@ -44,11 +46,20 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         create: true
       })
 
-    {:ok, unauthorized_user} = create_user()
     {:ok, group_2} = create_group(organisation)
 
     {:ok, _} =
-      create_group_membership(organisation, %{user_id: unauthorized_user.id, group_id: group_2.id})
+      create_access_right(organisation, %{
+        group_id: group_2.id,
+        read: true,
+        resource_name: "Organisation"
+      })
+
+    {:ok, _invitation} =
+      create_invitation(organisation, %{email: "test2@user.com", groups: [group_2.id]})
+
+    {:ok, unauthorized_user} =
+      create_user(%{email: "test2@user.com", current_organisation_id: organisation.id})
 
     %{
       authorized_user: authorized_user,
@@ -59,7 +70,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     }
   end
 
-  describe "/organisations/:slug/invitations" do
+  describe "/invitations" do
     alias Omedis.Accounts
 
     setup %{owner: owner, authorized_user: authorized_user, organisation: organisation} do
@@ -87,13 +98,12 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
     test "organisation owner can see all invitations with pagination", %{
       conn: conn,
-      owner: owner,
-      organisation: organisation
+      owner: owner
     } do
       {:ok, index_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/invitations")
+        |> live(~p"/invitations")
 
       assert html =~ "Listing Invitations"
       refute html =~ "test1@example.com"
@@ -121,13 +131,12 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
 
     test "authorized user can see all invitations with pagination", %{
       conn: conn,
-      organisation: organisation,
       authorized_user: authorized_user
     } do
       {:ok, index_live, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/organisations/#{organisation}/invitations")
+        |> live(~p"/invitations")
 
       assert html =~ "Listing Invitations"
       refute html =~ "test1@example.com"
@@ -173,7 +182,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(~p"/organisations/#{organisation}/invitations")
+        |> live(~p"/invitations")
 
       assert html =~ "Listing Invitations"
       refute html =~ "test1@example.com"
@@ -192,7 +201,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, index_live, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/invitations")
+        |> live(~p"/invitations")
 
       assert index_live
              |> element("#delete_invitation_#{invitation.id}")
@@ -232,7 +241,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, index_live, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/organisations/#{organisation}/invitations")
+        |> live(~p"/invitations")
 
       assert index_live
              |> element("#delete_invitation_#{invitation.id}")
@@ -266,7 +275,6 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     test "can sort invitations by inserted_at", %{
       conn: conn,
       owner: owner,
-      organisation: organisation,
       invitations: invitations
     } do
       oldest_invitation = List.first(invitations)
@@ -275,7 +283,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, index_live, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/invitations")
+        |> live(~p"/invitations")
 
       assert html =~ Ash.CiString.value(newest_invitation.email)
       refute html =~ Ash.CiString.value(oldest_invitation.email)
@@ -303,9 +311,9 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       }
 
       {:ok, invitation_live, html} =
-        create_invitation_via_ui(owner, organisation, invitation_create_params)
+        create_invitation_via_ui(owner, invitation_create_params)
 
-      assert_patch(invitation_live, ~p"/organisations/#{organisation}/invitations")
+      assert_patch(invitation_live, ~p"/invitations")
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [created_invitation]} =
@@ -338,7 +346,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       new_conn = build_conn()
 
       {:ok, register_live, _html} =
-        live(new_conn, ~p"/organisations/#{organisation}/invitations/#{created_invitation.id}")
+        live(new_conn, ~p"/invitations/#{created_invitation.id}")
 
       params = %{
         "current_organisation_id" => organisation.id,
@@ -395,9 +403,9 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       }
 
       {:ok, invitation_live, html} =
-        create_invitation_via_ui(owner, organisation, invitation_create_params)
+        create_invitation_via_ui(owner, invitation_create_params)
 
-      assert_patch(invitation_live, ~p"/organisations/#{organisation}/invitations")
+      assert_patch(invitation_live, ~p"/invitations")
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [created_invitation]} =
@@ -457,9 +465,9 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       }
 
       {:ok, invitation_live, html} =
-        create_invitation_via_ui(owner, organisation, invitation_create_params)
+        create_invitation_via_ui(owner, invitation_create_params)
 
-      assert_patch(invitation_live, ~p"/organisations/#{organisation}/invitations")
+      assert_patch(invitation_live, ~p"/invitations")
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [created_invitation]} =
@@ -510,7 +518,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     end
   end
 
-  describe "/organisations/:slug/invitations/new" do
+  describe "/invitations/new" do
     alias Omedis.Groups.Group
 
     test "organisation owner can create an invitation", %{
@@ -522,7 +530,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert {:ok, view, _html} =
                conn
                |> log_in_user(owner)
-               |> live(~p"/organisations/#{organisation}/invitations/new")
+               |> live(~p"/invitations/new")
 
       html =
         view
@@ -535,7 +543,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         )
         |> render_submit()
 
-      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+      assert_patch(view, ~p"/invitations")
 
       assert html =~ "Invitation created successfully"
 
@@ -570,7 +578,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert {:ok, view, _html} =
                conn
                |> log_in_user(authorized_user)
-               |> live(~p"/organisations/#{organisation}/invitations/new")
+               |> live(~p"/invitations/new")
 
       html =
         view
@@ -583,7 +591,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         )
         |> render_submit()
 
-      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+      assert_patch(view, ~p"/invitations")
 
       assert_broadcast "create", broadcast_payload
 
@@ -645,20 +653,19 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       assert {:error, {:live_redirect, %{to: path}}} =
                conn
                |> log_in_user(user)
-               |> live(~p"/organisations/#{organisation}/invitations/new")
+               |> live(~p"/invitations/new")
 
-      assert path == ~p"/organisations/#{organisation}/invitations"
+      assert path == ~p"/invitations"
     end
 
     test "preselects current user's language", %{
       authorized_user: authorized_user,
-      conn: conn,
-      organisation: organisation
+      conn: conn
     } do
       {:ok, view, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/organisations/#{organisation}/invitations/new")
+        |> live(~p"/invitations/new")
 
       # Verify the current user's language is preselected
       assert has_element?(view, "input[type='radio'][value='#{authorized_user.lang}'][checked]")
@@ -667,13 +674,12 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     test "shows validation errors while preserving group selection", %{
       conn: conn,
       group: group,
-      authorized_user: authorized_user,
-      organisation: organisation
+      authorized_user: authorized_user
     } do
       {:ok, view, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/organisations/#{organisation}/invitations/new")
+        |> live(~p"/invitations/new")
 
       html =
         view
@@ -702,7 +708,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
       {:ok, invitation_live, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/organisations/#{organisation}/invitations/new")
+        |> live(~p"/invitations/new")
 
       html =
         invitation_live
@@ -715,7 +721,7 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
         )
         |> render_submit()
 
-      assert_patch(invitation_live, ~p"/organisations/#{organisation}/invitations")
+      assert_patch(invitation_live, ~p"/invitations")
 
       assert html =~ "Invitation created successfully"
 
@@ -743,13 +749,13 @@ defmodule OmedisWeb.InvitationLive.IndexTest do
     end
   end
 
-  defp create_invitation_via_ui(authorized_user, organisation, invitation_create_params) do
+  defp create_invitation_via_ui(authorized_user, invitation_create_params) do
     conn = build_conn()
 
     {:ok, invitation_live, _html} =
       conn
       |> log_in_user(authorized_user)
-      |> live(~p"/organisations/#{organisation}/invitations/new")
+      |> live(~p"/invitations/new")
 
     html =
       invitation_live

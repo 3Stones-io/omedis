@@ -21,7 +21,6 @@ defmodule OmedisWeb.GroupLive.Index do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
             {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}", true}
           ]}
@@ -44,7 +43,7 @@ defmodule OmedisWeb.GroupLive.Index do
                   domain: Groups
                 )
               }
-              patch={~p"/organisations/#{@organisation}/groups/new"}
+              patch={~p"/groups/new"}
             >
               <.button>
                 {dgettext("group", "New Group")}
@@ -56,9 +55,7 @@ defmodule OmedisWeb.GroupLive.Index do
         <.table
           id="groups"
           rows={@streams.groups}
-          row_click={
-            fn {_id, group} -> JS.navigate(~p"/organisations/#{@organisation}/groups/#{group}") end
-          }
+          row_click={fn {_id, group} -> JS.navigate(~p"/groups/#{group}") end}
         >
           <:col :let={{_id, group}} label={dgettext("group", "Name")}>
             {group.name}
@@ -74,7 +71,7 @@ defmodule OmedisWeb.GroupLive.Index do
                   )
                 }
                 id={"edit-group-#{group.id}"}
-                patch={~p"/organisations/#{@organisation}/groups/#{group}/edit"}
+                patch={~p"/groups/#{group}/edit"}
                 class="font-semibold"
               >
                 {dgettext("group", "Edit")}
@@ -100,7 +97,7 @@ defmodule OmedisWeb.GroupLive.Index do
           :if={@live_action in [:new, :edit]}
           id="group-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation}/groups")}
+          on_cancel={JS.patch(~p"/groups")}
         >
           <.live_component
             module={OmedisWeb.GroupLive.FormComponent}
@@ -111,13 +108,13 @@ defmodule OmedisWeb.GroupLive.Index do
             group={@group}
             current_user={@current_user}
             organisation={@organisation}
-            patch={~p"/organisations/#{@organisation}/groups"}
+            patch={~p"/groups"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/organisations/#{@organisation}/groups"}
+          resource_path={~p"/groups"}
           total_pages={@total_pages}
         />
       </div>
@@ -158,7 +155,7 @@ defmodule OmedisWeb.GroupLive.Index do
         :error,
         dgettext("group", "You are not authorized to access this page")
       )
-      |> redirect(to: ~p"/organisations/#{socket.assigns.organisation}/groups")
+      |> redirect(to: ~p"/groups")
     end
   end
 
@@ -180,7 +177,7 @@ defmodule OmedisWeb.GroupLive.Index do
         :error,
         dgettext("group", "You are not authorized to access this page")
       )
-      |> redirect(to: ~p"/organisations/#{socket.assigns.organisation}/groups")
+      |> redirect(to: ~p"/groups")
     end
   end
 

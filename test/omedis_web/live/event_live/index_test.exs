@@ -10,11 +10,12 @@ defmodule OmedisWeb.EventLive.IndexTest do
     {:ok, group} = create_group(organisation)
     {:ok, project} = create_project(organisation)
     {:ok, activity} = create_activity(organisation, %{group_id: group.id, project_id: project.id})
-    {:ok, authorized_user} = create_user()
-    {:ok, user} = create_user()
 
-    {:ok, _} =
-      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _invitation} =
+      create_invitation(organisation, %{email: "test@user.com", groups: [group.id]})
+
+    {:ok, authorized_user} =
+      create_user(%{email: "test@user.com", current_organisation_id: organisation.id})
 
     {:ok, _} =
       create_access_right(organisation, %{
@@ -45,6 +46,35 @@ defmodule OmedisWeb.EventLive.IndexTest do
         resource_name: "Organisation"
       })
 
+    {:ok, group2} = create_group(organisation)
+
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group2.id,
+        read: true,
+        resource_name: "Group"
+      })
+
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group2.id,
+        read: true,
+        resource_name: "Activity"
+      })
+
+    {:ok, _} =
+      create_access_right(organisation, %{
+        group_id: group2.id,
+        read: true,
+        resource_name: "Organisation"
+      })
+
+    {:ok, _invitation} =
+      create_invitation(organisation, %{email: "test2@user.com", groups: [group2.id]})
+
+    {:ok, user} =
+      create_user(%{email: "test2@user.com", current_organisation_id: organisation.id})
+
     %{
       authorized_user: authorized_user,
       group: group,
@@ -56,7 +86,7 @@ defmodule OmedisWeb.EventLive.IndexTest do
     }
   end
 
-  describe "/organisations/:slug/activities/:id/events" do
+  describe "/activities/:id/events" do
     test "organisation owner can see all events", %{
       activity: activity,
       conn: conn,
@@ -94,7 +124,7 @@ defmodule OmedisWeb.EventLive.IndexTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/events")
+        |> live(~p"/activities/#{activity.id}/events")
 
       assert html =~ "User&#39;s event"
       assert html =~ "Owner&#39;s event"
@@ -137,34 +167,21 @@ defmodule OmedisWeb.EventLive.IndexTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/events")
+        |> live(~p"/activities/#{activity.id}/events")
 
       assert html =~ "Test summary 1"
       assert html =~ "Test summary 2"
     end
 
-    test "unauthorized user cannot see events", %{conn: conn, user: user} do
-      {:ok, organisation} = create_organisation()
-      {:ok, group} = create_group(organisation)
-      {:ok, _} = create_group_membership(organisation, %{group_id: group.id, user_id: user.id})
-      {:ok, project} = create_project(organisation)
-
+    test "unauthorized user cannot see events", %{
+      conn: conn,
+      organisation: organisation,
+      user: user,
+      group: group,
+      project: project
+    } do
       {:ok, activity} =
         create_activity(organisation, %{group_id: group.id, project_id: project.id})
-
-      {:ok, _} =
-        create_access_right(organisation, %{
-          group_id: group.id,
-          read: true,
-          resource_name: "Organisation"
-        })
-
-      {:ok, _} =
-        create_access_right(organisation, %{
-          group_id: group.id,
-          read: true,
-          resource_name: "Activity"
-        })
 
       {:ok, _} =
         create_event(
@@ -180,7 +197,7 @@ defmodule OmedisWeb.EventLive.IndexTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/organisations/#{organisation}/activities/#{activity.id}/events")
+        |> live(~p"/activities/#{activity.id}/events")
 
       refute html =~ "Test summary"
     end

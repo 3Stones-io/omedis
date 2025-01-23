@@ -3,8 +3,11 @@ defmodule OmedisWeb.LiveUserAuth do
   Helpers for authenticating users in LiveViews.
   """
 
-  import Phoenix.Component
   use OmedisWeb, :verified_routes
+
+  import Phoenix.Component
+
+  alias Omedis.Accounts
 
   def on_mount(:live_user_optional, _params, _session, socket) do
     if socket.assigns[:current_user] do
@@ -16,9 +19,15 @@ defmodule OmedisWeb.LiveUserAuth do
 
   def on_mount(:live_user_required, _params, _session, socket) do
     if socket.assigns[:current_user] do
+      user = socket.assigns[:current_user]
+
+      organisation =
+        Accounts.get_organisation_by_id!(user.current_organisation_id, actor: user)
+
       {:cont,
        socket
-       |> assign(:current_user, socket.assigns[:current_user])}
+       |> assign(:current_user, user)
+       |> assign(:organisation, organisation)}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/login")}
     end

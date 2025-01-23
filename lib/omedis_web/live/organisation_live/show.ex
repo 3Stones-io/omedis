@@ -15,7 +15,6 @@ defmodule OmedisWeb.OrganisationLive.Show do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", true}
           ]}
           language={@language}
@@ -27,33 +26,30 @@ defmodule OmedisWeb.OrganisationLive.Show do
           <:actions>
             <.link
               :if={Ash.can?({@organisation, :update}, @current_user)}
-              patch={~p"/organisations/#{@organisation}/show/edit"}
+              patch={~p"/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button>
                 {dgettext("organisation", "Edit organisation")}
               </.button>
             </.link>
-            <.link
-              navigate={~p"/organisations/#{@organisation}/invitations"}
-              phx-click={JS.push_focus()}
-            >
+            <.link navigate={~p"/invitations"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("organisation", "Invitations")}
               </.button>
             </.link>
-            <.link navigate={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/projects"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("organisation", "Projects")}
               </.button>
             </.link>
-            <.link navigate={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/groups"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("organisation", "Groups")}
               </.button>
             </.link>
 
-            <.link navigate={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/today"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("organisation", "Today")}
               </.button>
@@ -166,10 +162,6 @@ defmodule OmedisWeb.OrganisationLive.Show do
             {@organisation.account_holder}
           </:item>
         </.list>
-
-        <.back navigate={~p"/organisations"}>
-          {dgettext("organisation", "Back to organisations")}
-        </.back>
 
         <.modal
           :if={@live_action == :edit}
