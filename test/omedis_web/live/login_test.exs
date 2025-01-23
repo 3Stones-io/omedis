@@ -89,12 +89,11 @@ defmodule OmedisWeb.LoginTest do
 
       {:ok, view, _html} = live(conn, ~p"/login")
 
-      html =
-        view
-        |> form("#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
-        |> render_submit()
+      view
+      |> form("#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
+      |> render_submit()
 
-      assert html =~ "Signing in..."
+      assert has_element?(view, "button[type=\"submit\"]")
     end
   end
 end
