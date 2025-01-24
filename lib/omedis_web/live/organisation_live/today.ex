@@ -11,11 +11,7 @@ defmodule OmedisWeb.OrganisationLive.Today do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={@current_organisation}
-      language={@language}
-    >
+    <.side_and_topbar current_user={@current_user} organisation={@organisation} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[

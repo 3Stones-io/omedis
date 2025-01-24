@@ -16,7 +16,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      :ok = Endpoint.subscribe("#{socket.assigns.current_organisation.id}:invitations")
+      :ok = Endpoint.subscribe("#{socket.assigns.organisation.id}:invitations")
     end
 
     {:ok,
@@ -121,11 +121,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={@current_organisation}
-      language={@language}
-    >
+    <.side_and_topbar current_user={@current_user} organisation={@organisation} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[

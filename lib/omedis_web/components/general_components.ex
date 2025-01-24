@@ -131,14 +131,10 @@ defmodule OmedisWeb.GeneralComponents do
   def side_and_topbar(assigns) do
     ~H"""
     <div>
-      <.topbar
-        current_organisation={@current_organisation}
-        current_user={@current_user}
-        language={@language}
-      />
+      <.topbar organisation={@organisation} current_user={@current_user} language={@language} />
 
       <.desktop_sidebar
-        current_organisation={@current_organisation}
+        organisation={@organisation}
         current_user={@current_user}
         language={@language}
       />
@@ -163,14 +159,11 @@ defmodule OmedisWeb.GeneralComponents do
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" class="-mx-2 space-y-1">
-                <.organisation_link
-                  current_organisation={@current_organisation}
-                  current_user={@current_user}
-                />
+                <.organisation_link organisation={@organisation} current_user={@current_user} />
 
                 <li>
                   <.link
-                    :if={@current_organisation}
+                    :if={@organisation}
                     navigate={~p"/today"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
@@ -318,9 +311,9 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
               </ul>
             </li>
-            <li :if={@current_organisation}>
+            <li :if={@organisation}>
               <div class="text-xs font-semibold leading-6 text-gray-400">
-                {@current_organisation.name}
+                {@organisation.name}
               </div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
@@ -421,7 +414,7 @@ defmodule OmedisWeb.GeneralComponents do
           >
             <div class="flex gap-4">
               <.mobile_sidebar
-                current_organisation={@current_organisation}
+                organisation={@organisation}
                 current_user={@current_user}
                 language={@language}
               />
@@ -531,13 +524,10 @@ defmodule OmedisWeb.GeneralComponents do
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" class="-mx-2 space-y-1">
-                <.organisation_link
-                  current_organisation={@current_organisation}
-                  current_user={@current_user}
-                />
+                <.organisation_link organisation={@organisation} current_user={@current_user} />
                 <li>
                   <.link
-                    :if={@current_organisation}
+                    :if={@organisation}
                     navigate={~p"/today"}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
@@ -684,9 +674,9 @@ defmodule OmedisWeb.GeneralComponents do
                 </li>
               </ul>
             </li>
-            <li :if={@current_organisation}>
+            <li :if={@organisation}>
               <div class="text-xs font-semibold leading-6 text-gray-400">
-                {@current_organisation.name}
+                {@organisation.name}
               </div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li>
@@ -798,7 +788,7 @@ defmodule OmedisWeb.GeneralComponents do
     """
   end
 
-  defp organisation_link(%{current_organisation: nil} = assigns) do
+  defp organisation_link(%{organisation: nil} = assigns) do
     ~H"""
     <li :if={Ash.can?({Omedis.Accounts.Organisation, :create}, @current_user)}>
       <.link
@@ -829,7 +819,7 @@ defmodule OmedisWeb.GeneralComponents do
     ~H"""
     <li>
       <.link
-        navigate={~p"/organisations/#{@current_organisation}"}
+        navigate={~p"/organisations/#{@organisation}"}
         class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
       >
         <svg
@@ -846,7 +836,7 @@ defmodule OmedisWeb.GeneralComponents do
             d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
           />
         </svg>
-        {@current_organisation.name}
+        {@organisation.name}
       </.link>
     </li>
     """

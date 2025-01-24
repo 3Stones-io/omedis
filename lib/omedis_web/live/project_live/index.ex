@@ -13,11 +13,7 @@ defmodule OmedisWeb.ProjectLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={@current_organisation}
-      language={@language}
-    >
+    <.side_and_topbar current_user={@current_user} organisation={@organisation} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
@@ -111,7 +107,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     actor = socket.assigns.current_user
 
     if connected?(socket) do
-      :ok = OmedisWeb.Endpoint.subscribe("#{socket.assigns.current_organisation.id}:projects")
+      :ok = OmedisWeb.Endpoint.subscribe("#{socket.assigns.organisation.id}:projects")
     end
 
     {:ok,
