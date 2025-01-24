@@ -158,8 +158,7 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
                show_live
                |> form("#activity-form",
                  activity: %{
-                   name: "Updated Activity",
-                   color_code: "#00FF00"
+                   name: "Updated Activity"
                  }
                )
                |> render_submit()
@@ -248,11 +247,10 @@ defmodule OmedisWeb.ActivityLive.ShowTest do
 
       assert html =
                form_live
-               |> form("#activity-form", activity: %{name: "", color_code: "invalid"})
+               |> form("#activity-form", activity: %{name: ""})
                |> render_change()
 
       assert html =~ "must be present"
-      assert html =~ "Color code must be a valid hex color code"
     end
   end
 end

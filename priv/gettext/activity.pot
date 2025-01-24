@@ -42,16 +42,6 @@ msgstr ""
 msgid "Edit Activity"
 msgstr ""
 
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Enable or disable custom color input"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Enter custom color"
-msgstr ""
-
 #: lib/omedis_web/live/activity_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Listing Activities"
@@ -66,11 +56,6 @@ msgstr ""
 #: lib/omedis_web/live/activity_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "New Activity"
-msgstr ""
-
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Please correct the errors below"
 msgstr ""
 
 #: lib/omedis_web/live/activity_live/index.ex
@@ -115,7 +100,38 @@ msgstr ""
 msgid "You are not authorized to access this page"
 msgstr ""
 
+#: lib/omedis_web/live/activity_live/form_component.ex
 #: lib/omedis_web/live/activity_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Color Code"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Group <span class='text-red-600'>*</span>"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Is default"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Name  <span class='text-red-600'>*</span>"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Organisation  <span class='text-red-600'>*</span>"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Project  <span class='text-red-600'>*</span>"
+msgstr ""
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Select a color from the color picker or from the presets below"
 msgstr ""

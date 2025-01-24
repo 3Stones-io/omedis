@@ -118,6 +118,31 @@ defmodule Omedis.TimeTrackingTest do
       assert activity.name == "Test Activity"
     end
 
+    test "activities have unique color codes", %{
+      authorized_user: authorized_user,
+      organisation: organisation,
+      group: group,
+      project: project
+    } do
+      {:ok, _activity} =
+        create_activity(organisation, %{
+          name: "Test Activity",
+          group_id: group.id,
+          project_id: project.id,
+          color_code: "#FF0000"
+        })
+
+      attrs = %{
+        name: "Test Activity",
+        group_id: group.id,
+        project_id: project.id,
+        color_code: "#FF0000"
+      }
+
+      assert {:error, %Ash.Error.Invalid{}} =
+               TimeTracking.create_activity(attrs, actor: authorized_user, tenant: organisation)
+    end
+
     test "unauthorized user cannot create an activity", %{
       user: user,
       organisation: organisation,
@@ -671,15 +696,6 @@ defmodule Omedis.TimeTrackingTest do
                TimeTracking.move_activity_down(activity1, actor: owner, tenant: organisation)
 
       assert unchanged_activity.position == 2
-    end
-  end
-
-  describe "select_unused_color_code/1" do
-    test "returns a unused color code for an activity", %{
-      organisation: organisation
-    } do
-      {:ok, activity} = create_activity(organisation, %{color_code: "#1f77b4"})
-      assert TimeTracking.select_unused_color_code(organisation) != activity.color_code
     end
   end
 

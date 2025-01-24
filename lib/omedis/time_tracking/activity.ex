@@ -179,7 +179,7 @@ defmodule Omedis.TimeTracking.Activity do
   end
 
   identities do
-    identity :unique_color_code_position, [:color_code, :group_id]
+    identity :unique_color_code, [:color_code, :group_id]
 
     identity :unique_position, [:position, :group_id]
     identity :unique_slug, [:slug, :group_id], eager_check?: true

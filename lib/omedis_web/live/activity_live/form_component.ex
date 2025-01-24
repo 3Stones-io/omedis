@@ -2,7 +2,21 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
   use OmedisWeb, :live_component
 
   alias Omedis.TimeTracking
-  alias Omedis.TimeTracking.Activity
+
+  @color_presets [
+    "#cb328a",
+    "#db133c",
+    "#c11f56",
+    "#cb5a43",
+    "#eb9020",
+    "#029967",
+    "#8dbd8f",
+    "#6399ca",
+    "#e4e5f8",
+    "#9400d2",
+    "#320162",
+    "#37444d"
+  ]
 
   @impl true
   def render(assigns) do
@@ -22,14 +36,16 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         <.input
           field={@form[:name]}
           type="text"
-          label={Phoenix.HTML.raw("Name  <span class='text-red-600'>*</span>")}
+          label={Phoenix.HTML.raw(dgettext("activity", "Name  <span class='text-red-600'>*</span>"))}
         />
 
         <%= if @group.id do %>
           <.input
             field={@form[:group_id]}
             type="select"
-            label={Phoenix.HTML.raw("Group <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(dgettext("activity", "Group <span class='text-red-600'>*</span>"))
+            }
             options={Enum.map(@groups, &{&1.name, &1.id})}
             disabled={true}
             value={@group.id}
@@ -39,7 +55,11 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           <.input
             field={@form[:group_id]}
             type="select"
-            label={Phoenix.HTML.raw("Organisation  <span class='text-red-600'>*</span>")}
+            label={
+              Phoenix.HTML.raw(
+                dgettext("activity", "Organisation  <span class='text-red-600'>*</span>")
+              )
+            }
             options={Enum.map(@groups, &{&1.name, &1.id})}
           />
         <% end %>
@@ -47,83 +67,71 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         <.input
           field={@form[:project_id]}
           type="select"
-          label={Phoenix.HTML.raw("Project  <span class='text-red-600'>*</span>")}
+          label={
+            Phoenix.HTML.raw(dgettext("activity", "Project  <span class='text-red-600'>*</span>"))
+          }
           options={Enum.map(@projects, &{&1.name, &1.id})}
         />
 
-        <.input field={@form[:is_default]} type="checkbox" label={Phoenix.HTML.raw("Is default")} />
+        <.input
+          field={@form[:is_default]}
+          type="checkbox"
+          label={Phoenix.HTML.raw(dgettext("activity", "Is default"))}
+        />
 
-        <div class="flex gap-5">
-          <p>
-            {dgettext("activity", "Enter custom color")}
+        <div id="color-input-container" phx-hook="ActivityColorInput">
+          <p class="block text-sm font-semibold leading-6 text-zinc-800 mb-2">
+            <span>{dgettext("activity", "Color Code")}</span>
+            <span class="text-red-600">*</span>
           </p>
-          <div
-            role="switch"
-            phx-click="toggle_color_mode"
-            phx-target={@myself}
-            class={
-         "relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out " <>
-           if @is_custom_color, do: "bg-green-500", else: "bg-gray-200"
-           }
-            aria-checked={@is_custom_color}
-          >
-            <span class="sr-only">
-              {dgettext("activity", "Enable or disable custom color input")}
-            </span>
-
-            <span class={
-          "block w-5 h-5 transform bg-white rounded-full transition duration-200 ease-in-out " <>
-         if @is_custom_color, do: "translate-x-5", else: "translate-x-0"
-        }>
-            </span>
+          <div class="grid grid-cols-[10%_90%] outline outline-[1px] outline-gray-300 rounded-md mb-2">
+            <input
+              type="color"
+              class="px-1 border-r border-r-[1.5px] h-full"
+              id="color-picker-input"
+              phx-update="ignore"
+              value={@form[:color_code].value}
+            />
+            <input
+              type="text"
+              id="color-picker-input-text"
+              disabled
+              class="border-none outline-none"
+              phx-update="ignore"
+              value={@form[:color_code].value}
+            />
           </div>
-        </div>
-        <div :if={!@is_custom_color}>
-          <.input
-            field={@form[:color_code]}
-            type="select"
-            options={[
-              "#1f77b4",
-              "#ff7f0e",
-              "#2ca02c",
-              "#d62728",
-              "#9467bd",
-              "#8c564b",
-              "#e377c2",
-              "#7f7f7f",
-              "#bcbd22",
-              "#17becf"
-            ]}
-            value={@color_code}
-            label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
-          />
-        </div>
 
-        <div :if={@is_custom_color}>
-          <.input
-            field={@form[:color_code]}
-            type="text"
-            value={@form[:color_code].value || @color_code}
-            label={Phoenix.HTML.raw("Color code  <span class='text-red-600'>*</span>")}
-          />
-        </div>
+          <p class="mb-2">
+            {dgettext("activity", "Select a color from the color picker or from the presets below")}
+          </p>
 
-        <.custom_color_button :if={@form[:name].value} color={@form[:color_code].value || @color_code}>
-          {@form[:name].value || "Name"}
-        </.custom_color_button>
+          <div class="flex items-center gap-x-2">
+            <div :for={color <- @color_presets}>
+              <label class="cursor-pointer">
+                <input
+                  type="radio"
+                  value={color}
+                  class="absolute opacity-0 w-0 h-0 activity-color-radio"
+                  id={"color-radio-#{color}"}
+                  phx-update="ignore"
+                />
+                <span
+                  class={[
+                    "cursor-pointer text-2xl h-8 w-8 rounded-md inline-block color-preset",
+                    @form[:color_code].value == color && "checked-radio"
+                  ]}
+                  style={"background: #{color}"}
+                >
+                </span>
+              </label>
+            </div>
+          </div>
+          <.input field={@form[:color_code]} type="hidden" id="color-code-input" />
+        </div>
 
         <:actions>
-          <.button
-            class={
-              if @form.source.source.valid? == false do
-                "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
-              else
-                ""
-              end
-            }
-            disabled={@form.source.source.valid? == false}
-            phx-disable-with={dgettext("activity", "Saving...")}
-          >
+          <.button phx-disable-with={dgettext("activity", "Saving...")}>
             {dgettext("activity", "Save Activity")}
           </.button>
         </:actions>
@@ -137,6 +145,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:color_presets, @color_presets)
      |> assign_form()}
   end
 
@@ -146,12 +155,6 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
       AshPhoenix.Form.validate(socket.assigns.form, activity_params)
 
     {:noreply, assign(socket, form: form)}
-  end
-
-  def handle_event("toggle_color_mode", _params, socket) do
-    {:noreply,
-     socket
-     |> update(:is_custom_color, fn is_custom_color -> not is_custom_color end)}
   end
 
   def handle_event("save", %{"activity" => activity_params}, socket) do
@@ -170,13 +173,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         {:noreply, socket}
 
       {:error, form} ->
-        {:noreply,
-         socket
-         |> assign(form: form)
-         |> put_flash(
-           :error,
-           dgettext("activity", "Please correct the errors below")
-         )}
+        {:noreply, assign(socket, :form, form)}
     end
   end
 
@@ -194,19 +191,16 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         )
       else
         AshPhoenix.Form.for_create(
-          Activity,
+          TimeTracking.Activity,
           :create,
+          api: TimeTracking,
+          params: %{color_code: "#000000"},
           as: "activity",
           actor: socket.assigns.current_user,
           tenant: socket.assigns.organisation
         )
       end
 
-    color_code = TimeTracking.select_unused_color_code(socket.assigns.organisation)
-
-    assign(socket,
-      form: to_form(form),
-      color_code: color_code
-    )
+    assign(socket, :form, to_form(form))
   end
 end

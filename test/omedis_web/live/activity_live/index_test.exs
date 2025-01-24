@@ -251,6 +251,40 @@ defmodule OmedisWeb.ActivityLive.IndexTest do
 
       assert html =~ "must be present"
     end
+
+    test "user cannot create activity with existing color code", %{
+      conn: conn,
+      group: group,
+      project: project,
+      organisation: organisation,
+      authorized_user: authorized_user
+    } do
+      {:ok, _activity} =
+        create_activity(organisation, %{
+          group_id: group.id,
+          project_id: project.id,
+          name: "Test Activity",
+          color_code: "#000000"
+        })
+
+      {:ok, view, _html} =
+        conn
+        |> log_in_user(authorized_user)
+        |> live(~p"/organisations/#{organisation}/groups/#{group}/activities/new")
+
+      html =
+        view
+        |> form("#activity-form",
+          activity: %{
+            name: "New Activity",
+            color_code: "#000000",
+            project_id: project.id
+          }
+        )
+        |> render_submit()
+
+      assert html =~ "has already been taken"
+    end
   end
 
   describe "position updates" do
