@@ -1,4 +1,4 @@
-defmodule :"Elixir.Omedis.Repo.Migrations.Rename-unique-activity-color-identity" do
+defmodule Omedis.Repo.Migrations.RenameUniqueActivityColorIdentity do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

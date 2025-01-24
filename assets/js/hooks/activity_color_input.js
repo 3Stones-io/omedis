@@ -8,6 +8,7 @@ export default ActivityColorInput = {
   
     const selectColor = color => {
       colorCodeInput.value = color
+      colorCodeInput.dispatchEvent(new Event("input", { bubbles: true }))
       colorPickerInputText.value = color
     }
 
@@ -36,7 +37,6 @@ export default ActivityColorInput = {
       radio.addEventListener("change", (event) => {
         event.preventDefault()
         selectRadioColor(radio)
-        radio.value && (colorPickerInput.value = radio.value)
         radio.value && selectColor(radio.value)
       })
     })
