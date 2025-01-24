@@ -66,7 +66,6 @@ msgstr "Gruppi"
 #: lib/omedis_web/live/group_live/index.ex
 #: lib/omedis_web/live/group_live/show.ex
 #: lib/omedis_web/live/invitation_live/index.ex
-#: lib/omedis_web/live/organisation_live/index.ex
 #: lib/omedis_web/live/organisation_live/show.ex
 #: lib/omedis_web/live/organisation_live/today.ex
 #: lib/omedis_web/live/project_live/index.ex
@@ -94,21 +93,6 @@ msgstr "Navigazione Breadcrumb"
 #, elixir-autogen, elixir-format
 msgid "New Project"
 msgstr "Nuovo Progetto"
-
-#: lib/omedis_web/live/activity_live/index.ex
-#: lib/omedis_web/live/activity_live/show.ex
-#: lib/omedis_web/live/event_live/index.ex
-#: lib/omedis_web/live/group_live/index.ex
-#: lib/omedis_web/live/group_live/show.ex
-#: lib/omedis_web/live/invitation_live/index.ex
-#: lib/omedis_web/live/organisation_live/index.ex
-#: lib/omedis_web/live/organisation_live/show.ex
-#: lib/omedis_web/live/organisation_live/today.ex
-#: lib/omedis_web/live/project_live/index.ex
-#: lib/omedis_web/live/project_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Organisations"
-msgstr "Organizzazioni"
 
 #: lib/omedis_web/components/general_components.ex
 #: lib/omedis_web/live/project_live/index.ex
@@ -166,3 +150,8 @@ msgstr "Modifica progetto"
 #, elixir-autogen, elixir-format
 msgid "Create new organisation"
 msgstr "Crea nuova organizzazione"
+
+#: lib/omedis_web/components/general_components.ex
+#, elixir-autogen, elixir-format
+msgid "Playground"
+msgstr ""

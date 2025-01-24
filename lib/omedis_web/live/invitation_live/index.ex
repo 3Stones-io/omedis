@@ -130,7 +130,6 @@ defmodule OmedisWeb.InvitationLive.Index do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
             {dgettext("navigation", "Invitations"), "", true}
           ]}

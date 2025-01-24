@@ -15,7 +15,6 @@ defmodule OmedisWeb.OrganisationLive.Show do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", true}
           ]}
           language={@language}
@@ -166,10 +165,6 @@ defmodule OmedisWeb.OrganisationLive.Show do
             {@organisation.account_holder}
           </:item>
         </.list>
-
-        <.back navigate={~p"/organisations"}>
-          {dgettext("organisation", "Back to organisations")}
-        </.back>
 
         <.modal
           :if={@live_action == :edit}

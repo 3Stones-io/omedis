@@ -21,7 +21,6 @@ defmodule OmedisWeb.EventLive.Index do
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
-            {dgettext("navigation", "Organisations"), ~p"/organisations", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
             {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
             {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},

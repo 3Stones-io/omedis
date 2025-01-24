@@ -335,34 +335,6 @@ defmodule Omedis.AccountsTest do
     end
   end
 
-  describe "list_paginated_organisations/2" do
-    setup [:organisation_setup]
-
-    test "returns paginated organisations the user has access to", %{user: user, group: group} do
-      Enum.each(1..15, fn i ->
-        {:ok, organisation} = create_organisation(%{name: "Organisation #{i}"})
-
-        create_access_right(organisation, %{
-          group_id: group.id,
-          read: true,
-          resource_name: "Organisation"
-        })
-      end)
-
-      assert {:ok, %{results: organisations, count: total_count}} =
-               Accounts.list_paginated_organisations(actor: user, page: [limit: 10, offset: 0])
-
-      assert length(organisations) == 10
-      # Also includes the owned organisation created when user creates an organisation
-      assert total_count == 16
-
-      assert {:ok, %{results: next_page}} =
-               Accounts.list_paginated_organisations(actor: user, page: [limit: 10, offset: 10])
-
-      assert length(next_page) == 6
-    end
-  end
-
   # User tests
   describe "create_user/1" do
     test "creates a user given valid attributes" do

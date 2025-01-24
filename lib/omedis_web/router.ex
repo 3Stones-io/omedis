@@ -61,8 +61,6 @@ defmodule OmedisWeb.Router do
       ],
       session: {OmedisWeb.LiveHelpers, :add_pubsub_topics_unique_id_to_session, []} do
       live "/edit_profile", EditProfileLive, :index
-      live "/organisations", OrganisationLive.Index, :index
-      live "/organisations/:slug/edit", OrganisationLive.Index, :edit
 
       live "/organisations/:slug/invitations", InvitationLive.Index, :index
 
@@ -101,6 +99,7 @@ defmodule OmedisWeb.Router do
     end
 
     live "/organisations/:slug/invitations/:id", InvitationLive.Show, :show
+    live "/playground", PlaygroundLive, :index
   end
 
   # Other scopes may use custom stacks.
@@ -119,8 +118,6 @@ defmodule OmedisWeb.Router do
 
     scope "/dev" do
       pipe_through :browser
-
-      live "/playground", OmedisWeb.PlaygroundLive, :index
 
       live_dashboard "/dashboard", metrics: OmedisWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview

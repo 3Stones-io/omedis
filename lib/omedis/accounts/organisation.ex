@@ -114,14 +114,6 @@ defmodule Omedis.Accounts.Organisation do
       filter expr(slug == ^arg(:slug))
     end
 
-    read :list_paginated do
-      pagination offset?: true,
-                 default_limit: Application.compile_env(:omedis, :pagination_default_limit),
-                 countable: :by_default
-
-      prepare build(sort: :created_at)
-    end
-
     destroy :destroy do
     end
 
