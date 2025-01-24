@@ -47,6 +47,7 @@ msgstr "Modifica Attività"
 msgid "Listing Activities"
 msgstr "Elenco Attività"
 
+#: lib/omedis_web/live/activity_live/form_component.ex
 #: lib/omedis_web/live/activity_live/index.ex
 #: lib/omedis_web/live/activity_live/show.ex
 #, elixir-autogen, elixir-format
@@ -107,31 +108,26 @@ msgid "Color Code"
 msgstr "Codice colore"
 
 #: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Group <span class='text-red-600'>*</span>"
-msgstr "Gruppo <span class='text-red-600'>*</span>"
-
-#: lib/omedis_web/live/activity_live/form_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Is default"
 msgstr "Predefinito"
 
 #: lib/omedis_web/live/activity_live/form_component.ex
 #, elixir-autogen, elixir-format
-msgid "Name  <span class='text-red-600'>*</span>"
-msgstr "Nome  <span class='text-red-600'>*</span>"
-
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Organisation  <span class='text-red-600'>*</span>"
-msgstr "Organizzazione  <span class='text-red-600'>*</span>"
-
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Project  <span class='text-red-600'>*</span>"
-msgstr "Progetto  <span class='text-red-600'>*</span>"
-
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
 msgid "Select a color from the color picker or from the presets below"
 msgstr "Seleziona un colore dal selettore di colori o dai preset sottostanti"
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Group"
+msgstr "Gruppo"
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Organisation"
+msgstr "Organizzazione"
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Project"
+msgstr "Progetto"

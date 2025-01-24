@@ -36,7 +36,9 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
         <.input
           field={@form[:name]}
           type="text"
-          label={Phoenix.HTML.raw(dgettext("activity", "Name  <span class='text-red-600'>*</span>"))}
+          label={
+            Phoenix.HTML.raw("#{dgettext("activity", "Name")} <span class='text-red-600'>*</span>")
+          }
         />
 
         <%= if @group.id do %>
@@ -44,7 +46,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
             field={@form[:group_id]}
             type="select"
             label={
-              Phoenix.HTML.raw(dgettext("activity", "Group <span class='text-red-600'>*</span>"))
+              Phoenix.HTML.raw("#{dgettext("activity", "Group")} <span class='text-red-600'>*</span>")
             }
             options={Enum.map(@groups, &{&1.name, &1.id})}
             disabled={true}
@@ -57,7 +59,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
             type="select"
             label={
               Phoenix.HTML.raw(
-                dgettext("activity", "Organisation  <span class='text-red-600'>*</span>")
+                "#{dgettext("activity", "Organisation")} <span class='text-red-600'>*</span>"
               )
             }
             options={Enum.map(@groups, &{&1.name, &1.id})}
@@ -68,7 +70,7 @@ defmodule OmedisWeb.ActivityLive.FormComponent do
           field={@form[:project_id]}
           type="select"
           label={
-            Phoenix.HTML.raw(dgettext("activity", "Project  <span class='text-red-600'>*</span>"))
+            Phoenix.HTML.raw("#{dgettext("activity", "Project")} <span class='text-red-600'>*</span>")
           }
           options={Enum.map(@projects, &{&1.name, &1.id})}
         />
