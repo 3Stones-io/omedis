@@ -7,8 +7,6 @@ defmodule OmedisWeb.LiveUserAuth do
 
   import Phoenix.Component
 
-  alias Omedis.Accounts
-
   def on_mount(:live_user_optional, _params, _session, socket) do
     if socket.assigns[:current_user] do
       {:cont, socket}
@@ -21,13 +19,9 @@ defmodule OmedisWeb.LiveUserAuth do
     if socket.assigns[:current_user] do
       user = socket.assigns[:current_user]
 
-      organisation =
-        Accounts.get_organisation_by_id!(user.current_organisation_id, actor: user)
-
       {:cont,
        socket
-       |> assign(:current_user, user)
-       |> assign(:organisation, organisation)}
+       |> assign(:current_user, user)}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/login")}
     end

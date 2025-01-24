@@ -43,7 +43,6 @@ defmodule OmedisWeb.Router do
       ],
       session: {OmedisWeb.LiveHelpers, :add_pubsub_topics_unique_id_to_session, []} do
       live "/edit_profile", EditProfileLive, :index
-      live "/edit", OrganisationLive.Index, :edit
 
       live "/invitations", InvitationLive.Index, :index
 
