@@ -13,3 +13,7 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 .invitation-language-input:checked ~ .lang-flag {
   @apply outline outline-2 outline-offset-2 outline-red-500 rounded-full;
 }
+
+.checked-radio {
+  @apply outline outline-2 outline-offset-2 outline-red-500 rounded-md;
+}

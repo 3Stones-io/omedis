@@ -28,19 +28,6 @@ defmodule Omedis.TimeTracking do
     end
   end
 
-  @github_issue_color_codes [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
-    "#bcbd22",
-    "#17becf"
-  ]
-
   def move_activity_up(activity, opts \\ []) do
     case activity.position do
       1 ->
@@ -63,20 +50,6 @@ defmodule Omedis.TimeTracking do
     end
   end
 
-  def select_unused_color_code(organisation) do
-    existing_color_codes = get_color_code_for_an_organisation(organisation)
-
-    unused_color_code =
-      @github_issue_color_codes
-      |> Enum.filter(fn color_code -> color_code not in existing_color_codes end)
-      |> Enum.random()
-
-    case unused_color_code do
-      nil -> Enum.random(@github_issue_color_codes)
-      color_code -> color_code
-    end
-  end
-
   defp get_max_position_by_group_id(group_id, opts) do
     Activity
     |> Ash.Query.filter(group_id: group_id)
@@ -89,12 +62,5 @@ defmodule Omedis.TimeTracking do
       nil -> 0
       record -> record.position
     end
-  end
-
-  defp get_color_code_for_an_organisation(organisation) do
-    Activity
-    |> Ash.Query.select([:color_code])
-    |> Ash.read!(authorize?: false, tenant: organisation)
-    |> Enum.map(& &1.color_code)
   end
 end

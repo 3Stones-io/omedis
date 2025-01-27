@@ -42,21 +42,12 @@ msgstr "Bearbeiten"
 msgid "Edit Activity"
 msgstr "Aktivität bearbeiten"
 
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Enable or disable custom color input"
-msgstr "Benutzerdefinierte Farbeingabe aktivieren oder deaktivieren"
-
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Enter custom color"
-msgstr "Benutzerdefinierte Farbe eingeben"
-
 #: lib/omedis_web/live/activity_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Listing Activities"
 msgstr "Aktivitäten auflisten"
 
+#: lib/omedis_web/live/activity_live/form_component.ex
 #: lib/omedis_web/live/activity_live/index.ex
 #: lib/omedis_web/live/activity_live/show.ex
 #, elixir-autogen, elixir-format
@@ -67,11 +58,6 @@ msgstr "Name"
 #, elixir-autogen, elixir-format
 msgid "New Activity"
 msgstr "Neue Aktivität"
-
-#: lib/omedis_web/live/activity_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Please correct the errors below"
-msgstr "Bitte korrigieren Sie die untenstehenden Fehler"
 
 #: lib/omedis_web/live/activity_live/index.ex
 #: lib/omedis_web/live/activity_live/show.ex
@@ -115,7 +101,33 @@ msgstr "Ereignisse anzeigen"
 msgid "You are not authorized to access this page"
 msgstr "Sie sind nicht berechtigt, auf diese Seite zuzugreifen"
 
+#: lib/omedis_web/live/activity_live/form_component.ex
 #: lib/omedis_web/live/activity_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Color Code"
 msgstr "Farbcode"
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Is default"
+msgstr "Standard"
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Select a color from the color picker or from the presets below"
+msgstr "Wählen Sie eine Farbe aus dem Farbwähler oder aus den untenstehenden Voreinstellungen"
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Group"
+msgstr "Gruppe"
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Organisation"
+msgstr "Organisation"
+
+#: lib/omedis_web/live/activity_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Project"
+msgstr "Projekt"
