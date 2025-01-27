@@ -24,6 +24,7 @@ import topbar from "../vendor/topbar";
 
 import Alpine from "alpinejs";
 
+import ActivityColorInput from "./hooks/activity_color_input";
 import FlashAutoDisappear from "./hooks/flash_auto_disappear";
 import HideOnNavigate from "./hooks/hide_on_navigate";
 import phxFeedbackDom from "./phx_feedback_dom";
@@ -32,6 +33,7 @@ window.Alpine = Alpine;
 Alpine.start();
 
 let Hooks = {
+  ActivityColorInput,
   FlashAutoDisappear,
   HideOnNavigate,
 };

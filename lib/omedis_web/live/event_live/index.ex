@@ -12,22 +12,16 @@ defmodule OmedisWeb.EventLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={@current_organisation}
-      language={@language}
-    >
+    <.side_and_topbar current_user={@current_user} organisation={@organisation} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
-            {@group.name, ~p"/organisations/#{@organisation}/groups/#{@group}", false},
-            {dgettext("navigation", "Activities"),
-             ~p"/organisations/#{@organisation}/groups/#{@group}/activities", false},
-            {@activity.name,
-             ~p"/organisations/#{@organisation}/groups/#{@group}/activities/#{@activity.id}", false},
+            {dgettext("navigation", "Groups"), ~p"/groups", false},
+            {@group.name, ~p"/groups/#{@group}", false},
+            {dgettext("navigation", "Activities"), ~p"/groups/#{@group}/activities", false},
+            {@activity.name, ~p"/groups/#{@group}/activities/#{@activity.id}", false},
             {dgettext("navigation", "Events"), "", true}
           ]}
           language={@language}
@@ -56,7 +50,7 @@ defmodule OmedisWeb.EventLive.Index do
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/organisations/#{@organisation}/activities/#{@activity.id}/events"}
+          resource_path={~p"/activities/#{@activity.id}/events"}
           total_pages={@total_pages}
         />
       </div>

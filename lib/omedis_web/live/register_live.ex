@@ -24,7 +24,6 @@ defmodule OmedisWeb.RegisterLive do
      |> assign(current_user: nil)
      |> assign(:errors, [])
      |> assign(:language, language)
-     |> assign(:organisations_count, 0)
      |> assign(:select_language_form, to_form(select_language_fields))
      |> assign(:supported_languages, @supported_languages)
      |> assign(trigger_action: false)

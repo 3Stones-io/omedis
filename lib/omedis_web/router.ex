@@ -62,43 +62,43 @@ defmodule OmedisWeb.Router do
       session: {OmedisWeb.LiveHelpers, :add_pubsub_topics_unique_id_to_session, []} do
       live "/edit_profile", EditProfileLive, :index
 
-      live "/organisations/:slug/invitations", InvitationLive.Index, :index
+      live "/invitations", InvitationLive.Index, :index
 
-      live "/organisations/:slug/today", OrganisationLive.Today, :index
+      live "/today", OrganisationLive.Today, :index
 
-      live "/organisations/:slug/groups/:group_slug/activities", ActivityLive.Index, :index
-      live "/organisations/:slug/groups/:group_slug/activities/new", ActivityLive.Index, :new
-      live "/organisations/:slug/groups/:group_slug/activities/:id", ActivityLive.Show, :show
+      live "/groups/:group_slug/activities", ActivityLive.Index, :index
+      live "/groups/:group_slug/activities/new", ActivityLive.Index, :new
+      live "/groups/:group_slug/activities/:id", ActivityLive.Show, :show
 
-      live "/organisations/:slug/groups/:group_slug/activities/:id/edit",
+      live "/groups/:group_slug/activities/:id/edit",
            ActivityLive.Index,
            :edit
 
-      live "/organisations/:slug/groups/:group_slug/activities/:id/show/edit",
+      live "/groups/:group_slug/activities/:id/show/edit",
            ActivityLive.Show,
            :edit
 
-      live "/organisations/:slug/projects", ProjectLive.Index, :index
-      live "/organisations/:slug/projects/new", ProjectLive.Index, :new
-      live "/organisations/:slug/projects/:id", ProjectLive.Show, :show
-      live "/organisations/:slug/projects/:id/edit", ProjectLive.Index, :edit
-      live "/organisations/:slug/projects/:id/show/edit", ProjectLive.Show, :edit
+      live "/projects", ProjectLive.Index, :index
+      live "/projects/new", ProjectLive.Index, :new
+      live "/projects/:id", ProjectLive.Show, :show
+      live "/projects/:id/edit", ProjectLive.Index, :edit
+      live "/projects/:id/show/edit", ProjectLive.Show, :edit
 
-      live "/organisations/:slug/groups", GroupLive.Index, :index
-      live "/organisations/:slug/groups/new", GroupLive.Index, :new
-      live "/organisations/:slug/groups/:group_slug/show/edit", GroupLive.Show, :edit
-      live "/organisations/:slug/groups/:group_slug", GroupLive.Show, :show
-      live "/organisations/:slug/groups/:group_slug/edit", GroupLive.Index, :edit
+      live "/groups", GroupLive.Index, :index
+      live "/groups/new", GroupLive.Index, :new
+      live "/groups/:group_slug/show/edit", GroupLive.Show, :edit
+      live "/groups/:group_slug", GroupLive.Show, :show
+      live "/groups/:group_slug/edit", GroupLive.Index, :edit
 
       live "/organisations/:slug", OrganisationLive.Show, :show
-      live "/organisations/:slug/show/edit", OrganisationLive.Show, :edit
+      live "/show/edit", OrganisationLive.Show, :edit
 
-      live "/organisations/:slug/activities/:id/events", EventLive.Index, :index
+      live "/activities/:id/events", EventLive.Index, :index
 
-      live "/organisations/:slug/invitations/new", InvitationLive.Index, :new
+      live "/invitations/new", InvitationLive.Index, :new
     end
 
-    live "/organisations/:slug/invitations/:id", InvitationLive.Show, :show
+    live "/invitations/:id", InvitationLive.Show, :show
     live "/playground", PlaygroundLive, :index
   end
 

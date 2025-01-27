@@ -173,26 +173,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "E55DA722CB180FACF9B8AFC967CCC48FB1CDBA1A7179E9C3C055EEC19F615C08",
+  "hash": "7C0B0DCD5274DB09DA24EC98D02F6F940BC1A48239006A27D35267C0209DEFFF",
   "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "activities_unique_color_code_position_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "color_code"
-        },
-        {
-          "type": "atom",
-          "value": "group_id"
-        }
-      ],
-      "name": "unique_color_code_position",
-      "nils_distinct?": true,
-      "where": null
-    },
     {
       "all_tenants?": false,
       "base_filter": null,
@@ -226,6 +208,24 @@
         }
       ],
       "name": "unique_slug",
+      "nils_distinct?": true,
+      "where": null
+    },
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "activities_unique_color_code_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "color_code"
+        },
+        {
+          "type": "atom",
+          "value": "group_id"
+        }
+      ],
+      "name": "unique_color_code",
       "nils_distinct?": true,
       "where": null
     }

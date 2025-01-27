@@ -96,4 +96,17 @@ defmodule OmedisWeb.LoginTest do
       assert conn.resp_body =~ "Forgot your password?"
     end
   end
+
+  describe "/sign-out" do
+    test "user can sign out", %{conn: conn} do
+      {:ok, user} = Accounts.create_user(@valid_create_params)
+
+      conn =
+        conn
+        |> log_in_user(user)
+        |> get(~p"/auth/user/sign-out")
+
+      assert redirected_to(conn) == ~p"/"
+    end
+  end
 end

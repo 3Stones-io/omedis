@@ -7,7 +7,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   alias Phoenix.Socket.Broadcast
 
   @impl true
-  def render(%{current_organisation: nil} = assigns) do
+  def render(%{organisation: nil} = assigns) do
     ~H"""
     """
   end
@@ -17,7 +17,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     <div
       :if={
         @current_user &&
-          Ash.can?({TimeTracking.Event, :create}, @current_user, tenant: @current_organisation)
+          Ash.can?({TimeTracking.Event, :create}, @current_user, tenant: @organisation)
       }
       class={[
         "absolute top-3 right-[5rem] lg:right-[17rem] z-10 bg-black text-white shadow-lg rounded-lg",
@@ -109,7 +109,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
     if connected?(socket) do
       :ok = Endpoint.subscribe("current_activity_#{pubsub_topics_unique_id}")
-      :ok = Endpoint.subscribe("current_organisation_#{pubsub_topics_unique_id}")
+      :ok = Endpoint.subscribe("organisation_#{pubsub_topics_unique_id}")
 
       :ok =
         Endpoint.broadcast_from(
@@ -123,7 +123,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     {:ok,
      socket
      |> stream(:activities, [])
-     |> assign(:current_organisation, get_current_organisation(session))
+     |> assign(:organisation, get_organisation(session))
      |> assign(:current_user_id, session["current_user_id"])
      |> assign(:elapsed_time, "00:00:00")
      |> assign(:language, nil)
@@ -136,7 +136,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   end
 
   defp maybe_assign_current_user(socket, current_user_id) do
-    case socket.assigns[:current_organisation] do
+    case socket.assigns[:organisation] do
       nil ->
         assign(socket, :current_user, nil)
 
@@ -147,7 +147,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     end
   end
 
-  defp get_current_organisation(session) do
+  defp get_organisation(session) do
     case session["organisation_id"] do
       nil -> nil
       organisation_id -> Accounts.get_organisation_by_id!(organisation_id, authorize?: false)
@@ -156,7 +156,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
 
   @impl true
   def handle_info(%Broadcast{event: "organisation_selected", payload: nil}, socket) do
-    {:noreply, assign(socket, :current_organisation, nil)}
+    {:noreply, assign(socket, :organisation, nil)}
   end
 
   def handle_info(
@@ -168,7 +168,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
       ) do
     {:noreply,
      socket
-     |> assign(:current_organisation, organisation)
+     |> assign(:organisation, organisation)
      |> maybe_assign_current_user(socket.assigns.current_user_id)
      |> maybe_assign_activities()}
   end
@@ -196,7 +196,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     elapsed_time =
       get_elapsed_time(socket.assigns.current_activity,
         actor: socket.assigns.current_user,
-        tenant: socket.assigns.current_organisation
+        tenant: socket.assigns.organisation
       )
 
     {:noreply, assign(socket, :elapsed_time, elapsed_time)}
@@ -206,7 +206,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     :ok =
       stop_event(activity_id,
         actor: socket.assigns.current_user,
-        tenant: socket.assigns.current_organisation
+        tenant: socket.assigns.organisation
       )
 
     :ok =
@@ -313,7 +313,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     {:ok, %Ash.Page.Offset{results: activities}} =
       TimeTracking.list_keyset_paginated_activities(
         actor: socket.assigns.current_user,
-        tenant: socket.assigns.current_organisation
+        tenant: socket.assigns.organisation
       )
 
     socket
@@ -351,7 +351,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
         elapsed_time =
           get_elapsed_time(activity,
             actor: socket.assigns.current_user,
-            tenant: socket.assigns.current_organisation
+            tenant: socket.assigns.organisation
           )
 
         {:ok, timer_ref} = start_timer()
@@ -380,7 +380,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
   def handle_event("select_activity", %{"activity_id" => activity_id}, socket) do
     opts = [
       actor: socket.assigns.current_user,
-      tenant: socket.assigns.current_organisation,
+      tenant: socket.assigns.organisation,
       pubsub_topics_unique_id: socket.assigns.pubsub_topics_unique_id
     ]
 
@@ -429,7 +429,7 @@ defmodule OmedisWeb.TimeTrackerLive.Index do
     {:ok, %Ash.Page.Keyset{results: activities}} =
       TimeTracking.list_keyset_paginated_activities(
         actor: socket.assigns.current_user,
-        tenant: socket.assigns.current_organisation,
+        tenant: socket.assigns.organisation,
         page: [limit: 10] ++ page_opts
       )
 

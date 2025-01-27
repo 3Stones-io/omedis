@@ -103,7 +103,7 @@ defmodule OmedisWeb.OrganisationLive.ShowTest do
       assert show_live |> element("a", "Edit organisation") |> render_click() =~
                "Edit Organisation"
 
-      assert_patch(show_live, ~p"/organisations/#{owned_organisation}/show/edit")
+      assert_patch(show_live, ~p"/show/edit")
 
       html =
         show_live

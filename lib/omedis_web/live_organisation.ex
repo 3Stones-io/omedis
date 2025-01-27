@@ -26,19 +26,6 @@ defmodule OmedisWeb.LiveOrganisation do
           nil
       end
 
-    {:cont, assign(socket, :current_organisation, current_organisation)}
-  end
-
-  def on_mount(:assign_organisations_count, _params, _session, socket) do
-    organisations_count =
-      case socket.assigns[:current_user] do
-        %Accounts.User{} = user ->
-          Ash.count!(Accounts.Organisation, actor: user)
-
-        _ ->
-          0
-      end
-
-    {:cont, assign(socket, :organisations_count, organisations_count)}
+    {:cont, assign(socket, :organisation, current_organisation)}
   end
 end
