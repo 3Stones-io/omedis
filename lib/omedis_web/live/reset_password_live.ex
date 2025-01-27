@@ -51,7 +51,7 @@ defmodule OmedisWeb.ResetPasswordLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.side_and_topbar current_user={@current_user} current_organisation={nil} language={@language}>
+    <.side_and_topbar current_user={@current_user} organisation={nil} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.header class="text-center">
           {dgettext("auth", "Reset Password")}
