@@ -11,7 +11,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
     %{organisation: organisation, user: user}
   end
 
-  describe "/organisations/:slug/groups/:group_slug" do
+  describe "/groups/:group_slug" do
     test "renders group details if user is the organisation owner", %{
       conn: conn,
       organisation: organisation,
@@ -30,7 +30,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, _, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/organisations/#{organisation}/groups/#{group}")
+        |> live(~p"/groups/#{group}")
 
       assert html =~ "Test Group"
     end
@@ -39,14 +39,13 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       conn: conn,
       organisation: organisation
     } do
-      {:ok, authorized_user} = create_user()
       {:ok, group} = create_group(organisation, %{name: "Test Group"})
 
-      {:ok, _} =
-        create_group_membership(organisation, %{
-          group_id: group.id,
-          user_id: authorized_user.id
-        })
+      {:ok, _invitation} =
+        create_invitation(organisation, %{email: "test@user.com", groups: [group.id]})
+
+      {:ok, authorized_user} =
+        create_user(%{email: "test@user.com", current_organisation_id: organisation.id})
 
       {:ok, _} =
         create_access_right(organisation, %{
@@ -65,7 +64,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       {:ok, _, html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(~p"/organisations/#{organisation}/groups/#{group}")
+        |> live(~p"/groups/#{group}")
 
       assert html =~ "Test Group"
     end
@@ -88,7 +87,7 @@ defmodule OmedisWeb.GroupLive.ShowTest do
       assert_raise Ash.Error.Query.NotFound, fn ->
         conn
         |> log_in_user(user)
-        |> live(~p"/organisations/#{organisation}/groups/#{group}")
+        |> live(~p"/groups/#{group}")
       end
     end
   end

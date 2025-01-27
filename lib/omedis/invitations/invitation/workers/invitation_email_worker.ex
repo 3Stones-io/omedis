@@ -23,7 +23,7 @@ defmodule Omedis.Invitations.Invitation.Workers.InvitationEmailWorker do
       url =
         static_url(
           OmedisWeb.Endpoint,
-          ~p"/organisations/#{organisation}/invitations/#{invitation}"
+          ~p"/invitations/#{invitation}"
         )
 
       Omedis.Invitations.deliver_invitation_email(invitation, url)

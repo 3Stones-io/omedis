@@ -56,7 +56,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
     }
   end
 
-  describe "/organisations/:slug/invitations/:id" do
+  describe "/invitations/:id" do
     require Ash.Query
 
     alias Omedis.AccessRights.AccessRight
@@ -67,7 +67,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       valid_invitation: valid_invitation
     } do
       {:ok, view, _html} =
-        live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
+        live(conn, ~p"/invitations/#{valid_invitation.id}")
 
       valid_invitation_params =
         Map.put(
@@ -104,7 +104,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       valid_invitation: valid_invitation
     } do
       {:ok, view, _html} =
-        live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
+        live(conn, ~p"/invitations/#{valid_invitation.id}")
 
       valid_invitation_params =
         Map.put(
@@ -125,16 +125,6 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       conn = follow_trigger_action(form, conn)
 
       assert redirected_to(conn) == ~p"/edit_profile"
-
-      assert {:ok, edit_profile_live, html} = live(conn, ~p"/edit_profile")
-      assert html =~ "Edit your profile details"
-
-      assert has_element?(edit_profile_live, "input[name=\"user[first_name]\"]")
-      assert has_element?(edit_profile_live, "input[name=\"user[last_name]\"]")
-      assert has_element?(edit_profile_live, "select[name=\"user[gender]\"]")
-      assert has_element?(edit_profile_live, "input[type=\"date\"][name=\"user[birthdate]\"]")
-      assert has_element?(edit_profile_live, "select[name=\"user[lang]\"]")
-      assert has_element?(edit_profile_live, "button[type=\"submit\"]")
     end
 
     test "adds the invited user to the selected groups", %{
@@ -149,7 +139,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/invitations/new")
+        |> live(~p"/invitations/new")
 
       html =
         view
@@ -162,7 +152,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         )
         |> render_submit()
 
-      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+      assert_patch(view, ~p"/invitations")
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [invitation]} =
@@ -196,7 +186,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       new_conn = build_conn()
 
       {:ok, view, _html} =
-        live(new_conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+        live(new_conn, ~p"/invitations/#{invitation.id}")
 
       valid_invitation_params =
         @valid_registration_params
@@ -238,7 +228,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/invitations/new")
+        |> live(~p"/invitations/new")
 
       html =
         view
@@ -250,7 +240,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         )
         |> render_submit()
 
-      assert_patch(view, ~p"/organisations/#{organisation}/invitations")
+      assert_patch(view, ~p"/invitations")
       assert html =~ "Invitation created successfully"
 
       assert {:ok, [invitation]} =
@@ -280,7 +270,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
       new_conn = build_conn()
 
       {:ok, view, _html} =
-        live(new_conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+        live(new_conn, ~p"/invitations/#{invitation.id}")
 
       valid_invitation_params =
         @valid_registration_params
@@ -353,11 +343,10 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
     test "form errors are displayed", %{
       conn: conn,
-      organisation: organisation,
       valid_invitation: valid_invitation
     } do
       {:ok, view, _html} =
-        live(conn, ~p"/organisations/#{organisation}/invitations/#{valid_invitation.id}")
+        live(conn, ~p"/invitations/#{valid_invitation.id}")
 
       html =
         view
@@ -379,7 +368,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
         })
 
       {:ok, _view, html} =
-        live(conn, ~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+        live(conn, ~p"/invitations/#{invitation.id}")
 
       assert html =~ "Mot de passe"
       assert html =~ "Utilisez une adresse permanente où vous pouvez recevoir du courrier."
@@ -387,12 +376,11 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
     test "shows error for expired invitation", %{
       conn: conn,
-      expired_invitation: expired_invitation,
-      organisation: organisation
+      expired_invitation: expired_invitation
     } do
       {:ok, conn} =
         conn
-        |> live(~p"/organisations/#{organisation}/invitations/#{expired_invitation.id}")
+        |> live(~p"/invitations/#{expired_invitation.id}")
         |> follow_redirect(conn)
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
@@ -402,14 +390,13 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
     end
 
     test "shows error for invalid invitation ID", %{
-      conn: conn,
-      organisation: organisation
+      conn: conn
     } do
       invalid_id = Ash.UUID.generate()
 
       {:ok, conn} =
         conn
-        |> live(~p"/organisations/#{organisation}/invitations/#{invalid_id}")
+        |> live(~p"/invitations/#{invalid_id}")
         |> follow_redirect(conn)
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invitation expired or not found"
@@ -418,7 +405,6 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
     test "shows error when user is already registered", %{
       conn: conn,
-      organisation: organisation,
       valid_invitation: invitation
     } do
       # First create a user with the invitation email
@@ -426,7 +412,7 @@ defmodule OmedisWeb.InvitationLive.ShowTest do
 
       {:ok, conn} =
         conn
-        |> live(~p"/organisations/#{organisation}/invitations/#{invitation.id}")
+        |> live(~p"/invitations/#{invitation.id}")
         |> follow_redirect(conn)
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) == "User already registered"

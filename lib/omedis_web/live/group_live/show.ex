@@ -7,17 +7,13 @@ defmodule OmedisWeb.GroupLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={@current_organisation}
-      language={@language}
-    >
+    <.side_and_topbar current_user={@current_user} organisation={@organisation} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
             {dgettext("navigation", "Home"), ~p"/", false},
             {@organisation.name, ~p"/organisations/#{@organisation}", false},
-            {dgettext("navigation", "Groups"), ~p"/organisations/#{@organisation}/groups", false},
+            {dgettext("navigation", "Groups"), ~p"/groups", false},
             {@group.name, "", true}
           ]}
           language={@language}
@@ -25,10 +21,7 @@ defmodule OmedisWeb.GroupLive.Show do
 
         <.header>
           <:actions>
-            <.link
-              patch={~p"/organisations/#{@organisation}/groups/#{@group}/activities"}
-              phx-click={JS.push_focus()}
-            >
+            <.link patch={~p"/groups/#{@group}/activities"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("navigation", "Activities")}
               </.button>
@@ -42,7 +35,7 @@ defmodule OmedisWeb.GroupLive.Show do
           </:item>
         </.list>
 
-        <.back navigate={~p"/organisations/#{@organisation}/groups"}>
+        <.back navigate={~p"/groups"}>
           {dgettext("navigation", "Back to groups")}
         </.back>
 
@@ -50,7 +43,7 @@ defmodule OmedisWeb.GroupLive.Show do
           :if={@live_action == :edit}
           id="group-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation}/groups/#{@group}")}
+          on_cancel={JS.patch(~p"/groups/#{@group}")}
         >
           <.live_component
             module={OmedisWeb.GroupLive.FormComponent}
@@ -60,7 +53,7 @@ defmodule OmedisWeb.GroupLive.Show do
             organisation={@organisation}
             language={@language}
             group={@group}
-            patch={~p"/organisations/#{@organisation}/groups/#{@group}"}
+            patch={~p"/groups/#{@group}"}
           />
         </.modal>
       </div>
