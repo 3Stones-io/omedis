@@ -16,7 +16,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      :ok = Endpoint.subscribe("#{socket.assigns.current_organisation.id}:invitations")
+      :ok = Endpoint.subscribe("#{socket.assigns.organisation.id}:invitations")
     end
 
     {:ok,
@@ -55,13 +55,13 @@ defmodule OmedisWeb.InvitationLive.Index do
       socket
       |> assign(:invitation, nil)
     else
-      push_navigate(socket, to: ~p"/organisations/#{socket.assigns.organisation}/invitations")
+      push_navigate(socket, to: ~p"/invitations")
     end
   end
 
   defp apply_action(socket, _, _params) do
     socket
-    |> push_navigate(to: ~p"/organisations/#{socket.assigns.organisation}/invitations/new")
+    |> push_navigate(to: ~p"/invitations/new")
   end
 
   @impl true
@@ -121,11 +121,7 @@ defmodule OmedisWeb.InvitationLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={@current_organisation}
-      language={@language}
-    >
+    <.side_and_topbar current_user={@current_user} organisation={@organisation} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
@@ -142,7 +138,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           <:actions>
             <.link
               :if={Ash.can?({Invitations.Invitation, :create}, @current_user, tenant: @organisation)}
-              patch={~p"/organisations/#{@organisation}/invitations/new"}
+              patch={~p"/invitations/new"}
             >
               <.button>
                 {dgettext("invitation", "New Invitation")}
@@ -155,7 +151,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           :if={@live_action == :new}
           id="invitation-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation}/invitations")}
+          on_cancel={JS.patch(~p"/invitations")}
         >
           <.live_component
             module={OmedisWeb.InvitationLive.FormComponent}
@@ -164,7 +160,7 @@ defmodule OmedisWeb.InvitationLive.Index do
             organisation={@organisation}
             language={@language}
             current_user={@current_user}
-            patch={~p"/organisations/#{@organisation}/invitations"}
+            patch={~p"/invitations"}
           />
         </.modal>
 
@@ -219,7 +215,7 @@ defmodule OmedisWeb.InvitationLive.Index do
           <PaginationComponent.pagination
             current_page={@current_page}
             language={@language}
-            resource_path={~p"/organisations/#{@organisation}/invitations"}
+            resource_path={~p"/invitations"}
             total_pages={@total_pages}
           />
         </div>

@@ -6,11 +6,7 @@ defmodule OmedisWeb.OrganisationLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={@current_organisation}
-      language={@language}
-    >
+    <.side_and_topbar current_user={@current_user} organisation={@organisation} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
@@ -26,33 +22,30 @@ defmodule OmedisWeb.OrganisationLive.Show do
           <:actions>
             <.link
               :if={Ash.can?({@organisation, :update}, @current_user)}
-              patch={~p"/organisations/#{@organisation}/show/edit"}
+              patch={~p"/show/edit"}
               phx-click={JS.push_focus()}
             >
               <.button>
                 {dgettext("organisation", "Edit organisation")}
               </.button>
             </.link>
-            <.link
-              navigate={~p"/organisations/#{@organisation}/invitations"}
-              phx-click={JS.push_focus()}
-            >
+            <.link navigate={~p"/invitations"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("organisation", "Invitations")}
               </.button>
             </.link>
-            <.link navigate={~p"/organisations/#{@organisation}/projects"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/projects"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("organisation", "Projects")}
               </.button>
             </.link>
-            <.link navigate={~p"/organisations/#{@organisation}/groups"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/groups"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("organisation", "Groups")}
               </.button>
             </.link>
 
-            <.link navigate={~p"/organisations/#{@organisation}/today"} phx-click={JS.push_focus()}>
+            <.link navigate={~p"/today"} phx-click={JS.push_focus()}>
               <.button>
                 {dgettext("organisation", "Today")}
               </.button>

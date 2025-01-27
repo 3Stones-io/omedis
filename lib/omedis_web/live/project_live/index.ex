@@ -13,11 +13,7 @@ defmodule OmedisWeb.ProjectLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.side_and_topbar
-      current_user={@current_user}
-      current_organisation={@current_organisation}
-      language={@language}
-    >
+    <.side_and_topbar current_user={@current_user} organisation={@organisation} language={@language}>
       <div class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.breadcrumb
           items={[
@@ -33,7 +29,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           <:actions>
             <.link
               :if={Ash.can?({Project, :create}, @current_user, tenant: @organisation)}
-              patch={~p"/organisations/#{@organisation}/projects/new"}
+              patch={~p"/projects/new"}
             >
               <.button>
                 {dgettext("navigation", "New Project")}
@@ -47,7 +43,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           rows={@streams.projects}
           row_click={
             fn {_id, project} ->
-              JS.navigate(~p"/organisations/#{@organisation}/projects/#{project}")
+              JS.navigate(~p"/projects/#{project}")
             end
           }
         >
@@ -61,14 +57,14 @@ defmodule OmedisWeb.ProjectLive.Index do
 
           <:action :let={{_id, project}}>
             <div class="sr-only">
-              <.link navigate={~p"/organisations/#{@organisation}/projects/#{project}"}>
+              <.link navigate={~p"/projects/#{project}"}>
                 {dgettext("project", "Show")}
               </.link>
             </div>
 
             <.link
               :if={Ash.can?({project, :update}, @current_user, tenant: @organisation)}
-              patch={~p"/organisations/#{@organisation}/projects/#{project}/edit"}
+              patch={~p"/projects/#{project}/edit"}
             >
               {dgettext("project", "Edit")}
             </.link>
@@ -79,7 +75,7 @@ defmodule OmedisWeb.ProjectLive.Index do
           :if={@live_action in [:new, :edit]}
           id="project-modal"
           show
-          on_cancel={JS.patch(~p"/organisations/#{@organisation}/projects")}
+          on_cancel={JS.patch(~p"/projects")}
         >
           <.live_component
             module={OmedisWeb.ProjectLive.FormComponent}
@@ -92,13 +88,13 @@ defmodule OmedisWeb.ProjectLive.Index do
             language={@language}
             action={@live_action}
             project={@project}
-            patch={~p"/organisations/#{@organisation}/projects"}
+            patch={~p"/projects"}
           />
         </.modal>
         <PaginationComponent.pagination
           current_page={@current_page}
           language={@language}
-          resource_path={~p"/organisations/#{@organisation}/projects"}
+          resource_path={~p"/projects"}
           total_pages={@total_pages}
         />
       </div>
@@ -111,7 +107,7 @@ defmodule OmedisWeb.ProjectLive.Index do
     actor = socket.assigns.current_user
 
     if connected?(socket) do
-      :ok = OmedisWeb.Endpoint.subscribe("#{socket.assigns.current_organisation.id}:projects")
+      :ok = OmedisWeb.Endpoint.subscribe("#{socket.assigns.organisation.id}:projects")
     end
 
     {:ok,
@@ -209,15 +205,13 @@ defmodule OmedisWeb.ProjectLive.Index do
   end
 
   defp handle_unauthorized_access(socket) do
-    organisation = socket.assigns.organisation
-
     socket
     |> assign(
       :page_title,
       dgettext("project", "Projects")
     )
     |> assign(:user_has_access_rights, false)
-    |> push_patch(to: ~p"/organisations/#{organisation}/projects")
+    |> push_patch(to: ~p"/projects")
     |> put_flash(
       :error,
       dgettext("project", "You are not authorized to access this page")

@@ -162,7 +162,7 @@ defmodule OmedisWeb.RegisterTest do
       render_submit(form)
       conn = follow_trigger_action(form, conn)
 
-      {:ok, _index_live, _html} = live(conn, ~p"/edit_profile")
+      assert redirected_to(conn) == ~p"/edit_profile"
 
       assert {:ok, user} = Accounts.get_user_by_email("test@user.com")
 

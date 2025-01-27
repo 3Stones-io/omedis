@@ -27,13 +27,29 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
         project_id: project.id
       })
 
+    {:ok, _invitation} =
+      create_invitation(organisation, %{email: "test@user.com", groups: [group.id]})
+
     {:ok, authorized_user} =
-      create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
+      create_user(%{
+        email: "test@user.com",
+        daily_start_at: ~T[08:00:00],
+        daily_end_at: ~T[18:00:00],
+        current_organisation_id: organisation.id
+      })
 
-    {:ok, user} = create_user(%{daily_start_at: ~T[08:00:00], daily_end_at: ~T[18:00:00]})
+    {:ok, group2} = create_group(organisation)
 
-    {:ok, _} =
-      create_group_membership(organisation, %{group_id: group.id, user_id: authorized_user.id})
+    {:ok, _invitation} =
+      create_invitation(organisation, %{email: "test2@user.com", groups: [group2.id]})
+
+    {:ok, user} =
+      create_user(%{
+        email: "test2@user.com",
+        daily_start_at: ~T[08:00:00],
+        daily_end_at: ~T[18:00:00],
+        current_organisation_id: organisation.id
+      })
 
     {:ok, _} =
       create_access_right(organisation, %{
@@ -76,7 +92,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
     }
   end
 
-  describe "/organisations/:slug/today" do
+  describe "/today" do
     test "navigating to today view redirects one to the today view for the latest group and project",
          %{
            conn: conn,
@@ -93,10 +109,10 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:error, {:live_redirect, %{to: path}}} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/today")
+        |> live(~p"/today")
 
       assert path ==
-               ~p"/organisations/#{organisation}/today?group_id=#{latest_group.id}&project_id=#{project.id}"
+               ~p"/today?group_id=#{latest_group.id}&project_id=#{project.id}"
     end
 
     test "redirects to group creation page when no groups exist", %{
@@ -118,9 +134,9 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:error, {:live_redirect, %{to: path, flash: flash}}} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/today")
+        |> live(~p"/today")
 
-      assert path == ~p"/organisations/#{organisation}/groups/new"
+      assert path == ~p"/groups/new"
       assert flash["error"] == "No group found. Please create one first."
     end
 
@@ -143,9 +159,9 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:error, {:live_redirect, %{to: path, flash: flash}}} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/organisations/#{organisation}/today")
+        |> live(~p"/today")
 
-      assert path == ~p"/organisations/#{organisation}/projects/new"
+      assert path == ~p"/projects/new"
       assert flash["error"] == "No project found. Please create one first."
     end
 
@@ -182,9 +198,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, _lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{backdated_group.id}&project_id=#{backdated_project.id}"
-        )
+        |> live(~p"/today?group_id=#{backdated_group.id}&project_id=#{backdated_project.id}")
 
       # Fetch updated records
       {:ok, updated_group} =
@@ -210,9 +224,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
+        |> live(~p"/today?group_id=#{group.id}&project_id=#{project.id}")
 
       lv
       |> element("#group-select-form")
@@ -220,7 +232,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       assert_redirect(
         lv,
-        ~p"/organisations/#{organisation}/today?group_id=#{group2.id}&project_id=#{project.id}"
+        ~p"/today?group_id=#{group2.id}&project_id=#{project.id}"
       )
     end
 
@@ -237,9 +249,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
+        |> live(~p"/today?group_id=#{group.id}&project_id=#{project.id}")
 
       lv
       |> element("#project-select-form")
@@ -247,7 +257,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
 
       assert_redirect(
         lv,
-        ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project2.id}"
+        ~p"/today?group_id=#{group.id}&project_id=#{project2.id}"
       )
     end
 
@@ -270,9 +280,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
+        |> live(~p"/today?group_id=#{group.id}&project_id=#{project.id}")
 
       assert lv
              |> element("#start-activity-#{activity.id}")
@@ -309,9 +317,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(owner)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
+        |> live(~p"/today?group_id=#{group.id}&project_id=#{project.id}")
 
       # Create a event
       assert lv
@@ -353,9 +359,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
+        |> live(~p"/today?group_id=#{group.id}&project_id=#{project.id}")
 
       assert lv
              |> element("#start-activity-#{activity.id}")
@@ -393,9 +397,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(authorized_user)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
+        |> live(~p"/today?group_id=#{group.id}&project_id=#{project.id}")
 
       # Create a event
       assert lv
@@ -467,9 +469,7 @@ defmodule OmedisWeb.OrganisationLive.TodayTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(unauthorized_user)
-        |> live(
-          ~p"/organisations/#{organisation}/today?group_id=#{group.id}&project_id=#{project.id}"
-        )
+        |> live(~p"/today?group_id=#{group.id}&project_id=#{project.id}")
 
       refute lv
              |> element("#start-activity-#{activity.id}")
