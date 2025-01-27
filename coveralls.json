@@ -5,8 +5,6 @@
   "skip_files": [
     "lib/omedis_web/components/core_components.ex",
     "lib/omedis_web/live/playground_live.ex",
-    "lib/omedis_web/live/reset_password_live.ex",
-    "lib/omedis/accounts/user/notifiers/send_password_reset_email.ex",
     "lib/omedis/release.ex"
   ]
 }

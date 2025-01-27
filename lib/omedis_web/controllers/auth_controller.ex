@@ -9,8 +9,8 @@ defmodule OmedisWeb.AuthController do
     |> delete_session(:return_to)
     |> store_in_session(user)
     |> assign(:current_user, user)
-    |> redirect(to: return_to)
     |> maybe_show_flash_message(activity)
+    |> redirect(to: return_to)
   end
 
   def failure(
@@ -77,8 +77,10 @@ defmodule OmedisWeb.AuthController do
     |> redirect(to: return_to)
   end
 
-  defp get_return_to({:password, :reset_request}), do: ~p"/login"
-  defp get_return_to(_activity), do: ~p"/edit_profile"
+  defp get_return_to(action) when action in [{:password, :reset_request}, {:password, :reset}],
+    do: ~p"/login"
+
+  defp get_return_to(_action), do: ~p"/edit_profile"
 
   defp maybe_show_flash_message(conn, {:password, :reset_request}) do
     put_flash(
@@ -87,6 +89,17 @@ defmodule OmedisWeb.AuthController do
       dgettext(
         "auth",
         "If your email is in our system, you will receive instructions to reset your password shortly."
+      )
+    )
+  end
+
+  defp maybe_show_flash_message(conn, {:password, :reset}) do
+    put_flash(
+      conn,
+      :info,
+      dgettext(
+        "auth",
+        "Password reset successful. Please log in with your new password."
       )
     )
   end

@@ -11,4 +11,8 @@ defmodule Omedis.Accounts.Token do
     table "tokens"
     repo Omedis.Repo
   end
+
+  actions do
+    defaults [:read]
+  end
 end

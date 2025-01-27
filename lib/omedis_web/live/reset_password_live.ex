@@ -27,6 +27,13 @@ defmodule OmedisWeb.ResetPasswordLive do
      |> assign(:trigger_action, form.source.valid?)}
   end
 
+  def handle_event("validate", %{"user" => user_params}, socket) do
+    form =
+      AshPhoenix.Form.validate(socket.assigns.form, user_params)
+
+    {:noreply, assign(socket, form: form)}
+  end
+
   defp assign_form(socket) do
     form =
       AshPhoenix.Form.for_action(Accounts.User, :password_reset_with_password,
@@ -57,6 +64,7 @@ defmodule OmedisWeb.ResetPasswordLive do
           id="reset-password-form"
           class="max-w-md w-[90%] mx-auto grid gap-4"
           phx-submit="submit"
+          phx-change="validate"
           method="post"
         >
           <.input

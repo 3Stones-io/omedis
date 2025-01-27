@@ -3,6 +3,10 @@ defmodule OmedisWeb.ForgotPasswordLiveTest do
 
   import Phoenix.LiveViewTest
 
+  alias Omedis.Accounts
+
+  require Ash.Query
+
   describe "/password-reset" do
     setup do
       {:ok, user} = create_user()
@@ -38,9 +42,33 @@ defmodule OmedisWeb.ForgotPasswordLiveTest do
 
       assert redirected_to(conn) == ~p"/login"
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
+      conn = get(conn, ~p"/login")
+      response = html_response(conn, 200)
+      assert response =~ "If your email is in our system"
 
-      # TODO: Confirm that email was sent
+      assert {:ok, [token]} =
+               Accounts.Token
+               |> Ash.Query.filter(subject: AshAuthentication.user_to_subject(user))
+               |> Ash.read()
+
+      assert token.purpose == "user"
+    end
+
+    test "does not send reset password token if the email is invalid", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/password-reset")
+
+      form = form(lv, "#reset-password-form", user: %{"email" => "invalid@example.com"})
+
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
+
+      assert redirected_to(conn) == ~p"/login"
+
+      conn = get(conn, ~p"/login")
+      response = html_response(conn, 200)
+      assert response =~ "If your email is in our system"
+
+      assert {:ok, []} = Ash.read(Accounts.Token)
     end
   end
 end
