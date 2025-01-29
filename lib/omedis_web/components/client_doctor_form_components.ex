@@ -20,7 +20,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
               <.icon name="hero-bars-3" class="w-6 h-6 text-icons-txt-secondary" />
             </button>
             <div>
-              <h2 class="font-semibold">{@company_name}</h2>
+              <h2 class="font-semibold text-txt-primary">{@company_name}</h2>
               <.client_doctor_breadcrumb items={@breadcrumb_items} />
             </div>
           </div>
@@ -50,7 +50,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
       <div class="flex justify-between items-center py-6">
         <div class="logo flex items-center gap-2">
           <div class="bg-icons-txt-secondary h-8 w-8 rounded-lg"></div>
-          <p class="uppercase font-semibold text-xl">Company</p>
+          <p class="uppercase font-semibold text-xl text-txt-primary">Company</p>
         </div>
         <button phx-click={hide_mobile_menu()}>
           <.icon name="hero-x-mark" class="w-6 h-6 text-icons-txt-secondary" />
@@ -60,8 +60,8 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
       <ul class="grid gap-y-4">
         <li :for={{icon, label, path} <- mobile_menu_items()} class="py-4">
           <.link navigate={path} class="flex items-center gap-4">
-            <.icon name={icon} class="w-6 h-6" />
-            {label}
+            <.icon name={icon} class="w-6 h-6 text-icons-txt-secondary" />
+            <span class="text-txt-secondary">{label}</span>
           </.link>
         </li>
       </ul>
