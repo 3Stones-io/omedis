@@ -14,18 +14,18 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
         <div class="w-full flex justify-between items-center">
           <div class="flex gap-3">
             <button
-              class="inline-block border border-[#CCC9D1] rounded-lg flex items-center justify-center px-2 my-[.15em]"
+              class="inline-block border border-btn-border rounded-lg flex items-center justify-center px-2 my-[.15em]"
               phx-click={show_mobile_menu()}
             >
-              <.icon name="hero-bars-3" class="w-6 h-6 text-text-secondary" />
+              <.icon name="hero-bars-3" class="w-6 h-6 text-icons-txt-secondary" />
             </button>
             <div>
               <h2 class="font-semibold">{@company_name}</h2>
               <.client_doctor_breadcrumb items={@breadcrumb_items} />
             </div>
           </div>
-          <div class="flex items-center border border-button-border text-text-secondary rounded-lg">
-            <button class="h-full w-full py-2 px-3 border-r border-button-border">
+          <div class="flex items-center border border-btn-border text-txt-secondary rounded-lg">
+            <button class="h-full w-full py-2 px-3 border-r border-btn-border">
               <.icon name="hero-clock" class="w-5 h-5" />
             </button>
             <button class="h-full w-full p-2">
@@ -49,11 +49,11 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
     >
       <div class="flex justify-between items-center py-6">
         <div class="logo flex items-center gap-2">
-          <div class="bg-icons-text-secondary h-8 w-8 rounded-lg"></div>
+          <div class="bg-icons-txt-secondary h-8 w-8 rounded-lg"></div>
           <p class="uppercase font-semibold text-xl">Company</p>
         </div>
         <button phx-click={hide_mobile_menu()}>
-          <.icon name="hero-x-mark" class="w-6 h-6 text-icons-text-secondary" />
+          <.icon name="hero-x-mark" class="w-6 h-6 text-icons-txt-secondary" />
         </button>
       </div>
 
@@ -103,12 +103,12 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
     <li class="flex items-center">
       <.link navigate={@path} class="flex gap-x-1 text-xs font-medium">
         <span class={[
-          @is_current && "text-[#1f1f1f]",
-          !@is_current && "text-[#717171]"
+          @is_current && "text-txt-primary",
+          !@is_current && "text-txt-secondary"
         ]}>
           {@label}
         </span>
-        <span :if={!@is_current} class="text-[#717171]"> / </span>
+        <span :if={!@is_current} class="text-txt-secondary"> / </span>
       </.link>
     </li>
     """

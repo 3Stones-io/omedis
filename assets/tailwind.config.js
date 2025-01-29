@@ -16,11 +16,11 @@ module.exports = {
       colors: {
         "bg-primary": "rgba(var(--bg-primary))",
         "bg-secondary": "rgba(var(--bg-secondary))",
-        "text-primary": "rgba(var(--text-primary))",
-        "text-secondary": "rgba(var(--text-secondary))",
-        "button-border": "rgba(var(--button-border))",
+        "txt-primary": "rgba(var(--txt-primary))",
+        "txt-secondary": "rgba(var(--txt-secondary))",
+        "btn-border": "rgba(var(--btn-border))",
         "section-border": "rgba(var(--section-border))",
-        "icons-text-secondary": "rgba(var(--icons-text-secondary))",
+        "icons-txt-secondary": "rgba(var(--icons-txt-secondary))",
       },
       fontFamily: {
         openSans: ["Open Sans", "serif"],

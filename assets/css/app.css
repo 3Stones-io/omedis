@@ -9,13 +9,13 @@
   --bg-primary: 255, 255, 255, 1;  
   --bg-secondary: 245, 245, 253, 1;
 
-  --text-secondary: 113, 113, 113, 1;
-  --text-primary: 31, 31, 31, 1;
+  --txt-secondary: 113, 113, 113, 1;
+  --txt-primary: 31, 31, 31, 1;
  
-  --button-border: 204, 201, 209, 1;
+  --btn-border: 204, 201, 209, 1;
   --section-border: 203, 201, 210, 1;
 
-  --icons-text-secondary: 113, 113, 113, 1;
+  --icons-txt-secondary: 113, 113, 113, 1;
 }
 
 /* This file is for your main application CSS */
