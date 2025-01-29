@@ -10,22 +10,22 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   def navbar(assigns) do
     ~H"""
     <nav class="font-openSans relative">
-      <div class="nav-primary px-3 py-5 border-y-[1.5px] border-y-[#cbc9d2] bg-[#f5f5fd]">
+      <div class="nav-primary px-3 py-5 border-y-[1.5px] border-y-section-border bg-bg-secondary">
         <div class="w-full flex justify-between items-center">
           <div class="flex gap-3">
             <button
               class="inline-block border border-[#CCC9D1] rounded-lg flex items-center justify-center px-2 my-[.15em]"
               phx-click={show_mobile_menu()}
             >
-              <.icon name="hero-bars-3" class="w-6 h-6 text-[#717171]" />
+              <.icon name="hero-bars-3" class="w-6 h-6 text-text-secondary" />
             </button>
             <div>
               <h2 class="font-semibold">{@company_name}</h2>
               <.client_doctor_breadcrumb items={@breadcrumb_items} />
             </div>
           </div>
-          <div class="flex items-center border border-[#CCC9D1] text-[#717171] rounded-lg">
-            <button class="h-full w-full py-2 px-3 border-r border-[#CCC9D1]">
+          <div class="flex items-center border border-button-border text-text-secondary rounded-lg">
+            <button class="h-full w-full py-2 px-3 border-r border-button-border">
               <.icon name="hero-clock" class="w-5 h-5" />
             </button>
             <button class="h-full w-full p-2">
@@ -43,17 +43,17 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   defp mobile_menu(assigns) do
     ~H"""
     <nav
-      class="sidebar-nav bg-white min-h-screen w-[70%] shadow-md rounded-r-lg absolute top-0 left-0 z-[10000] px-4 hidden"
+      class="sidebar-nav bg-bg-primary min-h-screen w-[70%] shadow-md rounded-r-lg absolute top-0 left-0 z-[10000] px-4 hidden"
       id="mobile-menu"
       phx-click-away={hide_mobile_menu()}
     >
       <div class="flex justify-between items-center py-6">
         <div class="logo flex items-center gap-2">
-          <div class="bg-[#626266] h-8 w-8 rounded-lg"></div>
+          <div class="bg-icons-text-secondary h-8 w-8 rounded-lg"></div>
           <p class="uppercase font-semibold text-xl">Company</p>
         </div>
         <button phx-click={hide_mobile_menu()}>
-          <.icon name="hero-x-mark" class="w-6 h-6 text-[#626266]" />
+          <.icon name="hero-x-mark" class="w-6 h-6 text-icons-text-secondary" />
         </button>
       </div>
 
