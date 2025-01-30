@@ -77,9 +77,7 @@ defmodule OmedisWeb.AuthController do
     |> redirect(to: return_to)
   end
 
-  defp get_return_to(action) when action in [{:password, :reset_request}, {:password, :reset}],
-    do: ~p"/login"
-
+  defp get_return_to({:password, :reset_request}), do: ~p"/login"
   defp get_return_to(_action), do: ~p"/edit_profile"
 
   defp maybe_show_flash_message(conn, {:password, :reset_request}) do
@@ -99,7 +97,7 @@ defmodule OmedisWeb.AuthController do
       :info,
       dgettext(
         "auth",
-        "Password reset successful. Please log in with your new password."
+        "Password reset successful."
       )
     )
   end

@@ -123,5 +123,5 @@ msgstr ""
 
 #: lib/omedis_web/controllers/auth_controller.ex
 #, elixir-autogen, elixir-format
-msgid "Password reset successful. Please log in with your new password."
+msgid "Password reset successful."
 msgstr ""

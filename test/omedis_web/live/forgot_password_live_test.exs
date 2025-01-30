@@ -2,6 +2,7 @@ defmodule OmedisWeb.ForgotPasswordLiveTest do
   use OmedisWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
+  import Swoosh.TestAssertions
 
   alias Omedis.Accounts
 
@@ -45,6 +46,8 @@ defmodule OmedisWeb.ForgotPasswordLiveTest do
       conn = get(conn, ~p"/login")
       response = html_response(conn, 200)
       assert response =~ "If your email is in our system"
+
+      assert_email_sent(subject: "Omedis | Reset your password")
 
       assert {:ok, [token]} =
                Accounts.Token

@@ -122,6 +122,6 @@ msgid "We'll send a password reset link to your inbox"
 msgstr "Wir senden Ihnen einen Link zum Zurücksetzen des Passworts an Ihr Postfach"
 
 #: lib/omedis_web/controllers/auth_controller.ex
-#, elixir-autogen, elixir-format
-msgid "Password reset successful. Please log in with your new password."
-msgstr "Passwort erfolgreich zurückgesetzt. Bitte melden Sie sich mit Ihrem neuen Passwort an."
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Password reset successful."
+msgstr "Passwort erfolgreich zurückgesetzt."
