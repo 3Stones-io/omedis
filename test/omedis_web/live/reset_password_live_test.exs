@@ -44,7 +44,6 @@ defmodule OmedisWeb.ResetPasswordLiveTest do
       render_submit(form)
       conn = follow_trigger_action(form, conn)
 
-      # Chech flash in HTML
       assert redirected_to(conn) == ~p"/login"
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
