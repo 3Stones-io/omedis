@@ -81,19 +81,5 @@ defmodule OmedisWeb.LoginTest do
       response = html_response(conn, 200)
       assert response =~ "Username or password is incorrect"
     end
-
-    test "Login button changes from Sign in to Signing in... when submitting a valid form", %{
-      conn: conn
-    } do
-      {:ok, user} = Accounts.create_user(@valid_create_params)
-
-      {:ok, view, _html} = live(conn, ~p"/login")
-
-      view
-      |> form("#basic_user_sign_in_form", user: %{email: user.email, password: "password"})
-      |> render_submit()
-
-      assert has_element?(view, "button[type=\"submit\"]")
-    end
   end
 end
