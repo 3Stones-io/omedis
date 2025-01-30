@@ -4,6 +4,35 @@
 @import "tailwindcss/forms";
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
+/* light mode colors */
+:root {
+  --bg-primary: 255, 255, 255, 1;
+  --bg-secondary: 245, 245, 253, 1;
+
+  --txt-primary: 31, 31, 31, 1;
+  --txt-secondary: 113, 113, 113, 1;
+
+  --btn-border: 204, 201, 209, 1;
+  --section-border: 203, 201, 210, 1;
+
+  --icons-txt-secondary: 113, 113, 113, 1;
+}
+
+/* dark mode colors */
+/* TODO: put proper dark mode colors */
+.dark {
+  --bg-primary: 31, 31, 31, 1;
+  --bg-secondary: 113, 113, 113, 1;
+
+  --txt-primary: 255, 255, 255, 1;
+  --txt-secondary: 245, 245, 253, 1;
+
+  --btn-border: 204, 201, 209, 1;
+  --section-border: 203, 201, 210, 1;
+
+  --icons-txt-secondary: 113, 113, 113, 1;
+}
+
 /* This file is for your main application CSS */
 table:has(#activities) #activities > tr:first-child > td:has(.position) .position-up,
 table:has(#activities) #activities > tr:last-child > td:has(.position) .position-down {

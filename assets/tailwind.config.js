@@ -14,7 +14,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: "#FD4F00",
+        "bg-primary": "rgba(var(--bg-primary))",
+        "bg-secondary": "rgba(var(--bg-secondary))",
+        "txt-primary": "rgba(var(--txt-primary))",
+        "txt-secondary": "rgba(var(--txt-secondary))",
+        "btn-border": "rgba(var(--btn-border))",
+        "section-border": "rgba(var(--section-border))",
+        "icons-txt-secondary": "rgba(var(--icons-txt-secondary))",
       },
       fontFamily: {
         openSans: ["Open Sans", "serif"],
