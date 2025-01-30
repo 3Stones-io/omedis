@@ -57,6 +57,22 @@ defmodule OmedisWeb.ForgotPasswordLiveTest do
       assert token.purpose == "user"
     end
 
+    test "emails are translated in the user's language", %{conn: conn} do
+      {:ok, user} = create_user(%{lang: "de"})
+
+      {:ok, lv, _html} = live(conn, ~p"/password-reset")
+
+      form = form(lv, "#reset-password-form", user: %{"email" => Ash.CiString.value(user.email)})
+
+      render_submit(form)
+      follow_trigger_action(form, conn)
+
+      assert_received {:email, %Swoosh.Email{subject: subject, text_body: text_body}}
+
+      assert text_body =~ "\nBitte klicken Sie auf diesen Link"
+      assert subject == "Omedis | Setzen Sie Ihr Passwort zurück"
+    end
+
     test "does not send reset password token if the email is invalid", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/password-reset")
 
