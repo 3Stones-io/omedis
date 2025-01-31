@@ -5,14 +5,15 @@ defmodule OmedisWeb.ForgotPasswordLive do
 
   @impl Phoenix.LiveView
   def mount(_params, %{"language" => language} = _session, socket) do
+    Gettext.put_locale(language)
+
     {:ok,
      socket
      |> assign_form()
      |> assign(:language, language)
-     |> assign(:organisations_count, 0)
      |> assign(:page_title, dgettext("auth", "Reset password"))
      |> assign(:trigger_action, false)
-     |> assign(current_user: nil)}
+     |> assign(:current_user, nil)}
   end
 
   @impl Phoenix.LiveView

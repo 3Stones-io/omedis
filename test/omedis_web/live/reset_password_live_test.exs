@@ -3,10 +3,6 @@ defmodule OmedisWeb.ResetPasswordLiveTest do
 
   import Phoenix.LiveViewTest
 
-  alias AshAuthentication.Info
-  alias AshAuthentication.Strategy.Password
-  alias Omedis.Accounts.User
-
   setup do
     {:ok, user} = create_user()
 
@@ -31,15 +27,16 @@ defmodule OmedisWeb.ResetPasswordLiveTest do
       assert html =~ "length must be greater than or equal to 8"
     end
 
-    test "does not reset password if token is invalid", %{conn: conn, user: user} do
-      strategy =
-        Info.strategy_for_action!(User, :password_reset_with_password)
-
-      {:ok, invalid_token} = Password.reset_token_for(strategy, user)
+    test "does not reset password if token is invalid", %{conn: conn} do
+      invalid_token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY3QiOiJwYXNzd29yZF9yZXNldF93aXRoX3Bhc3N3b3JkIiwiYXVkIjoifj4gNC4zIiwiZXhwIjoxNzM4NTcxNzQxLCJpYXQiOjE3MzgzMTI1NDEsImlzcyI6IkFzaEF1dGhlbnRpY2F0aW9uIHY0LjMuOSIsImp0aSI6IjMwZnJrMnZrc2k1c3BoMTcyYzAwMGNxMSIsIm5iZiI6MTczODMxMjU0MSwic3ViIjoidXNlcj9pZD1kNjcwOTEzNy1iMGNkLTQyZmEtYmVmYy05YjI4NTAwNjgzOTMifQ.C2TIHvFkGukyJDVkyonbo2jkh1I0anfdd71EBaT__M8"
 
       {:ok, lv, _html} = live(conn, ~p"/password-reset/#{invalid_token}")
 
-      form = form(lv, "#reset-password-form", user: %{"password" => "new_password"})
+      form =
+        form(lv, "#reset-password-form",
+          user: %{"password" => "new_password", "reset_token" => invalid_token}
+        )
 
       render_submit(form)
       conn = follow_trigger_action(form, conn)
