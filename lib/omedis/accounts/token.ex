@@ -10,18 +10,9 @@ defmodule Omedis.Accounts.Token do
   postgres do
     table "tokens"
     repo Omedis.Repo
-
-    references do
-      reference :organisation, on_delete: :delete
-    end
   end
 
-  multitenancy do
-    strategy :attribute
-    attribute :organisation_id
-  end
-
-  relationships do
-    belongs_to :organisation, Omedis.Accounts.Organisation
+  actions do
+    defaults [:read]
   end
 end

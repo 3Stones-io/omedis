@@ -4,6 +4,9 @@ defmodule OmedisWeb.LoginTest do
   alias Omedis.Accounts
 
   import Phoenix.LiveViewTest
+  import Swoosh.TestAssertions
+
+  require Ash.Query
 
   @valid_create_params %{
     "first_name" => "John",
@@ -14,7 +17,7 @@ defmodule OmedisWeb.LoginTest do
     "hashed_password" => Bcrypt.hash_pwd_salt("password")
   }
 
-  describe "Tests the Login flow" do
+  describe "/login" do
     test "The login form is displayed", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/login")
 
@@ -80,6 +83,88 @@ defmodule OmedisWeb.LoginTest do
       conn = get(conn, "/login")
       response = html_response(conn, 200)
       assert response =~ "Username or password is incorrect"
+    end
+
+    test "redirects to forgot password page when the forgot password button is clicked", %{
+      conn: conn
+    } do
+      {:ok, lv, _html} = live(conn, ~p"/login")
+
+      html =
+        lv
+        |> element("#forgot-password-link")
+        |> render_click()
+
+      assert html =~ "Forgot your password?"
+
+      assert_patch(lv, ~p"/password-reset")
+    end
+  end
+
+  describe "/password-reset" do
+    setup do
+      {:ok, user} = create_user()
+
+      %{user: user}
+    end
+
+    test "renders forgot password page", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/password-reset")
+
+      assert html =~ "Forgot your password?"
+      assert html =~ "Send reset link"
+    end
+
+    test "redirects if the user is logged in", %{conn: conn, user: user} do
+      result =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/password-reset")
+        |> follow_redirect(conn, ~p"/")
+
+      assert {:ok, _conn} = result
+    end
+
+    test "sends a request for a new reset password token", %{conn: conn, user: user} do
+      {:ok, lv, _html} = live(conn, ~p"/password-reset")
+
+      form =
+        form(lv, "#request-password-reset-form",
+          user: %{"email" => Ash.CiString.value(user.email)}
+        )
+
+      conn = submit_form(form, conn)
+
+      assert redirected_to(conn) == ~p"/login"
+
+      conn = get(conn, ~p"/login")
+      response = html_response(conn, 200)
+      assert response =~ "If your email is in our system"
+
+      assert_email_sent(subject: "Omedis | Reset your password")
+
+      assert {:ok, [token]} =
+               Accounts.Token
+               |> Ash.Query.filter(subject: AshAuthentication.user_to_subject(user))
+               |> Ash.read()
+
+      assert token.purpose == "user"
+    end
+
+    test "does not send reset password token if the email is invalid", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/password-reset")
+
+      form = form(lv, "#request-password-reset-form", user: %{"email" => "invalid@example.com"})
+
+      conn = submit_form(form, conn)
+
+      assert redirected_to(conn) == ~p"/login"
+
+      conn = get(conn, ~p"/login")
+      response = html_response(conn, 200)
+      assert response =~ "If your email is in our system"
+
+      assert {:ok, []} = Ash.read(Accounts.Token)
     end
   end
 

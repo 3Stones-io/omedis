@@ -68,3 +68,58 @@ msgstr "nuova password"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Use a permanent email address where you can receive email."
 msgstr "Usa un indirizzo email permanente dove puoi ricevere email."
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Forgot your password?"
+msgstr "Hai dimenticato la password?"
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system, you will receive instructions to reset your password shortly."
+msgstr "Se la tua email è nel nostro sistema, riceverai a breve le istruzioni per reimpostare la tua password."
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "New password"
+msgstr "nuova password"
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Reset Password"
+msgstr "Reimposta password"
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Reset password"
+msgstr "Reimposta password"
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format
+msgid "Reset password link is invalid or it has expired."
+msgstr "Il link per reimpostare la password non è valido o è scaduto."
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Resetting..."
+msgstr "Reimpostazione in corso..."
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Send reset link"
+msgstr "Invia link di reimpostazione"
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Sending..."
+msgstr "Invio in corso..."
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "We'll send a password reset link to your inbox"
+msgstr "Ti invieremo un link per reimpostare la password nella tua casella di posta"
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Password reset successful."
+msgstr "Reimpostazione della password riuscita."

@@ -22,17 +22,35 @@ defmodule OmedisWeb.Router do
   scope "/", OmedisWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    sign_in_route(
+      path: "/login",
+      reset_path: "/password-reset",
+      live_view: OmedisWeb.LoginLive,
+      on_mount: [{OmedisWeb.LiveHelpers, :redirect_if_user_is_authenticated}]
+    )
 
-    post "/change_language", LanguageController, :update
-
-    live "/login", LoginLive, :index
-    live "/register", RegisterLive, :index
+    reset_route(
+      live_view: OmedisWeb.ResetPasswordLive,
+      on_mount: [{OmedisWeb.LiveHelpers, :redirect_if_user_is_authenticated}]
+    )
 
     sign_out_route(AuthController, "/auth/user/sign-out")
     auth_routes_for(Omedis.Accounts.User, to: AuthController)
 
-    reset_route([])
+    ash_authentication_live_session :redirect_if_user_is_authenticated,
+      on_mount: [
+        {OmedisWeb.LiveHelpers, :redirect_if_user_is_authenticated}
+      ] do
+      live "/register", RegisterLive, :index
+    end
+  end
+
+  scope "/", OmedisWeb do
+    pipe_through :browser
+
+    get "/", PageController, :home
+
+    post "/change_language", LanguageController, :update
 
     ash_authentication_live_session :authentication_required,
       on_mount: [

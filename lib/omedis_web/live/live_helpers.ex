@@ -1,4 +1,5 @@
 defmodule OmedisWeb.LiveHelpers do
+  use OmedisWeb, :verified_routes
   @moduledoc false
 
   import Phoenix.Component
@@ -6,6 +7,14 @@ defmodule OmedisWeb.LiveHelpers do
 
   alias Omedis.Accounts
   alias OmedisWeb.Endpoint
+
+  def on_mount(:redirect_if_user_is_authenticated, _params, _session, socket) do
+    if socket.assigns.current_user do
+      {:halt, redirect(socket, to: ~p"/")}
+    else
+      {:cont, socket}
+    end
+  end
 
   def on_mount(:assign_default_pagination_assigns, _params, _session, socket) do
     number_of_records_per_page = Application.get_env(:omedis, :pagination_default_limit)

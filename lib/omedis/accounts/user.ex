@@ -33,8 +33,13 @@ defmodule Omedis.Accounts.User do
 
         register_action_accept([
           :email,
+          :lang,
           :current_organisation_id
         ])
+
+        resettable do
+          sender Omedis.Accounts.User.Notifiers.SendPasswordResetEmail
+        end
       end
     end
 
@@ -45,6 +50,8 @@ defmodule Omedis.Accounts.User do
       signing_secret fn _, _ ->
         Application.fetch_env(:omedis, :token_signing_secret)
       end
+
+      store_all_tokens? true
     end
   end
 

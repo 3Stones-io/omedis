@@ -68,3 +68,58 @@ msgstr "nouveau mot de passe"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Use a permanent email address where you can receive email."
 msgstr "Utilisez une adresse e-mail permanente où vous pouvez recevoir des e-mails."
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Forgot your password?"
+msgstr "Mot de passe oublié ?"
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system, you will receive instructions to reset your password shortly."
+msgstr "Si votre e-mail est dans notre système, vous recevrez bientôt des instructions pour réinitialiser votre mot de passe."
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "New password"
+msgstr "nouveau mot de passe"
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Reset Password"
+msgstr "Réinitialiser le mot de passe"
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Reset password"
+msgstr "Réinitialiser le mot de passe"
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format
+msgid "Reset password link is invalid or it has expired."
+msgstr "Le lien de réinitialisation du mot de passe est invalide ou a expiré."
+
+#: lib/omedis_web/live/reset_password_live.ex
+#, elixir-autogen, elixir-format
+msgid "Resetting..."
+msgstr "Réinitialisation en cours..."
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Send reset link"
+msgstr "Envoyer le lien de réinitialisation"
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "Sending..."
+msgstr "Envoi en cours..."
+
+#: lib/omedis_web/live/login_live.ex
+#, elixir-autogen, elixir-format
+msgid "We'll send a password reset link to your inbox"
+msgstr "Nous vous enverrons un lien de réinitialisation du mot de passe dans votre boîte de réception"
+
+#: lib/omedis_web/controllers/auth_controller.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Password reset successful."
+msgstr "Réinitialisation du mot de passe réussie."
