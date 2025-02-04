@@ -38,8 +38,7 @@ defmodule OmedisWeb.ResetPasswordLiveTest do
           user: %{"password" => "new_password", "reset_token" => invalid_token}
         )
 
-      render_submit(form)
-      conn = follow_trigger_action(form, conn)
+      conn = submit_form(form, conn)
 
       assert redirected_to(conn) == ~p"/login"
 
@@ -51,10 +50,11 @@ defmodule OmedisWeb.ResetPasswordLiveTest do
       {:ok, lv, _html} = live(conn, ~p"/password-reset")
 
       form =
-        form(lv, "#reset-password-form", user: %{"email" => Ash.CiString.value(user.email)})
+        form(lv, "#request-password-reset-form",
+          user: %{"email" => Ash.CiString.value(user.email)}
+        )
 
-      render_submit(form)
-      follow_trigger_action(form, conn)
+      submit_form(form, conn)
 
       assert_received {:email, %Swoosh.Email{text_body: text_body}}
 

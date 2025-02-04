@@ -24,6 +24,7 @@ defmodule OmedisWeb.Router do
 
     sign_in_route(
       path: "/login",
+      reset_path: "/password-reset",
       live_view: OmedisWeb.LoginLive,
       on_mount: [{OmedisWeb.LiveHelpers, :redirect_if_user_is_authenticated}]
     )
@@ -40,7 +41,6 @@ defmodule OmedisWeb.Router do
       on_mount: [
         {OmedisWeb.LiveHelpers, :redirect_if_user_is_authenticated}
       ] do
-      live "/password-reset", ForgotPasswordLive, :new
       live "/register", RegisterLive, :index
     end
   end

@@ -37,6 +37,20 @@ defmodule OmedisWeb.LoginLive do
     )
   end
 
+  defp apply_action(socket, :reset, _params) do
+    form =
+      AshPhoenix.Form.for_action(Accounts.User, :request_password_reset_with_password,
+        api: Accounts,
+        as: "user",
+        context: %{private: %{ash_authentication?: true}}
+      )
+
+    socket
+    |> assign(:show_forgot_password_form, true)
+    |> assign(:form, to_form(form))
+    |> assign(:page_title, dgettext("auth", "Reset password"))
+  end
+
   @impl true
   def handle_event("validate", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user, errors: true)
@@ -44,7 +58,6 @@ defmodule OmedisWeb.LoginLive do
     {:noreply, socket |> assign(form: form)}
   end
 
-  @impl true
   def handle_event("submit", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user)
 
@@ -63,7 +76,7 @@ defmodule OmedisWeb.LoginLive do
   def render(assigns) do
     ~H"""
     <.side_and_topbar current_user={@current_user} organisation={nil} language={@language}>
-      <div class="px-4 lg:pl-80 lg:pr-8 py-10">
+      <div :if={@live_action == :sign_in} class="px-4 lg:pl-80 lg:pr-8 py-10">
         <.form
           :let={f}
           id="basic_user_sign_in_form"
@@ -125,7 +138,7 @@ defmodule OmedisWeb.LoginLive do
               </div>
 
               <.link
-                href={~p"/password-reset"}
+                patch={~p"/password-reset"}
                 id="forgot-password-link"
                 class="text-sm text-blue-600 hover:underline mt-4 inline-block"
               >
@@ -142,6 +155,29 @@ defmodule OmedisWeb.LoginLive do
               </div>
             </div>
           </div>
+        </.form>
+      </div>
+
+      <div :if={@live_action == :reset} class="px-4 lg:pl-80 lg:pr-8 py-10">
+        <.header class="text-center">
+          {dgettext("auth", "Forgot your password?")}
+          <:subtitle>
+            {dgettext("auth", "We'll send a password reset link to your inbox")}
+          </:subtitle>
+        </.header>
+
+        <.form
+          :let={f}
+          for={@form}
+          action={~p"/auth/user/password/reset_request"}
+          id="request-password-reset-form"
+          class="max-w-md w-[90%] mx-auto"
+          method="post"
+        >
+          <.input field={f[:email]} type="email" label={dgettext("auth", "Email")} />
+          <.button phx-disable-with={dgettext("auth", "Sending...")} class="mt-4">
+            {dgettext("auth", "Send reset link")}
+          </.button>
         </.form>
       </div>
     </.side_and_topbar>

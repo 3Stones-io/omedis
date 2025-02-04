@@ -16,7 +16,6 @@ msgstr ""
 msgid "Change language"
 msgstr "Cambia lingua"
 
-#: lib/omedis_web/live/forgot_password_live.ex
 #: lib/omedis_web/live/login_live.ex
 #: lib/omedis_web/live/register_live.ex
 #, elixir-autogen, elixir-format
@@ -70,7 +69,6 @@ msgstr "nuova password"
 msgid "Use a permanent email address where you can receive email."
 msgstr "Usa un indirizzo email permanente dove puoi ricevere email."
 
-#: lib/omedis_web/live/forgot_password_live.ex
 #: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Forgot your password?"
@@ -91,7 +89,7 @@ msgstr "nuova password"
 msgid "Reset Password"
 msgstr "Reimposta password"
 
-#: lib/omedis_web/live/forgot_password_live.ex
+#: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Reset password"
 msgstr "Reimposta password"
@@ -106,17 +104,17 @@ msgstr "Il link per reimpostare la password non è valido o è scaduto."
 msgid "Resetting..."
 msgstr "Reimpostazione in corso..."
 
-#: lib/omedis_web/live/forgot_password_live.ex
+#: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Send reset link"
 msgstr "Invia link di reimpostazione"
 
-#: lib/omedis_web/live/forgot_password_live.ex
+#: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "Sending..."
 msgstr "Invio in corso..."
 
-#: lib/omedis_web/live/forgot_password_live.ex
+#: lib/omedis_web/live/login_live.ex
 #, elixir-autogen, elixir-format
 msgid "We'll send a password reset link to your inbox"
 msgstr "Ti invieremo un link per reimpostare la password nella tua casella di posta"
