@@ -99,7 +99,13 @@ defmodule OmedisWeb.Router do
     end
 
     live "/invitations/:id", InvitationLive.Show, :show
-    live "/playground", PlaygroundLive, :index
+  end
+
+  scope "/playground", OmedisWeb do
+    pipe_through :browser
+
+    live "/", PlaygroundLive.Index, :index
+    live "/client-doctor-forms", PlaygroundLive.ClientDoctorForms, :index
   end
 
   # Other scopes may use custom stacks.
