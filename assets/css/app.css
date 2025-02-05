@@ -6,7 +6,6 @@
 @import '../node_modules/flatpickr/dist/flatpickr.css';
 
 /* light mode colors */
-/* Revert to root */
 :root {
   --bg-primary: 255, 255, 255;
   --bg-secondary: 245, 245, 253;
