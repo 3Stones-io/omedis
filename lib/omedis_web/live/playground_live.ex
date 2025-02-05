@@ -101,22 +101,6 @@ defmodule OmedisWeb.PlaygroundLive do
     {:noreply, assign(socket, :form, to_form(user_params))}
   end
 
-  # Reassigns the list :: Lose everything else
-  def handle_event(
-        "filter_dropdown_options",
-        %{"searchValue" => search_value, "dropdownId" => "canton-list"},
-        socket
-      ) do
-    filtered_cantons =
-      Enum.filter(socket.assigns.cantons, &String.contains?(&1, search_value))
-
-    {:noreply, assign(socket, :cantons, filtered_cantons)}
-  end
-
-  def handle_event("filter_dropdown_options", _search_value, socket) do
-    {:noreply, socket}
-  end
-
   def render(assigns) do
     ~H"""
     <section>
