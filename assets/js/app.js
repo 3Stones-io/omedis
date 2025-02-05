@@ -23,10 +23,12 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 
 import Alpine from "alpinejs";
-
+import DateTimePicker from "./hooks/date_time_picker";
 import ActivityColorInput from "./hooks/activity_color_input";
+import DropDownInput from "./hooks/drop_down_input";
 import FlashAutoDisappear from "./hooks/flash_auto_disappear";
 import HideOnNavigate from "./hooks/hide_on_navigate";
+import InputLabel from "./hooks/input_label";
 import phxFeedbackDom from "./phx_feedback_dom";
 
 window.Alpine = Alpine;
@@ -34,8 +36,11 @@ Alpine.start();
 
 let Hooks = {
   ActivityColorInput,
+  DateTimePicker,
+  DropDownInput,
   FlashAutoDisappear,
   HideOnNavigate,
+  InputLabel,
 };
 
 let csrfToken = document

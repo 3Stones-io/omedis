@@ -3,34 +3,71 @@
 @import "tailwindcss/utilities";
 @import "tailwindcss/forms";
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import '../node_modules/flatpickr/dist/flatpickr.css';
 
 /* light mode colors */
 :root {
-  --bg-primary: 255, 255, 255, 1;
-  --bg-secondary: 245, 245, 253, 1;
+  --bg-primary: 255, 255, 255;
+  --bg-secondary: 245, 245, 253;
 
-  --txt-primary: 31, 31, 31, 1;
-  --txt-secondary: 113, 113, 113, 1;
+  --txt-primary: 31, 31, 31;
+  --txt-secondary: 113, 113, 113;
 
-  --btn-border: 204, 201, 209, 1;
-  --section-border: 203, 201, 210, 1;
+  --btn-border: 204, 201, 209;
+  --section-border: 203, 201, 210;
 
-  --icons-txt-secondary: 113, 113, 113, 1;
+  --icons-txt-secondary: 113, 113, 113;
+
+  --form-subtitle-txt: 31, 31, 31;
+  --form-txt-primary: 113, 113, 113;
+  --form-error-text: 197, 69, 84;
+  --form-error-bg: 255, 221, 218;
+  --form-info-primary: 108, 51, 243;
+  --form-input-border: 189, 189, 189;
+  --form-radio-checked-primary: 69, 172, 226;
+  --form-radio-checked-secondary: 197, 69, 84;
+  --form-dropdown-bg: 255, 255, 255;
+  --form-dropdown-border: 189, 189, 189;
+  --form-dropdown-shadow: 236, 236, 236;
+  --form-dropdown-txt: 31, 31, 31;
+  --form-border-focus: 103, 114, 242;
+  --client-form-btn-bg: 123, 196, 109;
+  --client-form-btn-txt: 255, 255, 255;
+  --form-error-popup-bg: 249, 236, 238;
+  --form-error-popup-txt: 140, 49, 60;
 }
 
 /* dark mode colors */
 /* TODO: put proper dark mode colors */
 .dark {
-  --bg-primary: 31, 31, 31, 1;
-  --bg-secondary: 113, 113, 113, 1;
+  --bg-primary: 255, 255, 255;
+  --bg-secondary: 245, 245, 253;
 
-  --txt-primary: 255, 255, 255, 1;
-  --txt-secondary: 245, 245, 253, 1;
+  --txt-primary: 31, 31, 31;
+  --txt-secondary: 113, 113, 113;
 
-  --btn-border: 204, 201, 209, 1;
-  --section-border: 203, 201, 210, 1;
+  --btn-border: 204, 201, 209;
+  --section-border: 203, 201, 210;
 
-  --icons-txt-secondary: 113, 113, 113, 1;
+  --icons-txt-secondary: 113, 113, 113;
+
+  --form-subtitle-txt: 31, 31, 31;
+  --form-txt-primary: 113, 113, 113;
+  --form-error-text: 139, 31, 25;
+  --form-error-bg: 255, 221, 218;
+  --form-info-primary: 108, 51, 243;
+  --form-input-border: 189, 189, 189;
+  --form-radio-checked-primary: 69, 172, 226;
+  --form-radio-checked-secondary: 197, 69, 84;
+  --form-dropdown-bg: 255, 255, 255;
+  --form-dropdown-border: 189, 189, 189;
+  --form-dropdown-shadow: 236, 236, 236;
+  --form-dropdown-txt: 31, 31, 31;
+  --form-border-focus: 103, 114, 242;
+  --client-form-btn-bg: 123, 196, 109;
+  --client-form-btn-txt: 255, 255, 255;
+  --form-error-popup-bg: 249, 236, 238;
+  --form-error-popup-txt: 140, 49, 60;
 }
 
 /* This file is for your main application CSS */
@@ -45,4 +82,26 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 
 .checked-radio {
   @apply outline outline-2 outline-offset-2 outline-red-500 rounded-md;
+}
+
+.search-input-container:has(.search-input:focus) {
+  @apply border-form-border-focus;
+}
+
+/* Scrollbars */
+.dropdown-options-list::-webkit-scrollbar {
+  @apply w-[.25em];
+}
+
+.dropdown-options-list::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.dropdown-options-list::-webkit-scrollbar-thumb {
+  @apply bg-form-border-focus;
+  border-radius: 1em;
+}
+
+.flatpickr-wrapper {
+  @apply relative w-full;
 }
