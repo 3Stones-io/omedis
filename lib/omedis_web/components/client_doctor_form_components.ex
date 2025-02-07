@@ -543,7 +543,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
 
   defp hide_dropdown(id, js \\ %JS{}) do
     js
-    |> JS.hide(to: "#dropdown-options-container-#{id}")
+    |> JS.add_class("hidden", to: "#dropdown-options-container-#{id}")
     |> JS.remove_class("rotate-180", to: "#dropdown-chevron-#{id}")
     |> JS.remove_class("border-form-border-focus", to: "#dropdown-prompt-#{id}")
     |> JS.add_class("border-form-input-border", to: "#dropdown-prompt-#{id}")
