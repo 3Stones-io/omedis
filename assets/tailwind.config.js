@@ -38,6 +38,8 @@ module.exports = {
         "client-form-btn-txt": "rgba(var(--client-form-btn-txt))",
         "form-error-popup-bg": "rgba(var(--form-error-popup-bg))",
         "form-error-popup-txt": "rgba(var(--form-error-popup-txt))",
+        "form-error-msg": "rgba(var(--form-error-msg))",
+        "form-sidebar-active-txt": "rgba(var(--form-sidebar-active-txt))",
       },
       fontFamily: {
         openSans: ["Open Sans", "serif"],

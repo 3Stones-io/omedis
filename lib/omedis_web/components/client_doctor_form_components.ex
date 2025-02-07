@@ -3,6 +3,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
 
   use OmedisWeb, :html
 
+  alias OmedisWeb.Components.Icons
   alias OmedisWeb.CoreComponents
 
   attr :breadcrumb_items, :list, default: []
@@ -242,7 +243,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
       <input type="hidden" name={@name} id={@id} value={@value} />
 
       <button
-        class="text-form-txt-primary flex items-center justify-between w-full p-2 border-b-[1px] border-form-input-border mb-1"
+        class="text-form-txt-primary flex items-center justify-between w-full py-2 border-b-[1px] border-form-input-border mb-1"
         type="button"
         id={"dropdown-prompt-#{@id}"}
         phx-update="ignore"
@@ -359,11 +360,11 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
         id={@id}
         value={@value}
         class={[
-          "flatpickr mt-2 block w-full text-form-txt-primary focus:ring-0 sm:text-sm sm:leading-6 border-[0] px-0",
+          "mt-2 block w-full text-form-txt-primary focus:ring-0 sm:text-sm sm:leading-6 border-[0] px-0",
           @errors == [] &&
             "border-b-[1px] border-form-input-border phx-no-feedback:border-form-input-border focus:border-b focus:border-form-border-focus phx-no-feedback:focus:border-form-border-focus :placeholdertext-form-txt-primary",
           @errors != [] &&
-            "border-b-[1px] border-form-error-text placeholder:text-form-error-text focus:border-b focus:border-form-error-text"
+            "border-b-[1px] border-form-error-msg placeholder:text-form-error-msg focus:border-b focus:border-form-error-msg"
         ]}
         data-input
         phx-hook="DateTimePicker"
@@ -402,7 +403,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
           @errors == [] &&
             "border-b-[1px] border-form-input-border phx-no-feedback:border-form-input-border focus:border-b focus:border-form-border-focus phx-no-feedback:focus:border-form-border-focus :placeholdertext-form-txt-primary",
           @errors != [] &&
-            "border-b-[1px] border-form-error-text placeholder:text-form-error-text focus:border-b focus:border-form-error-text"
+            "border-b-[1px] border-form-error-msg placeholder:text-form-error-msg focus:border-b focus:border-form-error-msg"
         ]}
         {@rest}
       />
@@ -458,7 +459,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
 
   def custom_error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-form-error-text phx-no-feedback:hidden">
+    <p class="mt-3 flex gap-3 text-sm leading-6 text-form-error-msg phx-no-feedback:hidden">
       {render_slot(@inner_block)}
     </p>
     """
@@ -467,13 +468,56 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   @doc """
   Renders a form subtitle.
   """
+  attr :class, :any, default: nil
   slot :inner_block, required: true
 
   def form_subtitle(assigns) do
     ~H"""
-    <h4 class="font-openSans font-semibold text-form-subtitle-txt text-base mt-2">
+    <h4 class={["font-openSans font-semibold text-form-subtitle-txt text-base mt-2", @class]}>
       {render_slot(@inner_block)}
     </h4>
+    """
+  end
+
+  @doc """
+  Renders a collapsable menu.
+  """
+
+  attr :live_action, :atom, required: true
+  attr :page_action, :atom, required: true
+  attr :label, :string, required: true
+  attr :show_divider, :boolean, default: true
+  attr :id, :string, required: true
+  attr :form_link, :any, required: true
+
+  slot :inner_block, required: true
+
+  def collapsable_menu(assigns) do
+    ~H"""
+    <div class="wrap-collapsible my-2">
+      <div class={[
+        "divider bg-form-input-border w-full self-center",
+        !@show_divider && "hidden",
+        @live_action != @page_action && "h-[6svh]",
+        @live_action == @page_action && "h-full"
+      ]}>
+      </div>
+      <label for={@id} class="toggle-label flex items-center gap-2 my-2">
+        <input type="checkbox" id={@id} class="toggle hidden" phx-change={JS.navigate(@form_link)} />
+        <Icons.circle_with_dot fill={if @live_action == @page_action, do: "#7BC46D", else: "#9d9d9d"} />
+        <span class={[
+          "toggle-label-text font-semibold",
+          @live_action == @page_action && "text-form-sidebar-active-txt",
+          @live_action != @page_action && "text-form-txt-primary"
+        ]}>
+          {@label}
+        </span>
+      </label>
+
+      <div :if={@live_action == @page_action} class="collapsible-content">
+        {render_slot(@inner_block)}
+      </div>
+    </div>
     """
   end
 
