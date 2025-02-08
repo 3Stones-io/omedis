@@ -248,7 +248,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       ]} />
       <section class="min-h-full content p-4">
         <h1 class="text-xl font-semibold">Create a new client</h1>
-        <.collapsable_menu
+        <.collapsible_menu
           form_link={~p"/playground/client-doctor-forms"}
           id="collapsible-client-info"
           label="Client Info"
@@ -266,9 +266,9 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
             titles={@titles}
             show_submission_error={@show_submission_error}
           />
-        </.collapsable_menu>
+        </.collapsible_menu>
 
-        <.collapsable_menu
+        <.collapsible_menu
           form_link={~p"/playground/client-doctor-forms/billing"}
           id="collapsible-billing"
           label="Billing"
@@ -282,9 +282,9 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
             klv7_services_list={@klv7_services_list}
             invoice_types={@invoice_types}
           />
-        </.collapsable_menu>
+        </.collapsible_menu>
 
-        <.collapsable_menu
+        <.collapsible_menu
           form_link={~p"/playground/client-doctor-forms/doctor"}
           id="collapsible-doctor"
           label="Assign a Doctor"
@@ -298,7 +298,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
             doctors_and_specialities={@doctors_and_specialities}
             doctor_client_relationship={@doctor_client_relationship}
           />
-        </.collapsable_menu>
+        </.collapsible_menu>
       </section>
     </section>
     """

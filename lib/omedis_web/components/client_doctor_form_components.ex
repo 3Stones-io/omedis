@@ -390,6 +390,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
           "absolute left-0 translate-y-[60%]",
           "has-[+input:focus]:translate-y-[0%] top-0 mb-2"
         ]}
+        phx-update="ignore"
       >
         {@label}
       </.custom_label>
@@ -418,11 +419,12 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   """
   attr :for, :string, default: nil
   attr :class, :any, default: nil
+  attr :rest, :global
   slot :inner_block, required: true
 
   def custom_label(assigns) do
     ~H"""
-    <label for={@for} class={["font-openSans text-form-txt-primary", @class]}>
+    <label for={@for} class={["font-openSans text-form-txt-primary", @class]} {@rest}>
       {render_slot(@inner_block)}
     </label>
     """
@@ -481,7 +483,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   end
 
   @doc """
-  Renders a collapsable menu.
+  Renders a collapsible menu.
   """
 
   attr :live_action, :atom, required: true
@@ -494,7 +496,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
 
   slot :inner_block, required: true
 
-  def collapsable_menu(assigns) do
+  def collapsible_menu(assigns) do
     ~H"""
     <div class="wrap-collapsible my-2">
       <div class={[
