@@ -3,26 +3,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
 
   import OmedisWeb.ClientDoctorFormComponents
 
-  @client_info_fields %{
-    "title" => "",
-    "first_name" => "",
-    "last_name" => "",
-    "email" => "",
-    "dob" => "",
-    "street_no" => "",
-    "city" => "",
-    "zip_code" => "",
-    "canton" => "",
-    "social_security_number" => "",
-    "telephone_number" => "",
-    "mobile_number" => "",
-    "date_of_contact" => "",
-    "client_status" => "",
-    "file_assignment" => "",
-    "contact_mobile_number" => "",
-    "contact_category" => "",
-    "relationship" => ""
-  }
+  alias Omedis.Playground.Client
 
   @billing_fields %{
     "insurance_provider" => "",
@@ -42,6 +23,12 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
   def mount(_params, _session, socket) do
     {:ok,
      socket
+     |> assign(:form_percentages, %{
+       "client_info" => 0,
+       "billing" => 0,
+       "doctor" => 0
+     })
+     |> assign(:show_submission_error, false)
      |> assign_cantons()
      |> assign_client_status()
      |> assign_contact_category_types()
@@ -61,16 +48,38 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
   end
 
   @impl Phoenix.LiveView
+  def handle_event("validate", %{"client_info" => client_params}, socket) do
+    changeset = Client.changeset(%Client{}, client_params)
+    {:noreply, assign(socket, :form, to_form(changeset, as: :client_info))}
+  end
+
   def handle_event("validate", _params, socket) do
     {:noreply, socket}
   end
 
-  def handle_event("submit", _params, socket) do
-    {:noreply, socket}
+  def handle_event("submit", %{"client_info" => client_params} = params, socket) do
+    changeset = Client.changeset(%Client{}, client_params)
+
+    if changeset.valid? do
+      {:noreply,
+       socket
+       |> assign(:show_submission_error, false)
+       |> assign_percentage_complete(params)}
+    else
+      {:noreply,
+       socket
+       |> assign(:show_submission_error, true)
+       |> assign_form(changeset, "client_info")
+       |> assign_percentage_complete(params)}
+    end
+  end
+
+  def handle_event("submit", params, socket) do
+    {:noreply, assign_percentage_complete(socket, params)}
   end
 
   defp apply_action(socket, :client_info, _params) do
-    assign_form(socket, @client_info_fields, "client_info")
+    assign_form(socket, Client.changeset(%Client{}), "client_info")
   end
 
   defp apply_action(socket, :billing, _params) do
@@ -83,6 +92,28 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
 
   defp assign_form(socket, fields, name) do
     assign(socket, :form, to_form(fields, as: name))
+  end
+
+  defp assign_percentage_complete(socket, params) do
+    form_name = socket.assigns.form.name
+    %{^form_name => fields} = params
+    total_fields = map_size(fields)
+
+    filled_fields =
+      fields
+      |> Map.values()
+      |> Enum.count(&(not is_nil(&1) and &1 != ""))
+
+    percentage = trunc(ceil(filled_fields / total_fields * 100))
+
+    updated_percentages =
+      Map.put(
+        socket.assigns.form_percentages,
+        form_name,
+        percentage
+      )
+
+    assign(socket, :form_percentages, updated_percentages)
   end
 
   defp assign_titles(socket) do
@@ -223,6 +254,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
           label="Client Info"
           live_action={@live_action}
           page_action={:client_info}
+          percentage_complete={@form_percentages["client_info"]}
         >
           <.client_info_form
             cantons={@cantons}
@@ -232,6 +264,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
             form={@form}
             relationship_options={@relationship_options}
             titles={@titles}
+            show_submission_error={@show_submission_error}
           />
         </.collapsable_menu>
 
@@ -241,6 +274,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
           label="Billing"
           live_action={@live_action}
           page_action={:billing}
+          percentage_complete={@form_percentages["billing"]}
         >
           <.billing_form
             form={@form}
@@ -257,6 +291,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
           live_action={@live_action}
           page_action={:doctor}
           show_divider={false}
+          percentage_complete={@form_percentages["doctor"]}
         >
           <.doctor_form
             form={@form}
@@ -275,7 +310,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       :let={f}
       for={@form}
       phx-change="validate"
-      phx-submit="save"
+      phx-submit="submit"
       class="grid gap-y-4"
       phx-mounted={JS.transition("transition-all transform ease-in duration-100", time: 100)}
       phx-remove={
@@ -319,7 +354,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       :let={f}
       for={@form}
       phx-change="validate"
-      phx-submit="save"
+      phx-submit="submit"
       class="grid gap-y-4"
       phx-mounted={JS.transition("transition-all transform ease-in duration-100", time: 100)}
       phx-remove={
@@ -384,7 +419,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       :let={f}
       for={@form}
       phx-change="validate"
-      phx-submit="save"
+      phx-submit="submit"
       class="grid gap-y-4"
       phx-mounted={JS.transition("transition-all transform ease-in duration-100", time: 100)}
       phx-remove={
@@ -490,12 +525,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       <% end %>
 
       <.form_subtitle class="mt-4">Add Contact to Client Dossier</.form_subtitle>
-      <.custom_input
-        field={f[:contact_mobile_number]}
-        type="tel"
-        label="Mobile Number"
-        pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-      />
+      <.custom_input field={f[:contact_mobile_number]} type="tel" label="Mobile Number" />
 
       <.custom_input
         type="dropdown"
@@ -511,6 +541,11 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
         id="relationship-list"
         dropdown_prompt="Relationship"
         dropdown_options={@relationship_options}
+      />
+
+      <.form_error_message_pop_up
+        errors={Enum.map(f.errors, fn {_field, {error, _}} -> "#{error}" end)}
+        show_submission_error={@show_submission_error}
       />
 
       <.custom_button type="submit" class="ml-auto my-2">Save</.custom_button>

@@ -5,8 +5,9 @@
   "skip_files": [
     "lib/omedis_web/components/client_doctor_form_components.ex",
     "lib/omedis_web/components/core_components.ex",
-    "lib/omedis_web/live/playground_live/index.ex",
     "lib/omedis_web/live/playground_live/client_doctor_forms.ex",
+    "lib/omedis_web/live/playground_live/index.ex",
+    "lib/omedis/playground/client.ex",
     "lib/omedis/release.ex"
   ]
 }

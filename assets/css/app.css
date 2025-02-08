@@ -111,8 +111,9 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 
 .wrap-collapsible {
   display: grid;
-  grid-template-columns: .35em .10em 1em 1fr;
+  grid-template-columns: .45em .10em 1em 1fr;
   grid-template-areas: "label label label label"
+                       "... ... ... percentage-complete"
                        "... divider ... form";
 }
 
@@ -126,4 +127,8 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 
 .wrap-collapsible > .collapsible-content {
   grid-area: form;
+}
+
+.percentage-complete {
+  grid-area: percentage-complete;
 }

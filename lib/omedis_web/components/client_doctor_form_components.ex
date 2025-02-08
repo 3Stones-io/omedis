@@ -405,6 +405,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
           @errors != [] &&
             "border-b-[1px] border-form-error-msg placeholder:text-form-error-msg focus:border-b focus:border-form-error-msg"
         ]}
+        phx-debounce="blur"
         {@rest}
       />
       <.custom_error :for={msg <- @errors}>{msg}</.custom_error>
@@ -489,6 +490,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   attr :show_divider, :boolean, default: true
   attr :id, :string, required: true
   attr :form_link, :any, required: true
+  attr :percentage_complete, :integer, default: 0
 
   slot :inner_block, required: true
 
@@ -502,17 +504,34 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
         @live_action == @page_action && "h-full"
       ]}>
       </div>
-      <label for={@id} class="toggle-label flex items-center gap-2 my-2">
+      <label
+        for={@id}
+        class={[
+          "toggle-label flex items-center gap-2",
+          @percentage_complete <= 0 && "my-2"
+        ]}
+      >
         <input type="checkbox" id={@id} class="toggle hidden" phx-change={JS.navigate(@form_link)} />
         <Icons.circle_with_dot fill={if @live_action == @page_action, do: "#7BC46D", else: "#9d9d9d"} />
         <span class={[
-          "toggle-label-text font-semibold",
+          "toggle-label-text font-semibold flex flex-col self-end",
           @live_action == @page_action && "text-form-sidebar-active-txt",
           @live_action != @page_action && "text-form-txt-primary"
         ]}>
           {@label}
         </span>
       </label>
+
+      <p
+        :if={@percentage_complete > 0}
+        class={[
+          "font-normal text-xs mb-1 percentage-complete",
+          @live_action == @page_action && "text-form-sidebar-active-txt",
+          @live_action != @page_action && "text-form-txt-primary"
+        ]}
+      >
+        {if @percentage_complete == 100, do: "Complete", else: "#{@percentage_complete}% Done"}
+      </p>
 
       <div :if={@live_action == @page_action} class="collapsible-content">
         {render_slot(@inner_block)}
@@ -525,10 +544,15 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   Renders an error pop up message.
   """
   attr :errors, :list, default: []
+  attr :show_submission_error, :boolean, default: false
 
   def form_error_message_pop_up(assigns) do
     ~H"""
-    <div class="text-form-error-popup-txt bg-form-error-popup-bg rounded-lg py-4 px-6">
+    <div class={[
+      @show_submission_error &&
+        "text-form-error-popup-txt bg-form-error-popup-bg rounded-lg py-4 px-6",
+      !@show_submission_error && "hidden"
+    ]}>
       <div class="flex items-center gap-2 font-semibold mb-3">
         <.icon name="hero-exclamation-triangle" class="w-5 h-5 stroke-2" />
         <h4>Submission Error</h4>
