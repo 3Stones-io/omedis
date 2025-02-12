@@ -29,6 +29,7 @@ import DropDownInput from "./hooks/drop_down_input";
 import FlashAutoDisappear from "./hooks/flash_auto_disappear";
 import HideOnNavigate from "./hooks/hide_on_navigate";
 import InputLabel from "./hooks/input_label";
+import SearchActivityInput from "./hooks/search_activity_input";
 import phxFeedbackDom from "./phx_feedback_dom";
 
 window.Alpine = Alpine;
@@ -41,6 +42,7 @@ let Hooks = {
   FlashAutoDisappear,
   HideOnNavigate,
   InputLabel,
+  SearchActivityInput,
 };
 
 let csrfToken = document
