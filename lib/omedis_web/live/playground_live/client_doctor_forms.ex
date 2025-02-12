@@ -306,19 +306,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
 
   defp doctor_form(assigns) do
     ~H"""
-    <.form
-      :let={f}
-      for={@form}
-      phx-change="validate"
-      phx-submit="submit"
-      class="grid gap-y-4"
-      phx-mounted={JS.transition("transition-all transform ease-in duration-100", time: 100)}
-      phx-remove={
-        JS.hide(
-          transition: {"transition-all transform ease-in duration-100", "opacity-100", "opacity-0"}
-        )
-      }
-    >
+    <.client_doctor_form for={@form} phx-change="validate" phx-submit="submit">
       <.custom_input
         type="dropdown"
         field={@form[:doctor_speciality]}
@@ -337,61 +325,53 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       </.custom_input>
 
       <.custom_input
-        field={f[:doctor_client_relationship]}
+        field={@form[:doctor_client_relationship]}
         type="dropdown"
         dropdown_options={@doctor_client_relationship}
         dropdown_prompt="Doctor-Client Relationship"
       />
 
       <.custom_button type="submit" class="ml-auto my-2">Save</.custom_button>
-    </.form>
+    </.client_doctor_form>
     """
   end
 
   defp billing_form(assigns) do
     ~H"""
-    <.form
-      :let={f}
-      for={@form}
-      phx-change="validate"
-      phx-submit="submit"
-      class="grid gap-y-4"
-      phx-mounted={JS.transition("transition-all transform ease-in duration-100", time: 100)}
-      phx-remove={
-        JS.hide(
-          transition: {"transition-all transform ease-in duration-100", "opacity-100", "opacity-0"}
-        )
-      }
-    >
+    <.client_doctor_form for={@form} phx-change="validate" phx-submit="submit">
       <.form_subtitle>Add Insurer</.form_subtitle>
       <.custom_input
         type="dropdown"
-        field={f[:insurance_provider]}
+        field={@form[:insurance_provider]}
         id="insurance-provider-list"
         dropdown_prompt="Select an insurance provider"
         dropdown_options={@insurers}
       />
 
-      <.custom_input field={f[:insurance_policy_number]} type="text" label="Insurance Policy Number" />
+      <.custom_input
+        field={@form[:insurance_policy_number]}
+        type="text"
+        label="Insurance Policy Number"
+      />
 
       <.form_subtitle class="mt-4">KLV7 Services</.form_subtitle>
       <%= for option <- @klv7_services_list do %>
         <.custom_input
           type="radio"
-          field={f[:klv7_billing_type]}
+          field={@form[:klv7_billing_type]}
           id={option}
           value={option}
-          checked={input_value(f, :klv7_billing_type) == option}
+          checked={input_value(@form, :klv7_billing_type) == option}
           label={option}
         />
       <% end %>
 
       <.form_subtitle class="mt-4">Add Card Details</.form_subtitle>
-      <.custom_input field={f[:veka_number]} type="text" label="VEKA Number" />
+      <.custom_input field={@form[:veka_number]} type="text" label="VEKA Number" />
 
       <.custom_input
         id="card-expiry"
-        field={f[:card_expiry]}
+        field={@form[:card_expiry]}
         type="datetime"
         label="Card Expiry(DD/MM/YYYY)"
       />
@@ -400,82 +380,70 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       <%= for invoice_type <- @invoice_types do %>
         <.custom_input
           type="radio"
-          field={f[:invoice_type]}
+          field={@form[:invoice_type]}
           id={invoice_type}
           value={invoice_type}
-          checked={input_value(f, :invoice_type) == invoice_type}
+          checked={input_value(@form, :invoice_type) == invoice_type}
           label={invoice_type}
         />
       <% end %>
 
       <.custom_button type="submit" class="ml-auto my-2">Save</.custom_button>
-    </.form>
+    </.client_doctor_form>
     """
   end
 
   defp client_info_form(assigns) do
     ~H"""
-    <.form
-      :let={f}
-      for={@form}
-      phx-change="validate"
-      phx-submit="submit"
-      class="grid gap-y-4"
-      phx-mounted={JS.transition("transition-all transform ease-in duration-100", time: 100)}
-      phx-remove={
-        JS.hide(
-          transition: {"transition-all transform ease-in duration-100", "opacity-100", "opacity-0"}
-        )
-      }
-    >
+    <.client_doctor_form for={@form} phx-change="validate" phx-submit="submit">
       <.form_subtitle>Personal information</.form_subtitle>
       <div class="flex gap-x-3 items-center">
         <%= for title <- @titles do %>
           <.custom_input
             type="radio"
-            field={f[:title]}
+            field={@form[:title]}
             id={title}
             value={title}
-            checked={input_value(f, :title) == title}
+            checked={input_value(@form, :title) == title}
             label={title}
           />
         <% end %>
       </div>
 
       <.custom_input
-        field={f[:first_name]}
+        field={@form[:first_name]}
         type="text"
         label={Phoenix.HTML.raw("First Name" <> "<span class='text-red-600'>*</span>")}
         required={true}
       />
 
       <.custom_input
-        field={f[:last_name]}
+        field={@form[:last_name]}
         type="text"
         label={Phoenix.HTML.raw("Last Name" <> "<span class='text-red-600'>*</span>")}
         required={true}
       />
 
-      <.custom_input field={f[:email]} type="email" label="Email" />
+      <.custom_input field={@form[:email]} type="email" label="Email" />
 
       <.custom_input
         id="dob"
-        field={f[:dob]}
+        field={@form[:dob]}
         type="datetime"
         label="Date of Birth(DD/MM/YYYY)"
-        value={input_value(f, :dob)}
+        value={input_value(@form, :dob)}
       />
 
       <.form_subtitle class="mt-4">Contact Details</.form_subtitle>
-      <.custom_input field={f[:street_no]} type="text" label="Street/ No." />
+      <.custom_input field={@form[:street_no]} type="text" label="Street/ No." />
 
-      <.custom_input field={f[:city]} type="text" label="City" />
+      <.custom_input field={@form[:city]} type="text" label="City" />
 
-      <.custom_input field={f[:zip_code]} type="text" label="Zip Code" />
+      <.custom_input field={@form[:zip_code]} type="text" label="Zip Code" />
 
       <.custom_input
         type="dropdown"
-        field={f[:canton]}
+        field={@form[:canton]}
         id="canton-list"
         dropdown_prompt="Select a canton"
         dropdown_options={
@@ -488,12 +456,16 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
         dropdown_searchable={true}
       />
 
-      <.custom_input field={f[:social_security_number]} type="text" label="Social Security Number" />
+      <.custom_input
+        field={@form[:social_security_number]}
+        type="text"
+        label="Social Security Number"
+      />
 
-      <.custom_input field={f[:telephone_number]} type="tel" label="Telephone Number" />
+      <.custom_input field={@form[:telephone_number]} type="tel" label="Telephone Number" />
 
       <.custom_input
-        field={f[:mobile_number]}
+        field={@form[:mobile_number]}
         type="tel"
         label={Phoenix.HTML.raw("Mobile Number" <> "<span class='text-red-600'>*</span>")}
         required={true}
@@ -503,10 +475,10 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       <%= for status <- @client_statuses do %>
         <.custom_input
           type="radio"
-          field={f[:client_status]}
+          field={@form[:client_status]}
           id={status}
           value={status}
-          checked={input_value(f, :client_status) == status}
+          checked={input_value(@form, :client_status) == status}
           label={status}
           radio_checked_color={if status == "Inactive", do: "danger", else: "primary"}
         />
@@ -516,20 +488,20 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
       <%= for option <- @file_assignment_options do %>
         <.custom_input
           type="radio"
-          field={f[:file_assignment]}
+          field={@form[:file_assignment]}
           id={option}
           value={option}
-          checked={input_value(f, :file_assignment) == option}
+          checked={input_value(@form, :file_assignment) == option}
           label={option}
         />
       <% end %>
 
       <.form_subtitle class="mt-4">Add Contact to Client Dossier</.form_subtitle>
-      <.custom_input field={f[:contact_mobile_number]} type="tel" label="Mobile Number" />
+      <.custom_input field={@form[:contact_mobile_number]} type="tel" label="Mobile Number" />
 
       <.custom_input
         type="dropdown"
-        field={f[:contact_category_type]}
+        field={@form[:contact_category_type]}
         id="contact-category-type-list"
         dropdown_prompt="Select a contact category type"
         dropdown_options={@contact_category_types}
@@ -537,19 +509,19 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
 
       <.custom_input
         type="dropdown"
-        field={f[:relationship]}
+        field={@form[:relationship]}
         id="relationship-list"
         dropdown_prompt="Relationship"
         dropdown_options={@relationship_options}
       />
 
       <.form_error_message_pop_up
-        errors={Enum.map(f.errors, fn {_field, {error, _}} -> "#{error}" end)}
+        errors={Enum.map(@form.errors, fn {_field, {error, _}} -> "#{error}" end)}
         show_submission_error={@show_submission_error}
       />
 
       <.custom_button type="submit" class="ml-auto my-2">Save</.custom_button>
-    </.form>
+    </.client_doctor_form>
     """
   end
 end

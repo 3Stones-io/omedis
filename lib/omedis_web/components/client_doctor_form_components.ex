@@ -567,6 +567,33 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
     """
   end
 
+  @doc """
+  Renders a client doctor form.
+  """
+  attr :for, :any, required: true, doc: "the data structure for the form"
+  attr :rest, :global
+
+  slot :inner_block, required: true
+
+  def client_doctor_form(assigns) do
+    ~H"""
+    <.form
+      :let={f}
+      for={@for}
+      class="grid gap-y-4"
+      phx-mounted={JS.transition("transition-all transform ease-in duration-100", time: 100)}
+      phx-remove={
+        JS.hide(
+          transition: {"transition-all transform ease-in duration-100", "opacity-100", "opacity-0"}
+        )
+      }
+      {@rest}
+    >
+      {render_slot(@inner_block, f)}
+    </.form>
+    """
+  end
+
   defp hide_dropdown(id, js \\ %JS{}) do
     js
     |> JS.add_class("hidden", to: "#dropdown-options-container-#{id}")

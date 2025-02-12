@@ -16,5 +16,3 @@ defmodule OmedisWeb.Components.Icons do
     """
   end
 end
-
-# "#7BC46D"
