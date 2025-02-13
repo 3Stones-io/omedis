@@ -84,7 +84,7 @@ msgstr "Einladungen"
 msgid "Login"
 msgstr "Anmelden"
 
-#: lib/omedis_web/components/client_doctor_form_components.ex
+#: lib/omedis_web/components/custom_components.ex
 #: lib/omedis_web/components/general_components.ex
 #, elixir-autogen, elixir-format
 msgid "Navigation Breadcrumb"

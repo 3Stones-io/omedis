@@ -101,11 +101,14 @@ defmodule OmedisWeb.Router do
     live "/invitations/:id", InvitationLive.Show, :show
   end
 
-  scope "/playground", OmedisWeb do
+  scope "/playground", OmedisWeb.PlaygroundLive do
     pipe_through :browser
 
-    live "/", PlaygroundLive.Index, :index
-    live "/client-doctor-forms", PlaygroundLive.ClientDoctorForms, :index
+    live_session :playground do
+      live "/", Index, :index
+      live "/client-doctor-forms", ClientDoctorForms, :index
+      live "/time-tracking", TimeTracking
+    end
   end
 
   # Other scopes may use custom stacks.

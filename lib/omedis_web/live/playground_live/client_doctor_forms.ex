@@ -2,6 +2,7 @@ defmodule OmedisWeb.PlaygroundLive.ClientDoctorForms do
   use OmedisWeb, :live_view
 
   import OmedisWeb.ClientDoctorFormComponents
+  import OmedisWeb.CustomComponents
 
   def mount(_params, _session, socket) do
     fields = %{

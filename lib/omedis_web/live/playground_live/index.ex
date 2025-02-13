@@ -21,6 +21,15 @@ defmodule OmedisWeb.PlaygroundLive.Index do
             Client Doctor Forms
           </.link>
         </li>
+
+        <li>
+          <.link
+            navigate={~p"/playground/time-tracking"}
+            class="text-lg text-blue-500 hover:text-blue-700 hover:underline"
+          >
+            Time Tracking
+          </.link>
+        </li>
       </ul>
     </div>
     """
