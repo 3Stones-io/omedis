@@ -8,8 +8,8 @@ defmodule OmedisWeb.CustomComponents do
   attr :breadcrumb_items, :list, default: []
   attr :company_name, :string, default: "Omedis"
   attr :language, :string, default: "en"
-  attr :activities, :any
-  attr :favourite_activities, :any
+  attr :activities, :any, default: []
+  attr :favourite_activities, :any, default: []
   attr :search_activities, :list, default: []
 
   def navbar(assigns) do
@@ -162,7 +162,7 @@ defmodule OmedisWeb.CustomComponents do
     ~H"""
     <div
       class={[
-        "font-openSans w-[90%] absolute right-2 -translate-x-2 top-[80%] hidden",
+        "font-openSans w-[90%] absolute right-2 -translate-x-2 top-[80%] z-[10000] hidden",
         "border-[1px] border-time-tracking-container-border rounded-lg pt-6 bg-time-tracking-container-bg shadow-sm shadow-time-tracking-container-shadow"
       ]}
       id="time-tracking-component"
@@ -259,7 +259,7 @@ defmodule OmedisWeb.CustomComponents do
       <div
         :if={@condition}
         class="flex text-form-txt-primary py-6 items-center justify-center"
-        id="activities-empty"
+        id={"#{@id}-empty"}
       >
         <p>
           {@empty_message}

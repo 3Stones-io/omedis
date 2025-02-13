@@ -106,7 +106,9 @@ defmodule OmedisWeb.Router do
 
     live_session :playground do
       live "/", Index, :index
-      live "/client-doctor-forms", ClientDoctorForms, :index
+      live "/client-doctor-forms", ClientDoctorForms, :client_info
+      live "/client-doctor-forms/billing", ClientDoctorForms, :billing
+      live "/client-doctor-forms/doctor", ClientDoctorForms, :doctor
       live "/time-tracking", TimeTracking
     end
   end

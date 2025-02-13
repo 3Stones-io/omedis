@@ -3,6 +3,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
 
   use OmedisWeb, :html
 
+  alias OmedisWeb.Components.Icons
   alias OmedisWeb.CoreComponents
 
   # Form components
@@ -224,11 +225,11 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
         id={@id}
         value={@value}
         class={[
-          "flatpickr mt-2 block w-full text-form-txt-primary focus:ring-0 sm:text-sm sm:leading-6 border-[0] px-0",
+          "mt-2 block w-full text-form-txt-primary focus:ring-0 sm:text-sm sm:leading-6 border-[0] px-0",
           @errors == [] &&
             "border-b-[1px] border-form-input-border phx-no-feedback:border-form-input-border focus:border-b focus:border-form-border-focus phx-no-feedback:focus:border-form-border-focus :placeholdertext-form-txt-primary",
           @errors != [] &&
-            "border-b-[1px] border-form-error-text placeholder:text-form-error-text focus:border-b focus:border-form-error-text"
+            "border-b-[1px] border-form-error-msg placeholder:text-form-error-msg focus:border-b focus:border-form-error-msg"
         ]}
         data-input
         phx-hook="DateTimePicker"
@@ -254,6 +255,8 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
           "absolute left-0 translate-y-[60%]",
           "has-[+input:focus]:translate-y-[0%] top-0 mb-2"
         ]}
+        id={"#{@id}-label"}
+        phx-update="ignore"
       >
         {@label}
       </.custom_label>
@@ -267,8 +270,9 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
           @errors == [] &&
             "border-b-[1px] border-form-input-border phx-no-feedback:border-form-input-border focus:border-b focus:border-form-border-focus phx-no-feedback:focus:border-form-border-focus :placeholdertext-form-txt-primary",
           @errors != [] &&
-            "border-b-[1px] border-form-error-text placeholder:text-form-error-text focus:border-b focus:border-form-error-text"
+            "border-b-[1px] border-form-error-msg placeholder:text-form-error-msg focus:border-b focus:border-form-error-msg"
         ]}
+        phx-debounce="blur"
         {@rest}
       />
       <.custom_error :for={msg <- @errors}>{msg}</.custom_error>
@@ -281,11 +285,12 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   """
   attr :for, :string, default: nil
   attr :class, :any, default: nil
+  attr :rest, :global
   slot :inner_block, required: true
 
   def custom_label(assigns) do
     ~H"""
-    <label for={@for} class={["font-openSans text-form-txt-primary", @class]}>
+    <label for={@for} class={["font-openSans text-form-txt-primary", @class]} {@rest}>
       {render_slot(@inner_block)}
     </label>
     """
@@ -323,7 +328,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
 
   def custom_error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-form-error-text phx-no-feedback:hidden">
+    <p class="mt-3 flex gap-3 text-sm leading-6 text-form-error-msg phx-no-feedback:hidden">
       {render_slot(@inner_block)}
     </p>
     """
@@ -332,13 +337,74 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   @doc """
   Renders a form subtitle.
   """
+  attr :class, :any, default: nil
   slot :inner_block, required: true
 
   def form_subtitle(assigns) do
     ~H"""
-    <h4 class="font-openSans font-semibold text-form-subtitle-txt text-base mt-2">
+    <h4 class={["font-openSans font-semibold text-form-subtitle-txt text-base mt-2", @class]}>
       {render_slot(@inner_block)}
     </h4>
+    """
+  end
+
+  @doc """
+  Renders a collapsible menu.
+  """
+
+  attr :live_action, :atom, required: true
+  attr :page_action, :atom, required: true
+  attr :label, :string, required: true
+  attr :show_divider, :boolean, default: true
+  attr :id, :string, required: true
+  attr :form_link, :any, required: true
+  attr :percentage_complete, :integer, default: 0
+
+  slot :inner_block, required: true
+
+  def collapsible_menu(assigns) do
+    ~H"""
+    <div class="wrap-collapsible my-2">
+      <div class={[
+        "divider bg-form-input-border w-full self-center",
+        !@show_divider && "hidden",
+        @live_action != @page_action && "h-[6svh]",
+        @live_action == @page_action && "h-full"
+      ]}>
+      </div>
+      <label
+        for={@id}
+        class={[
+          "toggle-label flex items-center gap-2",
+          @percentage_complete <= 0 && "my-2"
+        ]}
+      >
+        <input type="checkbox" id={@id} class="toggle hidden" phx-change={JS.navigate(@form_link)} />
+        <Icons.circle_with_dot fill={if @live_action == @page_action, do: "#7BC46D", else: "#9d9d9d"} />
+        <span class={[
+          "toggle-label-text font-semibold flex flex-col self-end",
+          @live_action == @page_action && "text-form-sidebar-active-txt",
+          @live_action != @page_action && "text-form-txt-primary"
+        ]}>
+          {@label}
+        </span>
+      </label>
+
+      <p
+        :if={@percentage_complete > 0}
+        class={[
+          "font-normal text-xs mb-1 percentage-complete",
+          @live_action == @page_action && "text-form-sidebar-active-txt",
+          @live_action != @page_action && "text-form-txt-primary"
+        ]}
+      >
+        {if @percentage_complete == 100, do: "Complete", else: "#{@percentage_complete}% Done"}
+      </p>
+
+      <div :if={@live_action == @page_action} class="collapsible-content">
+        {render_slot(@inner_block)}
+      </div>
+    </div>
     """
   end
 
@@ -346,10 +412,15 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   Renders an error pop up message.
   """
   attr :errors, :list, default: []
+  attr :show_submission_error, :boolean, default: false
 
   def form_error_message_pop_up(assigns) do
     ~H"""
-    <div class="text-form-error-popup-txt bg-form-error-popup-bg rounded-lg py-4 px-6">
+    <div class={[
+      @show_submission_error &&
+        "text-form-error-popup-txt bg-form-error-popup-bg rounded-lg py-4 px-6",
+      !@show_submission_error && "hidden"
+    ]}>
       <div class="flex items-center gap-2 font-semibold mb-3">
         <.icon name="hero-exclamation-triangle" class="w-5 h-5 stroke-2" />
         <h4>Submission Error</h4>
@@ -362,9 +433,36 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
     """
   end
 
+  @doc """
+  Renders a client doctor form.
+  """
+  attr :for, :any, required: true, doc: "the data structure for the form"
+  attr :rest, :global
+
+  slot :inner_block, required: true
+
+  def client_doctor_form(assigns) do
+    ~H"""
+    <.form
+      :let={f}
+      for={@for}
+      class="grid gap-y-4"
+      phx-mounted={JS.transition("transition-all transform ease-in duration-100", time: 100)}
+      phx-remove={
+        JS.hide(
+          transition: {"transition-all transform ease-in duration-100", "opacity-100", "opacity-0"}
+        )
+      }
+      {@rest}
+    >
+      {render_slot(@inner_block, f)}
+    </.form>
+    """
+  end
+
   defp hide_dropdown(id, js \\ %JS{}) do
     js
-    |> JS.hide(to: "#dropdown-options-container-#{id}")
+    |> JS.add_class("hidden", to: "#dropdown-options-container-#{id}")
     |> JS.remove_class("rotate-180", to: "#dropdown-chevron-#{id}")
     |> JS.remove_class("border-form-border-focus", to: "#dropdown-prompt-#{id}")
     |> JS.add_class("border-form-input-border", to: "#dropdown-prompt-#{id}")

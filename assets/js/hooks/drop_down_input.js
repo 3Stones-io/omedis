@@ -44,8 +44,7 @@ export default DropDownInput = {
         dropdownPrompt.querySelector(".hero-chevron-down").classList.toggle("rotate-180")
         dropdownPrompt.classList.remove("border-form-border-focus")
         dropdownPrompt.classList.add("border-form-input-border")
-        dropdownOptionsContainer.style.display = "none"
-
+        dropdownOptionsContainer.classList.add("hidden")
         dropdownInput.value = optionValue
         dropdownInput.dispatchEvent(new Event("input", { bubbles: true }))
 

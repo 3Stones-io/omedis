@@ -22,6 +22,7 @@
   --form-txt-primary: 113, 113, 113;
   --form-error-text: 197, 69, 84;
   --form-error-bg: 255, 221, 218;
+  --form-error-msg: 198, 69, 83;
   --form-info-primary: 108, 51, 243;
   --form-input-border: 189, 189, 189;
   --form-radio-checked-primary: 69, 172, 226;
@@ -35,6 +36,7 @@
   --client-form-btn-txt: 255, 255, 255;
   --form-error-popup-bg: 249, 236, 238;
   --form-error-popup-txt: 140, 49, 60;
+  --form-sidebar-active-txt: 123, 196, 109;
 
   --time-tracking-container-border: 203, 212, 215;
   --time-tracking-container-shadow: 222 224 225;
@@ -81,6 +83,7 @@
   --client-form-btn-txt: 255, 255, 255;
   --form-error-popup-bg: 249, 236, 238;
   --form-error-popup-txt: 140, 49, 60;
+  --form-sidebar-active-txt: 123, 196, 109;
 
   --time-tracking-container-border: 203, 212, 215;
   --time-tracking-container-shadow: 222 224 225;
@@ -155,4 +158,28 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 
 .time-tracking-form-grid .prompt-text {
  @apply line-clamp-1;
+}
+
+.wrap-collapsible {
+  display: grid;
+  grid-template-columns: .45em .10em 1em 1fr;
+  grid-template-areas: "label label label label"
+                       "... ... ... percentage-complete"
+                       "... divider ... form";
+}
+
+.wrap-collapsible > label {
+  grid-area: label;
+}
+
+.wrap-collapsible > .divider {
+  grid-area: divider;
+}
+
+.wrap-collapsible > .collapsible-content {
+  grid-area: form;
+}
+
+.percentage-complete {
+  grid-area: percentage-complete;
 }
