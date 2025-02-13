@@ -101,14 +101,15 @@ defmodule OmedisWeb.Router do
     live "/invitations/:id", InvitationLive.Show, :show
   end
 
-  scope "/playground", OmedisWeb do
+  scope "/playground", OmedisWeb.PlaygroundLive do
     pipe_through :browser
 
     live_session :playground do
-      live "/", PlaygroundLive.Index, :index
-      live "/client-doctor-forms", PlaygroundLive.ClientDoctorForms, :client_info
-      live "/client-doctor-forms/billing", PlaygroundLive.ClientDoctorForms, :billing
-      live "/client-doctor-forms/doctor", PlaygroundLive.ClientDoctorForms, :doctor
+      live "/", Index, :index
+      live "/client-doctor-forms", ClientDoctorForms, :index
+      live "/client-doctor-forms/billing", ClientDoctorForms, :billing
+      live "/client-doctor-forms/doctor", ClientDoctorForms, :doctor
+      live "/time-tracking", TimeTracking
     end
   end
 

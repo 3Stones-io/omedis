@@ -37,6 +37,12 @@
   --form-error-popup-bg: 249, 236, 238;
   --form-error-popup-txt: 140, 49, 60;
   --form-sidebar-active-txt: 123, 196, 109;
+
+  --time-tracking-container-border: 203, 212, 215;
+  --time-tracking-container-shadow: 222 224 225;
+  --time-tracking-container-bg: 255, 255, 255;
+
+  --activity-list-bg: 241, 243, 244;
 }
 
 /* dark mode colors */
@@ -71,6 +77,12 @@
   --form-error-popup-bg: 249, 236, 238;
   --form-error-popup-txt: 140, 49, 60;
   --form-sidebar-active-txt: 123, 196, 109;
+
+  --time-tracking-container-border: 203, 212, 215;
+  --time-tracking-container-shadow: 222 224 225;
+  --time-tracking-container-bg: 255, 255, 255;
+
+  --activity-list-bg: 241, 243, 244;
 }
 
 /* This file is for your main application CSS */

@@ -40,6 +40,11 @@ module.exports = {
         "form-error-popup-txt": "rgba(var(--form-error-popup-txt))",
         "form-error-msg": "rgba(var(--form-error-msg))",
         "form-sidebar-active-txt": "rgba(var(--form-sidebar-active-txt))",
+
+        "time-tracking-container-border": "rgba(var(--time-tracking-container-border))",
+        "time-tracking-container-shadow": "rgba(var(--time-tracking-container-shadow))",
+        "time-tracking-container-bg": "rgba(var(--time-tracking-container-bg))",
+        "activity-list-bg": "rgba(var(--activity-list-bg))",
       },
       fontFamily: {
         openSans: ["Open Sans", "serif"],
