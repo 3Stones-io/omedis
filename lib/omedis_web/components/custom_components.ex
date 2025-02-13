@@ -8,8 +8,8 @@ defmodule OmedisWeb.CustomComponents do
   attr :breadcrumb_items, :list, default: []
   attr :company_name, :string, default: "Omedis"
   attr :language, :string, default: "en"
-  attr :activities, :any
-  attr :favourite_activities, :any
+  attr :activities, :any, default: []
+  attr :favourite_activities, :any, default: []
   attr :search_activities, :list, default: []
 
   def navbar(assigns) do
