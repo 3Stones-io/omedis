@@ -8,8 +8,8 @@ defmodule OmedisWeb.CustomComponents do
   attr :breadcrumb_items, :list, default: []
   attr :company_name, :string, default: "Omedis"
   attr :language, :string, default: "en"
-  attr :activities, :any
-  attr :favourite_activities, :any
+  attr :activities, :any, default: []
+  attr :favourite_activities, :any, default: []
   attr :search_activities, :list, default: []
 
   def navbar(assigns) do
@@ -259,7 +259,7 @@ defmodule OmedisWeb.CustomComponents do
       <div
         :if={@condition}
         class="flex text-form-txt-primary py-6 items-center justify-center"
-        id="activities-empty"
+        id={"#{@id}-empty"}
       >
         <p>
           {@empty_message}

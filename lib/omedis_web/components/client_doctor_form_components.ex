@@ -249,6 +249,7 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
           "absolute left-0 translate-y-[60%]",
           "has-[+input:focus]:translate-y-[0%] top-0 mb-2"
         ]}
+        id={"#{@id}-label"}
         phx-update="ignore"
       >
         {@label}
