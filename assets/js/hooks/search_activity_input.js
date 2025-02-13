@@ -5,8 +5,6 @@ export default SearchActivityInput = {
     const activitiesList = document.querySelector("#activities-list")
     const searchActivitiesList = document.querySelector("#search-activities-list-container")
 
-    console.log(searchActivitiesList)
-
     searchInputField.addEventListener("input", (event) => {
       let searchQuery = event.target.value.trim()
       if (searchQuery !== "") {

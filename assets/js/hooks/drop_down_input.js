@@ -32,6 +32,7 @@ export default DropDownInput = {
       dropdownPrompt.classList.toggle("border-form-input-border")
       dropdownPrompt.classList.toggle("border-form-border-focus")
       dropdownPrompt.querySelector(".hero-chevron-down").classList.toggle("rotate-180")
+      dropdownOptionsContainer.style.display = "unset"
     })
 
     // Item selection
