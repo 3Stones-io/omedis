@@ -55,6 +55,8 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
   attr :dropdown_options, :list, doc: "the options for dropdown inputs"
   attr :dropdown_prompt, :string, doc: "the prompt for dropdown inputs"
   attr :dropdown_search_prompt, :string, doc: "the prompt for search inputs", default: "Search"
+  attr :dropdown_list_class, :string, default: nil
+  attr :dropdown_prompt_class, :string, default: nil
 
   attr :has_dropdown_slot, :boolean,
     default: false,
@@ -102,7 +104,10 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
       <input type="hidden" name={@name} id={@id} value={@value} />
 
       <button
-        class="text-form-txt-primary flex items-center justify-between w-full py-2 border-b-[1px] border-form-input-border mb-1"
+        class={[
+          "text-form-txt-primary flex items-center justify-between w-full p-2 border-b-[1px] border-form-input-border mb-1",
+          @dropdown_prompt_class
+        ]}
         type="button"
         id={"dropdown-prompt-#{@id}"}
         phx-update="ignore"
@@ -142,7 +147,8 @@ defmodule OmedisWeb.ClientDoctorFormComponents do
         <ul
           class={[
             "grid gap-y-2 max-h-[20em] overflow-y-scroll dropdown-options-list",
-            @dropdown_searchable && "mt-2"
+            @dropdown_searchable && "mt-2",
+            @dropdown_list_class
           ]}
           id={"dropdown-options-list-#{@id}"}
           role="listbox"

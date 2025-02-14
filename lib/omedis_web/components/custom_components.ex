@@ -162,7 +162,7 @@ defmodule OmedisWeb.CustomComponents do
     ~H"""
     <div
       class={[
-        "font-openSans w-[90%] absolute right-2 -translate-x-2 top-[80%] hidden",
+        "font-openSans w-[90%] absolute right-2 -translate-x-2 top-[80%] z-[10000] hidden",
         "border-[1px] border-time-tracking-container-border rounded-lg pt-6 bg-time-tracking-container-bg shadow-sm shadow-time-tracking-container-shadow"
       ]}
       id="time-tracking-component"

@@ -43,6 +43,13 @@
   --time-tracking-container-bg: 255, 255, 255;
 
   --activity-list-bg: 241, 243, 244;
+  --time-tracker-start-btn-bg: 124, 196, 108;
+  --time-tracker-start-btn-active-txt: 255, 255, 255;
+  --time-tracker-start-btn-active-bg: 124, 196, 108;
+  --time-tracker-countdown-btn-bg: 68, 108, 60;
+  --time-tracker-dropdown-border: 203, 201, 210;
+  --time-tracker-start-btn-disabled-bg: 232, 232, 232;
+  --time-tracker-start-btn-disabled-txt: 157, 157, 157;
 }
 
 /* dark mode colors */
@@ -83,6 +90,12 @@
   --time-tracking-container-bg: 255, 255, 255;
 
   --activity-list-bg: 241, 243, 244;
+  --time-tracker-start-btn-bg: 124, 196, 108;
+  --time-tracker-start-btn-txt: 255, 255, 255;
+  --time-tracker-countdown-btn-bg: 68, 108, 60;
+  --time-tracker-dropdown-border: 203, 201, 210;
+  --time-tracker-start-btn-disabled-bg: 232, 232, 232;
+  --time-tracker-start-btn-disabled-txt: 157, 157, 157;
 }
 
 /* This file is for your main application CSS */
@@ -119,6 +132,32 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 
 .flatpickr-wrapper {
   @apply relative w-full;
+}
+
+.time-tracking-form-grid {
+  position: relative;
+  display: grid;
+  gap: .5em;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    "activity-prompt activity-prompt"
+    "btn btn";
+}
+
+.time-tracking-form-grid > .activity-btn {
+  grid-area: activity-prompt;
+}
+
+.time-tracking-form-grid > .project-btn {
+  grid-area: project-prompt;
+}
+
+.time-tracking-form-grid > button {
+  grid-area: btn;
+} 
+
+.time-tracking-form-grid .prompt-text {
+ @apply line-clamp-1;
 }
 
 .wrap-collapsible {

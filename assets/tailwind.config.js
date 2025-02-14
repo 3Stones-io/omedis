@@ -45,6 +45,13 @@ module.exports = {
         "time-tracking-container-shadow": "rgba(var(--time-tracking-container-shadow))",
         "time-tracking-container-bg": "rgba(var(--time-tracking-container-bg))",
         "activity-list-bg": "rgba(var(--activity-list-bg))",
+        "time-tracker-start-btn-bg": "rgba(var(--time-tracker-start-btn-bg))",
+        "time-tracker-countdown-btn-bg": "rgba(var(--time-tracker-countdown-btn-bg))",
+        "time-tracker-dropdown-border": "rgba(var(--time-tracker-dropdown-border))",
+        "time-tracker-start-btn-disabled-bg": "rgba(var(--time-tracker-start-btn-disabled-bg))",
+        "time-tracker-start-btn-disabled-txt": "rgba(var(--time-tracker-start-btn-disabled-txt))",
+        "time-tracker-start-btn-active-bg": "rgba(var(--time-tracker-start-btn-active-bg))",
+        "time-tracker-start-btn-active-txt": "rgba(var(--time-tracker-start-btn-active-txt))",
       },
       fontFamily: {
         openSans: ["Open Sans", "serif"],
