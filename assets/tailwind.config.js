@@ -52,6 +52,8 @@ module.exports = {
         "time-tracker-start-btn-disabled-txt": "rgba(var(--time-tracker-start-btn-disabled-txt))",
         "time-tracker-start-btn-active-bg": "rgba(var(--time-tracker-start-btn-active-bg))",
         "time-tracker-start-btn-active-txt": "rgba(var(--time-tracker-start-btn-active-txt))",
+        "timeline-calendar-btn-bg": "rgba(var(--timeline-calendar-btn-bg))",
+        "timeline-calendar-btn-txt": "rgba(var(--timeline-calendar-btn-txt))",
       },
       fontFamily: {
         openSans: ["Open Sans", "serif"],

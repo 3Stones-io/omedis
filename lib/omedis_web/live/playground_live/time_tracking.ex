@@ -59,6 +59,29 @@ defmodule OmedisWeb.PlaygroundLive.TimeTracking do
 
     fields = %{"activity" => "", "project" => ""}
 
+    events = [
+      %{
+        dtstart: ~T[09:01:00],
+        dtend: ~T[11:00:00],
+        activity_color: "#F43F5E"
+      },
+      %{
+        dtstart: ~T[11:01:00],
+        dtend: ~T[11:30:00],
+        activity_color: "#6366F1"
+      },
+      %{
+        dtstart: ~T[11:31:00],
+        dtend: ~T[12:14:00],
+        activity_color: "#22C55E"
+      },
+      %{
+        dtstart: ~T[13:30:00],
+        dtend: ~T[14:00:00],
+        activity_color: "#EAB308"
+      }
+    ]
+
     {:ok,
      socket
      |> assign(:activities, activities)
@@ -67,7 +90,10 @@ defmodule OmedisWeb.PlaygroundLive.TimeTracking do
      |> assign(:projects, projects)
      |> assign(:search_activities, [])
      |> assign(:begin_countdown, false)
-     |> assign(:elapsed_time, "00:00:00")}
+     |> assign(:elapsed_time, "00:00:00")
+     |> assign(:daily_start_at, "09:00")
+     |> assign(:daily_end_at, "16:00")
+     |> assign(:events, events)}
   end
 
   @impl Phoenix.LiveView
@@ -187,6 +213,32 @@ defmodule OmedisWeb.PlaygroundLive.TimeTracking do
           <.icon name="hero-stop-circle-solid" class="w-5 h-5" />
         </button>
       </.form>
+
+      <div class="calendar-container px-2">
+        <div
+          class="text-timeline-calendar-btn-txt bg-timeline-calendar-btn-bg py-4 px-4 mb-[-2px] z-[100] rounded-t-xl flex items-center justify-between"
+          id="timeline-calendar-date-selector"
+          phx-hook="TimelineCalendarDateSelector"
+        >
+          <button>
+            <.icon name="hero-chevron-left-solid" class="w-5 h-5" />
+          </button>
+          <p id="timeline-calendar-date-selector-date"></p>
+          <button>
+            <.icon name="hero-chevron-right-solid" class="w-5 h-5" />
+          </button>
+        </div>
+
+        <div
+          id="timeline-calendar"
+          phx-hook="TimelineCalendar"
+          data-daily-start-at={@daily_start_at}
+          data-daily-end-at={@daily_end_at}
+          data-events={Jason.encode!(@events)}
+          class="w-full max-w-2xl min-h-[70svh]"
+        >
+        </div>
+      </div>
     </section>
     """
   end
