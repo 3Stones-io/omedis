@@ -8,6 +8,7 @@ defmodule OmedisWeb.TimeTracking do
   use Phoenix.Component
   use Gettext, backend: OmedisWeb.Gettext
 
+  alias OmedisWeb.Components.Icons
   alias OmedisWeb.CoreComponents
   alias Phoenix.LiveView.JS
 
@@ -395,6 +396,94 @@ defmodule OmedisWeb.TimeTracking do
         </form>
       </div>
     </div>
+    """
+  end
+
+  attr :dtend, :string, required: true
+  attr :dtstart, :string, required: true
+  attr :event_duration, :any, required: true
+  attr :event, :any, required: true
+
+  def daily_summary_list_item(assigns) do
+    ~H"""
+    <li
+      class={[
+        "border-b-2 border-time-tracking-daily-report-item-border last:border-time-tracking-daily-report-item-border-last px-2",
+        "mt-4 text-sm relative"
+      ]}
+      id={"event-#{@event.id}"}
+    >
+      <div class="flex justify-between items-center mb-6">
+        <p>
+          <span>{@event.client_title}</span>
+          <span class="font-semibold">{@event.client_first_name}</span>
+          <span>{@event.client_last_name}</span>
+        </p>
+        <button phx-click={
+          JS.toggle(to: "#edit-delete-menu-#{@event.id}", in: "fade-in-scale", out: "fade-out-scale")
+        }>
+          <Icons.menu_kebab class="w-4 h-4" />
+        </button>
+      </div>
+
+      <p class="text-time-tracking-daily-report-activity-txt flex items-center gap-2 border-b border-time-tracking-daily-report-item-border pb-2">
+        <span
+          class="inline-block w-2 h-2 rounded-full"
+          style={"background-color: #{@event.activity_color}"}
+        >
+        </span>
+        <span>{@event.activity_title}</span>
+      </p>
+
+      <p class="flex justify-between py-2">
+        <span>{@dtstart} - {@dtend}</span>
+        <span>{@event_duration}</span>
+      </p>
+
+      <.edit_delete_menu id={@event.id} />
+    </li>
+    """
+  end
+
+  defp edit_delete_menu(assigns) do
+    ~H"""
+    <ul
+      class={[
+        "bg-time-tracking-edit-delete-menu-bg border border-time-tracking-edit-delete-menu-border rounded-md",
+        "hidden absolute top-4 right-4 z-1000 py-3 pr-12 shadow-sm"
+      ]}
+      id={"edit-delete-menu-#{@id}"}
+      phx-click-away={JS.hide(to: "#edit-delete-menu-#{@id}")}
+    >
+      <li>
+        <button
+          class="flex items-center gap-2 px-2 mb-4"
+          phx-click={
+            JS.push("edit-entry", value: %{id: @id})
+            |> JS.show(to: "#edit-menu-#{@id}")
+          }
+        >
+          <span>
+            <CoreComponents.icon name="hero-pencil" class="w-4 h-4" />
+          </span>
+          <span>Edit</span>
+        </button>
+      </li>
+      <li>
+        <button
+          class="text-time-tracking-edit-delete-menu-txt flex items-center gap-2 px-2"
+          phx-click={
+            JS.push("delete-entry", value: %{id: @id})
+            |> JS.hide(to: "#event-#{@id}")
+          }
+        >
+          <span>
+            <CoreComponents.icon name="hero-trash" class="w-4 h-4" />
+          </span>
+          <span>Delete</span>
+        </button>
+      </li>
+    </ul>
     """
   end
 end

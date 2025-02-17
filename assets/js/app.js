@@ -26,6 +26,7 @@ import Alpine from "alpinejs";
 import DateTimePicker from "./hooks/date_time_picker";
 import ActivityColorInput from "./hooks/activity_color_input";
 import DropDownInput from "./hooks/drop_down_input";
+import EventDeleteConfirmation from "./hooks/event_delete_confirmation";
 import FlashAutoDisappear from "./hooks/flash_auto_disappear";
 import HideOnNavigate from "./hooks/hide_on_navigate";
 import InputLabel from "./hooks/input_label";
@@ -39,6 +40,7 @@ let Hooks = {
   ActivityColorInput,
   DateTimePicker,
   DropDownInput,
+  EventDeleteConfirmation,
   FlashAutoDisappear,
   HideOnNavigate,
   InputLabel,

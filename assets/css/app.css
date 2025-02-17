@@ -50,6 +50,16 @@
   --time-tracker-dropdown-border: 203, 201, 210;
   --time-tracker-start-btn-disabled-bg: 232, 232, 232;
   --time-tracker-start-btn-disabled-txt: 157, 157, 157;
+
+  --time-tracking-daily-report-header-bg: 241, 243, 244;
+  --time-tracking-daily-report-item-border: 234, 234, 234;
+  --time-tracking-daily-report-item-border-last: 203, 212, 215;
+  --time-tracking-daily-report-activity-txt: 113, 113, 113;
+  --time-tracking-edit-delete-menu-bg: 255, 255, 255;
+  --time-tracking-edit-delete-menu-border: 203, 212, 215;
+  --time-tracking-edit-delete-menu-txt: 197, 69, 84;
+  --time-tracking-entry-delete-confirmation-txt: 197, 69, 84;
+  --time-tracking-entry-delete-confirmation-undo-btn: 68, 173, 226;
 }
 
 /* dark mode colors */
@@ -96,6 +106,16 @@
   --time-tracker-dropdown-border: 203, 201, 210;
   --time-tracker-start-btn-disabled-bg: 232, 232, 232;
   --time-tracker-start-btn-disabled-txt: 157, 157, 157;
+
+  --time-tracking-daily-report-header-bg: 241, 243, 244;
+  --time-tracking-daily-report-item-border: 234, 234, 234;
+  --time-tracking-daily-report-item-border-last: 203, 212, 215;
+  --time-tracking-daily-report-activity-txt: 113, 113, 113;
+  --time-tracking-edit-delete-menu-bg: 255, 255, 255;
+  --time-tracking-edit-delete-menu-border: 203, 212, 215;
+  --time-tracking-edit-delete-menu-txt: 197, 69, 84;
+  --time-tracking-entry-delete-confirmation-txt: 197, 69, 84;
+  --time-tracking-entry-delete-confirmation-undo-btn: 68, 173, 226;
 }
 
 /* This file is for your main application CSS */
@@ -154,18 +174,18 @@ table:has(#activities) #activities > tr:last-child > td:has(.position) .position
 
 .time-tracking-form-grid > button {
   grid-area: btn;
-} 
+}
 
 .time-tracking-form-grid .prompt-text {
- @apply line-clamp-1;
+  @apply line-clamp-1;
 }
 
 .wrap-collapsible {
   display: grid;
   grid-template-columns: .45em .10em 1em 1fr;
   grid-template-areas: "label label label label"
-                       "... ... ... percentage-complete"
-                       "... divider ... form";
+    "... ... ... percentage-complete"
+    "... divider ... form";
 }
 
 .wrap-collapsible > label {
