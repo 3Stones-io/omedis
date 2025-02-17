@@ -5,6 +5,39 @@ defmodule OmedisWeb.PlaygroundLive.TimeTracking do
 
   alias OmedisWeb.ClientDoctorFormComponents
 
+  @events [
+    %{
+      dtstart: ~T[09:00:00],
+      dtend: ~T[10:30:00],
+      activity_color: "#F43F5E",
+      created_at: ~U[2025-02-16T09:00:00Z]
+    },
+    %{
+      dtstart: ~T[11:00:00],
+      dtend: ~T[12:30:00],
+      activity_color: "#22C55E",
+      created_at: ~U[2025-02-16T11:00:00Z]
+    },
+    %{
+      dtstart: ~T[09:30:00],
+      dtend: ~T[11:00:00],
+      activity_color: "#6366F1",
+      created_at: ~U[2025-02-17T09:30:00Z]
+    },
+    %{
+      dtstart: ~T[13:00:00],
+      dtend: ~T[14:30:00],
+      activity_color: "#EAB308",
+      created_at: ~U[2025-02-18T13:00:00Z]
+    },
+    %{
+      dtstart: ~T[15:00:00],
+      dtend: ~T[16:00:00],
+      activity_color: "#A855F7",
+      created_at: ~U[2025-02-18T15:00:00Z]
+    }
+  ]
+
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     favourite_activities = [
@@ -67,7 +100,10 @@ defmodule OmedisWeb.PlaygroundLive.TimeTracking do
      |> assign(:projects, projects)
      |> assign(:search_activities, [])
      |> assign(:begin_countdown, false)
-     |> assign(:elapsed_time, "00:00:00")}
+     |> assign(:elapsed_time, "00:00:00")
+     |> assign(:daily_start_at, "09:00")
+     |> assign(:daily_end_at, "16:00")
+     |> filter_events_by_date(DateTime.utc_now())}
   end
 
   @impl Phoenix.LiveView
@@ -89,6 +125,31 @@ defmodule OmedisWeb.PlaygroundLive.TimeTracking do
 
   def handle_event("stop-countdown", _params, socket) do
     {:noreply, assign(socket, :begin_countdown, false)}
+  end
+
+  def handle_event("fetch-events", %{"date" => date}, socket) do
+    {:noreply, filter_events_by_date(socket, string_to_datetime_tuple(date))}
+  end
+
+  defp filter_events_by_date(socket, date) do
+    target_date = DateTime.to_date(date)
+
+    events =
+      Enum.filter(@events, fn event ->
+        Date.compare(DateTime.to_date(event.created_at), target_date) == :eq
+      end)
+
+    assign(socket, :events, events)
+  end
+
+  defp string_to_datetime_tuple(datetime_string) do
+    {:ok, datetime, _offset} = DateTime.from_iso8601(datetime_string)
+    date = {datetime.year, datetime.month, datetime.day}
+    time = {datetime.hour, datetime.minute, datetime.second}
+
+    {date, time}
+    |> NaiveDateTime.from_erl!()
+    |> DateTime.from_naive!("Etc/UTC")
   end
 
   defp search_activities(activity_query, socket) do
@@ -187,6 +248,32 @@ defmodule OmedisWeb.PlaygroundLive.TimeTracking do
           <.icon name="hero-stop-circle-solid" class="w-5 h-5" />
         </button>
       </.form>
+
+      <div class="calendar-container px-2">
+        <div
+          class="text-timeline-calendar-btn-txt bg-timeline-calendar-btn-bg py-4 px-4 mb-[-2px] z-[100] rounded-t-xl flex items-center justify-between"
+          id="timeline-calendar-date-selector"
+          phx-hook="TimelineCalendarDateSelector"
+        >
+          <button id="timeline-calendar-date-selector-previous">
+            <.icon name="hero-chevron-left-solid" class="w-5 h-5" />
+          </button>
+          <p id="timeline-calendar-date-selector-date"></p>
+          <button id="timeline-calendar-date-selector-next">
+            <.icon name="hero-chevron-right-solid" class="w-5 h-5" />
+          </button>
+        </div>
+
+        <div
+          id="timeline-calendar"
+          phx-hook="TimelineCalendar"
+          data-daily-start-at={@daily_start_at}
+          data-daily-end-at={@daily_end_at}
+          data-events={Jason.encode!(@events)}
+          class="w-full max-w-2xl min-h-[70svh]"
+        >
+        </div>
+      </div>
     </section>
     """
   end

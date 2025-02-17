@@ -30,6 +30,8 @@ import FlashAutoDisappear from "./hooks/flash_auto_disappear";
 import HideOnNavigate from "./hooks/hide_on_navigate";
 import InputLabel from "./hooks/input_label";
 import SearchActivityInput from "./hooks/search_activity_input";
+import TimelineCalendar from "./hooks/timeline_calendar";
+import TimelineCalendarDateSelector from "./hooks/timeline_calendar_date_selector";
 import phxFeedbackDom from "./phx_feedback_dom";
 
 window.Alpine = Alpine;
@@ -43,6 +45,8 @@ let Hooks = {
   HideOnNavigate,
   InputLabel,
   SearchActivityInput,
+  TimelineCalendar,
+  TimelineCalendarDateSelector,
 };
 
 let csrfToken = document

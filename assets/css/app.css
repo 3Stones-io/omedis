@@ -50,6 +50,15 @@
   --time-tracker-dropdown-border: 203, 201, 210;
   --time-tracker-start-btn-disabled-bg: 232, 232, 232;
   --time-tracker-start-btn-disabled-txt: 157, 157, 157;
+
+  /* Timetracker chart colors */
+  --timeline-axis-color: rgba(113, 113, 113, 1);
+  --timeline-grid-color: rgba(204, 212, 215, 1);
+  --timeline-border-color: rgba(113, 113, 113, 1);
+  --timeline-indicator-color: rgba(15, 41, 210, 1);
+  --timeline-duration-color: rgba(31, 31, 31, 1);
+
+  --timeline-calendar-btn-bg: 241, 243, 244;
 }
 
 /* dark mode colors */
@@ -96,6 +105,16 @@
   --time-tracker-dropdown-border: 203, 201, 210;
   --time-tracker-start-btn-disabled-bg: 232, 232, 232;
   --time-tracker-start-btn-disabled-txt: 157, 157, 157;
+
+  /* Timetracker chart colors */
+  --timeline-axis-color: rgba(113, 113, 113, 1);
+  --timeline-grid-color: rgba(204, 212, 215, 1);
+  --timeline-border-color: rgba(113, 113, 113, 1);
+  --timeline-indicator-color: rgba(15, 41, 210, 1);
+  --timeline-duration-color: rgba(31, 31, 31, 1);
+
+  --timeline-calendar-btn-bg: 241, 243, 244;
+  --timeline-calendar-btn-txt: 31, 31, 31;
 }
 
 /* This file is for your main application CSS */
